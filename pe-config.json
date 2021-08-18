@@ -1,0 +1,21 @@
+{
+    "gridwidth": 40,
+    "gridheight": 24,
+    "CellCountX": 32,
+    "CellCountY": 32,
+    "vp-color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "cell-color": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+    ],
+    "recents": [
+        "F:\\Devs\\GLFWWindow\\scene1.json"
+    ]
+}

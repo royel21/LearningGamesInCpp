@@ -1,0 +1,13 @@
+# folders
+build/
+node_modules/
+Test/
+assets/sounds/
+assets/fonts/
+assets/textures
+assets/tilemaps/
+webbuild/release/
+
+#files
+*.o
+*.lock
