@@ -1,2 +1,2 @@
-# A Repository Create while im learing to make cross platform c++ App for Android, Web and Windows
+# A Repository Create while learning to make cross platform c++ App for Android, Web and Windows
 this repo is about making game with opengl 3.3 and webgl 2.0 using c++ and emscripten for web compile using makefile. 
