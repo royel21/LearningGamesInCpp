@@ -22,55 +22,34 @@
 
 namespace Plutus
 {
-    const char* MouseKey[] = { "MouseLeft", "MouseRight", "MouseMidle", "", "" };
+    const char *MouseKey[] = {"MouseLeft", "MouseRight", "MouseMidle", "", ""};
 
-    std::unordered_map<int, const char*> unkeys;
+    std::unordered_map<int, const char *> unkeys;
 
-    void iniKeys()
+    void initKeys();
+
+    static void error_callback(int error, const char *description)
     {
-        unkeys[32] = "Space";
-        unkeys[341] = unkeys[345] = "Ctrl";
-        unkeys[340] = unkeys[344] = "Shift";
-        unkeys[335] = unkeys[257] = "Enter";
-        unkeys[256] = "Scape";
-        unkeys[258] = "Tab";
-        unkeys[260] = "Back";
-        unkeys[260] = "Ins";
-        unkeys[261] = "Del";
-        unkeys[262] = "Right";
-        unkeys[263] = "Left";
-        unkeys[264] = "Down";
-        unkeys[265] = "Up";
-        unkeys[266] = "PageUp";
-        unkeys[267] = "PageDown";
-        unkeys[268] = "End";
-        unkeys[269] = "Home";
+        std::printf("Error: %s\n", description);
     }
 
-    static void error_callback(int error, const char* description)
+    void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
     {
-        fprintf(stderr, "Error: %s\n", description);
+        Input::getInstance()->keyStateChange(unkeys[key], action > 0);
     }
 
-    void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
     {
-        auto name = glfwGetKeyName(key, scancode);
-        name = name ? name : unkeys[key];
+        auto name = unkeys[button];
         Input::getInstance()->keyStateChange(name, action > 0);
     }
 
-    void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
-    {
-        auto name = MouseKey[button];
-        Input::getInstance()->keyStateChange(name, action > 0);
-    }
-
-    void mousePosCallback(GLFWwindow* window, double xpos, double ypos)
+    void mousePosCallback(GLFWwindow *window, double xpos, double ypos)
     {
         Input::getInstance()->setMouseCoords(static_cast<float>(xpos), static_cast<float>(ypos));
     }
 
-    void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+    void scrollCallback(GLFWwindow *window, double xoffset, double yoffset)
     {
         Input::getInstance()->setMouseWheel(static_cast<int>(yoffset));
     }
@@ -80,7 +59,7 @@ namespace Plutus
 #ifdef _WIN32
         timeEndPeriod(1);
 #endif
-        fprintf(stderr, "Reset TimeEndPeriod\n");
+        std::printf("Reset TimeEndPeriod\n");
         if (mWindow != nullptr)
         {
             glfwDestroyWindow(mWindow);
@@ -89,9 +68,9 @@ namespace Plutus
         }
     }
 
-    bool Window::init(const char* name, int width, int height, GLFWwindow* parent)
+    bool Window::init(const char *name, int width, int height, GLFWwindow *parent)
     {
-        iniKeys();
+        initKeys();
         // set a error call back for glfw internal error
         glfwSetErrorCallback(error_callback);
         //Initialise glfw stuff
@@ -151,5 +130,103 @@ namespace Plutus
     void Window::close()
     {
         glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
+    }
+
+    void initKeys()
+    {
+        unkeys = {
+            {0, "MouseLeft"},
+            {1, "MouseRight"},
+            {2, "MouseMidle"},
+            {3, "MouseEx1"},
+            {4, "Mouseex2"},
+            {32, "Space"},
+            {39, "'"},
+            {44, ","},
+            {45, "-"},
+            {46, "."},
+            {47, "/"},
+            {48, "0"},
+            {49, "1"},
+            {50, "2"},
+            {51, "3"},
+            {52, "4"},
+            {53, "5"},
+            {54, "6"},
+            {55, "7"},
+            {56, "8"},
+            {57, "9"},
+            {65, "A"},
+            {66, "B"},
+            {67, "C"},
+            {68, "D"},
+            {69, "E"},
+            {70, "F"},
+            {71, "G"},
+            {72, "H"},
+            {73, "I"},
+            {74, "J"},
+            {75, "K"},
+            {76, "L"},
+            {77, "M"},
+            {78, "N"},
+            {79, "O"},
+            {80, "P"},
+            {81, "Q"},
+            {82, "R"},
+            {83, "S"},
+            {84, "T"},
+            {85, "U"},
+            {86, "V"},
+            {87, "W"},
+            {88, "X"},
+            {89, "Y"},
+            {90, "Z"},
+            {91, "["},
+            {92, "\\"},
+            {93, "]"},
+            {94, "`"},
+            {256, "Scape"},
+            {258, "Tab"},
+            {260, "Back"},
+            {260, "Ins"},
+            {261, "Del"},
+            {262, "Right"},
+            {263, "Left"},
+            {264, "Down"},
+            {265, "Up"},
+            {266, "PageUp"},
+            {267, "PageDown"},
+            {290, "F1"},
+            {291, "F2"},
+            {292, "F3"},
+            {293, "F4"},
+            {294, "F5"},
+            {295, "F6"},
+            {296, "F7"},
+            {297, "F8"},
+            {298, "F9"},
+            {299, "F10"},
+            {300, "F11"},
+            {301, "F12"},
+            {320, "NUMPAD0"},
+            {321, "NUMPAD1"},
+            {322, "NUMPAD2"},
+            {323, "NUMPAD3"},
+            {324, "NUMPAD4"},
+            {325, "NUMPAD5"},
+            {326, "NUMPAD6"},
+            {327, "NUMPAD7"},
+            {328, "NUMPAD8"},
+            {329, "NUMPAD9"},
+            {331, "NUMPAD/"},
+            {332, "NUMPAD*"},
+            {333, "NUMPAD-"},
+            {334, "NUMPAD+"},
+            {335, "NUMPAD."},
+            {340, "SHIFT"},
+            {341, "CTRL"},
+            {342, "ALT"},
+        };
     }
 }
