@@ -139,7 +139,7 @@ namespace Plutus
             {1, "MouseRight"},
             {2, "MouseMidle"},
             {3, "MouseEx1"},
-            {4, "Mouseex2"},
+            {4, "MouseEx2"},
             {32, "Space"},
             {39, "'"},
             {44, ","},
