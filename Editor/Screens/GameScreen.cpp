@@ -48,7 +48,7 @@ void GameScreen::onEntry()
 
     mInput = Plutus::Input::getInstance();
     auto start = Plutus::Timer::millis();
-    Plutus::SceneLoader::loadFromJson("scene1.json", mScene);
+    Plutus::SceneLoader::loadFromJson("assets/scene1.json", mScene);
 }
 
 void GameScreen::update(float dt)

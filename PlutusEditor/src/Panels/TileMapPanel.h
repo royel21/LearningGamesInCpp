@@ -25,6 +25,7 @@ namespace Plutus
         int mCurrentTexture = 0;
         float mRotation = 0;
         bool mShowAddModal = false;
+        bool mIsOpen = false;
 
     public:
         TileMapPanel() = default;

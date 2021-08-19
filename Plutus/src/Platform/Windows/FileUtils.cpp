@@ -4,11 +4,11 @@
 
 namespace Plutus
 {
-    bool windowDialog(int mode, std::string& path)
+    bool windowDialog(int mode, std::string &path)
     {
         OPENFILENAME ofn;
-        char* FilterSpec = "All Files(*.*)\0*.*\0";
-        char* Title = "Open....";
+        char *FilterSpec = "All Files(*.*)\0*.*\0";
+        char *Title = "Open....";
         char szFileName[MAX_PATH];
         char szFileTitle[MAX_PATH];
 
@@ -32,7 +32,8 @@ namespace Plutus
 
         ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
         bool success = false;
-
+        TCHAR currentDir[MAX_PATH];
+        GetCurrentDirectory(MAX_PATH, currentDir);
         if (mode)
         {
             success = GetOpenFileName((LPOPENFILENAME)&ofn);
@@ -46,7 +47,7 @@ namespace Plutus
         {
             path = szFileName;
         }
-
+        SetCurrentDirectory(currentDir);
         return success;
     }
 } // namespace Plutus

@@ -55,7 +55,7 @@ namespace Plutus
                     if (Plutus::windowDialog(OPEN_FILE, path))
                     {
                         filename = Utils::getFileName(path);
-                        std::cout << "Name: " << filename << "\n";
+
                         auto ex = Utils::getExtension(path);
                         if (ex.compare("png") != 0)
                         {
@@ -133,9 +133,10 @@ namespace Plutus
     }
     void TileMapPanel::draw(TileMap *tileMap)
     {
-        mTileMap = tileMap;
         if (ImGui::CollapsingHeader("TileMap##comp"))
         {
+            mIsOpen = true;
+            mTileMap = tileMap;
             int size[] = {mTileMap->mTileWidth, mTileMap->mTileHeight};
             ImGui::PushItemWidth(60);
             if (ImGui::DragInt2("Tile Size", size, 1))
@@ -190,11 +191,15 @@ namespace Plutus
                 }
             }
         }
+        else
+        {
+            mIsOpen = false;
+        }
     }
 
     void TileMapPanel::renderTiles(SpriteBatch2D *renderer, const glm::ivec2 &mCoords)
     {
-        if (mTempTiles.size() && mMode == MODE_PLACE)
+        if (mIsOpen && mTempTiles.size() && mMode == MODE_PLACE)
         {
             mScene->enableShader();
             renderer->begin();
@@ -245,6 +250,9 @@ namespace Plutus
 
     void TileMapPanel::createTiles(const glm::ivec2 &mCoords)
     {
+        if (!mIsOpen)
+            return;
+
         auto tiles = &mTileMap->mTiles;
         switch (mMode)
         {

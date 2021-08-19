@@ -27,7 +27,7 @@ namespace Plutus
         auto tag = getComponent<Tag>();
         return tag.Name;
     }
-    void Entity::setName(const std::string& name)
+    void Entity::setName(const std::string &name)
     {
         auto tag = getComponent<Tag>();
         tag.Name = name;
@@ -40,7 +40,7 @@ namespace Plutus
         mShader.dispose();
     }
 
-    void Scene::Init(Camera2D* camera)
+    void Scene::Init(Camera2D *camera)
     {
         mRenderer.init(camera);
         mCamera = camera;
@@ -48,7 +48,7 @@ namespace Plutus
         addLayer("Layer0");
     }
 
-    Entity* Scene::createEntity(const std::string& name)
+    Entity *Scene::createEntity(const std::string &name)
     {
         auto ent = mCurrentLayer->add(std::make_shared<Entity>(mRegistry.create(), this));
         ent->addComponent<Tag>(name);
@@ -56,7 +56,7 @@ namespace Plutus
         return ent.get();
     }
 
-    void Scene::removeEntity(Entity* ent)
+    void Scene::removeEntity(Entity *ent)
     {
         mRegistry.destroy(ent->mId);
         mCurrentLayer->remove(ent);
@@ -80,14 +80,14 @@ namespace Plutus
         return false;
     }
 
-    Layer* Scene::addLayer(const std::string& name)
+    Layer *Scene::addLayer(const std::string &name)
     {
         mLayers[name] = Layer(name);
         mCurrentLayer = &mLayers[name];
         return &mLayers[name];
     }
 
-    Layer* Scene::setLayer(const std::string& name)
+    Layer *Scene::setLayer(const std::string &name)
     {
         mCurrentLayer = &mLayers[name];
         return &mLayers[name];
@@ -111,7 +111,7 @@ namespace Plutus
         enableShader();
 
         mRenderer.begin();
-        for (auto& layer : mLayers)
+        for (auto &layer : mLayers)
         {
             if (layer.second.isVisible)
             {
@@ -119,7 +119,7 @@ namespace Plutus
                 {
                     if (ent->hasComponent<TileMap>())
                     {
-                        auto& map = ent->getComponent<TileMap>();
+                        auto &map = ent->getComponent<TileMap>();
                         auto tileset = map.mTextures[0];
                         const int w = map.mTileWidth;
                         const int h = map.mTileHeight;
@@ -127,23 +127,23 @@ namespace Plutus
                         if (map.mTiles.size())
                         {
                             auto start = Timer::millis();
-                            std::sort(map.mTiles.begin(), map.mTiles.end(), [](Tile& t1, Tile& t2) -> bool
-                                { return t1.texture < t2.texture; });
+                            std::sort(map.mTiles.begin(), map.mTiles.end(), [](Tile &t1, Tile &t2) -> bool
+                                      { return t1.texture < t2.texture; });
 
                             mRenderer.reserve(map.mTiles.size());
-                            for (auto& tile : map.mTiles)
+                            for (auto &tile : map.mTiles)
                             {
                                 auto tileset = map.mTextures[tile.texture];
-                                glm::vec4 rect{ tile.x, tile.y, w, h };
-                                mRenderer.submit(tileset->mTexture.id, rect, tileset->getUV(tile.texcoord), { tile.color }, tile.rotate, tile.flipX, tile.flipY);
+                                glm::vec4 rect{tile.x, tile.y, w, h};
+                                mRenderer.submit(tileset->mTexture.id, rect, tileset->getUV(tile.texcoord), {tile.color}, tile.rotate, tile.flipX, tile.flipY);
                             }
                         }
                     }
 
                     if (ent->hasComponent<Sprite>())
                     {
-                        auto& trans = ent->getComponent<Transform>();
-                        auto& sprite = ent->getComponent<Sprite>();
+                        auto &trans = ent->getComponent<Transform>();
+                        auto &sprite = ent->getComponent<Sprite>();
                         mRenderer.submit(sprite.mTexId, trans.getRect(), sprite.mUVCoord, sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY);
                     }
                 }
@@ -158,14 +158,14 @@ namespace Plutus
     void Scene::update(float dt)
     {
         auto view = mRegistry.view<Script>();
-        view.each([dt](auto& script)
-            { script.update(dt); });
+        view.each([dt](auto &script)
+                  { script.update(dt); });
 
         auto view2 = mRegistry.view<Animate>();
-        view2.each([dt](auto& anim)
-            { anim.update(dt); });
+        view2.each([dt](auto &anim)
+                   { anim.update(dt); });
 
-        auto view3 = mRegistry.view<TileMap>();
+        // auto view3 = mRegistry.view<TileMap>();
 
         // view3.each([dt](TileMap &t)
         //            {

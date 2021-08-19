@@ -94,7 +94,6 @@ namespace Plutus
 #endif
         int BPP;
         uint8_t *out = stbi_load(filePath.c_str(), &texture.width, &texture.height, &BPP, 4);
-        // auto *out = stbi_load_from_memory()
 
         glGenTextures(1, &texture.id);
         //link the image to a texture in the gpu texture array
@@ -119,7 +118,7 @@ namespace Plutus
         }
         else
         {
-            std::printf("stbi fail: %s\n", stbi_failure_reason());
+            std::printf("stbi fail: %s - %s\n", stbi_failure_reason(), filePath.c_str());
         }
         return texture;
     }

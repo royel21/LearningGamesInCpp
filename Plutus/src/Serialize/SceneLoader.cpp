@@ -123,10 +123,10 @@ namespace Plutus
                                 loadTileMap(entity, components[i].GetJsonObject());
                                 continue;
                             }
-                            // if (compType == "Script")
-                            // {
-                            //     entity->addComponent<Script>(component["path"].GetString(), entity, scene.get());
-                            // }
+                            if (compType == "Script")
+                            {
+                                entity->addComponent<Script>(component["path"].GetString(), entity, scene.get());
+                            }
                         }
                     }
                 }
