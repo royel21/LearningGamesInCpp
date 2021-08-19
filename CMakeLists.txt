@@ -50,8 +50,8 @@ add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC Plutus)
 
-add_executable("TEST" Test/test.cpp Test/Timer.cpp Test/Timer.h)
-target_link_libraries("TEST")
+# add_executable("TEST" Test/test.cpp Test/Timer.cpp Test/Timer.h)
+# target_link_libraries("TEST")
 
 # Editor
 add_subdirectory(PlutusEditor)
