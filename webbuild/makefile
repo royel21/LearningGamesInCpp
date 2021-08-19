@@ -26,3 +26,4 @@ game.o: ${SRC}
 	emcc -c ${SRC} ${INCLUDE}
 
 # include ../Plutus/pbuild/makefile
+$(shell mkdir -p release)

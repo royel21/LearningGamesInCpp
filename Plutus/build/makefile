@@ -48,10 +48,9 @@ FREETYPE_SRC = ${FT_DIR}/autofit/autofit.c \
 
 CFLAGS = -I../libs/lua/src -I../libs/box2d/include -I../libs/rapidjson/include -I../libs/sol3/include -I../libs/stb -I../libs/freetype/include --memory-init-file 0 -O3
 
-OBJS != find . -name "*.o"
 
 buildlib: stb.o box2d.o lua.o FREETYPE
-	emcc ${OBJS} -r -o../../webbuild/libs.o
+	emcc $(shell find . -name "*.o") -r -o../../webbuild/libs.o
 
 stb.o: ${stb}
 	emcc -c ${stb} ${CFLAGS}
@@ -62,7 +61,7 @@ box2d.o: ${box2d}
 lua.o: ${lua}
 	emcc -c ${lua} ${CFLAGS}
 
-FREETYPE:
+FREETYPE: ${FREETYPE_SRC}
 	emcc -c ${FREETYPE_SRC} -I../libs/freetype/include -DFT2_BUILD_LIBRARY --memory-init-file 0 -O3
 
 clean:
