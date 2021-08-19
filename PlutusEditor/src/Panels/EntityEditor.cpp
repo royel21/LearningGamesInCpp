@@ -12,13 +12,12 @@
 
 namespace Plutus
 {
-    void EntityEditor::setContext(const Ref<Scene> &context, EditorUI *parent)
+    void EntityEditor::setContext(const Ref<Scene>& context, EditorUI* parent)
     {
         mParentUI = parent;
         mInput = Plutus::Input::getInstance();
         mScene = context;
         mLayers = context->getLayers();
-        mCurrentLayer = context->getCurrentLayer();
     }
 
     void EntityEditor::drawTileset()
@@ -52,7 +51,7 @@ namespace Plutus
             std::string newLayer = LayerModal("New Layer", &openLayerModal);
             if (!openLayerModal && !newLayer.empty())
             {
-                mCurrentLayer = mScene->addLayer(newLayer);
+                mScene->addLayer(newLayer);
                 mParentUI->setEntity(nullptr);
             }
         }
@@ -64,39 +63,37 @@ namespace Plutus
         ImGui::SameLine();
         if (ImGui::Button(ICON_FA_TRASH_ALT " ##Remove_Layer"))
         {
-            if (mScene->removeLayer(mCurrentLayer->name))
+            if (mScene->removeLayer(mScene->getCurrentLayer()->name))
             {
                 mLayers = mScene->getLayers();
                 if (mLayers->size())
                 {
                     auto it = mLayers->begin();
-                    mScene->setLayer(it->first);
-                    mCurrentLayer = mScene->getCurrentLayer();
-                    if (mCurrentLayer->mEntities.size())
+                    auto layer = mScene->setLayer(it->first);
+                    if (layer->mEntities.size())
                     {
-                        mParentUI->setEntity(mCurrentLayer->mEntities[0].get());
+                        mParentUI->setEntity(layer->mEntities[0].get());
                     }
                 }
                 else
                 {
                     mParentUI->setEntity(nullptr);
-                    mCurrentLayer = nullptr;
                 }
             }
         }
         ImGui::PopStyleColor();
         ImGui::PushItemWidth(80);
-        if (ImGui::ComboBox<Layer>("Layers", *mLayers, mCurrentLayer->name))
+        auto name = mScene->getCurrentLayer()->name;
+        if (ImGui::ComboBox<Layer>("Layers", *mLayers, name))
         {
-            mScene->setLayer(mCurrentLayer->name);
-            mCurrentLayer = mScene->getCurrentLayer();
-            if (mCurrentLayer->mEntities.size() > 0)
+            auto layer = mScene->setLayer(name);
+            if (layer->mEntities.size() > 0)
             {
-                mParentUI->setEntity(mCurrentLayer->mEntities[0].get());
+                mParentUI->setEntity(layer->mEntities[0].get());
             }
         }
         ImGui::SameLine();
-        ImGui::Checkbox(ICON_FA_EYE " ##IsVisible", &mCurrentLayer->isVisible);
+        ImGui::Checkbox(ICON_FA_EYE " ##IsVisible", &mScene->getCurrentLayer()->isVisible);
     }
 
     /***************************Entity List*************************/
@@ -125,20 +122,20 @@ namespace Plutus
         ImGui::Separator();
         static int selected = 0;
         static int remove = -1;
-
-        if (ImGui::Entities("Entities##list", mCurrentLayer->mEntities, selected, remove))
+        auto layer = mScene->getCurrentLayer();
+        if (ImGui::Entities("Entities##list", layer->mEntities, selected, remove))
         {
-            if (mCurrentLayer->mEntities.size() && mCurrentLayer->mEntities[selected] != nullptr)
+            if (layer->mEntities.size() && layer->mEntities[selected] != nullptr)
             {
-                mParentUI->setEntity(mCurrentLayer->mEntities[selected].get());
+                mParentUI->setEntity(layer->mEntities[selected].get());
             }
         }
         if (remove > -1)
         {
-            mScene->removeEntity(mCurrentLayer->mEntities[remove].get());
-            if (mCurrentLayer->mEntities.size())
+            mScene->removeEntity(layer->mEntities[remove].get());
+            if (layer->mEntities.size())
             {
-                mParentUI->setEntity(mCurrentLayer->mEntities[0].get());
+                mParentUI->setEntity(layer->mEntities[0].get());
             }
             else
             {
@@ -148,7 +145,7 @@ namespace Plutus
         }
     }
 
-    std::string EntityEditor::LayerModal(char *label, bool *open)
+    std::string EntityEditor::LayerModal(char* label, bool* open)
     {
         std::string result = "";
         if (*open)

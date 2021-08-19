@@ -41,7 +41,6 @@ namespace Plutus
 
         Ref<Scene> mScene;
         std::unordered_map<std::string, Layer>* mLayers;
-        Layer* mCurrentLayer;
         EditorUI* mParentUI;
     };
 } // namespace Plutus
