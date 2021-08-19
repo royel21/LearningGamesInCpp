@@ -284,11 +284,11 @@ namespace Plutus
                 if (files.size())
                 {
                     int selected = Utils::getIndex(files, script.path);
-                    if (ImGui::ComboBox("Script", files, selected))
-                    {
-                        mEntity->removeComponent<Script>();
-                        mEntity->addComponent<Script>(files[selected], mEntity, mScene.get());
-                    }
+                    // if (ImGui::ComboBox("Script", files, selected))
+                    // {
+                    //     mEntity->removeComponent<Script>();
+                    //     mEntity->addComponent<Script>(files[selected], mEntity, mScene.get());
+                    // }
                 }
             }
         }

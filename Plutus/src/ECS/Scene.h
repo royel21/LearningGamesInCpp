@@ -75,7 +75,7 @@ namespace Plutus
     class Scene
     {
     public:
-        Scene();
+        Scene() = default;
         ~Scene();
         void Init(Camera2D* camera);
         void enableShader();
@@ -118,13 +118,13 @@ namespace Plutus
     template <typename T>
     bool Entity::hasComponent()
     {
-        return mScene->mRegistry.has<T>(mId);
+        return mScene->mRegistry.any_of<T>(mId);
     }
 
     template <typename T, typename... Args>
     T& Entity::addComponent(Args &&...args)
     {
-        return !hasComponent<T>() ? mScene->mRegistry.emplace<T>(mId, std::forward<Args>(args)...) : getComponent<T>();
+        return mScene->mRegistry.emplace_or_replace<T>(mId, std::forward<Args>(args)...);
     }
 
     template <typename T>

@@ -97,7 +97,10 @@ namespace Plutus
 		// use FONT_ICON_FILE_NAME_FAR if you want regular instead of solid
 		mImGui_IO->Fonts->AddFontDefault();
 
-		newScene();
+		mScene = CreateRef<Scene>();
+		mScene->Init(mCamera);
+		mComPanel.setContext(mScene);
+		mEntityEditor.setContext(mScene, this);
 		loadRecents();
 	}
 
@@ -611,10 +614,7 @@ namespace Plutus
 
 	void EditorUI::newScene()
 	{
-		mScene = CreateRef<Scene>();
-		mScene->Init(mCamera);
-		mComPanel.setContext(mScene);
-		mEntityEditor.setContext(mScene, this);
+		mScene->clear();
 		mEnt = nullptr;
 	}
 

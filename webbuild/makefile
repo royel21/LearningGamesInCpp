@@ -19,8 +19,10 @@ SRC != find ../src -name "*.cpp"
 
 GAME_OBJ != find . -name "*.o"
 
-output: Plutus game.o
+output: game.o
 	emcc ${GAME_OBJ} -o release/index.html ${CFLAGS} ${INCLUDE} --preload-file ./assets
 
 game.o: ${SRC}
 	emcc -c ${SRC} ${INCLUDE}
+
+# include ../Plutus/pbuild/makefile
