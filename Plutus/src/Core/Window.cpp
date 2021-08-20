@@ -36,7 +36,6 @@ namespace Plutus
     void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
     {
         Input::getInstance()->keyStateChange(unkeys[key], action > 0);
-        std::printf("Error: %s\n", unkeys[key]);
     }
 
     void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods)

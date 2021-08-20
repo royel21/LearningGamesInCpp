@@ -1,6 +1,3 @@
-box2d != find ../libs/box2d -name *.cpp
-lua != find ../libs/lua -name *.c
-stb != find ../libs/stb -name *.c
 
 FT_DIR = ../libs/freetype/src
 # freetype
@@ -46,22 +43,31 @@ FREETYPE_SRC = ${FT_DIR}/autofit/autofit.c \
 	${FT_DIR}/base/ftsystem.c \
 	${FT_DIR}/base/ftdebug.c 
 
+box2d != find ../libs/box2d -name *.cpp
+lua != find ../libs/lua -name *.c
+stb != find ../libs/stb -name *.c
+
+OBJ_BOX2D = $(patsubst %.cpp,%.o, $(notdir ${box2d}))
+OBJ_LUA = $(patsubst %.cpp,%.o, $(notdir ${lua}))
+OBJ_STB = $(patsubst %.cpp,%.o, $(notdir ${stb}))
+OBJ_FREETYPE = $(patsubst %.cpp,%.o, $(notdir ${FREETYPE_SRC}))
+
 CFLAGS = -I../libs/lua/src -I../libs/box2d/include -I../libs/rapidjson/include -I../libs/sol3/include -I../libs/stb -I../libs/freetype/include --memory-init-file 0 -O3
 
-
-buildlib: stb.o box2d.o lua.o FREETYPE
+libs.o: $(OBJ_BOX2D) $(OBJ_LUA) $(OBJ_STB) $(OBJ_FREETYPE)
 	emcc $(shell find . -name "*.o") -r -o../../webbuild/libs.o
 
-stb.o: ${stb}
-	emcc -c ${stb} ${CFLAGS}
-
-box2d.o: ${box2d}
+$(OBJ_BOX2D): ${box2d}
 	emcc -c ${box2d} ${CFLAGS}
 
-lua.o: ${lua}
+$(OBJ_LUA): ${lua}
 	emcc -c ${lua} ${CFLAGS}
 
-FREETYPE: ${FREETYPE_SRC}
+$(OBJ_STB): ${stb}
+	emcc -c ${stb} ${CFLAGS}
+
+
+$(OBJ_FREETYPE): ${FREETYPE_SRC}
 	emcc -c ${FREETYPE_SRC} -I../libs/freetype/include -DFT2_BUILD_LIBRARY --memory-init-file 0 -O3
 
 clean:

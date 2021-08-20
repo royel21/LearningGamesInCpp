@@ -13,17 +13,24 @@ INCLUDE = -I../Plutus/libs/box2d/include \
 	--memory-init-file 0 -O3 \
 	-std=c++1z
 
+SRC_Plutus != find ../Plutus/src -name "*.cpp" -not -path ../Plutus/src/Platform/Windows
+
 CFLAGS = -s USE_WEBGL2=1 -s USE_GLFW=3 -s WASM=1 -std=c++1z
 
 SRC != find ../src -name "*.cpp"
 
-GAME_OBJ != find . -name "*.o"
+GAME_OBJ = $(patsubst %.cpp,%.o, $(notdir ${SRC}))
 
-output: game.o
-	emcc ${GAME_OBJ} -o release/index.html ${CFLAGS} ${INCLUDE} --preload-file ./assets
+output: Plutus.o libs.o $(GAME_OBJ) 
+	emcc ${GAME_OBJ} Plutus.o libs.o -o release/index.html ${CFLAGS} ${INCLUDE} --preload-file ./assets
 
-game.o: ${SRC}
+$(GAME_OBJ): ${SRC}
 	emcc -c ${SRC} ${INCLUDE}
 
-# include ../Plutus/pbuild/makefile
+Plutus.o: ${SRC_Plutus}
+	cd ../Plutus/pbuild&&emmake make
+
+libs.o:
+	cd ../Plutus/build&&emmake make
+
 $(shell mkdir -p release)

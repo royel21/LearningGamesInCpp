@@ -9,6 +9,31 @@
 namespace Plutus
 {
 
+    void Textures_JSON(Serializer& serializer)
+    {
+        auto writer = serializer.getWriter();
+        writer->String("textures");
+        writer->StartArray();
+        for (auto tile : Textures::get()->mTileSets)
+        {
+            writer->StartObject();
+
+            writer->String("id");
+            writer->String(tile.first.c_str());
+            writer->String("path");
+            writer->String(tile.second.path.c_str());
+            writer->String("columns");
+            writer->Int(tile.second.columns);
+            writer->String("width");
+            writer->Int(tile.second.tileWidth);
+            writer->String("height");
+            writer->Int(tile.second.tileHeight);
+
+            writer->EndObject();
+        }
+        writer->EndArray();
+    }
+
     void Tag_JSON(Serializer& serializer, const Tag& tag)
     {
         auto writer = serializer.getWriter();
@@ -178,7 +203,9 @@ namespace Plutus
     {
         auto writer = ser.getWriter();
         writer->StartObject();
-        AssetManager::get()->Serialize(ser);
+
+        Textures_JSON(ser);
+
         writer->String("layers");
         writer->StartArray();
         auto layers = scene->getLayers();

@@ -46,7 +46,7 @@ namespace Plutus
 	{
 		if (!init())
 			return;
-		std::printf("running \n");
+		// std::printf("Running \n");
 
 		Clock::time_point startTime, endTime;
 #ifdef __EMSCRIPTEN__

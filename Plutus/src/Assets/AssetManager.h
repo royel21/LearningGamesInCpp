@@ -8,19 +8,16 @@
 
 namespace Plutus
 {
-	class Serializer;
 	class Textures;
 	//Manage all the texture of the game
 	class AssetManager
 	{
 	public:
-		Textures *mTextures = nullptr;
+		Textures* mTextures = nullptr;
 
 	public:
-		static AssetManager *get();
+		static AssetManager* get();
 		~AssetManager();
-
-		void Serialize(Serializer &serializer);
 		void clearData();
 
 	private:

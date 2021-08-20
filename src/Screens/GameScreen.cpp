@@ -44,7 +44,6 @@ void GameScreen::onEntry()
     mScene = Plutus::CreateRef<Plutus::Scene>();
     mWorldCamera.init(w, h);
     mTextLayer.Init(static_cast<float>(w), static_cast<float>(h), "assets/fonts/Zoika.ttf", 28);
-    std::printf("font-loaded\n");
     mScene->Init(&mWorldCamera);
     // mInput = Plutus::Input::getInstance();
 
@@ -55,13 +54,13 @@ void GameScreen::onEntry()
     auto player = mScene->createEntity("Player");
     player->addComponent<Plutus::Transform>(256.0f, h - 32.0f, 32, 32, 0.0f);
     player->addComponent<Plutus::Sprite>("Player");
-    // player->addComponent<Plutus::Script>("script/lua_test.lua", player, mScene.get());
+    player->addComponent<Plutus::Script>("assets/script/lua_test.lua", player, mScene.get());
 
     mEngine->setViewPort(w, h);
 
     auto bat = mScene->createEntity("Bat");
     bat->addComponent<Plutus::Transform>(288.0f, h - 64.0f, 64, 64, 0.0f);
-    // bat->addComponent<Plutus::Script>("script/bat.lua", bat, mScene.get());
+    bat->addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
     bat->addComponent<Plutus::Sprite>("bats");
 
     auto &anim = bat->addComponent<Plutus::Animate>(bat);

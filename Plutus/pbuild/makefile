@@ -6,12 +6,13 @@ CFLAGS = -I../libs/Entt \
 	-I../libs/sol3/include \
 	-I../libs/stb \
 	-I../src \
+	-I../libs/freetype/include \
 	--memory-init-file 0 -O3 \
 	-std=c++1z
 
 CC = em++
 
-BUILD_DIR = ./build
+BUILD_DIR = ./Build
 
 OBJS != find ./ -name "*.o"
 
@@ -39,46 +40,33 @@ OBJ_TextRender = $(patsubst %.cpp,%.o, $(notdir ${SRC_TextRender}))
 OBJ_Time = $(patsubst %.cpp,%.o, $(notdir ${SRC_Time}))
 OBJ_Utils = $(patsubst %.cpp,%.o, $(notdir ${SRC_Utils}))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#  Core ECS Graphics Input ParticleSystem Physics Systems TextRender Time Utils
 # Targets start here. 
-Plutus: Assets Core ECS Graphics Input ParticleSystem Physics Systems TextRender Time Utils
+Plutus.o: $(OBJ_Assets) $(OBJ_Core) $(OBJ_ECS) $(OBJ_Graphics) $(OBJ_Input) \
+	$(OBJ_ParticleSystem) $(OBJ_Physics) $(OBJ_Systems) $(OBJ_TextRender) $(OBJ_Time) $(OBJ_Utils)
 	emcc $(shell find ./ -name "*.o") -r -o../../webbuild/Plutus.o
 
-Assets: ${OBJ_Assets}
+$(OBJ_Assets): ${SRC_Assets}
 	${CC} -c ${SRC_Assets} -I../libs/glm -I../libs/stb -I../src -I../libs/rapidjson/include
-Core: ${OBJ_Core}
+$(OBJ_Core): ${SRC_Core}
 	${CC} -c ${SRC_Core} ${CFLAGS}
-%.o: ../src/ECS/*.cpp ../src/ECS/Components/*.cpp
-	${CC} ../src/ECS/*.cpp ../src/ECS/Components/*.cpp -c -o ${CFLAGS}
-Graphics: ${OBJ_Graphics}
+$(OBJ_ECS): ${SRC_ECS}
+	${CC} -c ${SRC_ECS} ${CFLAGS}
+$(OBJ_Graphics): ${SRC_Graphics}
 	${CC} -c ${SRC_Graphics} ${CFLAGS}
-Input: 
-	${CC} ../src/Input/*.cpp -I../libs/glm -I../src -c 
-ParticleSystem: ${OBJ_ParticleSystem}
+$(OBJ_Input): ${SRC_Input}
+	${CC} ${SRC_Input} -I../libs/glm -I../src -c 
+$(OBJ_ParticleSystem): ${SRC_ParticleSystem}
 	${CC} -c ${SRC_ParticleSystem} -I../src -I../libs/glm
-Physics: ${OBJ_Physics}
+$(OBJ_Physics): ${SRC_Physics}
 	${CC} -c ${SRC_Physics}  -I../src -I../libs/glm
-Systems: ${OBJ_Systems}
+$(OBJ_Systems): ${SRC_Systems}
 	${CC} -c ${SRC_Systems} ${CFLAGS}
-TextRender: ${OBJ_TextRender}
+$(OBJ_TextRender): ${SRC_TextRender}
 	${CC} -c ${SRC_TextRender} -I../libs/freetype/include -I../src -I../libs/glm
-Time: ${OBJ_Time}
+$(OBJ_Time): ${SRC_Time}
 	${CC} -c ${SRC_Time} -I../src
-Utils: ${OBJ_Utils}
+$(OBJ_Utils): ${SRC_Utils}
 	${CC} -c ${SRC_Utils} -I../src -I../libs/rapidjson/include -std=c++1z
 
 clean: 
