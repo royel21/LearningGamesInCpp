@@ -22,7 +22,7 @@ SRC != find ../src -name "*.cpp"
 GAME_OBJ = $(patsubst %.cpp,%.o, $(notdir ${SRC}))
 
 output: Plutus.o libs.o $(GAME_OBJ) 
-	emcc ${GAME_OBJ} Plutus.o libs.o -o release/index.html ${CFLAGS} ${INCLUDE} --preload-file ./assets
+	emcc ${GAME_OBJ} Plutus.o libs.o -o release/index.html ${CFLAGS} ${INCLUDE} --preload-file ./assets -s WASM=1 
 
 $(GAME_OBJ): ${SRC}
 	emcc -c ${SRC} ${INCLUDE}
