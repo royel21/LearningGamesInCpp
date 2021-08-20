@@ -13,7 +13,7 @@ INCLUDE = -I../Plutus/libs/box2d/include \
 	--memory-init-file 0 -O3 \
 	-std=c++1z
 
-SRC_Plutus != find ../Plutus/src -name "*.cpp" -not -path ../Plutus/src/Platform/Windows
+SRC_Plutus != find ../Plutus/src -name "*.cpp" -not -path ../Plutus/src/Platform/Windows --shell-file game.html
 
 CFLAGS = -s USE_WEBGL2=1 -s USE_GLFW=3 -s WASM=1 -std=c++1z
 
