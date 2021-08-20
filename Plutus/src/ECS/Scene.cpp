@@ -161,7 +161,7 @@ namespace Plutus
         view.each([dt](auto &script)
                   { script.update(dt); });
 
-        auto view2 = mRegistry.view<Animate>();
+        auto view2 = mRegistry.view<Animation>();
         view2.each([dt](auto &anim)
                    { anim.update(dt); });
 

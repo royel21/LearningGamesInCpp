@@ -6,5 +6,5 @@
 #include "./Components/Sprite.h"
 #include "./Components/TileMap.h"
 #include "./Components/Velocity.h"
-#include "./Components/Animate.h"
+#include "./Components/Animation.h"
 #include "./Components/Script.h"

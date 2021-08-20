@@ -13,7 +13,7 @@ namespace Plutus
 {
     void loadAnimation(Entity *ent, rapidjson::Value::Object value)
     {
-        auto &anim = ent->addComponent<Animate>(ent);
+        auto &anim = ent->addComponent<Animation>(ent);
     }
 
     void loadTileMap(Entity *ent, rapidjson::Value::Object value)
@@ -113,7 +113,7 @@ namespace Plutus
                                 spr.mColor.setColor(component["color"].GetInt());
                                 continue;
                             }
-                            if (compType == "Animate")
+                            if (compType == "Animation")
                             {
                                 loadAnimation(entity, components[i].GetJsonObject());
                                 continue;

@@ -6,7 +6,7 @@
 
 namespace Plutus
 {
-    int my_exception_handler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description)
+    int my_exception_handler(lua_State *L, sol::optional<const std::exception &> maybe_exception, sol::string_view description)
     {
         // L is the lua state, which you can wrap in a state_view if necessary
         // maybe_exception will contain exception, if it exists
@@ -15,7 +15,7 @@ namespace Plutus
         if (maybe_exception)
         {
             std::cout << "(straight from the exception): ";
-            const std::exception& ex = *maybe_exception;
+            const std::exception &ex = *maybe_exception;
             std::cout << ex.what() << std::endl;
         }
         else
@@ -32,7 +32,7 @@ namespace Plutus
         return sol::stack::push(L, description);
     }
 
-    Script::Script(std::string _path, Entity* ent, Scene* scene) : path(_path)
+    Script::Script(std::string _path, Entity *ent, Scene *scene) : path(_path)
     {
 
         lua.open_libraries(sol::lib::base, sol::lib::math);
@@ -54,8 +54,8 @@ namespace Plutus
         tile["x"] = &Tile::x;
         tile["y"] = &Tile::y;
 
-        auto animate = lua.new_usertype<Animate>("Animate");
-        animate["play"] = &Animate::PlayAnimation;
+        auto animate = lua.new_usertype<Animation>("Animation");
+        animate["play"] = &Animation::PlaySequence;
 
         auto tileMap = lua.new_usertype<TileMap>("TileMap");
         tileMap["tiles"] = &TileMap::mTiles;
@@ -63,7 +63,7 @@ namespace Plutus
         auto entity = lua.new_usertype<Entity>("Entity");
         entity["getTransform"] = &Entity::getComponent<Transform>;
         entity["getTileMap"] = &Entity::getComponent<TileMap>;
-        entity["getAnimate"] = &Entity::getComponent<Animate>;
+        entity["getAnimate"] = &Entity::getComponent<Animation>;
 
         lua.set("input", Input::getInstance());
 

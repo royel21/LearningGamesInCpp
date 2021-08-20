@@ -6,7 +6,7 @@
 #include "Input/Input.h"
 #include "ImGuiEx.h"
 
-#include "ECS/Components/Animate.h"
+#include "ECS/Components/Animation.h"
 #include "ECS/Components/Transform.h"
 #include "ECS/Components/Sprite.h"
 #include "ECS/Components/TileMap.h"
@@ -29,12 +29,12 @@ namespace Plutus
         mInput = Input::getInstance();
         mTileMapPanel.setContext(scene);
 
-        createComps["Animate"] = [&](bool &open)
+        createComps["Animation"] = [&](bool &open)
         {
             if (ImGui::Button("Create##Comp"))
             {
                 open = false;
-                mEntity->addComponent<Animate>(mEntity);
+                mEntity->addComponent<Animation>(mEntity);
             }
         };
 
@@ -134,13 +134,13 @@ namespace Plutus
 
     void ComponentPanel::drawAnimate()
     {
-        if (mEntity->hasComponent<Animate>())
+        if (mEntity->hasComponent<Animation>())
         {
-            if (ImGui::CollapsingHeader("Animate##comp"))
+            if (ImGui::CollapsingHeader("Animation##comp"))
             {
-                auto &animate = mEntity->getComponent<Animate>();
+                auto &animate = mEntity->getComponent<Animation>();
                 //Animations
-                auto &animations = animate.animations;
+                auto &sequences = animate.mSequences;
                 static bool newAnin = false;
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
                 if (ImGui::Button(ICON_FA_PLUS_CIRCLE "##add-anin"))
@@ -148,20 +148,21 @@ namespace Plutus
                 ImGui::PopStyleColor();
 
                 ImGui::SameLine();
-                auto it = animations.begin();
-                static std::string selected = it != animations.end() ? it->first : "";
+                auto it = sequences.begin();
+                static std::string selected = it != sequences.end() ? it->first : "";
                 ImGui::PushItemWidth(100);
-                ImGui::ComboBox("Animations", animations, selected);
+                ImGui::ComboBox("Sequences", sequences, selected);
                 ImGui::PopItemWidth();
 
                 if (newAnin)
                 {
-                    showDialog("New Animation", 300.0f, 200.0f);
+                    showDialog("New Sequences", 280.0f, 200.0f);
                     static char name[128];
-                    ImGui::InputText(",Name##anim", name, IM_ARRAYSIZE(name));
+                    ImGui::InputText("Name##anim", name, IM_ARRAYSIZE(name));
+                    ImGui::SetCursorPos({220.0f, 195.0f});
                     if (ImGui::Button("Save"))
                     {
-                        // animate.AddAnimation(name);
+                        // animate.AddSequences(name);
                         newAnin = false;
                     }
                     endDialog(newAnin);
@@ -169,10 +170,9 @@ namespace Plutus
 
                 if (!selected.empty())
                 {
-                    auto &anim = animations[selected];
+                    auto &anim = sequences[selected];
                     //Textures
                     // auto tilesets = mAManager->getTilesets();
-
                     // ImGui::ComboBox<TileSet>("TileSheet", tilesets, );
                 }
             }
@@ -280,7 +280,7 @@ namespace Plutus
             if (ImGui::CollapsingHeader("Script##comp"))
             {
                 auto &script = mEntity->getComponent<Script>();
-                auto files = Utils::listFiles("assests/script", ".lua");
+                auto files = Utils::listFiles("assets/script", ".lua");
                 if (files.size())
                 {
                     int selected = Utils::getIndex(files, script.path);
@@ -500,9 +500,9 @@ namespace Plutus
         std::vector<std::string> datas;
         if (!mEntity->hasComponent<TileMap>())
         {
-            if (!mEntity->hasComponent<Animate>())
+            if (!mEntity->hasComponent<Animation>())
             {
-                datas.push_back("Animate");
+                datas.push_back("Animation");
             }
             if (!mEntity->hasComponent<Transform>())
             {
@@ -527,7 +527,7 @@ namespace Plutus
     void ComponentPanel::showDialog(const char *name, float width, float height)
     {
         auto pos = ImGui::GetWindowPos();
-        ImGui::SetNextWindowPos({pos.x, pos.y + 60});
+        ImGui::SetNextWindowPos({pos.x + 5, pos.y + 60});
 
         ImGui::SetNextWindowSize({width, height});
         ImGui::OpenPopup(name);

@@ -64,15 +64,15 @@ void GameScreen::onEntry()
     bat->addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
     bat->addComponent<Plutus::Sprite>("bats");
 
-    auto& anim = bat->addComponent<Plutus::Animate>(bat);
+    auto &anim = bat->addComponent<Plutus::Animation>(bat);
 
     anim.addTexture("bats");
-    anim.AddAnimation("up", { {0, 1, 2}, 0, 120 });
-    anim.AddAnimation("left", { {3, 4, 5}, 0, 120 });
-    anim.AddAnimation("down", { {6, 7, 8}, 0, 120 });
-    anim.AddAnimation("right", { {9, 10, 11}, 0, 120 });
+    anim.AddSequence("up", {{0, 1, 2}, 0, 120});
+    anim.AddSequence("left", {{3, 4, 5}, 0, 120});
+    anim.AddSequence("down", {{6, 7, 8}, 0, 120});
+    anim.AddSequence("right", {{9, 10, 11}, 0, 120});
 
-    anim.PlayAnimation("down");
+    anim.PlaySequence("down");
 }
 
 void GameScreen::update(float dt)
@@ -100,7 +100,7 @@ void GameScreen::draw()
     mScene->draw();
     char text[20];
     snprintf(text, 20, "%.1f FPS", mEngine->getFPS());
-    mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, { 0, 0, 0.7f, 1 });
+    mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, {0, 0, 0.7f, 1});
 }
 
 void GameScreen::onScreenResize(int w, int h)
