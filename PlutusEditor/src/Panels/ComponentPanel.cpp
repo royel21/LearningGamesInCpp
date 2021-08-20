@@ -117,11 +117,18 @@ namespace Plutus
                     ImGui::PopStyleColor();
                     ImGui::Separator();
                 }
-                drawAnimate();
+
+                if (ent->hasComponent<Animation>())
+                {
+                    mAnimPanel.draw(mEntity);
+                }
                 drawTransform();
                 drawSprite();
                 drawScript();
-                drawTileMap();
+                if (mEntity->hasComponent<TileMap>())
+                {
+                    mTileMapPanel.draw(&mEntity->getComponent<TileMap>());
+                }
             }
         }
         ImGui::End();
@@ -130,53 +137,6 @@ namespace Plutus
     void ComponentPanel::render(SpriteBatch2D *renderer, glm::vec2 mcoords)
     {
         mTileMapPanel.renderTiles(renderer, mcoords);
-    }
-
-    void ComponentPanel::drawAnimate()
-    {
-        if (mEntity->hasComponent<Animation>())
-        {
-            if (ImGui::CollapsingHeader("Animation##comp"))
-            {
-                auto &animate = mEntity->getComponent<Animation>();
-                //Animations
-                auto &sequences = animate.mSequences;
-                static bool newAnin = false;
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
-                if (ImGui::Button(ICON_FA_PLUS_CIRCLE "##add-anin"))
-                    newAnin = true;
-                ImGui::PopStyleColor();
-
-                ImGui::SameLine();
-                auto it = sequences.begin();
-                static std::string selected = it != sequences.end() ? it->first : "";
-                ImGui::PushItemWidth(100);
-                ImGui::ComboBox("Sequences", sequences, selected);
-                ImGui::PopItemWidth();
-
-                if (newAnin)
-                {
-                    showDialog("New Sequences", 280.0f, 200.0f);
-                    static char name[128];
-                    ImGui::InputText("Name##anim", name, IM_ARRAYSIZE(name));
-                    ImGui::SetCursorPos({220.0f, 195.0f});
-                    if (ImGui::Button("Save"))
-                    {
-                        // animate.AddSequences(name);
-                        newAnin = false;
-                    }
-                    endDialog(newAnin);
-                }
-
-                if (!selected.empty())
-                {
-                    auto &anim = sequences[selected];
-                    //Textures
-                    // auto tilesets = mAManager->getTilesets();
-                    // ImGui::ComboBox<TileSet>("TileSheet", tilesets, );
-                }
-            }
-        }
     }
 
     void ComponentPanel::drawTransform()
@@ -262,14 +222,6 @@ namespace Plutus
                     }
                 }
             }
-        }
-    }
-
-    void ComponentPanel::drawTileMap()
-    {
-        if (mEntity->hasComponent<TileMap>())
-        {
-            mTileMapPanel.draw(&mEntity->getComponent<TileMap>());
         }
     }
 
@@ -479,7 +431,7 @@ namespace Plutus
         bool save = false;
         if (open)
         {
-            showDialog("New Component", 230.f, 300.0f);
+            ImGui::BeginDialog("New Component", 230.f, 300.0f);
             static int selected = 0;
             {
                 if (datas.size())
@@ -489,7 +441,7 @@ namespace Plutus
                     createComps[datas[selected]](open);
                 }
 
-                endDialog(open);
+                ImGui::EndDialog(open);
             }
         }
         return save;

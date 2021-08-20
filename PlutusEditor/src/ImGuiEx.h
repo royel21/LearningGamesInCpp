@@ -300,4 +300,26 @@ namespace ImGui
         }
         return change;
     }
+
+    inline void BeginDialog(const char *name, float width, float height)
+    {
+        auto pos = ImGui::GetWindowPos();
+        ImGui::SetNextWindowPos({pos.x + 5, pos.y + 60});
+
+        ImGui::SetNextWindowSize({width, height});
+        ImGui::OpenPopup(name);
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
+        ImGui::BeginPopupModal(name, NULL, window_flags);
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.33f, 0.33f, 0.33f, 0.8f));
+    }
+
+    inline void EndDialog(bool &show)
+    {
+        auto size = ImGui::GetWindowSize();
+        ImGui::SetCursorPos({size.x - 60.0f, size.y - 35.0f});
+        if (ImGui::Button("Cancel##modal-1"))
+            show = false;
+        ImGui::PopStyleColor();
+        ImGui::EndPopup();
+    }
 } // namespace ImGui
