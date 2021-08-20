@@ -280,7 +280,7 @@ namespace Plutus
             if (ImGui::CollapsingHeader("Script##comp"))
             {
                 auto &script = mEntity->getComponent<Script>();
-                auto files = Utils::listFiles("script", ".lua");
+                auto files = Utils::listFiles("assests/script", ".lua");
                 if (files.size())
                 {
                     int selected = Utils::getIndex(files, script.path);

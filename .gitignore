@@ -11,3 +11,4 @@ webbuild/release/
 #files
 *.o
 *.lock
+imgui.ini
