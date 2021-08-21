@@ -8,26 +8,25 @@
 #include "ECS/Components/Sprite.h"
 #include "ECS/Components/TileMap.h"
 #include "Utils/Utils.h"
+#include "IndexBuffer.h"
 #include "Camera2D.h"
-#include <Time/Timer.h>
+
+#include "Time/Timer.h"
 
 #define PI 3.141592f
 #define DEC2RA(dec) dec *(PI / 180.0f)
 
 namespace Plutus
 {
-	SpriteBatch2D::SpriteBatch2D()
-	{
-	}
-
 	SpriteBatch2D::~SpriteBatch2D()
 	{
 		mRenderBatches.clear();
 		glDeleteBuffers(1, &mVBO);
+		glDeleteVertexArrays(1, &mVAO);
 		delete mIBO;
 	}
 
-	void SpriteBatch2D::init(Camera2D *camera)
+	void SpriteBatch2D::init(Camera2D* camera)
 	{
 		mCamera = camera;
 		glGenVertexArrays(1, &mVAO);
@@ -37,17 +36,17 @@ namespace Plutus
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 		//Shader position
 		glEnableVertexAttribArray(SHADER_VERTEX_INDEX);
-		glVertexAttribPointer(SHADER_VERTEX_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void *)NULL);
+		glVertexAttribPointer(SHADER_VERTEX_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void*)NULL);
 		//Shader UV "Texture coordinate"
 		glEnableVertexAttribArray(SHADER_UV_INDEX);
-		glVertexAttribPointer(SHADER_UV_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void *)offsetof(Vertex, uv));
+		glVertexAttribPointer(SHADER_UV_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void*)offsetof(Vertex, uv));
 		//Shader Color
 		glEnableVertexAttribArray(SHADER_COLOR_INDEX);
-		glVertexAttribPointer(SHADER_COLOR_INDEX, 4, GL_UNSIGNED_BYTE, GL_TRUE, RENDERER_VERTEX_SIZE, (void *)offsetof(Vertex, color));
+		glVertexAttribPointer(SHADER_COLOR_INDEX, 4, GL_UNSIGNED_BYTE, GL_TRUE, RENDERER_VERTEX_SIZE, (void*)offsetof(Vertex, color));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		GLuint *indices = new GLuint[RENDERER_INDICES_SIZE];
+		GLuint* indices = new GLuint[RENDERER_INDICES_SIZE];
 
 		int offest = 0;
 		for (size_t i = 0; i < RENDERER_INDICES_SIZE; i += 6)
@@ -72,11 +71,9 @@ namespace Plutus
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 	}
 
-	void SpriteBatch2D::createVertice(const glm::vec4 &react, const glm::vec4 &_uv, ColorRGBA8 c, float r, bool flipX, bool flipY)
+	void SpriteBatch2D::createVertice(const glm::vec4& rect, const glm::vec4& _uv, ColorRGBA8 c, float r, bool flipX, bool flipY)
 	{
 		glm::vec4 uv(_uv);
-		int w = static_cast<int>(react.z);
-		int h = static_cast<int>(react.w);
 
 		if (flipX)
 			std::swap(uv.x, uv.z);
@@ -86,8 +83,7 @@ namespace Plutus
 
 		if (r > 0)
 		{
-			// >> 1 = divide by 2
-			glm::vec2 halfDim(w >> 1, h >> 1);
+			glm::vec2 halfDim(rect.z / 2, rect.w / 2);
 
 			glm::vec2 tl(-halfDim.x, halfDim.y);
 			glm::vec2 bl(-halfDim.x, -halfDim.y);
@@ -99,17 +95,17 @@ namespace Plutus
 			br = rotatePoint(br, r) + halfDim;
 			tr = rotatePoint(tr, r) + halfDim;
 
-			vertices.push_back({react.x + tl.x, react.y + tl.y, uv.x, uv.w, c});
-			vertices.push_back({react.x + bl.x, react.y + bl.y, uv.x, uv.y, c});
-			vertices.push_back({react.x + br.x, react.y + br.y, uv.z, uv.y, c});
-			vertices.push_back({react.x + tr.x, react.y + tr.y, uv.z, uv.w, c});
+			vertices.push_back({ rect.x + tl.x, rect.y + tl.y, uv.x, uv.w, c });
+			vertices.push_back({ rect.x + bl.x, rect.y + bl.y, uv.x, uv.y, c });
+			vertices.push_back({ rect.x + br.x, rect.y + br.y, uv.z, uv.y, c });
+			vertices.push_back({ rect.x + tr.x, rect.y + tr.y, uv.z, uv.w, c });
 		}
 		else
 		{
-			vertices.push_back({react.x, react.y, uv.x, uv.w, c});
-			vertices.push_back({react.x, react.y + h, uv.x, uv.y, c});
-			vertices.push_back({react.x + w, react.y + h, uv.z, uv.y, c});
-			vertices.push_back({react.x + w, react.y, uv.z, uv.w, c});
+			vertices.push_back({ rect.x, rect.y, uv.x, uv.w, c });
+			vertices.push_back({ rect.x, rect.y + rect.w, uv.x, uv.y, c });
+			vertices.push_back({ rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, c });
+			vertices.push_back({ rect.x + rect.z, rect.y, uv.z, uv.w, c });
 		}
 	}
 
@@ -131,7 +127,7 @@ namespace Plutus
 		{
 			count++;
 			glBindTexture(GL_TEXTURE_2D, mRenderBatches[i].texture);
-			glDrawElements(GL_TRIANGLES, mRenderBatches[i].numVertices, GL_UNSIGNED_INT, (void *)(mRenderBatches[i].offset * sizeof(GLuint)));
+			glDrawElements(GL_TRIANGLES, mRenderBatches[i].numVertices, GL_UNSIGNED_INT, (void*)(mRenderBatches[i].offset * sizeof(GLuint)));
 		}
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
@@ -147,8 +143,8 @@ namespace Plutus
 		float rad = DEC2RA(angle);
 		float cosAng = cos(rad);
 		float sinAng = sin(rad);
-		return {pos.x * cosAng - pos.y * sinAng,
-				pos.x * sinAng + pos.y * cosAng};
+		return { pos.x * cosAng - pos.y * sinAng,
+				pos.x * sinAng + pos.y * cosAng };
 	}
 
 } // namespace Plutus

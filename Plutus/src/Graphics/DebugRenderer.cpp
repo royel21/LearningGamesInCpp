@@ -51,7 +51,7 @@ namespace Plutus
 		return instance;
 	}
 
-	DebugRender::DebugRender() : m_vao(0), m_vbo(0), m_ibo(0), mGridColor(0, 0, 0, 255), mCellCount(40, 24), mCellSize(32, 32)
+	DebugRender::DebugRender() : mVao(0), mVbo(0), mIbo(0), mGridColor(0, 0, 0, 255), mCellCount(40, 24), mCellSize(32, 32)
 	{
 	}
 
@@ -59,22 +59,34 @@ namespace Plutus
 	{
 		dispose();
 	}
+
+	void DebugRender::dispose()
+	{
+		if (mVao)
+			glDeleteVertexArrays(1, &mVao);
+		if (mVbo)
+			glDeleteBuffers(1, &mVao);
+		if (mIbo)
+			glDeleteBuffers(1, &mVao);
+		mShader.dispose();
+	}
+
 	void DebugRender::init(Camera2D* _camera)
 	{
-		m_camera = _camera;
-		m_shader.CreateProgWithShader(VERT_SRC, FRAG_SRC);
-		m_shader.setAtribute("vertexPosition");
-		m_shader.setAtribute("vertexColor");
+		mCamera = _camera;
+		mShader.CreateProgWithShader(VERT_SRC, FRAG_SRC);
+		mShader.setAtribute("vertexPosition");
+		mShader.setAtribute("vertexColor");
 
 		//Set up buffer
-		glGenVertexArrays(1, &m_vao);
-		glGenBuffers(1, &m_vbo);
-		glGenBuffers(1, &m_ibo);
+		glGenVertexArrays(1, &mVao);
+		glGenBuffers(1, &mVbo);
+		glGenBuffers(1, &mIbo);
 
-		glBindVertexArray(m_vao);
+		glBindVertexArray(mVao);
 
-		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
+		glBindBuffer(GL_ARRAY_BUFFER, mVbo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(DebugVertex), (void*)offsetof(DebugVertex, position));
@@ -87,137 +99,136 @@ namespace Plutus
 	void DebugRender::end()
 	{
 		//Set Up Vertex Buffer Object
-		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, mVbo);
 
-		glBufferData(GL_ARRAY_BUFFER, m_vertexs.size() * sizeof(DebugVertex), nullptr, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, mVertexs.size() * sizeof(DebugVertex), nullptr, GL_DYNAMIC_DRAW);
 
-		glBufferSubData(GL_ARRAY_BUFFER, 0, m_vertexs.size() * sizeof(DebugVertex), m_vertexs.data());
+		glBufferSubData(GL_ARRAY_BUFFER, 0, mVertexs.size() * sizeof(DebugVertex), mVertexs.data());
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		//Set up Index Buffer Array
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
 
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(GLuint), nullptr, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndices.size() * sizeof(GLuint), nullptr, GL_DYNAMIC_DRAW);
 
-		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, m_indices.size() * sizeof(GLuint), m_indices.data());
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, mIndices.size() * sizeof(GLuint), mIndices.data());
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		m_numElements = (uint32_t)m_indices.size();
-		m_indices.clear();
-		m_vertexs.clear();
+		mNumElements = (uint32_t)mIndices.size();
+		mIndices.clear();
+		mVertexs.clear();
 	}
 
 	void DebugRender::drawLine(const glm::vec2& a, const glm::vec2& b, const ColorRGBA8& color = ColorRGBA8())
 	{
-		uint32_t i = (uint32_t)m_vertexs.size();
-		m_vertexs.resize(m_vertexs.size() + 2);
+		uint32_t i = (uint32_t)mVertexs.size();
+		mVertexs.resize(mVertexs.size() + 2);
 
-		m_vertexs[i].position = a;
-		m_vertexs[i].color = color;
-		m_vertexs[i + 1].position = b;
-		m_vertexs[i + 1].color = color;
+		mVertexs[i].position = a;
+		mVertexs[i].color = color;
+		mVertexs[i + 1].position = b;
+		mVertexs[i + 1].color = color;
 
-		m_indices.push_back(i);
-		m_indices.push_back(i + 1);
+		mIndices.push_back(i);
+		mIndices.push_back(i + 1);
 	}
 
 	glm::vec2 rotatePoint(glm::vec2 pos, float angle)
 	{
-		glm::vec2 newV;
-		newV.x = pos.x * cos(angle) - pos.y * sin(angle);
-		newV.y = pos.x * sin(angle) + pos.y * cos(angle);
+		float cosAng = cos(angle);
+		float sinAng = sin(angle);
 
-		return newV;
+		return {
+			pos.x * cosAng - pos.y * sinAng,
+			pos.x * sinAng + pos.y * cosAng
+		};
 	}
 
 	void DebugRender::drawBox(const glm::vec4& destRect, const ColorRGBA8& color, float angle)
 	{
-		uint32_t i = (uint32_t)m_vertexs.size();
-		m_vertexs.resize(m_vertexs.size() + 4);
+		uint32_t i = (uint32_t)mVertexs.size();
+		mVertexs.resize(mVertexs.size() + 4);
+		if (angle) {
+			glm::vec2 halfDim(destRect.z / 2.0f, destRect.w / 2.0f);
 
-		glm::vec2 halfDim(destRect.z / 2.0f, destRect.w / 2.0f);
+			glm::vec2 tl(-halfDim.x, halfDim.y);
+			glm::vec2 bl(-halfDim.x, -halfDim.y);
+			glm::vec2 br(halfDim.x, -halfDim.y);
+			glm::vec2 tr(halfDim.x, halfDim.y);
 
-		glm::vec2 tl(-halfDim.x, halfDim.y);
-		glm::vec2 bl(-halfDim.x, -halfDim.y);
-		glm::vec2 br(halfDim.x, -halfDim.y);
-		glm::vec2 tr(halfDim.x, halfDim.y);
+			glm::vec2 positionOffset(destRect.x, destRect.y);
 
-		glm::vec2 positionOffset(destRect.x, destRect.y);
-
-		m_vertexs[i].position = rotatePoint(tl, angle) + halfDim + positionOffset;
-		m_vertexs[i + 1].position = rotatePoint(bl, angle) + halfDim + positionOffset;
-		m_vertexs[i + 2].position = rotatePoint(br, angle) + halfDim + positionOffset;
-		m_vertexs[i + 3].position = rotatePoint(tr, angle) + halfDim + positionOffset;
-
+			mVertexs[i].position = rotatePoint(tl, angle) + halfDim + positionOffset;
+			mVertexs[i + 1].position = rotatePoint(bl, angle) + halfDim + positionOffset;
+			mVertexs[i + 2].position = rotatePoint(br, angle) + halfDim + positionOffset;
+			mVertexs[i + 3].position = rotatePoint(tr, angle) + halfDim + positionOffset;
+		}
+		else {
+			mVertexs[i].position = { destRect.x,  destRect.y };
+			mVertexs[i + 1].position = { destRect.x,  destRect.y + destRect.w };
+			mVertexs[i + 2].position = { destRect.x + destRect.z, destRect.y + destRect.w };
+			mVertexs[i + 3].position = { destRect.x + destRect.z, destRect.y };
+		}
 		for (uint32_t j = i; j < i + 4; j++)
-			m_vertexs[j].color = color;
+			mVertexs[j].color = color;
 
-		m_indices.reserve(m_indices.size() + 8);
+		mIndices.reserve(mIndices.size() + 8);
 
-		m_indices.push_back(i);
-		m_indices.push_back(i + 1);
+		mIndices.push_back(i);
+		mIndices.push_back(i + 1);
 
-		m_indices.push_back(i + 1);
-		m_indices.push_back(i + 2);
+		mIndices.push_back(i + 1);
+		mIndices.push_back(i + 2);
 
-		m_indices.push_back(i + 2);
-		m_indices.push_back(i + 3);
+		mIndices.push_back(i + 2);
+		mIndices.push_back(i + 3);
 
-		m_indices.push_back(i + 3);
-		m_indices.push_back(i);
+		mIndices.push_back(i + 3);
+		mIndices.push_back(i);
 	}
 
 	void DebugRender::drawCircle(const glm::vec2& center, const ColorRGBA8& color, float radius)
 	{
-		static const uint32_t NUM_VERTS = 100;
+		static const uint32_t NUmVERTS = 100;
 
-		uint32_t start = (uint32_t)m_vertexs.size();
-		m_vertexs.resize(m_vertexs.size() + NUM_VERTS);
-		for (size_t i = 0; i < NUM_VERTS; i++)
+		uint32_t start = (uint32_t)mVertexs.size();
+		mVertexs.resize(mVertexs.size() + NUmVERTS);
+		for (size_t i = 0; i < NUmVERTS; i++)
 		{
-			float angle = ((float)i / NUM_VERTS) * 2.0f * PI;
-			m_vertexs[start + i].position.x = cos(angle) * radius + center.x;
-			m_vertexs[start + i].position.y = sin(angle) * radius + center.y;
-			m_vertexs[start + i].color = color;
+			float angle = ((float)i / NUmVERTS) * 2.0f * PI;
+			mVertexs[start + i].position.x = cos(angle) * radius + center.x;
+			mVertexs[start + i].position.y = sin(angle) * radius + center.y;
+			mVertexs[start + i].color = color;
 		}
 		//Set up indixed drawing
-		m_indices.reserve(m_indices.size() + NUM_VERTS * 2);
-		for (uint32_t i = 0; i < NUM_VERTS - 1; i++)
+		mIndices.reserve(mIndices.size() + NUmVERTS * 2);
+		for (uint32_t i = 0; i < NUmVERTS - 1; i++)
 		{
-			m_indices.push_back(start + i);
-			m_indices.push_back(start + i + 1);
+			mIndices.push_back(start + i);
+			mIndices.push_back(start + i + 1);
 		}
 
-		m_indices.push_back(start + NUM_VERTS - 1);
-		m_indices.push_back(start);
+		mIndices.push_back(start + NUmVERTS - 1);
+		mIndices.push_back(start);
 	}
 
 	void DebugRender::render(float lineWidth)
 	{
-		m_shader.enable();
-		m_shader.setUniformMat4("camera", m_camera->getCameraMatrix());
+		mShader.enable();
+		mShader.setUniformMat4("camera", mCamera->getCameraMatrix());
 
 		glLineWidth(lineWidth);
-		glBindVertexArray(m_vao);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-		glDrawElements(GL_LINES, m_numElements, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(mVao);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
+		glDrawElements(GL_LINES, mNumElements, GL_UNSIGNED_INT, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
-		m_shader.disable();
+		mShader.disable();
 	}
-	void DebugRender::dispose()
-	{
-		if (m_vao)
-			glDeleteVertexArrays(1, &m_vao);
-		if (m_vbo)
-			glDeleteBuffers(1, &m_vao);
-		if (m_ibo)
-			glDeleteBuffers(1, &m_vao);
-		m_shader.dispose();
-	}
+
 	void DebugRender::drawGrid()
 	{
 		if (isDraw)
@@ -255,7 +266,7 @@ namespace Plutus
 
 	glm::vec2 DebugRender::getSquareCoords(glm::vec2 mousePos)
 	{
-		glm::vec2 cmpos = m_camera->convertScreenToWold(mousePos);
+		glm::vec2 cmpos = mCamera->convertScreenToWold(mousePos);
 		int x = (int)floor(cmpos.x / mCellSize.x) * mCellSize.x;
 		int y = (int)floor(cmpos.y / mCellSize.y) * mCellSize.y;
 		return glm::vec2(x, y);
@@ -263,7 +274,7 @@ namespace Plutus
 
 	glm::vec2 DebugRender::getSquareCoords(glm::vec2 mousePos, const glm::vec2& size)
 	{
-		glm::vec2 cmpos = m_camera->convertScreenToWold(mousePos);
+		glm::vec2 cmpos = mCamera->convertScreenToWold(mousePos);
 
 		int x = (int)floor(cmpos.x / mCellSize.x) * mCellSize.x;
 		int y = (int)floor(cmpos.y / mCellSize.y) * mCellSize.y;

@@ -3,52 +3,37 @@
 
 namespace Plutus
 {
-	Camera2D::Camera2D() : m_screenWidth(500),
-						   m_screenHeight(500),
-						   m_needsMatrixUpdate(true),
-						   m_scale(1.0f),
-						   mCamPos(0.0f, 0.0f),
-						   m_cameraMatrix(1.0f),
-						   m_orthoMatrix(1.0f)
-	{
-	}
-
-	Camera2D::~Camera2D()
-	{
-	}
-
 	void Camera2D::init(int screenWidth, int screenHeight)
 	{
-		m_screenWidth = screenWidth;
-		m_screenHeight = screenHeight;
-		//this is for convert the opengl espace -1.0 - 1.0 to 0 - screenW and height
-		m_orthoMatrix = glm::ortho(0.0f, (float)m_screenWidth, (float)m_screenHeight, 0.0f, 1.0f, -1.0f);
-		m_needsMatrixUpdate = true;
+		mScreenWidth = screenWidth;
+		mScreenHeight = screenHeight;
+		//Convert the opengl espace -1.0 - 1.0 to 0 - screenW and height
+		mOrthoMatrix = glm::ortho(0.0f, (float)mScreenWidth, (float)mScreenHeight, 0.0f, 1.0f, -1.0f);
 	}
 
 	void Camera2D::update()
 	{
-		if (m_needsMatrixUpdate == true)
+		if (mNeedsMatrixUpdate == true)
 		{
-			m_cameraMatrix = glm::translate(m_orthoMatrix, {-mCamPos.x, -mCamPos.y, 0.0f});
+			mCameraMatrix = glm::translate(mOrthoMatrix, { -mCamPos.x, -mCamPos.y, 0.0f });
 			//Camera Scale
-			m_cameraMatrix = glm::scale(glm::mat4(1.0f), {m_scale, m_scale, 0.0f}) * m_cameraMatrix;
-			m_needsMatrixUpdate = false;
+			mCameraMatrix = glm::scale(glm::mat4(1.0f), { mScale, mScale, 0.0f }) * mCameraMatrix;
+			mNeedsMatrixUpdate = false;
 		}
 	}
-	//Convert screen coordination to opengl coordination and return it
+
 	glm::vec2 Camera2D::convertScreenToWold(glm::vec2 coords)
 	{
 		// translate coord to center of the screen
-		coords -= glm::vec2(m_screenWidth >> 1, m_screenHeight >> 1);
+		coords -= glm::vec2(mScreenWidth >> 1, mScreenHeight >> 1);
 		//have to scale the coordinate and the camera current pos
-		coords /= m_scale;
-		auto camScale = mCamPos / m_scale;
+		coords /= mScale;
+		auto camScale = mCamPos / mScale;
 
 		//Translate with the camera position
 		coords += mCamPos;
 
-		coords += glm::vec2(m_screenWidth >> 1, m_screenHeight >> 1);
+		coords += glm::vec2(mScreenWidth >> 1, mScreenHeight >> 1);
 
 		return coords;
 	}

@@ -3,7 +3,11 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project("glfwwindow" CXX)
+project(game CXX)
+
+if(CMAKE_SYSTEM_NAME STREQUAL Emscripten)
+  set(CMAKE_EXECUTABLE_SUFFIX ".html")
+endif()
 # Add source files
 file(GLOB_RECURSE SRC_FILES src/*.c src/*.cpp)
 	
@@ -46,21 +50,27 @@ find_package(OpenGL REQUIRED)
 
 message("${CMAKE_CXX_COMPILER_ID}")
 
-add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES})
+  add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC Plutus)
+  target_link_libraries(${PROJECT_NAME} PUBLIC Plutus)
 
-# add_executable("TEST" Test/test.cpp Test/Timer.cpp Test/Timer.h)
-# target_link_libraries("TEST")
+if(CMAKE_SYSTEM_NAME STREQUAL Emscripten)
+  target_link_options(${PROJECT_NAME} --shell-file webbuild/game.html)
+  target_link_options(${PROJECT_NAME} -o1)
+endif()
+  # add_executable("TEST" Test/test.cpp Test/Timer.cpp Test/Timer.h)
+  # target_link_libraries("TEST")
+if(CMAKE_SYSTEM_NAME STREQUAL Windows)
+  # Editor
+  add_subdirectory(PlutusEditor)
 
-# Editor
-add_subdirectory(PlutusEditor)
+  # Add source files
+  file(GLOB_RECURSE EDITOR_SRC Editor/*.c Editor/*.cpp)
+    
+  # Add header files
+  file(GLOB_RECURSE EDITOR_HEADER Editor/*.h Editor/*.hpp)
 
-# Add source files
-file(GLOB_RECURSE EDITOR_SRC Editor/*.c Editor/*.cpp)
-	
-# Add header files
-file(GLOB_RECURSE EDITOR_HEADER Editor/*.h Editor/*.hpp)
+  add_executable("Editor" ${EDITOR_SRC} ${EDITOR_HEADER})
+  target_link_libraries("Editor" PUBLIC Plutus PlutusEditor)
 
-add_executable("Editor" ${EDITOR_SRC} ${EDITOR_HEADER})
-target_link_libraries("Editor" PUBLIC Plutus PlutusEditor)
+endif()

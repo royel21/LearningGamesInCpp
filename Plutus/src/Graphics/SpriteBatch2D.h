@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "IndexBuffer.h"
 #include "vertex.h"
 #include <unordered_map>
 
@@ -20,6 +19,7 @@
 namespace Plutus
 {
 	class Camera2D;
+	class IndexBuffer;
 	struct Tile;
 
 	class RenderBatch2D
@@ -38,22 +38,41 @@ namespace Plutus
 	{
 	private:
 		bool isSprite = false;
+		//Vertext Array Buffer Id
 		GLuint mVAO = 0;
+		//Vertext Object Buffer Id
 		GLuint mVBO = 0;
+		// Represent how many Vertice was created
 		GLuint mIndexCount = 0;
+		// Array of Rnder batcher per Image
 		std::vector<RenderBatch2D> mRenderBatches;
+		//Array of 4 Vertix per Single Object
 		std::vector<Vertex> vertices;
-		Vertex *mBuffer = nullptr;
-		IndexBuffer *mIBO = nullptr;
-		Camera2D *mCamera = nullptr;
+		//Index Buffer Array Object
+		IndexBuffer* mIBO = nullptr;
+		// Camera with the screen coordinate where we are drawing
+		Camera2D* mCamera = nullptr;
 
 	public:
-		SpriteBatch2D();
+		SpriteBatch2D() = default;
 		~SpriteBatch2D();
-		void init(Camera2D *camera);
+		void init(Camera2D* camera);
+		//Prepare the Vertex buffer to add objects
 		void begin();
+		//Reserve the memory for the objects
 		void reserve(uint32_t size) { vertices.reserve(size << 2); };
-		void submit(GLuint texture, glm::vec4 rect, glm::vec4 uv = {0, 0, 1, 1}, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false);
+		/*
+			Submit a single Object to draw in the screen
+			@param texture Texture image from where to draw
+			@param rect rectangle with the position and size
+			@param uv coordinate inside the texture
+			@param c optional color
+			@param r optional rotation
+			@param flipX optional flip the image from X coordinate
+			@param flipY optional flip the image from Y coordinate
+		*/
+		void submit(GLuint texture, glm::vec4 rect, glm::vec4 uv = { 0, 0, 1, 1 }, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false);
+		//Flush the Vertex buffer to the screen
 		void end();
 
 	private:
@@ -68,7 +87,7 @@ namespace Plutus
 			}
 			else
 			{
-				mRenderBatches.push_back({mIndexCount, 6, texture});
+				mRenderBatches.push_back({ mIndexCount, 6, texture });
 			}
 
 			mIndexCount += 6;
@@ -84,7 +103,7 @@ namespace Plutus
 			@param flipx flip the texture in x direction
 			@param flipy flip the texture in y direction
 		*/
-		void createVertice(const glm::vec4 &rect, const glm::vec4 &uv, ColorRGBA8 c, float r = 0, bool flipX = false, bool flipY = false);
+		void createVertice(const glm::vec4& rect, const glm::vec4& uv, ColorRGBA8 c, float r = 0, bool flipX = false, bool flipY = false);
 		/*
 			rotate a point by a angle in degre
 			@param pos point

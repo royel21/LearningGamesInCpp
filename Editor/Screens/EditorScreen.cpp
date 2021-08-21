@@ -39,7 +39,7 @@ void EditorScreen::onEntry()
     mTextLayer.Init(size.x, size.y, "./assets/fonts/Zoika.ttf", 28);
 
     mEditor = Plutus::EditorUI::getInstance();
-    mEditor->Init(size.x, size.y, &mCamera);
+    mEditor->Init(&mCamera);
 }
 
 void EditorScreen::update(float dt)

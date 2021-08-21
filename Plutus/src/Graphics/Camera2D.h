@@ -5,66 +5,77 @@
 
 namespace Plutus
 {
+	// Camera to transform Opengl normalize "-1.0 - 1.0" space to camera space in pixels
 	class Camera2D
 	{
 	private:
-		int m_screenWidth;
-		int m_screenHeight;
-		bool m_needsMatrixUpdate;
-		float m_scale;
+		int mScreenWidth = 0;
+		int mScreenHeight = 0;
+		bool mNeedsMatrixUpdate = true;
+		float mScale = 1.0f;
 		glm::vec2 mCamPos;
-		glm::mat4 m_cameraMatrix;
-		glm::mat4 m_orthoMatrix;
-		glm::vec2 screenOrigin;
-		glm::vec2 screenEnd;
+		glm::mat4 mCameraMatrix;
+		glm::mat4 mOrthoMatrix;
 
 	public:
-		Camera2D();
-		~Camera2D();
-		void init(int screenWidth, int screenHeight);
-
+		/*
+			initialize the camera
+			@param w Width of the camera in pixel
+			@param h height of the camera in pixel
+		*/
+		void init(int w, int h);
+		// update the camera if scale or position is changed
 		void update();
-		//Setters
+		//set camera position and shedule a update
+		//@param x position x
+		//@param y position y
 		void setPosition(float x, float y)
 		{
 			mCamPos.x = x;
 			mCamPos.y = y;
-			m_needsMatrixUpdate = true;
+			mNeedsMatrixUpdate = true;
 		}
-		void setPosition(const glm::vec2 &newPosition)
+		//set camera position and shedule a update
+		//@param newPosition glm vec2 position
+		void setPosition(const glm::vec2& newPosition)
 		{
 			mCamPos = newPosition;
-			m_needsMatrixUpdate = true;
+			mNeedsMatrixUpdate = true;
 		}
-
+		/*
+			change the camera to a new with and height
+			@param w Width of the camera in pixel
+			@param h height of the camera in pixel
+		*/
 		void setWindowSize(float w, float h) { init(static_cast<int>(w), static_cast<int>(h)); }
 
-		void setWindowSize(const glm::vec2 &size) { init(static_cast<int>(size.x), static_cast<int>(size.y)); }
-
+		/*
+			change the camera to a new with and height
+			@param size glm vec2 size
+		*/
+		void setWindowSize(const glm::vec2& size) { init(static_cast<int>(size.x), static_cast<int>(size.y)); }
+		// return the current scale value
+		float getScale() { return mScale; }
+		// zoom the view port
 		void setScale(float newScale)
 		{
-			m_scale = newScale;
-			m_needsMatrixUpdate = true;
+			mScale = newScale;
+			mNeedsMatrixUpdate = true;
 		}
-
-		glm::vec2 getViewPortSize() { return glm::vec2(m_screenWidth, m_screenHeight); }
+		// return the view port size in pixels
+		glm::vec2 getViewPortSize() { return glm::vec2(mScreenWidth, mScreenHeight); }
 		//Getters
 		glm::vec2 getPosition() { return mCamPos; }
-
-		glm::mat4 getCameraMatrix() { return m_cameraMatrix; }
-
-		float getScale() { return m_scale; }
-
-		bool isBoxInView(const glm::vec2 position, const glm::vec2 dim);
-
-		glm::vec2 convertScreenToWoldInv(glm::vec2 screenCoords);
+		// return the 4x4 camera matrix
+		glm::mat4 getCameraMatrix() { return mCameraMatrix; }
+		//Convert screen coordination to camera coordination and return it
+		glm::vec2 convertScreenToWold(float x, float y) { return convertScreenToWold({ x, y }); };
+		//Convert screen coordination to camera coordination and return it
 		glm::vec2 convertScreenToWold(glm::vec2 screenCoords);
 
-		glm::vec2 convertScreenToWold(float x, float y) { return convertScreenToWold(glm::vec2(x, y)); };
+		const glm::vec2 getScaleScreen() { return glm::vec2(mScreenWidth, mScreenHeight) / mScale; }
 
-		const glm::vec2 &getScreenOrigin() { return screenOrigin; }
-		const glm::vec2 &getScreenEnd() { return screenEnd; }
-		const glm::vec2 getScaleScreen() { return glm::vec2(m_screenWidth, m_screenHeight) / m_scale; }
+		bool isBoxInView(const glm::vec2 position, const glm::vec2 dim);
 	};
 } // namespace Plutus
 

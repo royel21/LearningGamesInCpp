@@ -37,7 +37,7 @@ namespace Plutus
 		glm::ivec2 getCellSize() { return mCellSize; };
 		glm::ivec2 getCellCount() { return mCellCount; };
 
-		inline void resizeBuffer(unsigned int size) { m_vertexs.reserve(size); }
+		inline void resizeBuffer(unsigned int size) { mVertexs.reserve(size); }
 
 		glm::vec2 getSquareCoords(glm::vec2 mousePos);
 		glm::vec2 getSquareCoords(glm::vec2 mousePos, const glm::vec2& size);
@@ -54,12 +54,12 @@ namespace Plutus
 
 		bool isDraw = true;
 
-		Shader m_shader;
-		std::vector<DebugVertex> m_vertexs;
-		std::vector<GLuint> m_indices;
-		GLuint m_vbo, m_vao, m_ibo;
-		uint32_t m_numElements = 0;
-		Camera2D* m_camera = nullptr;
+		Shader mShader;
+		std::vector<DebugVertex> mVertexs;
+		std::vector<GLuint> mIndices;
+		GLuint mVbo, mVao, mIbo;
+		uint32_t mNumElements = 0;
+		Camera2D* mCamera = nullptr;
 		ColorRGBA8 mGridColor;
 	};
 } // namespace Plutus

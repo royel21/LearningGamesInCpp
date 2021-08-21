@@ -39,14 +39,17 @@ namespace Plutus
 		void setColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a = 255) { rgba = a << 24 | b << 16 | g << 8 | r; };
 		operator GLuint() const { return rgba; }
 	};
-
+	/*
+		Represent a single Vertex information
+	*/
 	struct Vertex
 	{
+		Position position; /* Positon X,Y */
+		UV uv;	/* Texture coord from where to sample */
+		ColorRGBA8 color; /* RGBA Color for the sample */
+
 		Vertex() : position(), uv() {}
 		Vertex(float x, float y, float uvX, float uvY, ColorRGBA8 c) : position(x, y), uv(uvX, uvY), color(c) {}
-		Position position;
-		UV uv;
-		ColorRGBA8 color;
 
 		void setPosition(float x, float y)
 		{

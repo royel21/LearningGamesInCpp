@@ -3,46 +3,51 @@
 
 #include "types.h"
 #include "glm/glm.hpp"
-
-class FrameBuffer
+namespace Plutus
 {
-public:
-    FrameBuffer() {};
-    ~FrameBuffer();
-    void init(int width, int height, bool reset = false);
-    void bind();
-    void unBind();
-    inline void resize(const glm::ivec2& size)
+
+    class FrameBuffer
     {
-        isDirty = true;
-        mSize = size;
-    }
-    inline void resize(int w, int h)
-    {
-        isDirty = true;
-        mSize = { w, h };
-    }
+    public:
+        FrameBuffer() = default;
+        ~FrameBuffer();
+        void init(int width, int height, bool reset = false);
+        void bind();
+        void unBind();
 
-    glm::vec2 getSize() { return mSize; }
+        void resize(const glm::ivec2& size)
+        {
+            isDirty = true;
+            mSize = size;
+        }
 
-    float getAspectRatio() { return static_cast<float>(mSize.x) / static_cast<float>(mSize.y); }
+        void resize(int w, int h)
+        {
+            isDirty = true;
+            mSize = { w, h };
+        }
 
-    void setDirty() { isDirty = true; };
+        glm::vec2 getSize() { return mSize; }
 
-    uint32 getTextureId() const
-    {
-        return textId;
-    }
+        float getAspectRatio() { return static_cast<float>(mSize.x) / static_cast<float>(mSize.y); }
 
-private:
-    //Framebuffer Id
-    uint32 fboId = 0;
-    //texture Id
-    uint32 textId = 0;
-    //renderbuffer Id
-    uint32 rboId = 0;
-    bool isDirty = false;
-    glm::ivec2 mSize;
-};
+        void setDirty() { isDirty = true; };
+
+        uint32 getTextureId() const { return textId; }
+
+        void cleanUp();
+
+    private:
+        //Framebuffer Id
+        uint32 fboId = 0;
+        //texture Id
+        uint32 textId = 0;
+        //renderbuffer Id
+        uint32 rboId = 0;
+        bool isDirty = false;
+        glm::ivec2 mSize;
+    };
+} // namespace Plutus
+
 
 #endif

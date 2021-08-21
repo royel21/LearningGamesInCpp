@@ -16,11 +16,11 @@ namespace Plutus
 	class Input
 	{
 	private:
-		glm::vec2 m_mouseCoords;
+		bool mouseMove = false;
 		int m_mouseWheel = 0;
+		glm::vec2 m_mouseCoords;
 		std::unordered_map<std::string, bool> m_keyMap;
 		std::unordered_map<std::string, bool> m_prevKeyMap;
-		bool mouseMove = false;
 
 	public:
 		Input();

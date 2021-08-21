@@ -9,7 +9,9 @@
 
 namespace Plutus
 {
-
+	/*
+		Help create a opengl shader program
+	*/
 	class Shader
 	{
 	private:
@@ -21,32 +23,37 @@ namespace Plutus
 	public:
 		Shader();
 		~Shader();
-
+		/*Create a shader program
+			@param vsPath path to a vertex shader file or string with the data
+			@param fsPath path to a vertex fragment shaer file or string with the data
+		*/
 		bool CreateProgWithShader(std::string vsPath, std::string fsPath);
-
+		// Enable this shader program
 		void enable();
+		// Disable this shader program
 		void disable();
+		// Destroy this shader program
 		void dispose();
 
 		uint32_t getUniform(std::string uName);
-
+		// Return the shader program ID
 		uint32_t getProg() { return m_progId; }
 
-		void setAtribute(const std::string &attributeName);
+		void setAtribute(const std::string& attributeName);
 
 		void setUniform1i(std::string name, GLuint value);
 
 		void setUniform1f(std::string name, float value);
 
-		void setUniform1iv(std::string name, GLint *value, GLuint size);
+		void setUniform1iv(std::string name, GLint* value, GLuint size);
 
 		void setUniform2f(std::string name, glm::vec2 value);
 
 		void setUniform3f(std::string name, glm::vec3 value);
 
-		void setUniform4f(std::string name, const glm::vec4 &value);
+		void setUniform4f(std::string name, const glm::vec4& value);
 
-		void setUniformMat4(std::string name, const glm::mat4 &value);
+		void setUniformMat4(std::string name, const glm::mat4& value);
 
 	private:
 		void compileShader(uint32_t id, std::string shader);
