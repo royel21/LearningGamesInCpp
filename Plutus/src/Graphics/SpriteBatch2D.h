@@ -60,7 +60,7 @@ namespace Plutus
 		//Prepare the Vertex buffer to add objects
 		void begin();
 		//Reserve the memory for the objects
-		void reserve(uint32_t size) { vertices.reserve(size << 2); };
+		void reserve(uint32_t size) { vertices.reserve(vertices.size() + (size << 2)); };
 		/*
 			Submit a single Object to draw in the screen
 			@param texture Texture image from where to draw
