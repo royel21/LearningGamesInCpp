@@ -73,4 +73,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   add_executable("Editor" ${EDITOR_SRC} ${EDITOR_HEADER})
   target_link_libraries("Editor" PUBLIC Plutus PlutusEditor)
 
+  
+  add_executable("Test" Test/test.cpp)
+
 endif()

@@ -129,6 +129,8 @@ namespace Plutus
 			glBindTexture(GL_TEXTURE_2D, mRenderBatches[i].texture);
 			glDrawElements(GL_TRIANGLES, mRenderBatches[i].numVertices, GL_UNSIGNED_INT, (void*)(mRenderBatches[i].offset * sizeof(GLuint)));
 		}
+
+		//Clean up
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);

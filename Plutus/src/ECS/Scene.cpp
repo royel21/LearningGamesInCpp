@@ -126,7 +126,6 @@ namespace Plutus
 
                         if (map.mTiles.size())
                         {
-                            auto start = Timer::millis();
                             std::sort(map.mTiles.begin(), map.mTiles.end(), [](Tile& t1, Tile& t2) -> bool
                                 { return t1.texture < t2.texture; });
 

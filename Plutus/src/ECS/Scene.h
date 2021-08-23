@@ -1,14 +1,13 @@
 #pragma once
+#pragma warning (disable : 4307) //disable warning integral constant overflow for entt
 
-#include <memory>
 #include <vector>
 #include <cstring>
-#include <entt.hpp>
-#include <algorithm>
 #include <unordered_map>
 #include "Graphics/SpriteBatch2D.h"
 #include "Graphics/Shader.h"
 #include <Core/type.h>
+#include <entt.hpp>
 
 namespace Plutus
 {
@@ -16,6 +15,7 @@ namespace Plutus
     class Scene;
     class Camera2D;
     class Script;
+    class System;
 
     class Entity
     {
@@ -45,31 +45,19 @@ namespace Plutus
         void setName(const std::string& name);
     };
 
-    struct Layer
+    class Layer
     {
+    public:
         bool isVisible = true;
         std::string name;
-        Layer() = default;
-        Layer(const std::string& _name) : name(_name) {};
         std::vector<Ref<Entity>> mEntities;
 
-        Ref<Entity> add(Ref<Entity> item)
-        {
-            auto index = mEntities.size();
-            mEntities.push_back(item);
-            return mEntities[index];
-        }
+    public:
+        Layer() = default;
+        Layer(const std::string& _name) : name(_name) {};
 
-        void remove(const Entity* item)
-        {
-            auto e1 = std::remove_if(mEntities.begin(), mEntities.end(), [item](auto e) -> bool
-                { return e->mId == item->mId; });
-
-            if (e1 != mEntities.end())
-            {
-                mEntities.erase(e1, mEntities.end());
-            }
-        }
+        Ref<Entity> add(Ref<Entity> item);
+        void remove(const Entity* item);
     };
 
     class Scene
@@ -107,40 +95,15 @@ namespace Plutus
 
     private:
         entt::registry mRegistry;
-        Shader mShader;
         SpriteBatch2D mRenderer;
+        Shader mShader;
+
         Camera2D* mCamera = nullptr;
-        friend class Entity;
         Layer* mCurrentLayer;
+
         std::unordered_map<std::string, Layer> mLayers;
+        std::vector<System*> mSystems;
+        friend class Entity;
+        friend class System;
     };
-
-    template <typename T>
-    bool Entity::hasComponent()
-    {
-        return mScene->mRegistry.any_of<T>(mId);
-    }
-
-    template <typename T, typename... Args>
-    T& Entity::addComponent(Args &&...args)
-    {
-        return mScene->mRegistry.emplace_or_replace<T>(mId, std::forward<Args>(args)...);
-    }
-
-    template <typename T>
-    T& Entity::getComponent()
-    {
-        return mScene->mRegistry.get<T>(mId);
-    }
-
-    template <typename T>
-    bool Entity::removeComponent()
-    {
-        if (hasComponent<T>())
-        {
-            mScene->mRegistry.remove<T>(mId);
-        }
-        return 1;
-    }
-
 } // namespace Plutus

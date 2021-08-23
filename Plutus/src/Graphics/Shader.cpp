@@ -7,11 +7,6 @@
 
 namespace Plutus
 {
-
-	Shader::Shader() : m_progId(0), m_numAttributes(0)
-	{
-	}
-
 	Shader::~Shader()
 	{
 		dispose();
@@ -19,7 +14,7 @@ namespace Plutus
 
 	bool Shader::CreateProgWithShader(std::string vertPath, std::string fragPath)
 	{
-		m_progId = glCreateProgram();
+		mProgId = glCreateProgram();
 
 		GLuint vertId = glCreateShader(GL_VERTEX_SHADER);
 		GLuint fragId = glCreateShader(GL_FRAGMENT_SHADER);
@@ -40,26 +35,26 @@ namespace Plutus
 		}
 
 		//attach the shader to the program
-		glAttachShader(m_progId, vertId);
-		glAttachShader(m_progId, fragId);
+		glAttachShader(mProgId, vertId);
+		glAttachShader(mProgId, fragId);
 		//link the programs
-		glLinkProgram(m_progId);
+		glLinkProgram(mProgId);
 
 		int result;
 
-		glGetProgramiv(m_progId, GL_LINK_STATUS, &result);
+		glGetProgramiv(mProgId, GL_LINK_STATUS, &result);
 		if (result == GL_FALSE)
 		{
 			int InfogLenght;
-			glGetProgramiv(m_progId, GL_INFO_LOG_LENGTH, &InfogLenght);
+			glGetProgramiv(mProgId, GL_INFO_LOG_LENGTH, &InfogLenght);
 			std::vector<char> ProgramErrorMessage(InfogLenght + 1);
-			glGetProgramInfoLog(m_progId, InfogLenght, NULL, &ProgramErrorMessage[0]);
+			glGetProgramInfoLog(mProgId, InfogLenght, NULL, &ProgramErrorMessage[0]);
 			std::printf("ProgError: %s\n", &ProgramErrorMessage[0]);
 			return false;
 		}
 
-		glDetachShader(m_progId, vertId);
-		glDetachShader(m_progId, fragId);
+		glDetachShader(mProgId, vertId);
+		glDetachShader(mProgId, fragId);
 
 		glDeleteShader(vertId);
 		glDeleteShader(fragId);
@@ -68,9 +63,9 @@ namespace Plutus
 
 	void Shader::enable()
 	{
-		glUseProgram(m_progId);
+		glUseProgram(mProgId);
 		//enable all the attributes we added with addAttribute
-		for (int i = 0; i < m_numAttributes; i++)
+		for (int i = 0; i < mNumAttributes; i++)
 		{
 			glEnableVertexAttribArray(i);
 		}
@@ -79,7 +74,8 @@ namespace Plutus
 	void Shader::disable()
 	{
 		glUseProgram(0);
-		for (int i = 0; i < m_numAttributes; i++)
+		//disable all the attributes we added with addAttribute
+		for (int i = 0; i < mNumAttributes; i++)
 		{
 			glDisableVertexAttribArray(i);
 		}
@@ -87,29 +83,21 @@ namespace Plutus
 
 	void Shader::dispose()
 	{
-		if (m_progId)
-			glDeleteProgram(m_progId);
+		if (mProgId)
+			glDeleteProgram(mProgId);
 	}
 
 	uint32_t Shader::getUniform(std::string uName)
 	{
-		if (uniformLocationsMap.find(uName) != uniformLocationsMap.end())
-			return uniformLocationsMap[uName];
+		if (mUniforms.find(uName) != mUniforms.end())
+			return mUniforms[uName];
 
-		GLuint location = glGetUniformLocation(m_progId, uName.c_str());
-		if (location == 0xFFFFFFFFu)
-		{
-			// LOG_E("Location {0} no found \n", uName);
-			return -1;
-		}
-		uniformLocationsMap[uName] = location;
-
-		return location;
+		return mUniforms[uName] = glGetUniformLocation(mProgId, uName.c_str());
 	}
 
-	void Shader::setAtribute(const std::string &attributeName)
+	void Shader::setAtribute(const std::string& attributeName)
 	{
-		glBindAttribLocation(m_progId, m_numAttributes++, attributeName.c_str());
+		glBindAttribLocation(mProgId, mNumAttributes++, attributeName.c_str());
 	}
 
 	void Shader::setUniform1i(std::string name, GLuint value)
@@ -122,7 +110,7 @@ namespace Plutus
 		glUniform1f(getUniform(name), value);
 	}
 
-	void Shader::setUniform1iv(std::string name, GLint *value, GLuint size)
+	void Shader::setUniform1iv(std::string name, GLint* value, GLuint size)
 	{
 		glUniform1iv(getUniform(name), size, value);
 	}
@@ -137,12 +125,12 @@ namespace Plutus
 		glUniform3f(getUniform(name), value.x, value.y, value.z);
 	}
 
-	void Shader::setUniform4f(std::string name, const glm::vec4 &value)
+	void Shader::setUniform4f(std::string name, const glm::vec4& value)
 	{
 		glUniform4f(getUniform(name), value.x, value.y, value.z, value.w);
 	}
 
-	void Shader::setUniformMat4(std::string name, const glm::mat4 &value)
+	void Shader::setUniformMat4(std::string name, const glm::mat4& value)
 	{
 		glUniformMatrix4fv(getUniform(name), 1, GL_FALSE, &value[0][0]);
 	}
@@ -150,7 +138,7 @@ namespace Plutus
 	void Shader::compileShader(uint32_t id, std::string shaderPath)
 	{
 		std::ifstream vertexFile(shaderPath);
-		char const *vertSource = nullptr;
+		char const* vertSource = nullptr;
 
 		if (vertexFile.fail())
 		{
@@ -209,6 +197,6 @@ namespace Plutus
 	{
 		glDeleteShader(vertId);
 		glDeleteShader(fragId);
-		glDeleteProgram(m_progId);
+		glDeleteProgram(mProgId);
 	}
 } // namespace Plutus

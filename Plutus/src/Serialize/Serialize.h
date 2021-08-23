@@ -12,19 +12,8 @@ namespace Plutus
     {
     public:
         Serializer() : sb(), writer(sb) {}
-        template <typename T>
-        inline void WriteMap(const char *name, std::unordered_map<std::string, T> map)
-        {
-            writer.String(name);
-            writer.StartArray();
-            for (auto item : map)
-            {
-                writer.String(item.first.c_str());
-            }
-            writer.EndArray();
-        }
-        PrettyWriter<StringBuffer> *getWriter() { return &writer; }
-        const char *getString() { return sb.GetString(); };
+        PrettyWriter<StringBuffer>* getWriter() { return &writer; }
+        const char* getString() { return sb.GetString(); };
 
     private:
         StringBuffer sb;

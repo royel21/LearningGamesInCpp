@@ -1,14 +1,16 @@
 #include "RenderSystem.h"
 #include "Graphics/Camera2D.h"
 #include "Graphics/GLSL.h"
+#include "ECS/Scene.h"
 
 namespace Plutus
 {
-    void RenderSystem::init(Camera2D *camera)
+    RenderSystem::RenderSystem(Scene* scene) : System(scene)
     {
+        mShader.CreateProgWithShader(vertexShader2, fragShader2);
     }
 
-    void RenderSystem::draw(entt::registry *_register)
+    void RenderSystem::draw(Camera2D* camera)
     {
     }
 

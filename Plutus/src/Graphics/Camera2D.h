@@ -13,9 +13,9 @@ namespace Plutus
 		int mScreenHeight = 0;
 		bool mNeedsMatrixUpdate = true;
 		float mScale = 1.0f;
-		glm::vec2 mCamPos;
-		glm::mat4 mCameraMatrix;
-		glm::mat4 mOrthoMatrix;
+		glm::vec2 mCamPos = { 0,0 };
+		glm::mat4 mCameraMatrix = glm::mat4(0);
+		glm::mat4 mOrthoMatrix = glm::mat4(0);
 
 	public:
 		/*

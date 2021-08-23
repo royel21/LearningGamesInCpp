@@ -2,13 +2,15 @@
 
 namespace Plutus
 {
+    class Scene;
     class System
     {
     protected:
-        entt::registry *mRegister = nullptr;
+        Scene* mScene;
 
     public:
-        System(entt::registry *_register) : mRegister(_register) {}
+        System(Scene* scene) : mScene(scene) {};
+        virtual void update(float dt) = 0;
     };
 
 } // namespace Plutus
