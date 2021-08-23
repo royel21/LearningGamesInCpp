@@ -5,11 +5,14 @@
 #include <iostream>
 #include <algorithm>
 #include "ECS/Scene.h"
-#include "Graphics/SpriteBatch2D.h"
 #include "Utils/Utils.h"
 #include "Assets/Textures.h"
 #include "../IconsFontAwesome5.h"
 #include <Platform/Windows/FileUtils.h>
+
+#include <Graphics/GLSL.h>
+#include <Graphics/Camera2D.h>
+#include <Graphics/SpriteBatch2D.h>
 
 #define MODE_PLACE 0
 #define MODE_EDIT 1
@@ -21,9 +24,16 @@
 
 namespace Plutus
 {
+    TileMapPanel::~TileMapPanel()
+    {
+        mShader.dispose();
+    }
+
     void TileMapPanel::setContext(Ref<Scene> &scene)
     {
         mScene = scene;
+        mShader.CreateProgWithShader(vertexShader2, fragShader2);
+        mRenderer.init(mScene->getCamera());
     }
 
     void TileMapPanel::addTexture(const char *label, bool &open, TileMap *tMap)
@@ -201,24 +211,34 @@ namespace Plutus
     {
         if (mIsOpen && mTempTiles.size() && mMode == MODE_PLACE)
         {
+            // mShader.enable();
+            // mShader.setUniform1i("hasTexture", 0);
+            // mShader.setUniform1i("mySampler", 0);
+            // mShader.setUniformMat4("camera", mScene->getCamera()->getCameraMatrix());
+            // mRenderer.begin();
             mScene->enableShader();
             renderer->begin();
+
             std::vector<Tile> tiles;
             int w = mTileMap->mTileWidth;
             int h = mTileMap->mTileHeight;
             for (auto tile : mTempTiles)
             {
-                uint32_t x = mCoords.x + (tile.x * w);
-                uint32_t y = mCoords.y + (tile.y * h);
+                int x = mCoords.x + (tile.x * w);
+                int y = mCoords.y + (tile.y * h);
 
-                // tiles.emplace_back(x, y, tile.z, mCurrentTexture, mRotation);
-                glm::vec4 rect(x, y, w, h);
                 auto &tex = mTileMap->mTextures[mCurrentTexture];
-                renderer->submit(tex->mTexture.id, rect, tex->getUV(tile.z), {}, mRotation);
+                // mRenderer.submit(tex->mTexture.id, rect, tex->getUV(tile.z), {}, mRotation);
+                if (x < 0)
+                {
+                    x = x;
+                }
+                renderer->submit(tex->mTexture.id, {x, y, w, h}, tex->getUV(tile.z), {}, mRotation);
             }
-
             renderer->end();
-            mScene->disableShader();
+            mScene->enableShader();
+            // mRenderer.end();
+            // mShader.disable();
         }
     }
 

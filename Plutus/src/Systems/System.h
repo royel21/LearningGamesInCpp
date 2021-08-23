@@ -1,16 +1,17 @@
-#include <entt.hpp>
-
 namespace Plutus
 {
     class Scene;
-    class System
+    class Camera2D;
+
+    class ISystem
     {
     protected:
-        Scene* mScene;
+        Scene *mScene;
 
     public:
-        System(Scene* scene) : mScene(scene) {};
+        ISystem(Scene *scene) : mScene(scene){};
         virtual void update(float dt) = 0;
+        virtual void draw(Camera2D *camera) = 0;
     };
 
 } // namespace Plutus

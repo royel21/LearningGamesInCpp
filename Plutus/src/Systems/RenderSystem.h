@@ -7,16 +7,15 @@ namespace Plutus
 {
     class Camera2D;
 
-    class RenderSystem : public System
+    class RenderSystem : public ISystem
     {
-        RenderSystem(Scene* scene);
-        void update(float dt) {};
-        void draw(Camera2D* camera);
+        RenderSystem(Scene *scene);
+        void update(float dt){};
+        void draw(Camera2D *camera);
         void destroy();
 
     private:
         Shader mShader;
         SpriteBatch2D mRenderer;
-        Camera2D* mCamera = nullptr;
     };
 } // namespace Plutus

@@ -1,15 +1,15 @@
 #pragma once
 #include "glm/glm.hpp"
 #include <vector>
-#include "Graphics/Shader.h"
 #include "Core/type.h"
+#include "Graphics/Shader.h"
+#include "Graphics/SpriteBatch2D.h"
 
 namespace Plutus
 {
     struct TileMap;
 
     class Scene;
-    class SpriteBatch2D;
     struct Tile;
 
     class TileMapPanel
@@ -20,24 +20,26 @@ namespace Plutus
         int mMode = 0;
         //TileMap
         std::vector<glm::ivec3> mTempTiles;
-        TileMap* mTileMap = nullptr;
-        Tile* mCurrentTile = nullptr;
+        TileMap *mTileMap = nullptr;
+        Tile *mCurrentTile = nullptr;
         int mCurrentTexture = 0;
         float mRotation = 0;
         bool mShowAddModal = false;
         bool mIsOpen = false;
+        SpriteBatch2D mRenderer;
 
     public:
         TileMapPanel() = default;
-        void setContext(Ref<Scene>& scene);
-        void draw(TileMap* tileMap);
+        ~TileMapPanel();
+        void setContext(Ref<Scene> &scene);
+        void draw(TileMap *tileMap);
         void drawTempTiles();
-        void renderTiles(SpriteBatch2D* renderer, const glm::ivec2& mCoords);
-        void createTiles(const glm::ivec2& mCoords);
+        void renderTiles(SpriteBatch2D *renderer, const glm::ivec2 &mCoords);
+        void createTiles(const glm::ivec2 &mCoords);
 
     private:
-        static bool compare(const glm::ivec2& a, const glm::ivec2& b);
+        static bool compare(const glm::ivec2 &a, const glm::ivec2 &b);
         void tileProps();
-        void addTexture(const char* label, bool& open, TileMap* tMap);
+        void addTexture(const char *label, bool &open, TileMap *tMap);
     };
 } // namespace Plutus

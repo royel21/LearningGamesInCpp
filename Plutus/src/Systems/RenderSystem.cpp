@@ -5,12 +5,12 @@
 
 namespace Plutus
 {
-    RenderSystem::RenderSystem(Scene* scene) : System(scene)
+    RenderSystem::RenderSystem(Scene *scene) : ISystem(scene)
     {
         mShader.CreateProgWithShader(vertexShader2, fragShader2);
     }
 
-    void RenderSystem::draw(Camera2D* camera)
+    void RenderSystem::draw(Camera2D *camera)
     {
     }
 
