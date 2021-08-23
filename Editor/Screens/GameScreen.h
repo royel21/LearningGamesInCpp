@@ -4,6 +4,7 @@
 #include "Graphics/Camera2D.h"
 #include "TextRender/TextLayer.h"
 #include "Input/Input.h"
+#include <Systems/SystemManager.h>
 
 class GameScreen : public Plutus::IGameScreen
 {
@@ -31,4 +32,5 @@ private:
     Plutus::Camera2D mWorldCamera;
     Plutus::TextLayer mTextLayer;
     Plutus::Input *mInput;
+    Plutus::SystemManager mSystemManager;
 };

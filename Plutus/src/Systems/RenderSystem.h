@@ -9,9 +9,9 @@ namespace Plutus
 
     class RenderSystem : public ISystem
     {
+    public:
         RenderSystem(Scene *scene);
-        void update(float dt){};
-        void draw(Camera2D *camera);
+        void update(float dt);
         void destroy();
 
     private:

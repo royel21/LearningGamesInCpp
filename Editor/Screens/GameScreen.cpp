@@ -12,6 +12,7 @@
 #include <time.h>
 #include <Serialize/SceneLoader.h>
 #include <Time/Timer.h>
+#include <Systems/RenderSystem.h>
 
 GameScreen::GameScreen()
 {
@@ -42,6 +43,8 @@ void GameScreen::onEntry()
     const int h = mEngine->getHeight();
 
     mScene = Plutus::CreateRef<Plutus::Scene>();
+    // mSystemManager.init(mScene.get());
+    // mSystemManager.AddSystem<Plutus::RenderSystem>();
     mWorldCamera.init(w, h);
     mScene->Init(&mWorldCamera);
     mTextLayer.Init(static_cast<float>(w), static_cast<float>(h), "assets/fonts/Zoika.ttf", 28);
@@ -64,6 +67,7 @@ void GameScreen::update(float dt)
     {
         mCurrentState = Plutus::ScreenState::CHANGE_NEXT;
     }
+    // mSystemManager.update(dt);
 }
 
 void GameScreen::draw()
@@ -73,11 +77,6 @@ void GameScreen::draw()
     snprintf(text, 20, "%.1f FPS", mEngine->getFPS());
     mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, {1, 0, 0, 1});
     mTextLayer.drawString("This is a pretty large text for testing purpose and some more test", 5.0f, 30.0f);
-    mTextLayer.drawString("This is a pretty large text for testing purpose and some more test", 5.0f, 60.0f);
-    mTextLayer.drawString("This is a pretty large text for testing purpose and some more test", 5.0f, 90.0f);
-    mTextLayer.drawString("This is a pretty large text for testing purpose and some more test", 5.0f, 120.0f);
-    mTextLayer.drawString("This is a pretty large text for testing purpose and some more test", 5.0f, 150.0f);
-    mTextLayer.drawString("This is a pretty large text for testing purpose and some more test", 5.0f, 180.0f);
     glClearColor(0, 0, 0, 1);
 }
 
