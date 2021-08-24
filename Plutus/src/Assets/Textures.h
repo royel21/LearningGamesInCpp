@@ -59,6 +59,7 @@ namespace Plutus
 
         const TileSet *addTexture(const std::string &id, const std::string &path, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
         const TileSet *addTexture(const std::string &id, const std::string &path, int c, int w, int h, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
+        void removeTexture(const std::string &id);
 
         void cleanUp();
 

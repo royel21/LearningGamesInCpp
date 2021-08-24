@@ -141,6 +141,7 @@ namespace Plutus
             }
         }
     }
+
     void TileMapPanel::draw(TileMap *tileMap)
     {
         if (ImGui::CollapsingHeader("TileMap##comp"))

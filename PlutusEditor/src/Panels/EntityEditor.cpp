@@ -9,10 +9,11 @@
 #include "Utils/Utils.h"
 #include "EditorUI.h"
 #include <Platform/Windows/FileUtils.h>
+#include "Modals.h"
 
 namespace Plutus
 {
-    void EntityEditor::setContext(const Ref<Scene>& context, EditorUI* parent)
+    void EntityEditor::setContext(const Ref<Scene> &context, EditorUI *parent)
     {
         mParentUI = parent;
         mInput = Plutus::Input::getInstance();
@@ -24,9 +25,31 @@ namespace Plutus
     {
     }
 
+    void EntityEditor::removeLayer()
+    {
+        if (mScene->removeLayer(mScene->getCurrentLayer()->name))
+        {
+            mLayers = mScene->getLayers();
+            if (mLayers->size())
+            {
+                auto it = mLayers->begin();
+                auto layer = mScene->setLayer(it->first);
+                if (layer->mEntities.size())
+                {
+                    mParentUI->setEntity(layer->mEntities[0].get());
+                }
+            }
+            else
+            {
+                mParentUI->setEntity(nullptr);
+            }
+        }
+    }
+
     void EntityEditor::draw()
     {
-        ImGui::Begin("Scene Editor");
+        bool open = true;
+        ImGui::Begin("Scene Editor", &open, ImGuiWindowFlags_NoScrollbar);
         layers();
         entity();
         ImGui::End();
@@ -34,16 +57,33 @@ namespace Plutus
 
     void EntityEditor::layers()
     {
+        auto size = ImGui::GetWindowContentRegionMax();
         ImGui::Text(ICON_FA_LAYER_GROUP " Layers");
-        ImGui::SameLine();
+        ImGui::Separator();
         static bool openLayerModal = false;
 
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
         if (ImGui::Button(ICON_FA_PLUS_CIRCLE " ##layer"))
-        {
             openLayerModal = true;
-        }
+        ImGui::SameLine();
+        ImGui::Button(ICON_FA_EDIT " ##Edit_Layer_Name");
+        ImGui::SameLine();
+        if (ImGui::Button(ICON_FA_TRASH_ALT " ##Remove_Layer"))
+            removeLayer();
         ImGui::PopStyleColor();
+        ImGui::SameLine();
+        ImGui::Checkbox(ICON_FA_EYE " ##IsVisible", &mScene->getCurrentLayer()->isVisible);
+        ImGui::PushItemWidth(size.x);
+        auto name = mScene->getCurrentLayer()->name;
+        if (ImGui::ComboBox<Layer>("##Layers", *mLayers, name))
+        {
+            auto layer = mScene->setLayer(name);
+            if (layer->mEntities.size() > 0)
+            {
+                mParentUI->setEntity(layer->mEntities[0].get());
+            }
+        }
+        ImGui::PopItemWidth();
         if (openLayerModal)
         {
             auto pos = ImGui::GetWindowPos();
@@ -55,59 +95,56 @@ namespace Plutus
                 mParentUI->setEntity(nullptr);
             }
         }
-
-        ImGui::SameLine();
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
-        ImGui::Button(ICON_FA_EDIT " ##Edit_Layer_Name");
-        //Remove Layer from list
-        ImGui::SameLine();
-        if (ImGui::Button(ICON_FA_TRASH_ALT " ##Remove_Layer"))
-        {
-            if (mScene->removeLayer(mScene->getCurrentLayer()->name))
-            {
-                mLayers = mScene->getLayers();
-                if (mLayers->size())
-                {
-                    auto it = mLayers->begin();
-                    auto layer = mScene->setLayer(it->first);
-                    if (layer->mEntities.size())
-                    {
-                        mParentUI->setEntity(layer->mEntities[0].get());
-                    }
-                }
-                else
-                {
-                    mParentUI->setEntity(nullptr);
-                }
-            }
-        }
-        ImGui::PopStyleColor();
-        ImGui::PushItemWidth(80);
-        auto name = mScene->getCurrentLayer()->name;
-        if (ImGui::ComboBox<Layer>("Layers", *mLayers, name))
-        {
-            auto layer = mScene->setLayer(name);
-            if (layer->mEntities.size() > 0)
-            {
-                mParentUI->setEntity(layer->mEntities[0].get());
-            }
-        }
-        ImGui::SameLine();
-        ImGui::Checkbox(ICON_FA_EYE " ##IsVisible", &mScene->getCurrentLayer()->isVisible);
     }
 
+    void EntityEditor::entityList()
+    {
+        static int selected = 0;
+        auto layer = mScene->getCurrentLayer();
+        bool isSelected = false;
+        auto entities = layer->mEntities;
+        int remove = -1;
+        for (uint32_t i = 0; i < entities.size(); i++)
+        {
+            ImGui::PushID(i);
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
+            if (ImGui::Button(ICON_FA_TRASH_ALT " ##remove"))
+                remove = i;
+            ImGui::PopID();
+            ImGui::PopStyleColor();
+            ImGui::SameLine();
+            if (ImGui::Selectable(entities[i]->getName().c_str(), i == selected))
+            {
+                selected = i;
+                mParentUI->setEntity(layer->mEntities[i].get());
+            }
+
+            if (remove != -1)
+            {
+                mScene->removeEntity(entities[i].get());
+                mParentUI->setEntity(layer->mEntities.size() ? layer->mEntities[0].get() : nullptr);
+            }
+        }
+    }
     /***************************Entity List*************************/
     void EntityEditor::entity()
     {
+        auto size = ImGui::GetWindowContentRegionMax();
+        static bool openEntModal = false;
+        static int remove = -1;
+        auto layer = mScene->getCurrentLayer();
+
         ImGui::Separator();
         ImGui::Text(ICON_FA_LIST_OL " Entities");
         ImGui::SameLine();
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
-        static bool openEntModal = false;
         if (ImGui::Button(ICON_FA_PLUS_CIRCLE " ##ent"))
-        {
             openEntModal = true;
-        }
+        ImGui::PopStyleColor();
+        ImGui::Separator();
+        ImGui::BeginChild("ent-list", {size.x, size.y * 0.35f});
+        entityList();
+        ImGui::EndChild();
         if (openEntModal)
         {
             auto pos = ImGui::GetWindowPos();
@@ -118,34 +155,41 @@ namespace Plutus
                 mParentUI->setEntity(mScene->createEntity(newEntity));
             }
         }
-        ImGui::PopStyleColor();
-        ImGui::Separator();
-        static int selected = 0;
-        static int remove = -1;
-        auto layer = mScene->getCurrentLayer();
-        if (ImGui::Entities("Entities##list", layer->mEntities, selected, remove))
-        {
-            if (layer->mEntities.size() && layer->mEntities[selected] != nullptr)
-            {
-                mParentUI->setEntity(layer->mEntities[selected].get());
-            }
-        }
-        if (remove > -1)
-        {
-            mScene->removeEntity(layer->mEntities[remove].get());
-            if (layer->mEntities.size())
-            {
-                mParentUI->setEntity(layer->mEntities[0].get());
-            }
-            else
-            {
-                mParentUI->setEntity(nullptr);
-            }
-            remove = -1;
-        }
+        assetsList();
     }
 
-    std::string EntityEditor::LayerModal(char* label, bool* open)
+    void EntityEditor::assetsList()
+    {
+        auto size = ImGui::GetWindowContentRegionMax();
+        static bool open = false;
+
+        ImGui::Separator();
+        ImGui::Text("Assets List");
+        ImGui::SameLine();
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
+        if (ImGui::Button(ICON_FA_PLUS_CIRCLE " ##asset"))
+            open = true;
+        ImGui::Separator();
+        ImGui::BeginChild("assets-list", {0, 0});
+        std::string toRemove;
+        for (auto &tex : AssetManager::get()->mTextures->mTileSets)
+        {
+
+            if (ImGui::Button((ICON_FA_TRASH_ALT + std::string(" ##") + tex.first).c_str()))
+                toRemove = tex.first;
+
+            ImGui::SameLine();
+            ImGui::Text((tex.first).c_str());
+        }
+        ImGui::PopStyleColor();
+        ImGui::EndChild();
+        if (!toRemove.empty())
+            AssetManager::get()->mTextures->removeTexture(toRemove);
+
+        TextureModal("Add texture##asset", open);
+    }
+
+    std::string EntityEditor::LayerModal(char *label, bool *open)
     {
         std::string result = "";
         if (*open)

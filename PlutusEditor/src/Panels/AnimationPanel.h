@@ -13,6 +13,6 @@ namespace Plutus
         void draw(Entity *ent);
 
     private:
-        void SequenceEditor(bool &show);
+        void SequenceEditor(bool &show, Animation &anim);
     };
 }

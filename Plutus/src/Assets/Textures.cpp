@@ -3,6 +3,7 @@
 #include <iostream>
 #include <filesystem>
 #include <cstdio>
+#include <algorithm>
 
 namespace Plutus
 {
@@ -74,6 +75,13 @@ namespace Plutus
         }
 
         return &mTileSets[id];
+    }
+
+    void Textures::removeTexture(const std::string &id)
+    {
+        auto tex = mTileSets[id];
+        mTileSets.erase(id);
+        glDeleteTextures(1, &tex.mTexture.id);
     }
 
     void Textures::cleanUp()

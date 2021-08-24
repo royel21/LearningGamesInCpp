@@ -2,6 +2,7 @@
 #include <ECS/Scene.h>
 #include <imgui.h>
 #include "ImGuiEx.h"
+#include <Assets/Textures.h>
 
 #define ZeroMem(arr, val) std::memset(arr, val, sizeof(arr))
 
@@ -23,14 +24,25 @@ namespace Plutus
                 mSeq = {};
                 ZeroMem(name, 0);
             }
-            ImGui::PopStyleColor();
 
             ImGui::SameLine();
             auto it = sequences.begin();
             static std::string selected = it != sequences.end() ? it->first : "";
             ImGui::PushItemWidth(100);
             ImGui::ComboBox("Sequences", sequences, selected);
+
+            static auto textures = Plutus::Textures::get()->mTileSets;
+            static std::string selectedTex;
+            if (ImGui::Button(ICON_FA_PLUS_CIRCLE "##add-tex"))
+            {
+                newAnin = true;
+                mSeq = {};
+                ZeroMem(name, 0);
+            }
+            ImGui::SameLine();
+            ImGui::ComboBox("Textures", textures, selectedTex);
             ImGui::PopItemWidth();
+            ImGui::PopStyleColor();
 
             if (!selected.empty())
             {
@@ -39,25 +51,48 @@ namespace Plutus
                 // auto tilesets = mAManager->getTilesets();
                 // ImGui::ComboBox<TileSet>("TileSheet", tilesets, );
             }
-            SequenceEditor(newAnin);
+            SequenceEditor(newAnin, animate);
         }
     }
 
-    void AnimationPanel::SequenceEditor(bool &show)
+    void AnimationPanel::SequenceEditor(bool &show, Animation &anim)
     {
         if (show)
         {
-            ImGui::BeginDialog("New Sequences", 280.0f, 200.0f);
-            ImGui::InputText("Name##anim", name, IM_ARRAYSIZE(name));
+            static int textureIndex = 0;
+            static char seqName[128];
+            static std::vector<int> seq;
 
-            ImGui::SetCursorPos({180.0f, 200.0f - 35.0f});
-            if (ImGui::Button("Save"))
+            ImGui::SetNextWindowSize({450.0f, 350.0f});
+            if (ImGui::Begin("New Sequence", &show))
             {
-                // animate.AddSequences(name);
-                show = false;
+                ImGui::InputText("Name##seq", seqName, IM_ARRAYSIZE(seqName));
+                auto &textures = anim.mTextures;
+                if (textures.size())
+                {
+                    ImGui::ComboBox<TileSet>("TileSheet", textures, textureIndex);
+                }
+                ImGui::End();
             }
-            ImGui::EndDialog(show);
+            else
+            {
+                textureIndex = 0;
+            }
         }
     }
 
 } // namespace Plutus
+
+/*
+ImGui::BeginDialog("New Sequences", 280.0f, 200.0f);
+ImGui::InputText("Name##anim", name, IM_ARRAYSIZE(name));
+
+ImGui::SetCursorPos({180.0f, 200.0f - 35.0f});
+if (ImGui::Button("Save"))
+{
+    // animate.AddSequences(name);
+    show = false;
+}
+ImGui::EndDialog(show);
+
+*/
