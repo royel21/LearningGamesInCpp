@@ -48,11 +48,9 @@ add_subdirectory(Plutus)
 
 find_package(OpenGL REQUIRED)
 
-message("${CMAKE_CXX_COMPILER_ID}")
+add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES})
 
-  add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES})
-
-  target_link_libraries(${PROJECT_NAME} PUBLIC Plutus)
+target_link_libraries(${PROJECT_NAME} PUBLIC Plutus)
 
 if(CMAKE_SYSTEM_NAME STREQUAL Emscripten)
   target_link_options(${PROJECT_NAME} --shell-file webbuild/game.html)
