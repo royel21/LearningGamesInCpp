@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <glm/glm.hpp>
+#include <functional>
 
 namespace Plutus
 {
@@ -23,12 +24,15 @@ namespace Plutus
 		std::unordered_map<std::string, bool> m_prevKeyMap;
 
 	public:
+		std::function<void(const char *)> onFileDrop = nullptr;
+
+	public:
 		Input();
-		static Input* getInstance();
+		static Input *getInstance();
 
 		void update();
 
-		void keyStateChange(const std::string& keyId, bool state);
+		void keyStateChange(const std::string &keyId, bool state);
 
 		void setMouseCoords(float x, float y);
 
@@ -45,7 +49,7 @@ namespace Plutus
 		glm::vec2 getMouseCoords() const { return m_mouseCoords; }
 
 	private:
-		bool wasKeyDown(const std::string& keyId);
+		bool wasKeyDown(const std::string &keyId);
 	};
 } // namespace Plutus
 

@@ -1,6 +1,8 @@
 #include "FileUtils.h"
 
 #include <windows.h>
+#include <filesystem>
+#include <unordered_map>
 
 namespace Plutus
 {
@@ -49,5 +51,15 @@ namespace Plutus
         }
         SetCurrentDirectory(currentDir);
         return success;
+    }
+
+    bool copyFile(const std::string &from, const std::string &to)
+    {
+        if (std::filesystem::exists(from))
+        {
+            auto name = std::filesystem::path(from).filename().string();
+            return std::filesystem::copy_file(from, "assets/textures/" + name);
+        }
+        return false;
     }
 } // namespace Plutus

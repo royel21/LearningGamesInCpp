@@ -16,6 +16,7 @@
 
 #include "ECS/Scene.h"
 #include <Platform/Windows/FileUtils.h>
+#include <cstdio>
 
 #define mapIn(x, min_in, max_in, min_out, max_out) (x - min_in) * (max_out - min_out) / (max_in - min_in) + min_out
 
@@ -31,6 +32,17 @@ namespace Plutus
 	EditorUI::EditorUI() : mVPColor(1, 1, 1, 1), mGridColor(0)
 	{
 		mInput = Input::getInstance();
+		if (!std::filesystem::exists("assets"))
+		{
+			std::filesystem::create_directories("assets/textures");
+			std::filesystem::create_directories("assets/audios");
+			std::filesystem::create_directories("assets/fonts");
+		}
+
+		Input::getInstance()->onFileDrop = [](const char *file)
+		{
+			std::printf("file: %s", file);
+		};
 	}
 
 	EditorUI::~EditorUI()
@@ -101,6 +113,7 @@ namespace Plutus
 		mScene->Init(mCamera);
 		mComPanel.setContext(mScene);
 		mEntityEditor.setContext(mScene, this);
+
 		loadRecents();
 	}
 
