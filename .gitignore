@@ -2,10 +2,7 @@
 /build/
 node_modules/
 Test/
-assets/sounds/
-assets/fonts/
-assets/textures
-assets/tilemaps/
+/assets
 webbuild/release/
 
 #files

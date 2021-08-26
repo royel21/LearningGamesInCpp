@@ -30,16 +30,17 @@ void EditorScreen::build()
 
 void EditorScreen::onEntry()
 {
+    mEditor = Plutus::EditorUI::getInstance();
+    mEditor->Init(&mCamera);
+
     mInput = Plutus::Input::getInstance();
+
     auto size = mEngine->getWindowSize();
-    mInput = Plutus::Input::getInstance();
+
     mCamera.init(static_cast<int>(size.x), static_cast<int>(size.y));
     mCamera.update();
 
     mTextLayer.Init(size.x, size.y, "./assets/fonts/Zoika.ttf", 28);
-
-    mEditor = Plutus::EditorUI::getInstance();
-    mEditor->Init(&mCamera);
 }
 
 void EditorScreen::update(float dt)

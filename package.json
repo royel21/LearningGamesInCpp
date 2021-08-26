@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "fs-extra": "^10.0.0",
     "http-server": "^13.0.0"
   },
   "scripts": {
