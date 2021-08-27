@@ -8,15 +8,17 @@
 
 namespace Plutus
 {
-	class Textures;
 	//Manage all the texture of the game
+	class Textures;
+
 	class AssetManager
 	{
 	public:
-		Textures* mTextures = nullptr;
+		Textures *mTextures = nullptr;
 
 	public:
-		static AssetManager* get();
+		static AssetManager *get();
+
 		~AssetManager();
 		void clearData();
 

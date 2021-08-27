@@ -11,7 +11,7 @@ namespace Plutus
 
     void TileMap::removeTexture(const std::string &texture)
     {
-        auto it = std::find_if(mTextures.begin(), mTextures.end(), [texture](const TileSet *tileset) -> bool
+        auto it = std::find_if(mTextures.begin(), mTextures.end(), [texture](const Texure *tileset) -> bool
                                { return tileset->name.compare(texture) == 0; });
         mTextures.erase(it);
     }

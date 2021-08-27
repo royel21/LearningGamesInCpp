@@ -66,7 +66,7 @@ namespace Plutus
         {
             static std::string selected = Textures::get()->mTileSets.begin()->first;
 
-            ImGui::ComboBox<TileSet>("TileSheet", Textures::get()->mTileSets, selected);
+            ImGui::ComboBox<Texure>("TileSheet", Textures::get()->mTileSets, selected);
             if (ImGui::Button("Create##Comp"))
             {
                 mEntity->addComponent<Sprite>(selected);
@@ -179,7 +179,7 @@ namespace Plutus
                 static std::string selected = sprite.mTextureId;
                 static int sc = 100;
                 static float scale = 1.0f;
-                ImGui::ComboBox<TileSet>("TileSheet", tilesets, selected);
+                ImGui::ComboBox<Texure>("TileSheet", tilesets, selected);
 
                 if (ImGui::ColorInt("Color", color))
                 {
@@ -192,7 +192,7 @@ namespace Plutus
                     scale = sc / 100.0f;
                 }
                 auto tileset = &tilesets[selected];
-                uint32_t id = tileset->mTexture.id;
+                uint32_t id = tileset->texId;
 
                 if (sprite.mTexId != id && id > 0)
                 {
@@ -201,7 +201,7 @@ namespace Plutus
                 }
 
                 static char text[120];
-                snprintf(text, 120, "Texure Size W:%d H:%d", tileset->mTexture.width, tileset->mTexture.height);
+                snprintf(text, 120, "Texure Size W:%d H:%d", tileset->texWidth, tileset->texHeight);
                 ImGui::Text(text);
                 ImGui::Separator();
                 if (tileset != NULL)
@@ -246,7 +246,7 @@ namespace Plutus
         }
     }
 
-    void ComponentPanel::drawCanvas(TileSet *tileset, float scale)
+    void ComponentPanel::drawCanvas(Texure *tileset, float scale)
     {
         ImDrawList *drawList = ImGui::GetWindowDrawList();
         auto size = ImGui::GetContentRegionAvail();
@@ -254,9 +254,9 @@ namespace Plutus
         ImVec2 cvPos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
         ImVec2 cv_destStart(cvPos.x, cvPos.y);
 
-        const int w = tileset->mTexture.width;
-        const int h = tileset->mTexture.height;
-        uint32_t id = tileset->mTexture.id;
+        const int w = tileset->texWidth;
+        const int h = tileset->texHeight;
+        uint32_t id = tileset->texId;
 
         ImVec2 cvDestEnd(cvPos.x + w * scale, cvPos.y + h * scale);
         ImGui::Image((void *)id, ImVec2(w * scale, h * scale));
@@ -339,12 +339,12 @@ namespace Plutus
         }
     }
 
-    void ComponentPanel::drawTexCoords(TileSet *tileset, float scale)
+    void ComponentPanel::drawTexCoords(Texure *tileset, float scale)
     {
 
-        const int w = tileset->mTexture.width;
-        const int h = tileset->mTexture.height;
-        uint32_t id = tileset->mTexture.id;
+        const int w = tileset->texWidth;
+        const int h = tileset->texHeight;
+        uint32_t id = tileset->texId;
 
         ImDrawList *drawList = ImGui::GetWindowDrawList();
         static ImVector<ImVec2> points;

@@ -52,6 +52,8 @@ void GameScreen::onEntry()
 
     Plutus::Textures::get()->addTexture("bats", "assets/textures/monster/bat.png", 3, 32, 32);
     Plutus::Textures::get()->addTexture("Player", "assets/textures/player1.png");
+    Plutus::Textures::get()->addTexture("cave", "assets/textures/goblin_cave.png", 8, 32, 32);
+
     auto player = mScene->createEntity("Player");
     player->addComponent<Plutus::Transform>(256.0f, h - 32.0f, 32, 32, 0.0f);
     player->addComponent<Plutus::Sprite>("Player");
@@ -73,6 +75,12 @@ void GameScreen::onEntry()
     anim.AddSequence("right", {{9, 10, 11}, 0, 120});
 
     anim.PlaySequence("down");
+
+    auto bed = mScene->createEntity("bed");
+    bed->addComponent<Plutus::Transform>(128.0f, h - 128.0f, 96, 96);
+    auto &sprite = bed->addComponent<Plutus::Sprite>("cave");
+    auto uv = Plutus::Textures::get()->getTexture("cave")->getUV(1, 10, 96, 96);
+    sprite.mUVCoord = uv;
 }
 
 void GameScreen::update(float dt)

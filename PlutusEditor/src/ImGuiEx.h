@@ -162,7 +162,7 @@ namespace ImGui
         return isSelected;
     }
 
-    inline bool TileSet(Plutus::TileSet *tileset, float scale, std::vector<glm::ivec3> &selected)
+    inline bool Texure(Plutus::Texure *tileset, float scale, std::vector<glm::ivec3> &selected)
     {
         bool isSelected = false;
         auto mInput = Plutus::Input::getInstance();
@@ -171,14 +171,14 @@ namespace ImGui
 
         ImVec2 cvPos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
         ImVec2 cv_destStart(cvPos.x, cvPos.y);
-        const int w = tileset->mTexture.width;
-        const int h = tileset->mTexture.height;
+        const int w = tileset->texWidth;
+        const int h = tileset->texHeight;
 
         ImVec2 cvDestEnd(cvPos.x + w * scale, cvPos.y + h * scale);
-        ImGui::Image((void *)tileset->mTexture.id, ImVec2(w * scale, h * scale));
+        ImGui::Image((void *)tileset->texId, ImVec2(w * scale, h * scale));
         {
             auto color = IM_COL32(255, 255, 255, 100);
-            if (tileset->mTexture.id)
+            if (tileset->texId)
             {
                 drawList->AddRect(cvPos, cvDestEnd, color);
             }

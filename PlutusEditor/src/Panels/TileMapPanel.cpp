@@ -46,7 +46,7 @@ namespace Plutus
             ImGui::OpenPopup(label);
             static char name[128];
             static std::string path = "", filename = "";
-            static TileSet *tilesheet = nullptr;
+            static Texure *tilesheet = nullptr;
             static int columns, tileWidth, tileHeight;
 
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
@@ -177,7 +177,7 @@ namespace Plutus
             if (mTileMap->mTextures.size() > 0)
             {
                 ImGui::PushItemWidth(110);
-                ImGui::ComboBox<TileSet>("TileSheet##mttexture", mTileMap->mTextures, mCurrentTexture);
+                ImGui::ComboBox<Texure>("TileSheet##mttexture", mTileMap->mTextures, mCurrentTexture);
                 ImGui::PopItemWidth();
                 ImGui::Separator();
 
@@ -193,7 +193,7 @@ namespace Plutus
                     {
                         mRotation = LIMIT(mRotation, 0.0f, 360.0f);
                     }
-                    ImGui::TileSet(mTileMap->mTextures[mCurrentTexture], 1, mTempTiles);
+                    ImGui::Texure(mTileMap->mTextures[mCurrentTexture], 1, mTempTiles);
                 }
 
                 if (mCurrentTile != nullptr && mMode == MODE_EDIT)
@@ -234,7 +234,7 @@ namespace Plutus
                 {
                     x = x;
                 }
-                renderer->submit(tex->mTexture.id, {x, y, w, h}, tex->getUV(tile.z), {}, mRotation);
+                renderer->submit(tex->texId, {x, y, w, h}, tex->getUV(tile.z), {}, mRotation);
             }
             renderer->end();
             mScene->enableShader();

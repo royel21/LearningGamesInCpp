@@ -268,8 +268,6 @@ namespace Plutus
 				mGridColor.z = color[2];
 				mGridColor.w = color[3];
 			}
-
-			ImGui::Separator();
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();

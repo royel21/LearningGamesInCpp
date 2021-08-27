@@ -49,7 +49,7 @@ namespace Plutus
                 auto &anim = sequences[selected];
                 //Textures
                 // auto tilesets = mAManager->getTilesets();
-                // ImGui::ComboBox<TileSet>("TileSheet", tilesets, );
+                // ImGui::ComboBox<Texure>("TileSheet", tilesets, );
             }
             SequenceEditor(newAnin, animate);
         }
@@ -70,7 +70,7 @@ namespace Plutus
                 auto &textures = anim.mTextures;
                 if (textures.size())
                 {
-                    ImGui::ComboBox<TileSet>("TileSheet", textures, textureIndex);
+                    ImGui::ComboBox<Texure>("TileSheet", textures, textureIndex);
                 }
                 ImGui::End();
             }

@@ -7,13 +7,17 @@
 
 namespace Plutus
 {
-    TileSet::TileSet(const std::string &id, int c, int w, int h, GLTexture tex, const std::string &_path) : name(id), mTexture(tex), path(_path)
+    Texure::Texure(const std::string &id, int c, int w, int h, GLTexture tex, const std::string &_path) : name(id), path(_path)
     {
         path = _path;
         tileWidth = w;
         tileHeight = h;
         columns = c;
         totalTiles = 0;
+        texWidth = tex.width;
+        texHeight = tex.height;
+        texId = tex.id;
+
         if (h)
         {
             totalTiles = static_cast<int>(floor(tex.width / w) * floor(tex.height / h));
@@ -29,27 +33,32 @@ namespace Plutus
         }
     }
 
-    void TileSet::calculateUV()
+    void Texure::calculateUV()
     {
-        uint32_t w = mTexture.width;
-        uint32_t h = mTexture.height;
-
         if (tileWidth > 0)
         {
-            mTexCount = columns * int(h / tileHeight);
+            mTexCount = columns * int(texHeight / tileHeight);
             for (int i = 0; i < mTexCount; i++)
             {
                 int y = i / columns;
                 int x = i % columns;
                 glm::vec4 UV;
-                UV.x = ((float)(x * tileWidth) / (float)w);
-                UV.y = ((float)(y * tileHeight + tileHeight) / (float)h);
-                UV.z = ((float)(x * tileWidth + tileWidth) / (float)w);
-                UV.w = ((float)(y * tileHeight) / (float)h);
+                UV.x = ((float)(x * tileWidth) / (float)texWidth);
+                UV.y = ((float)(y * tileHeight + tileHeight) / (float)texHeight);
+                UV.z = ((float)(x * tileWidth + tileWidth) / (float)texWidth);
+                UV.w = ((float)(y * tileHeight) / (float)texHeight);
                 uvs.push_back(UV);
             }
         }
     }
+
+    glm::vec4 Texure::getUV(float column, float row, float w, float h)
+    {
+        float xw = column * tileWidth;
+        float yh = row * tileHeight;
+        return {xw / texWidth, (yh + h) / texHeight, (xw + w) / texWidth, yh / texHeight};
+    }
+
     Textures *Textures::get()
     {
         static Textures textures;
@@ -61,17 +70,17 @@ namespace Plutus
         cleanUp();
     }
 
-    const TileSet *Textures::addTexture(const std::string &id, const std::string &path, GLint minFilter, GLint magFilter)
+    const Texure *Textures::addTexture(const std::string &id, const std::string &path, GLint minFilter, GLint magFilter)
     {
         return addTexture(id, path, 0, 0, 0, minFilter, magFilter);
     }
 
-    const TileSet *Textures::addTexture(const std::string &id, const std::string &path, int c, int w, int h, GLint minFilter, GLint magFilter)
+    const Texure *Textures::addTexture(const std::string &id, const std::string &path, int c, int w, int h, GLint minFilter, GLint magFilter)
     {
         auto mit = mTileSets.find(path);
         if (mit == mTileSets.end())
         {
-            mTileSets[id] = TileSet(id, c, w, h, loadTexture(path, minFilter, magFilter), path);
+            mTileSets[id] = Texure(id, c, w, h, loadTexture(path, minFilter, magFilter), path);
         }
 
         return &mTileSets[id];
@@ -81,14 +90,14 @@ namespace Plutus
     {
         auto tex = mTileSets[id];
         mTileSets.erase(id);
-        glDeleteTextures(1, &tex.mTexture.id);
+        glDeleteTextures(1, &tex.texId);
     }
 
     void Textures::cleanUp()
     {
         for (auto &tm : mTileSets)
         {
-            glDeleteTextures(1, &tm.second.mTexture.id);
+            glDeleteTextures(1, &tm.second.texId);
         }
         mTileSets.clear();
     }

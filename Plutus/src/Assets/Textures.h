@@ -16,7 +16,7 @@ namespace Plutus
         int height;
     };
 
-    struct TileSet
+    struct Texure
     {
         std::string name;
         std::string path;
@@ -24,21 +24,25 @@ namespace Plutus
         int tileWidth;
         int tileHeight;
         int totalTiles;
-        std::vector<glm::vec4> uvs;
         int mTexCount = 0;
-        GLTexture mTexture;
+        int texWidth = 0;
+        int texHeight = 0;
+        uint32_t texId = -1;
+        std::vector<glm::vec4> uvs;
 
-        TileSet() : columns(0), tileWidth(0), tileHeight(0) {}
+        Texure() : columns(0), tileWidth(0), tileHeight(0) {}
 
         /***
 		 *Create a texture atlas from the image from the tile width and height
 		 * @param id the Id of the texture
-		 * @param c count/total tile in the altas
-		 * @param tex reference to the texture
+		 * @param columns count/total tile in the altas
+		 * @param tex reference to a texture
 		 * **/
-        TileSet(const std::string &id, int c, int w, int h, GLTexture tex, const std::string &_path);
+        Texure(const std::string &id, int columns, int w, int h, GLTexture tex, const std::string &_path);
 
-        inline const glm::vec4 getUV(int texcoord)
+        glm::vec4 getUV(float column, float row, float w, float h);
+
+        glm::vec4 getUV(int texcoord)
         {
             return texcoord < mTexCount ? uvs[texcoord] : glm::vec4();
         }
@@ -50,15 +54,15 @@ namespace Plutus
     class Textures
     {
     public:
-        std::unordered_map<std::string, TileSet> mTileSets;
+        std::unordered_map<std::string, Texure> mTileSets;
 
     public:
         static Textures *get();
         ~Textures();
-        TileSet *getTexture(const std::string &id) { return &mTileSets[id]; }
+        Texure *getTexture(const std::string &id) { return &mTileSets[id]; }
 
-        const TileSet *addTexture(const std::string &id, const std::string &path, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
-        const TileSet *addTexture(const std::string &id, const std::string &path, int c, int w, int h, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
+        const Texure *addTexture(const std::string &id, const std::string &path, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
+        const Texure *addTexture(const std::string &id, const std::string &path, int c, int w, int h, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
         void removeTexture(const std::string &id);
 
         void cleanUp();

@@ -22,7 +22,7 @@ namespace Plutus
             @param h Height
             @param r Rotation
         */
-        Transform(float _x = 0, float _y = 0, int _w = 0, int _h = 0, float _r = 0) : x(_x), y(_y), w(_w), h(_h), r(_r)
+        Transform(float _x = 0, float _y = 0, int _w = 0, int _h = 0, float _r = 0) : x(_x), y(_y), w(_w), h(_h), r(-_r)
         {
         }
 

@@ -34,7 +34,7 @@ namespace Plutus
         float currentTime = 0.0f;
         std::string currentSeq;
         std::unordered_map<std::string, Sequence> mSequences;
-        std::vector<TileSet *> mTextures;
+        std::vector<Texure *> mTextures;
         Entity *mEnt = nullptr;
     };
 } // namespace Plutus

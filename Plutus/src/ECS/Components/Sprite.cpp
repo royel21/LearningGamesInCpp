@@ -9,6 +9,6 @@ namespace Plutus
 
     Sprite::Sprite(std::string textId) : mUVCoord(0, 0, 1, 1), mTextureId(textId)
     {
-        mTexId = Textures::get()->getTexture(textId)->mTexture.id;
+        mTexId = Textures::get()->getTexture(textId)->texId;
     }
 } // namespace Plutus

@@ -9,6 +9,7 @@
 #include <Core/type.h>
 #include <entt.hpp>
 #include <algorithm>
+#include <Assets/Textures.h>
 
 namespace Plutus
 {
@@ -117,6 +118,7 @@ namespace Plutus
         Layer *mCurrentLayer;
 
         std::unordered_map<std::string, Layer> mLayers;
+        std::unordered_map<char *, Texure> mAssets;
         friend class Entity;
         friend class System;
     };

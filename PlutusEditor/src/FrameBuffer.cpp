@@ -6,7 +6,7 @@ namespace Plutus
 {
     void FrameBuffer::init(int w, int h, bool reset)
     {
-        mSize = { w, h };
+        mSize = {w, h};
         if (reset)
         {
             cleanUp();
@@ -19,12 +19,10 @@ namespace Plutus
         glGenTextures(1, &textId);
         glBindTexture(GL_TEXTURE_2D, textId);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         //See https://en.wikipedia.org/wiki/Mipmap
-        // glGenerateMipmap(GL_TEXTURE_2D);
+        glGenerateMipmap(GL_TEXTURE_2D);
         //attach the buffer to the texture
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textId, 0);
         // Create render buffer for store the depth info
@@ -62,11 +60,11 @@ namespace Plutus
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    void FrameBuffer::cleanUp() {
+    void FrameBuffer::cleanUp()
+    {
         glDeleteFramebuffers(1, &fboId);
         glDeleteTextures(1, &textId);
         glDeleteRenderbuffers(1, &rboId);
     }
 
 } // namespace Plutus
-

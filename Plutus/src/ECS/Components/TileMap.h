@@ -46,8 +46,8 @@ namespace Plutus
         int mTileWidth;
         int mTileHeight;
         std::vector<Tile> mTiles;
-        TileSet *mTileset = nullptr;
-        std::vector<TileSet *> mTextures;
+        Texure *mTileset = nullptr;
+        std::vector<Texure *> mTextures;
 
         TileMap() = default;
         TileMap(int tileWidth, int tileHeight) : mTileWidth(tileWidth), mTileHeight(tileHeight) {}

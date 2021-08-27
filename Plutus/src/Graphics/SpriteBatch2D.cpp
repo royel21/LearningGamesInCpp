@@ -81,7 +81,7 @@ namespace Plutus
 		if (flipY)
 			std::swap(uv.y, uv.w);
 
-		if (r > 0)
+		if (r)
 		{
 			glm::vec2 halfDim(rect.z / 2, rect.w / 2);
 

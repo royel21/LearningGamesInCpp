@@ -11,7 +11,7 @@
 namespace Plutus
 {
     class Entity;
-    struct TileSet;
+    struct Texure;
     class Input;
     class Scene;
     class EditorUI;
@@ -42,9 +42,9 @@ namespace Plutus
         void drawSprite();
         void drawScript();
 
-        void drawCanvas(TileSet *tileset, float scale);
-        void drawTexCoords(TileSet *tileset, float scale);
-        void drawTilesetProps(TileSet *tileset);
+        void drawCanvas(Texure *tileset, float scale);
+        void drawTexCoords(Texure *tileset, float scale);
+        void drawTilesetProps(Texure *tileset);
         bool showCreateComp(bool &open);
         std::vector<std::string> getCompList();
 

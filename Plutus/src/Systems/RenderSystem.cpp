@@ -46,7 +46,7 @@ namespace Plutus
                             {
                                 auto tileset = map.mTextures[tile.texture];
                                 glm::vec4 rect{tile.x, tile.y, w, h};
-                                mRenderer.submit(tileset->mTexture.id, rect, tileset->getUV(tile.texcoord), {tile.color}, tile.rotate, tile.flipX, tile.flipY);
+                                mRenderer.submit(tileset->texId, rect, tileset->getUV(tile.texcoord), {tile.color}, tile.rotate, tile.flipX, tile.flipY);
                             }
                         }
                     }
