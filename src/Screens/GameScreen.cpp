@@ -66,19 +66,19 @@ void GameScreen::onEntry()
     bat->addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
     bat->addComponent<Plutus::Sprite>("bats");
 
-    auto &anim = bat->addComponent<Plutus::Animation>(bat);
+    auto& anim = bat->addComponent<Plutus::Animation>(bat);
 
     anim.addTexture("bats");
-    anim.AddSequence("up", {{0, 1, 2}, 0, 120});
-    anim.AddSequence("left", {{3, 4, 5}, 0, 120});
-    anim.AddSequence("down", {{6, 7, 8}, 0, 120});
-    anim.AddSequence("right", {{9, 10, 11}, 0, 120});
+    anim.AddSequence("up", { {0, 1, 2}, 0, 120 });
+    anim.AddSequence("left", { {3, 4, 5}, 0, 120 });
+    anim.AddSequence("down", { {6, 7, 8}, 0, 120 });
+    anim.AddSequence("right", { {9, 10, 11}, 0, 120 });
 
     anim.PlaySequence("down");
 
     auto bed = mScene->createEntity("bed");
-    bed->addComponent<Plutus::Transform>(128.0f, h - 128.0f, 96, 96);
-    auto &sprite = bed->addComponent<Plutus::Sprite>("cave");
+    bed->addComponent<Plutus::Transform>(128.0f, h - 256.0f, 128, 128);
+    auto& sprite = bed->addComponent<Plutus::Sprite>("cave");
     auto uv = Plutus::Textures::get()->getTexture("cave")->getUV(1, 10, 96, 96);
     sprite.mUVCoord = uv;
 }
@@ -108,7 +108,7 @@ void GameScreen::draw()
     mScene->draw();
     char text[20];
     snprintf(text, 20, "%.1f FPS", mEngine->getFPS());
-    mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, {0, 0, 0.7f, 1});
+    mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, { 0, 0, 0.7f, 1 });
 }
 
 void GameScreen::onScreenResize(int w, int h)

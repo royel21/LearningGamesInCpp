@@ -1,6 +1,10 @@
 #define SDL_MAIN_HANDLED
 #include "App.h"
 
+extern "C"
+{
+    _declspec(dllexport) unsigned long NvOptimusEnablement = 0x00000001;
+}
 int main(int argc, char const* argv[])
 {
 

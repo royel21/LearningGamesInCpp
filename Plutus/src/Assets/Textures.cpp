@@ -7,7 +7,14 @@
 
 namespace Plutus
 {
-    Texure::Texure(const std::string &id, int c, int w, int h, GLTexture tex, const std::string &_path) : name(id), path(_path)
+
+    Textures* Textures::get()
+    {
+        static Textures textures;
+        return &textures;
+    }
+
+    Texure::Texure(const std::string& id, int c, int w, int h, GLTexture tex, const std::string& _path) : name(id), path(_path)
     {
         path = _path;
         tileWidth = w;
@@ -29,7 +36,7 @@ namespace Plutus
         else
         {
             mTexCount = 1;
-            uvs.push_back({0, 0, 1, 1});
+            uvs.push_back({ 0, 0, 1, 1 });
         }
     }
 
@@ -56,13 +63,7 @@ namespace Plutus
     {
         float xw = column * tileWidth;
         float yh = row * tileHeight;
-        return {xw / texWidth, (yh + h) / texHeight, (xw + w) / texWidth, yh / texHeight};
-    }
-
-    Textures *Textures::get()
-    {
-        static Textures textures;
-        return &textures;
+        return { xw / texWidth, (yh + h) / texHeight, (xw + w) / texWidth, yh / texHeight };
     }
 
     Textures::~Textures()
@@ -70,12 +71,12 @@ namespace Plutus
         cleanUp();
     }
 
-    const Texure *Textures::addTexture(const std::string &id, const std::string &path, GLint minFilter, GLint magFilter)
+    const Texure* Textures::addTexture(const std::string& id, const std::string& path, GLint minFilter, GLint magFilter)
     {
         return addTexture(id, path, 0, 0, 0, minFilter, magFilter);
     }
 
-    const Texure *Textures::addTexture(const std::string &id, const std::string &path, int c, int w, int h, GLint minFilter, GLint magFilter)
+    const Texure* Textures::addTexture(const std::string& id, const std::string& path, int c, int w, int h, GLint minFilter, GLint magFilter)
     {
         auto mit = mTileSets.find(path);
         if (mit == mTileSets.end())
@@ -86,7 +87,7 @@ namespace Plutus
         return &mTileSets[id];
     }
 
-    void Textures::removeTexture(const std::string &id)
+    void Textures::removeTexture(const std::string& id)
     {
         auto tex = mTileSets[id];
         mTileSets.erase(id);
@@ -95,7 +96,7 @@ namespace Plutus
 
     void Textures::cleanUp()
     {
-        for (auto &tm : mTileSets)
+        for (auto& tm : mTileSets)
         {
             glDeleteTextures(1, &tm.second.texId);
         }
@@ -110,7 +111,7 @@ namespace Plutus
         filePath = std::filesystem::absolute(path).string();
 #endif
         int BPP;
-        uint8_t *out = stbi_load(filePath.c_str(), &texture.width, &texture.height, &BPP, 4);
+        uint8_t* out = stbi_load(filePath.c_str(), &texture.width, &texture.height, &BPP, 4);
 
         glGenTextures(1, &texture.id);
         //link the image to a texture in the gpu texture array

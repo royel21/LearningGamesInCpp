@@ -79,7 +79,7 @@ void GameScreen::draw()
     // std::printf("end: %llu\n", Plutus::Timer::millis() - start);
     char text[20];
     snprintf(text, 20, "%.1f FPS", mEngine->getFPS());
-    mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, {1, 0, 0, 1});
+    mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, { 1, 0, 0, 1 });
     mTextLayer.drawString("This is a pretty large text for testing purpose and some more test", 5.0f, 30.0f);
     glClearColor(0, 0, 0, 1);
 }
