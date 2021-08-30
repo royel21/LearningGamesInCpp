@@ -4,11 +4,12 @@
 
 namespace Plutus
 {
-    void FrameBuffer::init(int w, int h, bool reset)
+    void FrameBuffer::init(int w, int h)
     {
         mSize = {w, h};
-        if (reset)
+        if (isDirty)
         {
+            isDirty = false;
             cleanUp();
         }
         //Grenerate a frame buffer
@@ -37,7 +38,6 @@ namespace Plutus
         glViewport(0, 0, w, h);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
-        isDirty = false;
     }
 
     FrameBuffer::~FrameBuffer()
@@ -48,7 +48,7 @@ namespace Plutus
     void FrameBuffer::bind()
     {
         if (isDirty)
-            init(mSize.x, mSize.y, true);
+            init(mSize.x, mSize.y);
 
         glBindFramebuffer(GL_FRAMEBUFFER, fboId);
         glBindTexture(GL_TEXTURE_2D, textId);

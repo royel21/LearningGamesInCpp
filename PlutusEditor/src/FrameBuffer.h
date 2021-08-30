@@ -11,11 +11,11 @@ namespace Plutus
     public:
         FrameBuffer() = default;
         ~FrameBuffer();
-        void init(int width, int height, bool reset = false);
+        void init(int width, int height);
         void bind();
         void unBind();
 
-        void resize(const glm::ivec2& size)
+        void resize(const glm::ivec2 &size)
         {
             isDirty = true;
             mSize = size;
@@ -24,7 +24,7 @@ namespace Plutus
         void resize(int w, int h)
         {
             isDirty = true;
-            mSize = { w, h };
+            mSize = {w, h};
         }
 
         glm::vec2 getSize() { return mSize; }
@@ -48,6 +48,5 @@ namespace Plutus
         glm::ivec2 mSize;
     };
 } // namespace Plutus
-
 
 #endif

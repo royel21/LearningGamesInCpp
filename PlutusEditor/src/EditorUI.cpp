@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <GLFW/glfw3.h>
 
+#include <glm/gtc/type_ptr.hpp>
 #include "Serialize/SceneSerializer.h"
 #include "Serialize/Serialize.h"
 
@@ -79,7 +80,6 @@ namespace Plutus
 	{
 
 		mCamera = cam;
-		mFb.init(static_cast<int>(cam->getScaleScreen().x), static_cast<int>(cam->getScaleScreen().y));
 		mRender.init(cam);
 
 		IMGUI_CHECKVERSION();
@@ -94,7 +94,6 @@ namespace Plutus
 		ImGui_ImplOpenGL3_Init("#version 130");
 
 		ImGui::CaptureMouseFromApp();
-		// mImGui_IO->FontDefault =
 		mDebugRender = Plutus::DebugRender::geInstances();
 		mDebugRender->init(cam);
 		//Settup font
@@ -114,6 +113,7 @@ namespace Plutus
 		mComPanel.setContext(mScene);
 		mEntityEditor.setContext(mScene, this);
 
+		mFb.init(static_cast<int>(cam->getScaleScreen().x), static_cast<int>(cam->getScaleScreen().y));
 		loadRecents();
 	}
 
@@ -208,17 +208,13 @@ namespace Plutus
 		ImGui::Columns(3, NULL, true);
 		ImGui::Text("ViewPort Props");
 		ImGui::PushItemWidth(150);
-		static auto size = mFb.getSize();
+
 		if (ImGui::InputFloat("Zoom##vp", &mVPScale, 0.05f))
 		{
 			mVPScale = CHECKLIMIT(mVPScale, 0.20f, 6.0f);
 		}
 
-		static float bg[] = {mVPColor.x, mVPColor.y, mVPColor.z, mVPColor.w};
-		if (ImGui::ColorEdit4("VP BG", bg, ImGuiColorEditFlags_AlphaBar))
-		{
-			mVPColor = glm::vec4(bg[0], bg[1], bg[2], bg[3]);
-		}
+		ImGui::ColorEdit4("VP BG", glm::value_ptr(mVPColor), ImGuiColorEditFlags_AlphaBar);
 		ImGui::PopItemWidth();
 		ImGui::NextColumn();
 		ImGui::Text("Camera Control");

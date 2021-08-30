@@ -19,7 +19,6 @@ namespace Plutus
 {
 	class Camera2D;
 	class Scene;
-	class AssetManager;
 	class DebugRender;
 	class Input;
 	class Entity;
@@ -40,7 +39,6 @@ namespace Plutus
 		ImGuiIO *mImGui_IO = nullptr;
 		DebugRender *mDebugRender = nullptr;
 		Input *mInput = nullptr;
-		AssetManager *mAssets = nullptr;
 		SpriteBatch2D mRender;
 		FrameBuffer mFb;
 		ImVec2 mViewportSize;
@@ -52,7 +50,6 @@ namespace Plutus
 		Entity *mEnt = nullptr;
 
 		bool mMoveCam = false;
-		bool m_moveCamera = false;
 
 		glm::vec2 lastCoords;
 		glm::vec2 lastCamPos;
@@ -66,8 +63,7 @@ namespace Plutus
 		ComponentPanel mComPanel;
 
 	public:
-		std::vector<ImVec2>
-			Selectedtiles;
+		std::vector<ImVec2> Selectedtiles;
 
 	public:
 		static EditorUI *getInstance();
@@ -91,7 +87,6 @@ namespace Plutus
 		const glm::vec2 &getLastCoords() { return lastCoords; }
 
 		inline void setLastCoord(const glm::vec2 &coords) { lastCoords = coords; }
-		inline bool moveCamera() { return m_moveCamera; }
 		inline bool isHover() { return ImGui::IsAnyItemHovered(); }
 		inline void drawDemo() { ImGui::ShowDemoWindow(); }
 		void viewPortBGColor(float r, float b, float g, float a);
