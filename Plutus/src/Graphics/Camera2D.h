@@ -13,7 +13,7 @@ namespace Plutus
 		int mScreenHeight = 0;
 		bool mNeedsMatrixUpdate = true;
 		float mScale = 1.0f;
-		glm::vec2 mCamPos = { 0,0 };
+		glm::vec2 mCamPos = {0, 0};
 		glm::mat4 mCameraMatrix = glm::mat4(0);
 		glm::mat4 mOrthoMatrix = glm::mat4(0);
 
@@ -37,7 +37,7 @@ namespace Plutus
 		}
 		//set camera position and shedule a update
 		//@param newPosition glm vec2 position
-		void setPosition(const glm::vec2& newPosition)
+		void setPosition(const glm::vec2 &newPosition)
 		{
 			mCamPos = newPosition;
 			mNeedsMatrixUpdate = true;
@@ -47,13 +47,13 @@ namespace Plutus
 			@param w Width of the camera in pixel
 			@param h height of the camera in pixel
 		*/
-		void setWindowSize(float w, float h) { init(static_cast<int>(w), static_cast<int>(h)); }
+		void setWindowSize(int w, int h) { init(w, h); }
 
 		/*
 			change the camera to a new with and height
 			@param size glm vec2 size
 		*/
-		void setWindowSize(const glm::vec2& size) { init(static_cast<int>(size.x), static_cast<int>(size.y)); }
+		void setWindowSize(const glm::ivec2 &size) { init(size.x, size.y); }
 		// return the current scale value
 		float getScale() { return mScale; }
 		// zoom the view port
@@ -69,7 +69,7 @@ namespace Plutus
 		// return the 4x4 camera matrix
 		glm::mat4 getCameraMatrix() { return mCameraMatrix; }
 		//Convert screen coordination to camera coordination and return it
-		glm::vec2 convertScreenToWold(float x, float y) { return convertScreenToWold({ x, y }); };
+		glm::vec2 convertScreenToWold(float x, float y) { return convertScreenToWold({x, y}); };
 		//Convert screen coordination to camera coordination and return it
 		glm::vec2 convertScreenToWold(glm::vec2 screenCoords);
 

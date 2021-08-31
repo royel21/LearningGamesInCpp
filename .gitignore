@@ -9,3 +9,4 @@ webbuild/release/
 *.o
 *.lock
 imgui.ini
+pe-config.json

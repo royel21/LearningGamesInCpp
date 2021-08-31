@@ -34,10 +34,6 @@ int GameScreen::getPrevScreentIndex() const
 
 void GameScreen::build()
 {
-}
-
-void GameScreen::onEntry()
-{
     mEngine->setFPS(60);
     const int w = mEngine->getWidth();
     const int h = mEngine->getHeight();
@@ -52,6 +48,10 @@ void GameScreen::onEntry()
     mInput = Plutus::Input::getInstance();
     auto start = Plutus::Timer::millis();
     Plutus::SceneLoader::loadFromJson("assets/scenes/scene1.json", mScene);
+}
+
+void GameScreen::onEntry()
+{
 }
 
 void GameScreen::update(float dt)
@@ -79,7 +79,7 @@ void GameScreen::draw()
     // std::printf("end: %llu\n", Plutus::Timer::millis() - start);
     char text[20];
     snprintf(text, 20, "%.1f FPS", mEngine->getFPS());
-    mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, { 1, 0, 0, 1 });
+    mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, {1, 0, 0, 1});
     mTextLayer.drawString("This is a pretty large text for testing purpose and some more test", 5.0f, 30.0f);
     glClearColor(0, 0, 0, 1);
 }

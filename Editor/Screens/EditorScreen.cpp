@@ -26,21 +26,20 @@ int EditorScreen::getPrevScreentIndex() const
 
 void EditorScreen::build()
 {
+    mInput = Plutus::Input::getInstance();
+
+    auto size = static_cast<glm::ivec2>(mEngine->getWindowSize());
+    mCamera.init(size.x, size.y);
+    mCamera.update();
+
+    mEditor = Plutus::EditorUI::getInstance();
+    mEditor->Init(&mCamera);
+
+    mTextLayer.Init(size.x, size.y, "./assets/fonts/Zoika.ttf", 28);
 }
 
 void EditorScreen::onEntry()
 {
-    mEditor = Plutus::EditorUI::getInstance();
-    mEditor->Init(&mCamera);
-
-    mInput = Plutus::Input::getInstance();
-
-    auto size = mEngine->getWindowSize();
-
-    mCamera.init(static_cast<int>(size.x), static_cast<int>(size.y));
-    mCamera.update();
-
-    mTextLayer.Init(size.x, size.y, "./assets/fonts/Zoika.ttf", 28);
 }
 
 void EditorScreen::update(float dt)
@@ -80,9 +79,9 @@ void EditorScreen::onScreenResize(int w, int h)
 
 void EditorScreen::onExit()
 {
-    mEditor->destroy();
 }
 
 void EditorScreen::destroy()
 {
+    mEditor->destroy();
 }

@@ -91,7 +91,7 @@ namespace Plutus
 		ImGui::StyleColorsDark();
 		// Setup Platform/Renderer backends
 		ImGui_ImplGlfw_InitForOpenGL(glfwGetCurrentContext(), true);
-		ImGui_ImplOpenGL3_Init("#version 130");
+		ImGui_ImplOpenGL3_Init("#version 150");
 
 		ImGui::CaptureMouseFromApp();
 		mDebugRender = Plutus::DebugRender::geInstances();
@@ -113,7 +113,8 @@ namespace Plutus
 		mComPanel.setContext(mScene);
 		mEntityEditor.setContext(mScene, this);
 
-		mFb.init(static_cast<int>(cam->getScaleScreen().x), static_cast<int>(cam->getScaleScreen().y));
+		auto size = cam->getScaleScreen();
+		mFb.init(static_cast<int>(size.x), static_cast<int>(size.y));
 		loadRecents();
 	}
 
