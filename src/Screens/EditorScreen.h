@@ -2,6 +2,12 @@
 
 #include "Core/IGameScreen.h"
 #include "Input/Input.h"
+#include <Graphics/Shader.h>
+#include <Graphics/Camera2D.h>
+#include <Graphics/SpriteBatch2D.h>
+#include <Assets/Textures.h>
+
+#include "TTF.h"
 
 class EditorScreen : public Plutus::IGameScreen
 {
@@ -24,5 +30,10 @@ public:
     void onScreenResize(int w, int h) override;
 
 private:
-    Plutus::Input *mInput = nullptr;
+    Plutus::Input* mInput = nullptr;
+    Plutus::Shader mShader;
+    Plutus::Camera2D mCamera;
+    Plutus::SpriteBatch2D mRender;
+    Plutus::TTF mTTF;
+    Plutus::Textures* mTextures;
 };

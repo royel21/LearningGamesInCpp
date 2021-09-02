@@ -26,7 +26,7 @@ namespace Plutus
 		delete mIBO;
 	}
 
-	void SpriteBatch2D::init(Camera2D *camera)
+	void SpriteBatch2D::init(Camera2D* camera)
 	{
 		mCamera = camera;
 		glGenVertexArrays(1, &mVAO);
@@ -36,17 +36,17 @@ namespace Plutus
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 		//Shader position
 		glEnableVertexAttribArray(SHADER_VERTEX_INDEX);
-		glVertexAttribPointer(SHADER_VERTEX_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void *)NULL);
+		glVertexAttribPointer(SHADER_VERTEX_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void*)NULL);
 		//Shader UV "Texture coordinate"
 		glEnableVertexAttribArray(SHADER_UV_INDEX);
-		glVertexAttribPointer(SHADER_UV_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void *)offsetof(Vertex, uv));
+		glVertexAttribPointer(SHADER_UV_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void*)offsetof(Vertex, uv));
 		//Shader Color
 		glEnableVertexAttribArray(SHADER_COLOR_INDEX);
-		glVertexAttribPointer(SHADER_COLOR_INDEX, 4, GL_UNSIGNED_BYTE, GL_TRUE, RENDERER_VERTEX_SIZE, (void *)offsetof(Vertex, color));
+		glVertexAttribPointer(SHADER_COLOR_INDEX, 4, GL_UNSIGNED_BYTE, GL_TRUE, RENDERER_VERTEX_SIZE, (void*)offsetof(Vertex, color));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		GLuint *indices = new GLuint[RENDERER_INDICES_SIZE];
+		GLuint* indices = new GLuint[RENDERER_INDICES_SIZE];
 
 		int offest = 0;
 		for (size_t i = 0; i < RENDERER_INDICES_SIZE; i += 6)
@@ -68,10 +68,9 @@ namespace Plutus
 
 	void SpriteBatch2D::begin()
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 	}
 
-	void SpriteBatch2D::createVertice(const glm::vec4 &rect, const glm::vec4 &_uv, ColorRGBA8 c, float r, bool flipX, bool flipY)
+	void SpriteBatch2D::createVertice(const glm::vec4& rect, const glm::vec4& _uv, ColorRGBA8 c, float r, bool flipX, bool flipY)
 	{
 		glm::vec4 uv(_uv);
 
@@ -95,17 +94,17 @@ namespace Plutus
 			br = rotatePoint(br, r) + halfDim;
 			tr = rotatePoint(tr, r) + halfDim;
 
-			vertices.push_back({rect.x + tl.x, rect.y + tl.y, uv.x, uv.w, c});
-			vertices.push_back({rect.x + bl.x, rect.y + bl.y, uv.x, uv.y, c});
-			vertices.push_back({rect.x + br.x, rect.y + br.y, uv.z, uv.y, c});
-			vertices.push_back({rect.x + tr.x, rect.y + tr.y, uv.z, uv.w, c});
+			vertices.push_back({ rect.x + tl.x, rect.y + tl.y, uv.x, uv.w, c });
+			vertices.push_back({ rect.x + bl.x, rect.y + bl.y, uv.x, uv.y, c });
+			vertices.push_back({ rect.x + br.x, rect.y + br.y, uv.z, uv.y, c });
+			vertices.push_back({ rect.x + tr.x, rect.y + tr.y, uv.z, uv.w, c });
 		}
 		else
 		{
-			vertices.push_back({rect.x, rect.y, uv.x, uv.w, c});
-			vertices.push_back({rect.x, rect.y + rect.w, uv.x, uv.y, c});
-			vertices.push_back({rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, c});
-			vertices.push_back({rect.x + rect.z, rect.y, uv.z, uv.w, c});
+			vertices.push_back({ rect.x, rect.y, uv.x, uv.w, c });
+			vertices.push_back({ rect.x, rect.y + rect.w, uv.x, uv.y, c });
+			vertices.push_back({ rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, c });
+			vertices.push_back({ rect.x + rect.z, rect.y, uv.z, uv.w, c });
 		}
 	}
 
@@ -117,17 +116,15 @@ namespace Plutus
 
 	void SpriteBatch2D::end()
 	{
-		int count = 0;
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(Vertex), vertices.data());
+		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
 
 		mIBO->bind();
 		glBindVertexArray(mVAO);
 		for (size_t i = 0; i < mRenderBatches.size(); i++)
 		{
-			count++;
 			glBindTexture(GL_TEXTURE_2D, mRenderBatches[i].texture);
-			glDrawElements(GL_TRIANGLES, mRenderBatches[i].numVertices, GL_UNSIGNED_INT, (void *)(mRenderBatches[i].offset * sizeof(GLuint)));
+			glDrawElements(GL_TRIANGLES, mRenderBatches[i].numVertices, GL_UNSIGNED_INT, (void*)(mRenderBatches[i].offset * sizeof(GLuint)));
 		}
 
 		//Clean up
@@ -145,8 +142,8 @@ namespace Plutus
 		float rad = DEC2RA(angle);
 		float cosAng = cos(rad);
 		float sinAng = sin(rad);
-		return {pos.x * cosAng - pos.y * sinAng,
-				pos.x * sinAng + pos.y * cosAng};
+		return { pos.x * cosAng - pos.y * sinAng,
+				pos.x * sinAng + pos.y * cosAng };
 	}
 
 } // namespace Plutus

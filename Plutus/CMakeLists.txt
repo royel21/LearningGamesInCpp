@@ -29,6 +29,7 @@ include_directories(libs/rapidjson/include)
 include_directories(libs/box2d/include)
 include_directories(libs/glfw/include)
 include_directories(libs/freetype/include)
+include_directories(libs/freetypegl)
 
 add_subdirectory(libs/glad)
 add_subdirectory(libs/lua)
@@ -39,6 +40,7 @@ add_subdirectory(libs/sol3)
 add_subdirectory(libs/box2d)
 add_subdirectory(libs/glfw)
 add_subdirectory(libs/freetype)
+add_subdirectory(libs/freetypegl)
 
 add_library(entt INTERFACE libs/Entt/entt.hpp)
 
@@ -47,7 +49,7 @@ find_package(OpenGL REQUIRED)
 set(LIB_DIR ${PROJECT_SOURCE_DIR}/libs/)
 
 # Link the library to the project
-link_libraries(glad lua stb spdlog entt rapidjson box2d sol3 glfw freetype opengl32)
+link_libraries(glad lua stb spdlog entt rapidjson box2d sol3 glfw freetype freetypegl opengl32)
 
 add_library(Plutus STATIC ${PLUTUS_SRC} ${PLUTUS_INC})
 

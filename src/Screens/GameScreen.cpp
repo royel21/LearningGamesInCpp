@@ -46,7 +46,7 @@ void GameScreen::onEntry()
     mTextLayer.Init(static_cast<float>(w), static_cast<float>(h), "assets/fonts/Zoika.ttf", 28);
     std::printf("font-loaded\n");
     mScene->Init(&mWorldCamera);
-    // mInput = Plutus::Input::getInstance();
+    mInput = Plutus::Input::getInstance();
 
     // Plutus::SceneLoader::loadFromJson("assets/scene1.json", mScene);
 
@@ -88,14 +88,14 @@ void GameScreen::update(float dt)
     mWorldCamera.update();
 
     mScene->update(dt);
-    // if (mInput->onKeyPressed("PageUp"))
-    // {
-    //     mCurrentState = Plutus::ScreenState::CHANGE_PREV;
-    // }
-    // if (mInput->onKeyPressed("PageDown"))
-    // {
-    //     mCurrentState = Plutus::ScreenState::CHANGE_NEXT;
-    // }
+    if (mInput->onKeyPressed("PageUp"))
+    {
+        mCurrentState = Plutus::ScreenState::CHANGE_PREV;
+    }
+    if (mInput->onKeyPressed("PageDown"))
+    {
+        mCurrentState = Plutus::ScreenState::CHANGE_NEXT;
+    }
 
     // if (mInput->onKeyDown("Ctrl") && mInput->getMouseWheel() != 0)
     // {

@@ -151,7 +151,7 @@ namespace Plutus
         glBindVertexArray(pVAO);
         GLfloat startX = x;
         // Iterate through all characters
-        for (char &c : text)
+        for (char& c : text)
         {
             if (c == '\n')
             {
@@ -174,7 +174,7 @@ namespace Plutus
 
                 {xpos, ypos + h, 0.0, 0.0},
                 {xpos + w, ypos, 1.0, 1.0},
-                {xpos + w, ypos + h, 1.0, 0.0}};
+                {xpos + w, ypos + h, 1.0, 0.0} };
             // Render glyph texture over quad
             glBindTexture(GL_TEXTURE_2D, ch.TextureID);
             // Update content of VBO memory

@@ -40,6 +40,8 @@ include_directories(${LIB_DIR}/spdlog/include)
 include_directories(${LIB_DIR}/rapidjson/include)
 include_directories(${LIB_DIR}/box2d/include)
 include_directories(${LIB_DIR}/freetype/include)
+include_directories(${LIB_DIR}/freetypegl)
+include_directories(${LIB_DIR}/stb)
 
 include_directories(PlutusEditor/src)
 include_directories(PlutusEditor/libs/imgui/src)
@@ -73,5 +75,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
 
   
   add_executable("Test" Test/test.cpp)
+  target_link_libraries("Editor" PUBLIC Plutus)
 
 endif()

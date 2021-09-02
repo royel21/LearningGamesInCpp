@@ -6,7 +6,7 @@
 #ifndef __FREETYPE_GL_H__
 #define __FREETYPE_GL_H__
 
-/* Mandatory */
+ /* Mandatory */
 #include "platform.h"
 #include "opengl.h"
 #include "vec234.h"

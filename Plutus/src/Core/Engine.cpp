@@ -22,7 +22,7 @@ namespace Plutus
 	void main_loop() { loop(); }
 #endif
 
-	Engine::Engine(const char *name, int w, int h) : mWinName(name), mScreenWidth(w), mScreenHeight(h)
+	Engine::Engine(const char* name, int w, int h) : mWinName(name), mScreenWidth(w), mScreenHeight(h)
 	{
 		mWindow.init(name, w, h);
 		mInput = Input::getInstance();
@@ -61,8 +61,6 @@ namespace Plutus
 		{
 			auto startTime = Clock::now();
 #endif
-			setBackgoundColor(1, 0, 0, 1);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			update(static_cast<float>(mLastElapsed));
 			draw();
 			mInput->update();
