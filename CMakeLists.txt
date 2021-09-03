@@ -15,7 +15,7 @@ file(GLOB_RECURSE SRC_FILES src/*.c src/*.cpp)
 file(GLOB_RECURSE HEADER_FILES src/*.h src/*.hpp)
 
 if(MSVC)
-  add_compile_options ("/DP_DEBUG;/DDEBUG")
+  add_compile_options ("/DP_DEBUG;/DDEBUG;/D_WIN32")
   SET( CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS}
   "/NODEFAULTLIBS:LIBCMT" )
   SET( CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS}
@@ -40,7 +40,6 @@ include_directories(${LIB_DIR}/spdlog/include)
 include_directories(${LIB_DIR}/rapidjson/include)
 include_directories(${LIB_DIR}/box2d/include)
 include_directories(${LIB_DIR}/freetype/include)
-include_directories(${LIB_DIR}/freetypegl)
 include_directories(${LIB_DIR}/stb)
 
 include_directories(PlutusEditor/src)

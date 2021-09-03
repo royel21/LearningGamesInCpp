@@ -3,12 +3,6 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(MSVC)
-  add_compile_options ("/DP_DEBUG;/DDEBUG")
-else()
-  add_compile_options ("-DP_DEBUG;-DDEBUG")
-endif()
-
 project("Plutus" C CXX)
 
 # Add source files
@@ -40,7 +34,6 @@ add_subdirectory(libs/sol3)
 add_subdirectory(libs/box2d)
 add_subdirectory(libs/glfw)
 add_subdirectory(libs/freetype)
-add_subdirectory(libs/freetypegl)
 
 add_library(entt INTERFACE libs/Entt/entt.hpp)
 
@@ -49,7 +42,7 @@ find_package(OpenGL REQUIRED)
 set(LIB_DIR ${PROJECT_SOURCE_DIR}/libs/)
 
 # Link the library to the project
-link_libraries(glad lua stb spdlog entt rapidjson box2d sol3 glfw freetype freetypegl opengl32)
+link_libraries(glad lua stb spdlog entt rapidjson box2d sol3 glfw freetype opengl32)
 
 add_library(Plutus STATIC ${PLUTUS_SRC} ${PLUTUS_INC})
 

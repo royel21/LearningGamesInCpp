@@ -11,7 +11,7 @@ namespace Plutus
     {
     public:
         TTF() = default;
-        void init(char* fontPath, int fontSize);
+        void init(char* fontPath, float fontSize = 14);
         void print(float x, float y, char* text, SpriteBatch2D& render);
 
     private:

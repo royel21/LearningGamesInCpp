@@ -105,6 +105,7 @@ void GameScreen::update(float dt)
 
 void GameScreen::draw()
 {
+    setBackgoundColor(1, 0, 0, 1);
     mScene->draw();
     char text[20];
     snprintf(text, 20, "%.1f FPS", mEngine->getFPS());

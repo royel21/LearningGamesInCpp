@@ -27,10 +27,9 @@ void EditorScreen::onEntry()
 {
     mTextures = Plutus::Textures::get();
     mTextures->addTexture("player", "assets/textures/zombie.png");
-    mTextures->addTexture("font", "./STB2.png");
 
     auto size = mEngine->getWindowSize();
-    mShader.CreateProgWithShader(vertexShader2, fragShader2);
+    mShader.CreateProgWithShader(vertexShader2, textFrag);
     mCamera.init(static_cast<int>(size.x), static_cast<int>(size.y));
     mRender.init(&mCamera);
     mInput = Plutus::Input::getInstance();
@@ -52,16 +51,15 @@ void EditorScreen::update(float dt)
 
 void EditorScreen::draw()
 {
-    // setBackgoundColor(1, 0, 0, 1);
+    setBackgoundColor(1, 0, 0, 1);
     mShader.enable();
     mShader.setUniformMat4("camera", mCamera.getCameraMatrix());
 
-    // mTTF.print(32.0f, 32.0f, "hello world", mRender);
+    mTTF.print(32.0f, 32.0f, "hello world - Royel", mRender);
 
-    mRender.begin();
-    mRender.submit(mTextures->getTexture("font")->texId, { 0, 0, 512, 512 });
-    mRender.submit(mTextures->getTexture("player")->texId, { 0,0,64,64 });
-    mRender.end();
+    // mRender.begin();
+    // mRender.submit(mTextures->getTexture("player")->texId, { 0,0,64,64 });
+    // mRender.end();
 
     mShader.disable();
 }
