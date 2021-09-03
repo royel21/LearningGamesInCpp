@@ -10,8 +10,19 @@
 #include "Utils/Utils.h"
 #include "IndexBuffer.h"
 #include "Camera2D.h"
+#include "Shader.h"
 
 #include "Time/Timer.h"
+
+#define RENDERER_MAX_SPRITES 60000
+#define RENDERER_VERTEX_SIZE sizeof(Vertex)
+#define RENDERER_SPRITE_SIZE RENDERER_VERTEX_SIZE * 4
+#define RENDERER_BUFFER_SIZE RENDERER_SPRITE_SIZE *RENDERER_MAX_SPRITES
+#define RENDERER_INDICES_SIZE RENDERER_MAX_SPRITES * 6
+
+#define SHADER_VERTEX_INDEX 0
+#define SHADER_UV_INDEX 1
+#define SHADER_COLOR_INDEX 2
 
 #define PI 3.141592f
 #define DEC2RA(dec) dec *(PI / 180.0f)
@@ -26,21 +37,20 @@ namespace Plutus
 		delete mIBO;
 	}
 
-	void SpriteBatch2D::init(Camera2D* camera)
+	void SpriteBatch2D::init()
 	{
-		mCamera = camera;
 		glGenVertexArrays(1, &mVAO);
 		glBindVertexArray(mVAO);
 
 		glGenBuffers(1, &mVBO);
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-		//Shader position
+		//bind the Shader position to the buffer object
 		glEnableVertexAttribArray(SHADER_VERTEX_INDEX);
 		glVertexAttribPointer(SHADER_VERTEX_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void*)NULL);
-		//Shader UV "Texture coordinate"
+		//bind the Shader UV "Texture coordinate" to the buffer object
 		glEnableVertexAttribArray(SHADER_UV_INDEX);
 		glVertexAttribPointer(SHADER_UV_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void*)offsetof(Vertex, uv));
-		//Shader Color
+		//bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
 		glEnableVertexAttribArray(SHADER_COLOR_INDEX);
 		glVertexAttribPointer(SHADER_COLOR_INDEX, 4, GL_UNSIGNED_BYTE, GL_TRUE, RENDERER_VERTEX_SIZE, (void*)offsetof(Vertex, color));
 
@@ -64,10 +74,8 @@ namespace Plutus
 
 		mIBO = new IndexBuffer(indices, RENDERER_INDICES_SIZE);
 		delete[] indices;
-	}
 
-	void SpriteBatch2D::begin()
-	{
+		vertices.resize(RENDERER_MAX_SPRITES * 4);
 	}
 
 	void SpriteBatch2D::createVertice(const glm::vec4& rect, const glm::vec4& _uv, ColorRGBA8 c, float r, bool flipX, bool flipY)
@@ -94,18 +102,26 @@ namespace Plutus
 			br = rotatePoint(br, r) + halfDim;
 			tr = rotatePoint(tr, r) + halfDim;
 
-			vertices.push_back({ rect.x + tl.x, rect.y + tl.y, uv.x, uv.w, c });
-			vertices.push_back({ rect.x + bl.x, rect.y + bl.y, uv.x, uv.y, c });
-			vertices.push_back({ rect.x + br.x, rect.y + br.y, uv.z, uv.y, c });
-			vertices.push_back({ rect.x + tr.x, rect.y + tr.y, uv.z, uv.w, c });
+
+			vertices[mVertexCount] = { rect.x + tl.x, rect.y + tl.y, uv.x, uv.w, c };
+			vertices[mVertexCount + 1] = { rect.x + bl.x, rect.y + bl.y, uv.x, uv.y, c };
+			vertices[mVertexCount + 2] = { rect.x + br.x, rect.y + br.y, uv.z, uv.y, c };
+			vertices[mVertexCount + 3] = { rect.x + tr.x, rect.y + tr.y, uv.z, uv.w, c };
 		}
 		else
 		{
-			vertices.push_back({ rect.x, rect.y, uv.x, uv.w, c });
-			vertices.push_back({ rect.x, rect.y + rect.w, uv.x, uv.y, c });
-			vertices.push_back({ rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, c });
-			vertices.push_back({ rect.x + rect.z, rect.y, uv.z, uv.w, c });
+			vertices[mVertexCount] = { rect.x, rect.y, uv.x, uv.w, c };
+			vertices[mVertexCount + 1] = { rect.x, rect.y + rect.w, uv.x, uv.y, c };
+			vertices[mVertexCount + 2] = { rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, c };
+			vertices[mVertexCount + 3] = { rect.x + rect.z, rect.y, uv.z, uv.w, c };
 		}
+		mVertexCount += 4;
+	}
+
+	void SpriteBatch2D::begin(Shader* shader, Camera2D* camera)
+	{
+		mCamera = camera;
+		mShader = shader;
 	}
 
 	void SpriteBatch2D::submit(GLuint texture, glm::vec4 rect, glm::vec4 uv, ColorRGBA8 c, float r, bool flipX, bool flipY)
@@ -116,8 +132,15 @@ namespace Plutus
 
 	void SpriteBatch2D::end()
 	{
+
+		mShader->enable();
+		mShader->setUniform1i("hasTexture", 0);
+		mShader->setUniform1i("mySampler", 0);
+		mShader->setUniformMat4("camera", mCamera->getCameraMatrix());
+		glClearDepth(1.0f);
+
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, mVertexCount * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
 
 		mIBO->bind();
 		glBindVertexArray(mVAO);
@@ -132,9 +155,13 @@ namespace Plutus
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		mIBO->unbind();
-		mIndexCount = 0;
-		vertices.clear();
+		// vertices.clear();
 		mRenderBatches.clear();
+
+		mShader->disable();
+
+		mVertexCount = 0;
+		mIndexCount = 0;
 	}
 
 	glm::vec2 SpriteBatch2D::rotatePoint(glm::vec2 pos, float angle)

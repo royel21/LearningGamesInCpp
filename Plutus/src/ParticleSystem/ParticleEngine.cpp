@@ -10,27 +10,25 @@ namespace Plutus
 
 	ParticleEngine::~ParticleEngine()
 	{
-		for (auto &b : m_batches)
+		for (auto& b : m_batches)
 		{
 			delete b;
 		}
 	}
-	void ParticleEngine::addParticleBatch(ParticleBatch *pb)
+	void ParticleEngine::addParticleBatch(ParticleBatch* pb)
 	{
 		m_batches.push_back(pb);
 	}
-	void ParticleEngine::draw(SpriteBatch2D *sp)
+	void ParticleEngine::draw(SpriteBatch2D* sp)
 	{
-		for (auto &b : m_batches)
+		for (auto& b : m_batches)
 		{
-			sp->begin();
 			b->draw(sp);
-			sp->end();
 		}
 	}
 	void ParticleEngine::update(float deltaTime)
 	{
-		for (auto &b : m_batches)
+		for (auto& b : m_batches)
 		{
 			b->update(deltaTime);
 		}

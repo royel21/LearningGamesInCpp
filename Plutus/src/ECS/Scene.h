@@ -108,6 +108,7 @@ namespace Plutus
         const glm::vec2 getScreen();
 
         Camera2D *getCamera() { return mCamera; }
+        Shader* getShader(){return &mShader; }
 
     private:
         entt::registry mRegistry;

@@ -29,14 +29,14 @@ namespace Plutus
         mShader.dispose();
     }
 
-    void TileMapPanel::setContext(Ref<Scene> &scene)
+    void TileMapPanel::setContext(Ref<Scene>& scene)
     {
         mScene = scene;
         mShader.CreateProgWithShader(vertexShader2, fragShader2);
-        mRenderer.init(mScene->getCamera());
+        mRenderer.init();
     }
 
-    void TileMapPanel::addTexture(const char *label, bool &open, TileMap *tMap)
+    void TileMapPanel::addTexture(const char* label, bool& open, TileMap* tMap)
     {
         auto assestM = Textures::get();
         if (open)
@@ -46,7 +46,7 @@ namespace Plutus
             ImGui::OpenPopup(label);
             static char name[128];
             static std::string path = "", filename = "";
-            static Texure *tilesheet = nullptr;
+            static Texure* tilesheet = nullptr;
             static int columns, tileWidth, tileHeight;
 
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
@@ -56,7 +56,7 @@ namespace Plutus
                 ImGui::InputText("Name##modal", name, IM_ARRAYSIZE(name));
                 ImGui::SameLine();
                 static int selectedType = 0;
-                const std::vector<std::string> type{"Texture", "Tilesheet"};
+                const std::vector<std::string> type{ "Texture", "Tilesheet" };
                 ImGui::ComboBox("Type", type, selectedType);
                 ImGui::PopItemWidth();
                 ImGui::Separator();
@@ -91,7 +91,7 @@ namespace Plutus
                 ImGui::Checkbox("From List", &fromList);
                 if (fromList)
                 {
-                    auto &textures = Textures::get()->mTileSets;
+                    auto& textures = Textures::get()->mTileSets;
 
                     if (textures.size())
                     {
@@ -142,13 +142,13 @@ namespace Plutus
         }
     }
 
-    void TileMapPanel::draw(TileMap *tileMap)
+    void TileMapPanel::draw(TileMap* tileMap)
     {
         if (ImGui::CollapsingHeader("TileMap##comp"))
         {
             mIsOpen = true;
             mTileMap = tileMap;
-            int size[] = {mTileMap->mTileWidth, mTileMap->mTileHeight};
+            int size[] = { mTileMap->mTileWidth, mTileMap->mTileHeight };
             ImGui::PushItemWidth(60);
             if (ImGui::DragInt2("Tile Size", size, 1))
             {
@@ -208,7 +208,7 @@ namespace Plutus
         }
     }
 
-    void TileMapPanel::renderTiles(SpriteBatch2D *renderer, const glm::ivec2 &mCoords)
+    void TileMapPanel::renderTiles(SpriteBatch2D* renderer, const glm::ivec2& mCoords)
     {
         if (mIsOpen && mTempTiles.size() && mMode == MODE_PLACE)
         {
@@ -217,8 +217,7 @@ namespace Plutus
             // mShader.setUniform1i("mySampler", 0);
             // mShader.setUniformMat4("camera", mScene->getCamera()->getCameraMatrix());
             // mRenderer.begin();
-            mScene->enableShader();
-            renderer->begin();
+            renderer->begin(mScene->getShader(), mScene->getCamera());
 
             std::vector<Tile> tiles;
             int w = mTileMap->mTileWidth;
@@ -228,16 +227,15 @@ namespace Plutus
                 int x = mCoords.x + (tile.x * w);
                 int y = mCoords.y + (tile.y * h);
 
-                auto &tex = mTileMap->mTextures[mCurrentTexture];
+                auto& tex = mTileMap->mTextures[mCurrentTexture];
                 // mRenderer.submit(tex->mTexture.id, rect, tex->getUV(tile.z), {}, mRotation);
                 if (x < 0)
                 {
                     x = x;
                 }
-                renderer->submit(tex->texId, {x, y, w, h}, tex->getUV(tile.z), {}, mRotation);
+                renderer->submit(tex->texId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation);
             }
             renderer->end();
-            mScene->enableShader();
             // mRenderer.end();
             // mShader.disable();
         }
@@ -269,7 +267,7 @@ namespace Plutus
         ImGui::PopItemWidth();
     }
 
-    void TileMapPanel::createTiles(const glm::ivec2 &mCoords)
+    void TileMapPanel::createTiles(const glm::ivec2& mCoords)
     {
         if (!mIsOpen)
             return;
@@ -285,7 +283,7 @@ namespace Plutus
                 uint32_t y = mCoords.y + (tile.y * mTileMap->mTileHeight);
 
                 Tile tile(x, y, tile.z, mCurrentTexture, mRotation);
-                int index = mTileMap->getIndex({x, y});
+                int index = mTileMap->getIndex({ x, y });
                 if (index == -1)
                 {
                     tiles->push_back(tile);
@@ -314,7 +312,7 @@ namespace Plutus
         }
     }
 
-    bool TileMapPanel::compare(const glm::ivec2 &a, const glm::ivec2 &b)
+    bool TileMapPanel::compare(const glm::ivec2& a, const glm::ivec2& b)
     {
         if (a.x < b.x)
             return true;

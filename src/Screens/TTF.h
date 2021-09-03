@@ -6,13 +6,14 @@
 
 namespace Plutus
 {
+    struct Renderable;
 
     class TTF
     {
     public:
         TTF() = default;
         void init(char* fontPath, float fontSize = 14);
-        void print(float x, float y, char* text, SpriteBatch2D& render);
+        std::vector<Renderable> getRenderable(float x, float y, char* text, float scale = 1.0f, ColorRGBA8 c = { 0,0,0,255 });
 
     private:
         // Character Data

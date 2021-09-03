@@ -25,15 +25,17 @@ void EditorScreen::build()
 
 void EditorScreen::onEntry()
 {
+    auto size = mEngine->getWindowSize();
+    mTextLayer.Init(static_cast<float>(size.x), static_cast<float>(size.y), "./assets/fonts/NotoSansJP-Bold.otf", 32);
+
     mTextures = Plutus::Textures::get();
     mTextures->addTexture("player", "assets/textures/zombie.png");
 
-    auto size = mEngine->getWindowSize();
     mShader.CreateProgWithShader(vertexShader2, textFrag);
     mCamera.init(static_cast<int>(size.x), static_cast<int>(size.y));
-    mRender.init(&mCamera);
+    mRender.init();
     mInput = Plutus::Input::getInstance();
-    mTTF.init("c:/windows/fonts/times.ttf", 32);
+    mTTF.init("./assets/fonts/NotoSansJP-Bold.otf", 46);
 }
 
 void EditorScreen::update(float dt)
@@ -51,17 +53,17 @@ void EditorScreen::update(float dt)
 
 void EditorScreen::draw()
 {
-    setBackgoundColor(1, 0, 0, 1);
-    mShader.enable();
-    mShader.setUniformMat4("camera", mCamera.getCameraMatrix());
+    setBackgoundColor(1, 1, 1, 1);
+    int h = mEngine->getHeight();
 
-    mTTF.print(32.0f, 32.0f, "hello world - Royel", mRender);
+    auto text = mTTF.getRenderable(32.0f, h - 42.0f, "hello world_Royel");
+    mRender.begin(&mShader, &mCamera);
+    for (auto r : text) {
+        mRender.submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY);
+    }
+    mRender.end();
+    mTextLayer.drawString("hello world_Royel", 32.0f, 10.0f);
 
-    // mRender.begin();
-    // mRender.submit(mTextures->getTexture("player")->texId, { 0,0,64,64 });
-    // mRender.end();
-
-    mShader.disable();
 }
 
 void EditorScreen::onScreenResize(int w, int h)

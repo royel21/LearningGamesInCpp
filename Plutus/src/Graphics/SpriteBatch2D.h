@@ -6,21 +6,23 @@
 #include "vertex.h"
 #include <unordered_map>
 
-#define RENDERER_MAX_SPRITES 60000
-#define RENDERER_VERTEX_SIZE sizeof(Vertex)
-#define RENDERER_SPRITE_SIZE RENDERER_VERTEX_SIZE * 4
-#define RENDERER_BUFFER_SIZE RENDERER_SPRITE_SIZE *RENDERER_MAX_SPRITES
-#define RENDERER_INDICES_SIZE RENDERER_MAX_SPRITES * 6
-
-#define SHADER_VERTEX_INDEX 0
-#define SHADER_UV_INDEX 1
-#define SHADER_COLOR_INDEX 2
 
 namespace Plutus
 {
+	struct Tile;
+	class Shader;
 	class Camera2D;
 	class IndexBuffer;
-	struct Tile;
+
+	struct Renderable {
+		GLuint TexId;
+		glm::vec4 trans;
+		glm::vec4 uv = { 0,0,1,1 };
+		ColorRGBA8 color = {};
+		float r = 0;
+		bool flipX = false;
+		bool flipY = false;
+	};
 
 	class RenderBatch2D
 	{
@@ -44,6 +46,7 @@ namespace Plutus
 		GLuint mVBO = 0;
 		// Represent how many Vertice was created
 		GLuint mIndexCount = 0;
+		GLuint mVertexCount = 0;
 		// Array of Rnder batcher per Image
 		std::vector<RenderBatch2D> mRenderBatches;
 		//Array of 4 Vertix per Single Object
@@ -52,13 +55,14 @@ namespace Plutus
 		IndexBuffer* mIBO = nullptr;
 		// Camera with the screen coordinate where we are drawing
 		Camera2D* mCamera = nullptr;
+		Shader* mShader = nullptr;
 
 	public:
 		SpriteBatch2D() = default;
 		~SpriteBatch2D();
-		void init(Camera2D* camera);
+		void init();
 		//Prepare the Vertex buffer to add objects
-		void begin();
+		void begin(Shader* shader, Camera2D* camera);
 		//Reserve the memory for the objects
 		void reserve(uint32_t size) {
 			vertices.reserve(vertices.size() + (size << 2));

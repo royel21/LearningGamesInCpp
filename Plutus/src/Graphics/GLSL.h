@@ -55,9 +55,10 @@ void main() {
 inline const std::string textFrag = std::string(VERTEX_HEADER) + R"END(
 
 in vec2 uv;
+in vec4 color;
 
 uniform sampler2D mySampler;
 
 void main(){
-    gl_FragColor = vec4(texture(mySampler, uv).r);
+    gl_FragColor = vec4(texture(mySampler, uv).r) * color;
 })END";

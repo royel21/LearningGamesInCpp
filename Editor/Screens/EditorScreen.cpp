@@ -34,8 +34,6 @@ void EditorScreen::build()
 
     mEditor = Plutus::EditorUI::getInstance();
     mEditor->Init(&mCamera);
-
-    mTextLayer.Init(static_cast<float>(size.x), static_cast<float>(size.y), "./assets/fonts/Zoika.ttf", 28);
 }
 
 void EditorScreen::onEntry()
@@ -66,8 +64,6 @@ void EditorScreen::draw()
     snprintf(text, 20, "%.1f FPS", mEngine->getFPS());
     mTextLayer.setColor(1.0f, 1.0f, 1.0f);
     mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, glm::vec4(1, 0, 0, 1));
-
-    mTextLayer.setColor(1.0f, 0.0f, 0.0f, 0.8f);
 
     mEditor->unBindFB();
     mEditor->DrawUI();

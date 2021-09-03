@@ -80,7 +80,7 @@ namespace Plutus
 	{
 
 		mCamera = cam;
-		mRender.init(cam);
+		mRender.init();
 
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
