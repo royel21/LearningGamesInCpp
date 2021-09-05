@@ -14,6 +14,9 @@ namespace Plutus
     {
         unsigned char temp_bitmap[mTexWidth * mTexHeight];
         auto buffer = readFile(fontPath);
+
+        stbtt_InitFont(&info, buffer.data(), 0);
+
         stbtt_BakeFontBitmap(buffer.data(), 0, fontSize, temp_bitmap, mTexWidth, mTexHeight, 32, 96, cdata); // no guarantee this fits!
         glGenTextures(1, &mTexId);
 
@@ -27,6 +30,41 @@ namespace Plutus
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, mTexWidth, mTexHeight, 0, GL_RED, GL_UNSIGNED_BYTE, temp_bitmap);
 
         glBindTexture(GL_TEXTURE_2D, 0);
+
+        // *Font = {};
+        // Font->BitmapWidth = mTexWidth;
+        // Font->BitmapHeight = mTexHeight;
+        // Font->Bitmap = (byte*)malloc(mTexWidth * mTexHeight);
+        // Font->Size = fontSize;
+        // stbtt_fontinfo info;
+
+        // stbtt_InitFont(&info, buffer.data(), 0);
+
+        // stbtt_pack_context PackContext = {};
+        // stbtt_PackBegin(&PackContext, temp_bitmap, mTexWidth, mTexHeight, 0, 1, 0);
+        // stbtt_PackSetOversampling(&PackContext, 2, 2);
+        // stbtt_pack_range Ranges[1] = {};
+        // Ranges[0].chardata_for_range = &cdata;
+        // Ranges[0].array_of_unicode_codepoints = 0;
+        // Ranges[0].first_unicode_codepoint_in_range = 32;
+        // Ranges[0].num_chars = 96;
+        // Ranges[0].font_size = STBTT_POINT_SIZE(fontSize);
+        // stbtt_PackFontRanges(&PackContext, buffer.data(), 0, Ranges, 1);
+        // stbtt_PackEnd(&PackContext);
+
+        // int Ascend;
+        // stbtt_GetFontVMetrics(&info, &Ascend, 0, 0);
+        // float Scale = stbtt_ScaleForPixelHeight(&info, fontSize);
+        // float Baseline = Ascend * Scale;
+
+        // glGenTextures(1, &mTexId);
+        // glBindTexture(GL_TEXTURE_2D, mTexId);
+        // glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        // glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, mTexWidth, mTexHeight, 0, GL_ALPHA, GL_UNSIGNED_BYTE, temp_bitmap);
     }
 
     std::vector<Renderable> TTF::getRenderable(float x, float y, char* text, float scale, ColorRGBA8 c)

@@ -25,8 +25,8 @@ void EditorScreen::build()
 
 void EditorScreen::onEntry()
 {
+    mFontManager = Plutus::FontManager::get();
     auto size = mEngine->getWindowSize();
-    mTextLayer.Init(static_cast<float>(size.x), static_cast<float>(size.y), "./assets/fonts/NotoSansJP-Bold.otf", 32);
 
     mTextures = Plutus::Textures::get();
     mTextures->addTexture("player", "assets/textures/zombie.png");
@@ -35,7 +35,10 @@ void EditorScreen::onEntry()
     mCamera.init(static_cast<int>(size.x), static_cast<int>(size.y));
     mRender.init();
     mInput = Plutus::Input::getInstance();
-    mTTF.init("./assets/fonts/NotoSansJP-Bold.otf", 46);
+
+    mFontManager->addFont("arial", "./assets/fonts/arial.ttf", 32);
+    mFontManager->addFont("OpenSansBold", "./assets/fonts/OpenSans-Bold.ttf", 32);
+    mFontManager->addFont("Zoika", "./assets/fonts/Zoika.ttf", 32);
 }
 
 void EditorScreen::update(float dt)
@@ -53,17 +56,28 @@ void EditorScreen::update(float dt)
 
 void EditorScreen::draw()
 {
-    setBackgoundColor(1, 1, 1, 1);
+    setBackgoundColor(0, 0, 0, 1);
     int h = mEngine->getHeight();
 
-    auto text = mTTF.getRenderable(32.0f, h - 42.0f, "hello world_Royel");
     mRender.begin(&mShader, &mCamera);
+
+    mFontManager->setFont("arial");
+    auto text = mFontManager->renderText("hello world_Royel - Arial", 32.0f, h - 175.0f, 1.0f, { 255,255,255,255 });
     for (auto r : text) {
         mRender.submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY);
     }
-    mRender.end();
-    mTextLayer.drawString("hello world_Royel", 32.0f, 10.0f);
+    mFontManager->setFont("OpenSansBold");
+    text = mFontManager->renderText("hello world_Royel - OpenSans", 32.0f, h - 120.0f, 1.0f, { 255,255,255,255 });
+    for (auto r : text) {
+        mRender.submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY);
+    }
+    mFontManager->setFont("Zoika");
+    text = mFontManager->renderText("hello world_Royel _=+/&^%$# Zoika", 32.0f, h - 65.0f, 1.0f, { 255,255,255,255 });
+    for (auto r : text) {
+        mRender.submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY);
+    }
 
+    mRender.end();
 }
 
 void EditorScreen::onScreenResize(int w, int h)

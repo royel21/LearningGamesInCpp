@@ -6,30 +6,32 @@
 #include "Utils/Utils.h"
 #include "ECS/Scene.h"
 #include "ECS/Components.h"
-#include <cstdio>
 #include <Assets/Textures.h>
 
 namespace Plutus
 {
-    void loadAnimation(Entity *ent, rapidjson::Value::Object value)
+    void loadAnimation(Entity* ent, rapidjson::Value::Object value)
     {
-        auto &anim = ent->addComponent<Animation>(ent);
+        auto& anim = ent->addComponent<Animation>(ent);
     }
 
-    void loadTileMap(Entity *ent, rapidjson::Value::Object value)
+    void loadTileMap(Entity* ent, rapidjson::Value::Object value)
     {
         int w = value["tilewidth"].GetInt();
         int h = value["tileheight"].GetInt();
         auto tileset = value["tileset"].GetString();
-        auto &tmap = ent->addComponent<TileMap>(w, h);
+        auto& tmap = ent->addComponent<TileMap>(w, h);
+
         tmap.mTileset = Textures::get()->getTexture(tileset);
         auto textures = value["textures"].GetArray();
-        for (auto &t : value["textures"].GetArray())
+
+        for (auto& t : value["textures"].GetArray())
         {
             tmap.mTextures.push_back(Textures::get()->getTexture(t.GetString()));
         }
+
         auto tiles = value["tiles"].GetArray();
-        // LOG_I("tiles:{0}", tiles.Size());
+
         for (size_t i = 0; i < tiles.Size(); i++)
         {
             auto tile = tiles[i].GetJsonObject();
@@ -46,7 +48,7 @@ namespace Plutus
         }
     }
 
-    bool SceneLoader::loadFromJson(const char *path, Ref<Scene> &scene)
+    bool SceneLoader::loadFromJson(const char* path, Ref<Scene>& scene)
     {
         bool success = false;
         rapidjson::Document doc;
@@ -55,7 +57,7 @@ namespace Plutus
             //Load All Textures
             if (doc["textures"].IsArray())
             {
-                Textures::get()->cleanUp();
+                // Textures::get()->cleanUp();
 
                 auto textures = doc["textures"].GetArray();
                 for (size_t i = 0; i < textures.Size(); i++)

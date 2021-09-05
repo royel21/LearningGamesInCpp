@@ -14,16 +14,6 @@ namespace Plutus
 	class Camera2D;
 	class IndexBuffer;
 
-	struct Renderable {
-		GLuint TexId;
-		glm::vec4 trans;
-		glm::vec4 uv = { 0,0,1,1 };
-		ColorRGBA8 color = {};
-		float r = 0;
-		bool flipX = false;
-		bool flipY = false;
-	};
-
 	class RenderBatch2D
 	{
 	public:

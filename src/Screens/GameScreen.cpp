@@ -43,7 +43,7 @@ void GameScreen::onEntry()
 
     mScene = Plutus::CreateRef<Plutus::Scene>();
     mWorldCamera.init(w, h);
-    mTextLayer.Init(static_cast<float>(w), static_cast<float>(h), "assets/fonts/Zoika.ttf", 28);
+
     std::printf("font-loaded\n");
     mScene->Init(&mWorldCamera);
     mInput = Plutus::Input::getInstance();
@@ -107,9 +107,9 @@ void GameScreen::draw()
 {
     setBackgoundColor(1, 0, 0, 1);
     mScene->draw();
-    char text[20];
-    snprintf(text, 20, "%.1f FPS", mEngine->getFPS());
-    mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, { 0, 0, 0.7f, 1 });
+    // char text[20];
+    // snprintf(text, 20, "%.1f FPS", mEngine->getFPS());
+    // mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, { 0, 0, 0.7f, 1 });
 }
 
 void GameScreen::onScreenResize(int w, int h)

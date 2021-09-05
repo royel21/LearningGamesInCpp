@@ -2,7 +2,6 @@
 #include "Core/IGameScreen.h"
 #include "Core/type.h"
 
-#include "TextRender/TextLayer.h"
 #include "Graphics/Camera2D.h"
 #include "Input/Input.h"
 #include "ECS/Scene.h"
@@ -29,8 +28,7 @@ public:
     void onScreenResize(int w, int h) override;
 
 private:
-    Plutus::TextLayer mTextLayer;
-    Plutus::EditorUI *mEditor = nullptr;
+    Plutus::EditorUI* mEditor = nullptr;
     Plutus::Camera2D mCamera;
-    Plutus::Input *mInput = nullptr;
+    Plutus::Input* mInput = nullptr;
 };

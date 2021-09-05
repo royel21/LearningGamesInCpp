@@ -3,7 +3,6 @@
 #include "ECS/Scene.h"
 #include "Graphics/Camera2D.h"
 #include "Input/Input.h"
-#include "TextRender/TextLayer.h"
 
 class GameScreen : public Plutus::IGameScreen
 {
@@ -29,6 +28,5 @@ public:
 private:
     Plutus::Ref<Plutus::Scene> mScene;
     Plutus::Camera2D mWorldCamera;
-    Plutus::TextLayer mTextLayer;
-    Plutus::Input *mInput;
+    Plutus::Input* mInput;
 };

@@ -60,10 +60,10 @@ void EditorScreen::draw()
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     mEditor->bindFB();
-    char text[20];
-    snprintf(text, 20, "%.1f FPS", mEngine->getFPS());
-    mTextLayer.setColor(1.0f, 1.0f, 1.0f);
-    mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, glm::vec4(1, 0, 0, 1));
+    // char text[20];
+    // snprintf(text, 20, "%.1f FPS", mEngine->getFPS());
+    // mTextLayer.setColor(1.0f, 1.0f, 1.0f);
+    // mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, glm::vec4(1, 0, 0, 1));
 
     mEditor->unBindFB();
     mEditor->DrawUI();

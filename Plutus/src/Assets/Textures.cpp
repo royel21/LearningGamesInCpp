@@ -78,7 +78,7 @@ namespace Plutus
 
     const Texure* Textures::addTexture(const std::string& id, const std::string& path, int c, int w, int h, GLint minFilter, GLint magFilter)
     {
-        auto mit = mTileSets.find(path);
+        auto mit = mTileSets.find(id);
         if (mit == mTileSets.end())
         {
             mTileSets[id] = Texure(id, c, w, h, loadTexture(path, minFilter, magFilter), path);
