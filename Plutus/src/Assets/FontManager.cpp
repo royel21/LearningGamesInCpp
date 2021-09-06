@@ -17,7 +17,7 @@ namespace Plutus
     FontManager::~FontManager()
     {
         for (auto f : mFonts) {
-            glDeleteTextures(1, &f.second.textId);
+            glDeleteTextures(1, &f.second.texId);
         }
     }
 
@@ -40,8 +40,8 @@ namespace Plutus
         //Set font height in pixel
         FT_Set_Pixel_Sizes(face, 0, fontSize);
 
-        glGenTextures(1, &font.textId);
-        glBindTexture(GL_TEXTURE_2D, font.textId);
+        glGenTextures(1, &font.texId);
+        glBindTexture(GL_TEXTURE_2D, font.texId);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -97,7 +97,7 @@ namespace Plutus
 
             GLfloat w = ch.bw * scale;
             GLfloat h = ch.bh * scale;
-            renderables.push_back({ font.textId, { xpos, ypos, w, h }, ch.uv, color });
+            renderables.push_back({ font.texId, { xpos, ypos, w, h }, ch.uv, color });
             // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
             x += ch.ax * scale;
         }

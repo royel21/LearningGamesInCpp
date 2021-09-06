@@ -30,7 +30,7 @@ namespace Plutus
 		u32 width;
 		u32 height;
 		CharData ch[128];
-		u32 textId;
+		u32 texId;
 	};
 
 	class FontManager
