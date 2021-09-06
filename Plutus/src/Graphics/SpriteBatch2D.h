@@ -46,6 +46,8 @@ namespace Plutus
 		// Camera with the screen coordinate where we are drawing
 		Camera2D* mCamera = nullptr;
 		Shader* mShader = nullptr;
+		glm::vec2 camPos;
+		glm::vec2 camSize;
 
 	public:
 		SpriteBatch2D() = default;

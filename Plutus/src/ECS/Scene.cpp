@@ -96,6 +96,7 @@ namespace Plutus
     void Scene::draw()
     {
         mRenderer.begin(&mShader, mCamera);
+        auto  start = Timer::millis();
         for (auto& layer : mLayers)
         {
             if (layer.second.isVisible)
@@ -134,6 +135,7 @@ namespace Plutus
         }
 
         mRenderer.end();
+        std::printf("time: %llu\n", Timer::millis() - start);
     }
 
     void Scene::update(float dt)

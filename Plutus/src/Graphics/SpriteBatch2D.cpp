@@ -122,12 +122,17 @@ namespace Plutus
 	{
 		mCamera = camera;
 		mShader = shader;
+		camPos = mCamera->getPosition();
+		camSize = mCamera->getScaleScreen();
 	}
 
 	void SpriteBatch2D::submit(GLuint texture, glm::vec4 rect, glm::vec4 uv, ColorRGBA8 c, float r, bool flipX, bool flipY)
 	{
-		createBatch(texture);
-		createVertice(rect, uv, c, r, flipX, flipY);
+		// Check if is inside the view port
+		if (rect.x + rect.z >= camPos.x && rect.y + rect.w >= camPos.y && rect.x <= camSize.x + camPos.x && rect.y <= camSize.y + camPos.y) {
+			createBatch(texture);
+			createVertice(rect, uv, c, r, flipX, flipY);
+		}
 	}
 
 	void SpriteBatch2D::end()
