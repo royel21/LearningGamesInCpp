@@ -12,6 +12,14 @@ namespace Plutus
 		update();
 	}
 
+	glm::vec4 Camera2D::getViewPortDim()
+	{
+		auto half = glm::vec2(mScreenWidth >> 1, mScreenHeight >> 1) + mCamPos;
+		auto halfScale = getScaleScreen() / 2.0f;
+		glm::vec4 size = { half.x - halfScale.x, half.y - halfScale.y, half.x + halfScale.x, half.y + halfScale.y };
+		return size;
+	}
+
 	void Camera2D::update()
 	{
 		if (mNeedsMatrixUpdate == true)

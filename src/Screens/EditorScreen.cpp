@@ -27,11 +27,12 @@ void EditorScreen::onEntry()
 {
     mFontManager = Plutus::FontManager::get();
     auto size = mEngine->getWindowSize();
-
+    mDebug = Plutus::DebugRender::geInstances();
+    mDebug->init(&mCamera);
     mTextures = Plutus::Textures::get();
     mTextures->addTexture("player", "assets/textures/zombie.png");
 
-    mShader.CreateProgWithShader(vertexShader2, textFrag);
+    mShader.CreateProgWithShader(vertexShader2, fragShader2);
     mCamera.init(static_cast<int>(size.x), static_cast<int>(size.y));
     mRender.init();
     mInput = Plutus::Input::getInstance();
@@ -59,7 +60,7 @@ void EditorScreen::draw()
     setBackgoundColor(0, 0, 0, 1);
     int h = mEngine->getHeight();
 
-    mRender.begin(&mShader, &mCamera);
+    mRender.begin(&mShader, &mCamera, true);
 
     mFontManager->setFont("arial");
     auto text = mFontManager->renderText("hello world_Royel - Arial", 32.0f, h - 175.0f, 1.0f, { 255,255,255,255 });
@@ -72,12 +73,20 @@ void EditorScreen::draw()
         mRender.submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY);
     }
     mFontManager->setFont("Zoika");
-    text = mFontManager->renderText("hello world_Royel _=+/&^%$# Zoika", 32.0f, h - 65.0f, 1.0f, { 255,255,255,255 });
+    text = mFontManager->renderText("hello world_Royel _=+/&^%$# Zoika", 32.0f, h - 65.0f, 1.0f, { 255, 255,255,255 });
     for (auto r : text) {
         mRender.submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY);
     }
-
     mRender.end();
+
+    mRender.begin(&mShader, &mCamera);
+    mRender.submit({ 50, 100, 200, 200 }, 45.0f);
+    mRender.end();
+
+    mDebug->drawBox({ 10, 10, 150, 150 }, { 255,255,255,255 }, 0.0f);
+    mDebug->drawCircle({ 85.0f, 85.0f }, { 255, 255,255,255 }, 70.0f);
+    mDebug->end();
+    mDebug->render(2);
 }
 
 void EditorScreen::onScreenResize(int w, int h)

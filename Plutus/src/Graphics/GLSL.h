@@ -37,28 +37,20 @@ inline const std::string fragShader2 = std::string(VERTEX_HEADER) + R"END(
 in vec2 uv;
 in vec4 color;
 
-out vec4 fragColor;
+uniform bool isText;
 uniform int hasTexture;
 uniform sampler2D mySampler;
 
+out vec4 fragColor;
+
 void main() {
 
-    vec4 textureColor = texture(mySampler, uv);
-
-    if(hasTexture == 1){
-        fragColor = vec4(color);
+    if(isText){
+        fragColor = vec4(texture(mySampler, uv).r) * color;
+    }else if(hasTexture > 0){
+        fragColor = color * texture(mySampler, uv); 
     }else{
-        fragColor = vec4(color * textureColor);
+        fragColor = color;
     }
-})END";
 
-inline const std::string textFrag = std::string(VERTEX_HEADER) + R"END(
-
-in vec2 uv;
-in vec4 color;
-
-uniform sampler2D mySampler;
-
-void main(){
-    gl_FragColor = vec4(texture(mySampler, uv).r) * color;
 })END";

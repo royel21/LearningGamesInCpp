@@ -118,18 +118,18 @@ namespace Plutus
 		mVertexCount += 4;
 	}
 
-	void SpriteBatch2D::begin(Shader* shader, Camera2D* camera)
+	void SpriteBatch2D::begin(Shader* shader, Camera2D* camera, bool isText)
 	{
+		mIsText = isText;
 		mCamera = camera;
 		mShader = shader;
-		camPos = mCamera->getPosition();
-		camSize = mCamera->getScaleScreen();
+		camSize = mCamera->getViewPortDim();
 	}
 
 	void SpriteBatch2D::submit(GLuint texture, glm::vec4 rect, glm::vec4 uv, ColorRGBA8 c, float r, bool flipX, bool flipY)
 	{
 		// Check if is inside the view port
-		if (rect.x + rect.z >= camPos.x && rect.y + rect.w >= camPos.y && rect.x <= camSize.x + camPos.x && rect.y <= camSize.y + camPos.y) {
+		if (rect.x + rect.z > camSize.x && rect.y + rect.w > camSize.y && rect.x < camSize.z && rect.y < camSize.w) {
 			createBatch(texture);
 			createVertice(rect, uv, c, r, flipX, flipY);
 		}
@@ -139,7 +139,7 @@ namespace Plutus
 	{
 
 		mShader->enable();
-		mShader->setUniform1i("hasTexture", 0);
+		mShader->setUniform1b("isText", mIsText);
 		mShader->setUniform1i("mySampler", 0);
 		mShader->setUniformMat4("camera", mCamera->getCameraMatrix());
 		glClearDepth(1.0f);
@@ -151,6 +151,7 @@ namespace Plutus
 		glBindVertexArray(mVAO);
 		for (size_t i = 0; i < mRenderBatches.size(); i++)
 		{
+			mShader->setUniform1i("hasTexture", mRenderBatches[i].texture);
 			glBindTexture(GL_TEXTURE_2D, mRenderBatches[i].texture);
 			glDrawElements(GL_TRIANGLES, mRenderBatches[i].numVertices, GL_UNSIGNED_INT, (void*)(mRenderBatches[i].offset * sizeof(GLuint)));
 		}

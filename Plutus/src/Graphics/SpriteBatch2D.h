@@ -46,15 +46,15 @@ namespace Plutus
 		// Camera with the screen coordinate where we are drawing
 		Camera2D* mCamera = nullptr;
 		Shader* mShader = nullptr;
-		glm::vec2 camPos;
-		glm::vec2 camSize;
+		glm::vec4 camSize;
+		bool mIsText = false;
 
 	public:
 		SpriteBatch2D() = default;
 		~SpriteBatch2D();
 		void init();
 		//Prepare the Vertex buffer to add objects
-		void begin(Shader* shader, Camera2D* camera);
+		void begin(Shader* shader, Camera2D* camera, bool isText = false);
 		//Reserve the memory for the objects
 		void reserve(uint32_t size) {
 			vertices.reserve(vertices.size() + (size << 2));
@@ -70,6 +70,8 @@ namespace Plutus
 			@param flipY optional flip the image from Y coordinate
 		*/
 		void submit(GLuint texture, glm::vec4 rect, glm::vec4 uv = { 0, 0, 1, 1 }, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false);
+
+		void submit(glm::vec4 rect, float r) { submit(0, rect, { 0,0,1,1 }, { 255,255,255 }, r); }
 		//Flush the Vertex buffer to the screen
 		void end();
 

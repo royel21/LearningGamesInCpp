@@ -99,7 +99,10 @@ namespace Plutus
 	{
 		glBindAttribLocation(mProgId, mNumAttributes++, attributeName.c_str());
 	}
-
+	void Shader::setUniform1b(std::string name, GLboolean value)
+	{
+		glUniform1i(getUniform(name), value);
+	}
 	void Shader::setUniform1i(std::string name, GLuint value)
 	{
 		glUniform1i(getUniform(name), value);

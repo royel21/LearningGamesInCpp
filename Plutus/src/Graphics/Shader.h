@@ -43,6 +43,8 @@ namespace Plutus
 		uint32_t getProg() { return mProgId; }
 		// Acivate attributes by name
 		void setAtribute(const std::string& attributeName);
+		//Upload Uniform 1 boolean 
+		void setUniform1b(std::string name, GLboolean value);
 		//Upload Uniform 1 integer
 		void setUniform1i(std::string name, GLuint value);
 		//Uniform 1 variable Array

@@ -5,6 +5,7 @@
 #include <Graphics/Shader.h>
 #include <Graphics/Camera2D.h>
 #include <Graphics/SpriteBatch2D.h>
+#include <Graphics/DebugRenderer.h>
 #include <Assets/Textures.h>
 #include <Assets/FontManager.h>
 
@@ -35,4 +36,5 @@ private:
     Plutus::SpriteBatch2D mRender;
     Plutus::Textures* mTextures;
     Plutus::FontManager* mFontManager;
+    Plutus::DebugRender* mDebug;
 };
