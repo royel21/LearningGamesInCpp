@@ -7,7 +7,6 @@ namespace Plutus
 {
 	AssetManager::AssetManager()
 	{
-		mTextures = Textures::get();
 	}
 	AssetManager* AssetManager::get()
 	{
@@ -17,11 +16,12 @@ namespace Plutus
 
 	AssetManager::~AssetManager()
 	{
-		mTextures->cleanUp();
+		clearData();
 	}
 
 	void AssetManager::clearData()
 	{
-		mTextures->cleanUp();
+		mTextures.cleanUp();
+		mFonts.cleanUp();
 	}
 } // namespace Plutus

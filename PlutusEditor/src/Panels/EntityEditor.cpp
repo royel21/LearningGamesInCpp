@@ -13,7 +13,7 @@
 
 namespace Plutus
 {
-    void EntityEditor::setContext(const Ref<Scene> &context, EditorUI *parent)
+    void EntityEditor::setContext(const Ref<Scene>& context, EditorUI* parent)
     {
         mParentUI = parent;
         mInput = Plutus::Input::getInstance();
@@ -142,7 +142,7 @@ namespace Plutus
             openEntModal = true;
         ImGui::PopStyleColor();
         ImGui::Separator();
-        ImGui::BeginChild("ent-list", {size.x, size.y * 0.35f});
+        ImGui::BeginChild("ent-list", { size.x, size.y * 0.35f });
         entityList();
         ImGui::EndChild();
         if (openEntModal)
@@ -170,9 +170,9 @@ namespace Plutus
         if (ImGui::Button(ICON_FA_PLUS_CIRCLE " ##asset"))
             open = true;
         ImGui::Separator();
-        ImGui::BeginChild("assets-list", {0, 0});
+        ImGui::BeginChild("assets-list", { 0, 0 });
         std::string toRemove;
-        for (auto &tex : AssetManager::get()->mTextures->mTileSets)
+        for (auto& tex : AssetManager::get()->mTextures.mTileSets)
         {
 
             if (ImGui::Button((ICON_FA_TRASH_ALT + std::string(" ##") + tex.first).c_str()))
@@ -184,12 +184,12 @@ namespace Plutus
         ImGui::PopStyleColor();
         ImGui::EndChild();
         if (!toRemove.empty())
-            AssetManager::get()->mTextures->removeTexture(toRemove);
+            AssetManager::get()->mTextures.removeTexture(toRemove);
 
         TextureModal("Add texture##asset", open);
     }
 
-    std::string EntityEditor::LayerModal(char *label, bool *open)
+    std::string EntityEditor::LayerModal(char* label, bool* open)
     {
         std::string result = "";
         if (*open)

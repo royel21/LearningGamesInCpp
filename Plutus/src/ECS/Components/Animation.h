@@ -3,11 +3,11 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include "Assets/Textures.h"
 
 namespace Plutus
 {
     class Entity;
+    struct Texture;
 
     struct Sequence
     {
@@ -22,19 +22,19 @@ namespace Plutus
     class Animation
     {
     public:
-        Animation(Entity *ent) : mEnt(ent){};
+        Animation(Entity* ent) : mEnt(ent) {};
 
         void update(float dt);
-        void addTexture(const std::string &id);
+        void addTexture(const std::string& id);
         void AddSequence(const std::string id, Sequence seq);
-        void PlaySequence(const std::string &id, bool _loop = false);
+        void PlaySequence(const std::string& id, bool _loop = false);
 
     public:
         bool loop = false;
         float currentTime = 0.0f;
         std::string currentSeq;
         std::unordered_map<std::string, Sequence> mSequences;
-        std::vector<Texure *> mTextures;
-        Entity *mEnt = nullptr;
+        std::vector<Texture*> mTextures;
+        Entity* mEnt = nullptr;
     };
 } // namespace Plutus

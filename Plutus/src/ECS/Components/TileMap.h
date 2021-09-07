@@ -3,10 +3,12 @@
 #include <cstring>
 #include <vector>
 #include <unordered_map>
-#include "Assets/Textures.h"
+#include <glm/glm.hpp>
 
 namespace Plutus
 {
+    struct Texture;
+
     struct Tile
     {
         int x = 0;
@@ -46,18 +48,18 @@ namespace Plutus
         int mTileWidth;
         int mTileHeight;
         std::vector<Tile> mTiles;
-        Texure *mTileset = nullptr;
-        std::vector<Texure *> mTextures;
+        Texture* mTileset = nullptr;
+        std::vector<Texture*> mTextures;
 
         TileMap() = default;
         TileMap(int tileWidth, int tileHeight) : mTileWidth(tileWidth), mTileHeight(tileHeight) {}
 
-        void addTexture(const std::string &texture);
-        void removeTexture(const std::string &texture);
+        void addTexture(const std::string& texture);
+        void removeTexture(const std::string& texture);
 
-        void addTile(const Tile &tile);
-        Tile *getTile(const glm::ivec2 &mCoords);
-        int getIndex(const glm::ivec2 &mCoords);
-        void removeTile(const glm::ivec2 &mCoords);
+        void addTile(const Tile& tile);
+        Tile* getTile(const glm::ivec2& mCoords);
+        int getIndex(const glm::ivec2& mCoords);
+        void removeTile(const glm::ivec2& mCoords);
     };
 } // namespace Plutus

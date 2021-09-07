@@ -1,14 +1,18 @@
 #include "TileMapPanel.h"
-#include "ECS/Components/TileMap.h"
-#include "imgui.h"
-#include "ImGuiEx.h"
+
 #include <iostream>
 #include <algorithm>
-#include "ECS/Scene.h"
-#include "Utils/Utils.h"
-#include "Assets/Textures.h"
-#include "../IconsFontAwesome5.h"
+
+#include <imgui.h>
+
+#include <ECS/Scene.h>
+#include <Utils/Utils.h>
+#include <Assets/AssetManager.h>
+#include <ECS/Components/TileMap.h>
 #include <Platform/Windows/FileUtils.h>
+
+#include "ImGuiEx.h"
+#include "../IconsFontAwesome5.h"
 
 #include <Graphics/GLSL.h>
 #include <Graphics/Camera2D.h>
@@ -38,7 +42,7 @@ namespace Plutus
 
     void TileMapPanel::addTexture(const char* label, bool& open, TileMap* tMap)
     {
-        auto assestM = Textures::get();
+        auto& assetsM = AssetManager::get()->mTextures;
         if (open)
         {
             ImGui::SetNextWindowSize(ImVec2(300.0f, 270.0f));
@@ -46,7 +50,7 @@ namespace Plutus
             ImGui::OpenPopup(label);
             static char name[128];
             static std::string path = "", filename = "";
-            static Texure* tilesheet = nullptr;
+            static Texture* tilesheet = nullptr;
             static int columns, tileWidth, tileHeight;
 
             ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
@@ -76,11 +80,11 @@ namespace Plutus
 
                             if (selectedType == 1)
                             {
-                                assestM->addTexture(name, path);
+                                assetsM.addTexture(name, path);
                             }
                             else
                             {
-                                assestM->addTexture(name, path, columns, tileWidth, tileHeight);
+                                assetsM.addTexture(name, path, columns, tileWidth, tileHeight);
                             }
                         }
                     }
@@ -91,7 +95,7 @@ namespace Plutus
                 ImGui::Checkbox("From List", &fromList);
                 if (fromList)
                 {
-                    auto& textures = Textures::get()->mTileSets;
+                    auto& textures = assetsM.mTileSets;
 
                     if (textures.size())
                     {
@@ -123,7 +127,7 @@ namespace Plutus
                     std::string texName(name);
                     if (!texName.empty())
                     {
-                        mTileMap->mTextures.push_back(assestM->getTexture(name));
+                        mTileMap->mTextures.push_back(assetsM.getTexture(name));
                         open = false;
                         filename = "";
                         path = "";
@@ -177,7 +181,7 @@ namespace Plutus
             if (mTileMap->mTextures.size() > 0)
             {
                 ImGui::PushItemWidth(110);
-                ImGui::ComboBox<Texure>("TileSheet##mttexture", mTileMap->mTextures, mCurrentTexture);
+                ImGui::ComboBox<Texture>("TileSheet##mttexture", mTileMap->mTextures, mCurrentTexture);
                 ImGui::PopItemWidth();
                 ImGui::Separator();
 
@@ -193,7 +197,7 @@ namespace Plutus
                     {
                         mRotation = LIMIT(mRotation, 0.0f, 360.0f);
                     }
-                    ImGui::Texure(mTileMap->mTextures[mCurrentTexture], 1, mTempTiles);
+                    ImGui::Texture(mTileMap->mTextures[mCurrentTexture], 1, mTempTiles);
                 }
 
                 if (mCurrentTile != nullptr && mMode == MODE_EDIT)

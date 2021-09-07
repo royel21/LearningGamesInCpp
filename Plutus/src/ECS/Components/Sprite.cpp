@@ -1,5 +1,5 @@
 #include "Sprite.h"
-#include "Assets/Textures.h"
+#include "Assets/AssetManager.h"
 
 namespace Plutus
 {
@@ -9,6 +9,6 @@ namespace Plutus
 
     Sprite::Sprite(std::string textId) : mUVCoord(0, 0, 1, 1), mTextureId(textId)
     {
-        mTexId = Textures::get()->getTexture(textId)->texId;
+        mTexId = AssetManager::get()->mTextures.getTexture(textId)->texId;
     }
 } // namespace Plutus

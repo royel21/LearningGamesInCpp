@@ -4,20 +4,20 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
-#include "glm/glm.hpp"
+
+#include "Textures.h"
+#include "FontManager.h"
 
 namespace Plutus
 {
-	//Manage all the texture of the game
-	class Textures;
-
 	class AssetManager
 	{
 	public:
-		Textures *mTextures = nullptr;
+		Textures mTextures;
+		FontManager mFonts;
 
 	public:
-		static AssetManager *get();
+		static AssetManager* get();
 
 		~AssetManager();
 		void clearData();

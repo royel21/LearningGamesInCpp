@@ -16,7 +16,7 @@ namespace Plutus
         int height;
     };
 
-    struct Texure
+    struct Texture
     {
         std::string name;
         std::string path;
@@ -30,7 +30,7 @@ namespace Plutus
         uint32_t texId = -1;
         std::vector<glm::vec4> uvs;
 
-        Texure() : columns(0), tileWidth(0), tileHeight(0) {}
+        Texture() : columns(0), tileWidth(0), tileHeight(0) {}
 
         /***
          *Create a texture atlas from the image from the tile width and height
@@ -38,7 +38,7 @@ namespace Plutus
          * @param columns count/total tile in the altas
          * @param tex reference to a texture
          * **/
-        Texure(const std::string& id, int columns, int w, int h, GLTexture tex, const std::string& _path);
+        Texture(const std::string& id, int columns, int w, int h, GLTexture tex, const std::string& _path);
 
         glm::vec4 getUV(float column, float row, float w, float h);
 
@@ -54,30 +54,29 @@ namespace Plutus
     class Textures
     {
     public:
-        std::unordered_map<std::string, Texure> mTileSets;
+        std::unordered_map<std::string, Texture> mTileSets;
 
     public:
-        static Textures* get();
+        Textures() = default;
         ~Textures();
-        Texure* getTexture(const std::string& id) { return &mTileSets[id]; }
+        Texture* getTexture(const std::string& id) { return &mTileSets[id]; }
         /***
             Create a texture atlas from the image from the tile width and height
             @param id the Id of the texture
             @param path route to file
         ***/
-        const Texure* addTexture(const std::string& id, const std::string& path, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
+        const Texture* addTexture(const std::string& id, const std::string& path, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
         /***
            *Create a texture atlas from the image from the tile width and height
             @param id the Id of the texture
             @param path route to file
        ***/
-        const Texure* addTexture(const std::string& id, const std::string& path, int c, int w, int h, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
+        const Texture* addTexture(const std::string& id, const std::string& path, int c, int w, int h, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
         void removeTexture(const std::string& id);
 
         void cleanUp();
 
     private:
-        Textures() = default;
         GLTexture loadTexture(std::string path, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
         std::unordered_map<std::string, bool> mTextureMap;
     };

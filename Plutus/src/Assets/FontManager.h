@@ -42,19 +42,24 @@ namespace Plutus
 		std::unordered_map<std::string, FontTexture> mFonts;
 
 	public:
-		//Return instace of Font Manager
-		static FontManager* get();
+		FontManager() = default;
 		~FontManager();
 		bool addFont(const std::string& Id, const std::string& fontPath, u32 fontSize);
 		void setFont(const std::string& Id) { mCurrentFont = Id; }
 		FontTexture* getFont(const std::string& Id) { return &mFonts[Id]; };
 
+		// Set font as current and Prepare list of renderable letter 
+		std::vector<Renderable> renderText(const std::string& font, const std::string& text, float x, float y, float scale = 1.0f, ColorRGBA8 color = {}) {
+			mCurrentFont = font;
+			return renderText(text, x, y, scale, color);
+		}
+
+		// Prepare list of renderable letter
 		std::vector<Renderable> renderText(const std::string& text, float x, float y, float scale = 1.0f, ColorRGBA8 color = {});
 
 		inline void setColor(u8 r, u8 g, u8 b, u8 a) { color = { r,g,b,a }; };
 
-	private:
-		FontManager() = default;
+		void cleanUp();
 	};
 } // namespace Plutus
 

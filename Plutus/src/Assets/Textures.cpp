@@ -7,14 +7,7 @@
 
 namespace Plutus
 {
-
-    Textures* Textures::get()
-    {
-        static Textures textures;
-        return &textures;
-    }
-
-    Texure::Texure(const std::string& id, int c, int w, int h, GLTexture tex, const std::string& _path) : name(id), path(_path)
+    Texture::Texture(const std::string& id, int c, int w, int h, GLTexture tex, const std::string& _path) : name(id), path(_path)
     {
         path = _path;
         tileWidth = w;
@@ -40,7 +33,7 @@ namespace Plutus
         }
     }
 
-    void Texure::calculateUV()
+    void Texture::calculateUV()
     {
         if (tileWidth > 0)
         {
@@ -59,7 +52,7 @@ namespace Plutus
         }
     }
 
-    glm::vec4 Texure::getUV(float column, float row, float w, float h)
+    glm::vec4 Texture::getUV(float column, float row, float w, float h)
     {
         float xw = column * tileWidth;
         float yh = row * tileHeight;
@@ -71,17 +64,17 @@ namespace Plutus
         cleanUp();
     }
 
-    const Texure* Textures::addTexture(const std::string& id, const std::string& path, GLint minFilter, GLint magFilter)
+    const Texture* Textures::addTexture(const std::string& id, const std::string& path, GLint minFilter, GLint magFilter)
     {
         return addTexture(id, path, 0, 0, 0, minFilter, magFilter);
     }
 
-    const Texure* Textures::addTexture(const std::string& id, const std::string& path, int c, int w, int h, GLint minFilter, GLint magFilter)
+    const Texture* Textures::addTexture(const std::string& id, const std::string& path, int c, int w, int h, GLint minFilter, GLint magFilter)
     {
         auto mit = mTileSets.find(id);
         if (mit == mTileSets.end())
         {
-            mTileSets[id] = Texure(id, c, w, h, loadTexture(path, minFilter, magFilter), path);
+            mTileSets[id] = Texture(id, c, w, h, loadTexture(path, minFilter, magFilter), path);
         }
 
         return &mTileSets[id];

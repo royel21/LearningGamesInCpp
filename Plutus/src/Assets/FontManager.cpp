@@ -1,24 +1,19 @@
-#include <glm/gtc/matrix_transform.hpp>
 #include "FontManager.h"
-#include <Graphics/GLheaders.h>
-#include <cmath>
+
 #include <vector>
 #include <iostream>
+
+#include <Graphics/GLheaders.h>
+#include <Utils/FileIO.h>
 // FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
 namespace Plutus
 {
-    FontManager* FontManager::get() {
-        static FontManager manager;
-        return &manager;
-    }
     FontManager::~FontManager()
     {
-        for (auto f : mFonts) {
-            glDeleteTextures(1, &f.second.texId);
-        }
+        cleanUp();
     }
 
     bool FontManager::addFont(const std::string& Id, const std::string& fontPath, u32 fontSize)
@@ -31,9 +26,10 @@ namespace Plutus
             return false;
         }
 
+        auto buffer = readFile(fontPath.c_str());
         // Load font as face
         FT_Face face;
-        if (FT_New_Face(ft, fontPath.c_str(), 0, &face)) {
+        if (FT_New_Memory_Face(ft, buffer.data(), buffer.size(), 0, &face)) {
             std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
             return false;
         }
@@ -83,6 +79,7 @@ namespace Plutus
         if (mCurrentFont.empty()) {
             mCurrentFont = Id;
         }
+        buffer.clear();
         return true;
     }
 
@@ -102,5 +99,12 @@ namespace Plutus
             x += ch.ax * scale;
         }
         return renderables;
+    }
+
+    void FontManager::cleanUp()
+    {
+        for (auto f : mFonts) {
+            glDeleteTextures(1, &f.second.texId);
+        }
     }
 } // namespace Plutus

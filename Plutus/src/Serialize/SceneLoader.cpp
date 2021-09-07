@@ -3,10 +3,10 @@
 
 #include "rapidjson/document.h"
 
-#include "Utils/Utils.h"
 #include "ECS/Scene.h"
 #include "ECS/Components.h"
-#include <Assets/Textures.h>
+#include <Assets/AssetManager.h>
+#include <Serialize/Serialize.h>
 
 namespace Plutus
 {
@@ -22,12 +22,12 @@ namespace Plutus
         auto tileset = value["tileset"].GetString();
         auto& tmap = ent->addComponent<TileMap>(w, h);
 
-        tmap.mTileset = Textures::get()->getTexture(tileset);
+        tmap.mTileset = AssetManager::get()->mTextures.getTexture(tileset);
         auto textures = value["textures"].GetArray();
 
         for (auto& t : value["textures"].GetArray())
         {
-            tmap.mTextures.push_back(Textures::get()->getTexture(t.GetString()));
+            tmap.mTextures.push_back(AssetManager::get()->mTextures.getTexture(t.GetString()));
         }
 
         auto tiles = value["tiles"].GetArray();
@@ -52,7 +52,7 @@ namespace Plutus
     {
         bool success = false;
         rapidjson::Document doc;
-        if (Utils::loadJson(path, &doc))
+        if (loadJson(path, &doc))
         {
             //Load All Textures
             if (doc["textures"].IsArray())
@@ -68,7 +68,7 @@ namespace Plutus
                     int columns = tex["columns"].GetInt();
                     int width = tex["width"].GetInt();
                     int height = tex["height"].GetInt();
-                    Textures::get()->addTexture(id, path, columns, width, height);
+                    AssetManager::get()->mTextures.addTexture(id, path, columns, width, height);
                 }
             }
 

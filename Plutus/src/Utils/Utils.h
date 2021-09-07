@@ -2,7 +2,6 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "rapidjson/document.h"
 
 #define SAVE_FILE 0
 #define OPEN_FILE 1
@@ -25,10 +24,6 @@ namespace Plutus
         std::string getFileName(const std::string& filePath);
         //Get file extenxion
         std::string getExtension(const std::string& fileName);
-
-        bool loadJson(const char* filePath, rapidjson::Document* document);
-
-        void toJsonFile(const std::string& path, const char* buffer);
 
         std::vector<std::string> listFiles(const std::string& path, const std::string& fileType);
 

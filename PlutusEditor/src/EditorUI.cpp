@@ -4,18 +4,18 @@
 #include <GLFW/glfw3.h>
 
 #include <glm/gtc/type_ptr.hpp>
-#include "Serialize/SceneSerializer.h"
-#include "Serialize/Serialize.h"
+#include <Serialize/SceneSerializer.h>
+#include <Serialize/Serialize.h>
 
-#include "Graphics/DebugRenderer.h"
-#include "Graphics/Camera2D.h"
-#include "Input/Input.h"
-#include "Utils/Utils.h"
+#include <Graphics/DebugRenderer.h>
+#include <Graphics/Camera2D.h>
+#include <Input/Input.h>
+#include <Utils/Utils.h>
 
 #include "IconsFontAwesome5.h"
 #include "ImGuiEx.h"
 
-#include "ECS/Scene.h"
+#include <ECS/Scene.h>
 #include <Platform/Windows/FileUtils.h>
 #include <cstdio>
 
@@ -505,7 +505,7 @@ namespace Plutus
 		std::string filePath;
 		if (Plutus::windowDialog(SAVE_FILE, filePath))
 		{
-			Plutus::Utils::toJsonFile(filePath, sr.getString());
+			Plutus::toJsonFile(filePath, sr.getString());
 			addRecent(filePath);
 		}
 	}
@@ -548,7 +548,7 @@ namespace Plutus
 		writer->EndArray();
 		writer->EndObject();
 		std::string path = std::filesystem::absolute("./pe-config.json").string();
-		Plutus::Utils::toJsonFile(path, sr.getString());
+		Plutus::toJsonFile(path, sr.getString());
 	}
 
 	void initColor(const rapidjson::Document& doc, const char* label, glm::vec4& color)
@@ -566,7 +566,7 @@ namespace Plutus
 	void EditorUI::loadRecents()
 	{
 		rapidjson::Document doc;
-		if (Utils::loadJson("./pe-config.json", &doc))
+		if (loadJson("./pe-config.json", &doc))
 		{
 			if (doc.HasMember("gridwidth"))
 			{

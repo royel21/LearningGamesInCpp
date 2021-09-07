@@ -6,8 +6,7 @@
 #include <Graphics/Camera2D.h>
 #include <Graphics/SpriteBatch2D.h>
 #include <Graphics/DebugRenderer.h>
-#include <Assets/Textures.h>
-#include <Assets/FontManager.h>
+#include <Assets/AssetManager.h>
 
 class EditorScreen : public Plutus::IGameScreen
 {
@@ -34,7 +33,6 @@ private:
     Plutus::Shader mShader;
     Plutus::Camera2D mCamera;
     Plutus::SpriteBatch2D mRender;
-    Plutus::Textures* mTextures;
-    Plutus::FontManager* mFontManager;
+    Plutus::AssetManager* mAssets;
     Plutus::DebugRender* mDebug;
 };

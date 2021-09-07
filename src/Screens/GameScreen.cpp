@@ -4,7 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 
-#include <Assets/Textures.h>
+#include <Assets/AssetManager.h>
 #include <Serialize/SceneLoader.h>
 #include <ECS/Components.h>
 
@@ -49,10 +49,10 @@ void GameScreen::onEntry()
     mInput = Plutus::Input::getInstance();
 
     // Plutus::SceneLoader::loadFromJson("assets/scene1.json", mScene);
-
-    Plutus::Textures::get()->addTexture("bats", "assets/textures/monster/bat.png", 3, 32, 32);
-    Plutus::Textures::get()->addTexture("Player", "assets/textures/player1.png");
-    Plutus::Textures::get()->addTexture("cave", "assets/textures/goblin_cave.png", 8, 32, 32);
+    auto& textures = Plutus::AssetManager::get()->mTextures;
+    textures.addTexture("bats", "assets/textures/monster/bat.png", 3, 32, 32);
+    textures.addTexture("Player", "assets/textures/player1.png");
+    textures.addTexture("cave", "assets/textures/goblin_cave.png", 8, 32, 32);
 
     auto player = mScene->createEntity("Player");
     player->addComponent<Plutus::Transform>(256.0f, h - 32.0f, 32, 32, 0.0f);
@@ -79,7 +79,7 @@ void GameScreen::onEntry()
     auto bed = mScene->createEntity("bed");
     bed->addComponent<Plutus::Transform>(128.0f, h - 256.0f, 128, 128);
     auto& sprite = bed->addComponent<Plutus::Sprite>("cave");
-    auto uv = Plutus::Textures::get()->getTexture("cave")->getUV(1, 10, 96, 96);
+    auto uv = textures.getTexture("cave")->getUV(1, 10, 96, 96);
     sprite.mUVCoord = uv;
 }
 

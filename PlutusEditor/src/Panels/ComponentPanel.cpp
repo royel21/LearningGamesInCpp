@@ -1,17 +1,17 @@
 #include "ComponentPanel.h"
-#include "glm/glm.hpp"
 
-#include "Graphics/SpriteBatch2D.h"
-#include "Assets/Textures.h"
-#include "Input/Input.h"
 #include "ImGuiEx.h"
 
-#include "ECS/Components/Animation.h"
-#include "ECS/Components/Transform.h"
-#include "ECS/Components/Sprite.h"
-#include "ECS/Components/TileMap.h"
-#include "ECS/Scene.h"
-#include "Utils/Utils.h"
+#include <algorithm>
+
+#include <glm/glm.hpp>
+
+#include "Graphics/SpriteBatch2D.h"
+#include <Assets/AssetManager.h>
+#include <Input/Input.h>
+#include <ECS/Components.h>
+#include <ECS/Scene.h>
+#include <Utils/Utils.h>
 
 #define COMP_TRASNFORM 0
 #define COMP_SPRITE 1
@@ -23,13 +23,13 @@ const uint32_t color3 = IM_COL32(60, 60, 70, 255);
 
 namespace Plutus
 {
-    void ComponentPanel::setContext(Ref<Scene> &scene)
+    void ComponentPanel::setContext(Ref<Scene>& scene)
     {
         mScene = scene;
         mInput = Input::getInstance();
         mTileMapPanel.setContext(scene);
 
-        createComps["Animation"] = [&](bool &open)
+        createComps["Animation"] = [&](bool& open)
         {
             if (ImGui::Button("Create##Comp"))
             {
@@ -38,11 +38,11 @@ namespace Plutus
             }
         };
 
-        createComps["Transform"] = [&](bool &open)
+        createComps["Transform"] = [&](bool& open)
         {
             // Transform Props
-            static float transPos[] = {0, 0};
-            static int transSize[] = {0, 0};
+            static float transPos[] = { 0, 0 };
+            static int transSize[] = { 0, 0 };
             static float transRotate = 0;
 
             ImGui::DragFloat2("Position##trans-modal", transPos, 1.0f, 0, 0, "%.2f");
@@ -62,18 +62,18 @@ namespace Plutus
                 mEntity->addComponent<Transform>(transPos[1], transPos[0], transSize[0], transSize[1], transRotate);
             }
         };
-        createComps["Sprite"] = [&](bool &open)
+        createComps["Sprite"] = [&](bool& open)
         {
-            static std::string selected = Textures::get()->mTileSets.begin()->first;
+            static std::string selected = AssetManager::get()->mTextures.mTileSets.begin()->first;
 
-            ImGui::ComboBox<Texure>("TileSheet", Textures::get()->mTileSets, selected);
+            ImGui::ComboBox<Texture>("TileSheet", AssetManager::get()->mTextures.mTileSets, selected);
             if (ImGui::Button("Create##Comp"))
             {
                 mEntity->addComponent<Sprite>(selected);
                 open = false;
             }
         };
-        createComps["TileMap"] = [&](bool &open)
+        createComps["TileMap"] = [&](bool& open)
         {
             if (ImGui::Button("Create##Comp"))
             {
@@ -81,7 +81,7 @@ namespace Plutus
                 mEntity->addComponent<TileMap>(32, 32);
             }
         };
-        createComps["Script"] = [&](bool &open)
+        createComps["Script"] = [&](bool& open)
         {
             auto files = Utils::listFiles("assets/script", ".lua");
             if (files.size())
@@ -97,7 +97,7 @@ namespace Plutus
         };
     }
 
-    void ComponentPanel::drawUI(Entity *ent)
+    void ComponentPanel::drawUI(Entity* ent)
     {
         static bool isOpen = true;
         ImGui::Begin("Components", &isOpen, ImGuiWindowFlags_HorizontalScrollbar);
@@ -134,7 +134,7 @@ namespace Plutus
         ImGui::End();
     }
 
-    void ComponentPanel::render(SpriteBatch2D *renderer, glm::vec2 mcoords)
+    void ComponentPanel::render(SpriteBatch2D* renderer, glm::vec2 mcoords)
     {
         mTileMapPanel.renderTiles(renderer, mcoords);
     }
@@ -145,8 +145,8 @@ namespace Plutus
         {
             if (ImGui::CollapsingHeader("Transform##comp"))
             {
-                auto &trans = mEntity->getComponent<Transform>();
-                float position[] = {trans.x, trans.y};
+                auto& trans = mEntity->getComponent<Transform>();
+                float position[] = { trans.x, trans.y };
 
                 ImGui::PushItemWidth(100);
                 if (ImGui::DragFloat2("Position X Y", position, 1.0f, 0, 0, "%.2f"))
@@ -154,7 +154,7 @@ namespace Plutus
                     trans.x = position[0];
                     trans.y = position[1];
                 }
-                int size[] = {trans.h, trans.w};
+                int size[] = { trans.h, trans.w };
                 if (ImGui::DragInt2("Size W H", size))
                 {
                     trans.h = size[0];
@@ -172,14 +172,14 @@ namespace Plutus
         {
             if (ImGui::CollapsingHeader("Sprite##comp"))
             {
-                auto &sprite = mEntity->getComponent<Sprite>();
-                auto &tilesets = Textures::get()->mTileSets;
+                auto& sprite = mEntity->getComponent<Sprite>();
+                auto& tilesets = AssetManager::get()->mTextures.mTileSets;
 
                 auto color = sprite.mColor.rgba;
                 static std::string selected = sprite.mTextureId;
                 static int sc = 100;
                 static float scale = 1.0f;
-                ImGui::ComboBox<Texure>("TileSheet", tilesets, selected);
+                ImGui::ComboBox<Texture>("TileSheet", tilesets, selected);
 
                 if (ImGui::ColorInt("Color", color))
                 {
@@ -201,7 +201,7 @@ namespace Plutus
                 }
 
                 static char text[120];
-                snprintf(text, 120, "Texure Size W:%d H:%d", tileset->texWidth, tileset->texHeight);
+                snprintf(text, 120, "Texture Size W:%d H:%d", tileset->texWidth, tileset->texHeight);
                 ImGui::Text(text);
                 ImGui::Separator();
                 if (tileset != NULL)
@@ -231,7 +231,7 @@ namespace Plutus
         {
             if (ImGui::CollapsingHeader("Script##comp"))
             {
-                auto &script = mEntity->getComponent<Script>();
+                auto& script = mEntity->getComponent<Script>();
                 auto files = Utils::listFiles("assets/script", ".lua");
                 if (files.size())
                 {
@@ -246,9 +246,9 @@ namespace Plutus
         }
     }
 
-    void ComponentPanel::drawCanvas(Texure *tileset, float scale)
+    void ComponentPanel::drawCanvas(Texture* tileset, float scale)
     {
-        ImDrawList *drawList = ImGui::GetWindowDrawList();
+        ImDrawList* drawList = ImGui::GetWindowDrawList();
         auto size = ImGui::GetContentRegionAvail();
 
         ImVec2 cvPos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
@@ -259,7 +259,7 @@ namespace Plutus
         uint32_t id = tileset->texId;
 
         ImVec2 cvDestEnd(cvPos.x + w * scale, cvPos.y + h * scale);
-        ImGui::Image((void *)id, ImVec2(w * scale, h * scale));
+        ImGui::Image((void*)id, ImVec2(w * scale, h * scale));
         {
             auto color = IM_COL32(255, 255, 255, 100);
             if (id)
@@ -280,7 +280,7 @@ namespace Plutus
                     for (float y = 0; y < textureHeight; y += tileHeight)
                     {
                         drawList->AddLine(ImVec2(cvPos.x, cvPos.y + y),
-                                          ImVec2(cvDestEnd.x, cvPos.y + y), color, 1.0f);
+                            ImVec2(cvDestEnd.x, cvPos.y + y), color, 1.0f);
                     }
                 }
                 if (tileWidth)
@@ -288,7 +288,7 @@ namespace Plutus
                     for (float x = 0; x < textureWidth; x += tileWidth)
                     {
                         drawList->AddLine(ImVec2(cvPos.x + x, cvPos.y),
-                                          ImVec2(cvPos.x + x, cvDestEnd.y), color, 1.0f);
+                            ImVec2(cvPos.x + x, cvDestEnd.y), color, 1.0f);
                     }
                 }
                 //Rect
@@ -320,8 +320,8 @@ namespace Plutus
                         ImVec2 vec(x, y);
 
                         auto found = std::find_if(mSelectedtiles.begin(), mSelectedtiles.end(),
-                                                  [vec](const ImVec2 &m) -> bool
-                                                  { return m.x == vec.x && m.y == vec.y; });
+                            [vec](const ImVec2& m) -> bool
+                            { return m.x == vec.x && m.y == vec.y; });
                         if (found == mSelectedtiles.end())
                         {
                             mSelectedtiles.push_back(vec);
@@ -339,14 +339,14 @@ namespace Plutus
         }
     }
 
-    void ComponentPanel::drawTexCoords(Texure *tileset, float scale)
+    void ComponentPanel::drawTexCoords(Texture* tileset, float scale)
     {
 
         const int w = tileset->texWidth;
         const int h = tileset->texHeight;
         uint32_t id = tileset->texId;
 
-        ImDrawList *drawList = ImGui::GetWindowDrawList();
+        ImDrawList* drawList = ImGui::GetWindowDrawList();
         static ImVector<ImVec2> points;
         if (ImGui::Button("Add Selection"))
         {
@@ -360,7 +360,7 @@ namespace Plutus
         ImVec2 cvPos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
         ImVec2 cv_destStart(cvPos.x, cvPos.y);
         ImVec2 cvDestEnd(cvPos.x + w * scale, cvPos.y + h * scale);
-        ImGui::Image((void *)id, ImVec2(w * scale, h * scale));
+        ImGui::Image((void*)id, ImVec2(w * scale, h * scale));
         {
             static ImVec2 StartCoords(0, 0);
             static ImVec2 EndCoords(0, 0);
@@ -373,7 +373,7 @@ namespace Plutus
             auto color = IM_COL32(255, 255, 255, 100);
             if (id)
             {
-                drawList->AddImage((void *)id, cvPos, cvDestEnd);
+                drawList->AddImage((void*)id, cvPos, cvDestEnd);
                 drawList->AddRect(cvPos, cvDestEnd, color);
             }
             if (ImGui::IsItemHovered())
@@ -423,7 +423,7 @@ namespace Plutus
         }
     }
 
-    bool ComponentPanel::showCreateComp(bool &open)
+    bool ComponentPanel::showCreateComp(bool& open)
     {
 
         auto datas = getCompList();
@@ -476,22 +476,22 @@ namespace Plutus
         return datas;
     }
 
-    void ComponentPanel::showDialog(const char *name, float width, float height)
+    void ComponentPanel::showDialog(const char* name, float width, float height)
     {
         auto pos = ImGui::GetWindowPos();
-        ImGui::SetNextWindowPos({pos.x + 5, pos.y + 60});
+        ImGui::SetNextWindowPos({ pos.x + 5, pos.y + 60 });
 
-        ImGui::SetNextWindowSize({width, height});
+        ImGui::SetNextWindowSize({ width, height });
         ImGui::OpenPopup(name);
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
         ImGui::BeginPopupModal(name, NULL, window_flags);
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.33f, 0.33f, 0.33f, 0.8f));
     }
 
-    void ComponentPanel::endDialog(bool &show)
+    void ComponentPanel::endDialog(bool& show)
     {
         auto size = ImGui::GetWindowSize();
-        ImGui::SetCursorPos({size.x - 60.0f, size.y - 35.0f});
+        ImGui::SetCursorPos({ size.x - 60.0f, size.y - 35.0f });
         if (ImGui::Button("Cancel##modal-1"))
             show = false;
         ImGui::PopStyleColor();

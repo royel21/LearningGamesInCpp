@@ -9,12 +9,12 @@
 namespace Plutus
 {
 
-    void Textures_JSON(Serializer &serializer)
+    void Textures_JSON(Serializer& serializer)
     {
         auto writer = serializer.getWriter();
         writer->String("textures");
         writer->StartArray();
-        for (auto tile : Textures::get()->mTileSets)
+        for (auto tile : AssetManager::get()->mTextures.mTileSets)
         {
             writer->StartObject();
 
@@ -34,7 +34,7 @@ namespace Plutus
         writer->EndArray();
     }
 
-    void Tag_JSON(Serializer &serializer, const Tag &tag)
+    void Tag_JSON(Serializer& serializer, const Tag& tag)
     {
         auto writer = serializer.getWriter();
         writer->StartObject();
@@ -46,7 +46,7 @@ namespace Plutus
         }
     }
 
-    void Transform_JSON(Serializer &serializer, const Transform &trans)
+    void Transform_JSON(Serializer& serializer, const Transform& trans)
     {
         auto writer = serializer.getWriter();
         writer->StartObject();
@@ -67,7 +67,7 @@ namespace Plutus
         writer->EndObject();
     }
 
-    void Sprite_json(Serializer &serializer, const Sprite &sprite)
+    void Sprite_json(Serializer& serializer, const Sprite& sprite)
     {
         auto writer = serializer.getWriter();
         writer->StartObject();
@@ -86,7 +86,7 @@ namespace Plutus
         writer->EndObject();
     }
 
-    void Script_JSON(Serializer &serializer, const Script &script)
+    void Script_JSON(Serializer& serializer, const Script& script)
     {
         auto writer = serializer.getWriter();
         writer->StartObject();
@@ -99,7 +99,7 @@ namespace Plutus
         writer->EndObject();
     }
 
-    void Animate_JSON(Serializer &ser, const Animation &anim)
+    void Animate_JSON(Serializer& ser, const Animation& anim)
     {
         auto writer = ser.getWriter();
         writer->StartObject();
@@ -117,7 +117,7 @@ namespace Plutus
 
             writer->String("sequences");
             writer->StartArray();
-            for (auto &a : anim.mSequences)
+            for (auto& a : anim.mSequences)
             {
                 writer->StartObject();
                 {
@@ -142,7 +142,7 @@ namespace Plutus
         writer->EndObject();
     }
 
-    void TileMap_json(Serializer &serializer, const TileMap &tilemap)
+    void TileMap_json(Serializer& serializer, const TileMap& tilemap)
     {
         auto writer = serializer.getWriter();
         writer->StartObject();
@@ -199,7 +199,7 @@ namespace Plutus
         writer->EndObject();
     }
 
-    void sceneSerializer(Serializer &ser, Ref<Scene> &scene)
+    void sceneSerializer(Serializer& ser, Ref<Scene>& scene)
     {
         auto writer = ser.getWriter();
         writer->StartObject();

@@ -2,6 +2,7 @@
 
 #include "ECS/Scene.h"
 #include "Sprite.h"
+#include <Assets/AssetManager.h>
 
 namespace Plutus
 {
@@ -16,11 +17,11 @@ namespace Plutus
     {
         if (mEnt->hasComponent<Sprite>() && mSequences.size())
         {
-            auto &sprite = mEnt->getComponent<Sprite>();
+            auto& sprite = mEnt->getComponent<Sprite>();
             currentTime += dt;
 
-            auto &seq = mSequences[currentSeq];
-            auto &frames = seq.mFrames;
+            auto& seq = mSequences[currentSeq];
+            auto& frames = seq.mFrames;
 
             if (currentTime > seq.mSeqTime)
             {
@@ -32,9 +33,9 @@ namespace Plutus
         }
     }
 
-    void Animation::addTexture(const std::string &id)
+    void Animation::addTexture(const std::string& id)
     {
-        mTextures.push_back(Textures::get()->getTexture(id));
+        mTextures.push_back(AssetManager::get()->mTextures.getTexture(id));
     }
 
     void Animation::AddSequence(const std::string id, Sequence seq)
@@ -42,7 +43,7 @@ namespace Plutus
         mSequences[id] = seq;
     }
 
-    void Animation::PlaySequence(const std::string &id, bool _loop)
+    void Animation::PlaySequence(const std::string& id, bool _loop)
     {
         currentSeq = id;
         loop = _loop;

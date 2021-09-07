@@ -1,7 +1,7 @@
-
 #pragma once
 
 #include <rapidjson/writer.h> // for stringify JSON
+#include "rapidjson/document.h"
 #include <unordered_map>
 
 namespace Plutus
@@ -19,5 +19,9 @@ namespace Plutus
         StringBuffer sb;
         Writer<StringBuffer> writer;
     };
+
+    bool loadJson(const char* filePath, rapidjson::Document* document);
+
+    void toJsonFile(const std::string& path, const char* buffer);
 
 } // namespace Plutus

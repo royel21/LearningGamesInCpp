@@ -25,21 +25,21 @@ void EditorScreen::build()
 
 void EditorScreen::onEntry()
 {
-    mFontManager = Plutus::FontManager::get();
+    mAssets = Plutus::AssetManager::get();
     auto size = mEngine->getWindowSize();
     mDebug = Plutus::DebugRender::geInstances();
     mDebug->init(&mCamera);
-    mTextures = Plutus::Textures::get();
-    mTextures->addTexture("player", "assets/textures/zombie.png");
+
+    mAssets->mTextures.addTexture("player", "assets/textures/zombie.png");
 
     mShader.CreateProgWithShader(vertexShader2, fragShader2);
     mCamera.init(static_cast<int>(size.x), static_cast<int>(size.y));
     mRender.init();
     mInput = Plutus::Input::getInstance();
 
-    mFontManager->addFont("arial", "./assets/fonts/arial.ttf", 32);
-    mFontManager->addFont("OpenSansBold", "./assets/fonts/OpenSans-Bold.ttf", 32);
-    mFontManager->addFont("Zoika", "./assets/fonts/Zoika.ttf", 32);
+    mAssets->mFonts.addFont("arial", "./assets/fonts/arial.ttf", 32);
+    mAssets->mFonts.addFont("OpenSansBold", "./assets/fonts/OpenSans-Bold.ttf", 32);
+    mAssets->mFonts.addFont("Zoika", "./assets/fonts/Zoika.ttf", 32);
 }
 
 void EditorScreen::update(float dt)
@@ -62,18 +62,17 @@ void EditorScreen::draw()
 
     mRender.begin(&mShader, &mCamera, true);
 
-    mFontManager->setFont("arial");
-    auto text = mFontManager->renderText("hello world_Royel - Arial", 32.0f, h - 175.0f, 1.0f, { 255,255,255,255 });
+    auto text = mAssets->mFonts.renderText("arial", "hello world_Royel - Arial", 32.0f, h - 175.0f, 1.0f, { 255,255,255,255 });
     for (auto r : text) {
         mRender.submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY);
     }
-    mFontManager->setFont("OpenSansBold");
-    text = mFontManager->renderText("hello world_Royel - OpenSans", 32.0f, h - 120.0f, 1.0f, { 255,255,255,255 });
+
+    text = mAssets->mFonts.renderText("OpenSansBold", "hello world_Royel - OpenSans", 32.0f, h - 120.0f, 1.0f, { 255,255,255,255 });
     for (auto r : text) {
         mRender.submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY);
     }
-    mFontManager->setFont("Zoika");
-    text = mFontManager->renderText("hello world_Royel _=+/&^%$# Zoika", 32.0f, h - 65.0f, 1.0f, { 255, 255,255,255 });
+
+    text = mAssets->mFonts.renderText("Zoika", "hello world_Royel _=+/&^%$# Zoika", 32.0f, h - 65.0f, 1.0f, { 255, 255,255,255 });
     for (auto r : text) {
         mRender.submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY);
     }

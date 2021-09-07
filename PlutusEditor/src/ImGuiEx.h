@@ -1,21 +1,24 @@
 #pragma once
+
 #include <vector>
+#include <imgui.h>
+#include <iostream>
 #include <unordered_map>
-#include "imgui.h"
-#include "iostream"
-#include "entt.hpp"
-#include "ECS/Scene.h"
-#include "Assets/Textures.h"
-#include "Input/Input.h"
-#include "IconsFontAwesome5.h"
-#include "ECS/Components.h"
+
+#include <entt.hpp>
 #include <Core/type.h>
+#include <ECS/Scene.h>
+#include <Input/Input.h>
+#include <ECS/Components.h>
+#include <Assets/AssetManager.h>
+
+#include "IconsFontAwesome5.h"
 
 #define IM_F4_2_I32COLOR(color) static_cast<int>(color[3] * 255) << 24 | static_cast<int>(color[2] * 255) << 16 | static_cast<int>(color[1] * 255) << 8 | static_cast<int>(color[0] * 255)
 
 namespace Plutus
 {
-    inline bool compare(const glm::ivec2 &a, const glm::ivec2 &b)
+    inline bool compare(const glm::ivec2& a, const glm::ivec2& b)
     {
         if (a.x < b.x)
             return true;
@@ -31,8 +34,8 @@ namespace Plutus
     template <typename T>
     inline bool hasVec(std::vector<T> items, int x, int y)
     {
-        auto found = std::find_if(items.begin(), items.end(), [x, y](const glm::ivec2 &m) -> bool
-                                  { return m.x == x && m.y == y; });
+        auto found = std::find_if(items.begin(), items.end(), [x, y](const glm::ivec2& m) -> bool
+            { return m.x == x && m.y == y; });
         return found != items.end();
     }
 } // namespace Plutus
@@ -40,7 +43,7 @@ namespace Plutus
 namespace ImGui
 {
     template <typename T>
-    inline bool ComboBox(const char *label, const std::vector<T *> &data, int &selected)
+    inline bool ComboBox(const char* label, const std::vector<T*>& data, int& selected)
     {
         bool isSelected = false;
 
@@ -65,7 +68,7 @@ namespace ImGui
         return isSelected;
     }
 
-    inline bool ComboBox(const char *label, const std::vector<std::string> &data, int &selected)
+    inline bool ComboBox(const char* label, const std::vector<std::string>& data, int& selected)
     {
         bool isSelected = false;
 
@@ -90,7 +93,7 @@ namespace ImGui
         return isSelected;
     }
     template <typename T>
-    inline bool ComboBox(const char *label, const std::unordered_map<std::string, T> &data, std::string &selected)
+    inline bool ComboBox(const char* label, const std::unordered_map<std::string, T>& data, std::string& selected)
     {
         bool isSelected = false;
 
@@ -113,7 +116,7 @@ namespace ImGui
         return isSelected;
     }
 
-    inline bool ListBox(const char *label, std::vector<Plutus::Entity *> data, Plutus::Entity *selected)
+    inline bool ListBox(const char* label, std::vector<Plutus::Entity*> data, Plutus::Entity* selected)
     {
         bool isSelected = false;
         if (ImGui::ListBoxHeader(label, data.size()))
@@ -136,7 +139,7 @@ namespace ImGui
         return isSelected;
     }
 
-    inline bool Entities(const char *label, std::vector<Plutus::Ref<Plutus::Entity>> &entities, int &selected, int &remove)
+    inline bool Entities(const char* label, std::vector<Plutus::Ref<Plutus::Entity>>& entities, int& selected, int& remove)
     {
         bool isSelected = false;
         for (uint32_t i = 0; i < entities.size(); i++)
@@ -162,11 +165,11 @@ namespace ImGui
         return isSelected;
     }
 
-    inline bool Texure(Plutus::Texure *tileset, float scale, std::vector<glm::ivec3> &selected)
+    inline bool Texture(Plutus::Texture* tileset, float scale, std::vector<glm::ivec3>& selected)
     {
         bool isSelected = false;
         auto mInput = Plutus::Input::getInstance();
-        ImDrawList *drawList = ImGui::GetWindowDrawList();
+        ImDrawList* drawList = ImGui::GetWindowDrawList();
         auto size = ImGui::GetContentRegionAvail();
 
         ImVec2 cvPos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
@@ -175,7 +178,7 @@ namespace ImGui
         const int h = tileset->texHeight;
 
         ImVec2 cvDestEnd(cvPos.x + w * scale, cvPos.y + h * scale);
-        ImGui::Image((void *)tileset->texId, ImVec2(w * scale, h * scale));
+        ImGui::Image((void*)tileset->texId, ImVec2(w * scale, h * scale));
         {
             auto color = IM_COL32(255, 255, 255, 100);
             if (tileset->texId)
@@ -196,12 +199,12 @@ namespace ImGui
                     for (float y = 0; y < textureHeight; y += tileHeight)
                     {
                         drawList->AddLine(ImVec2(cvPos.x, cvPos.y + y),
-                                          ImVec2(cvDestEnd.x, cvPos.y + y), color, 1.0f);
+                            ImVec2(cvDestEnd.x, cvPos.y + y), color, 1.0f);
                     }
                     for (float x = 0; x < textureWidth; x += tileWidth)
                     {
                         drawList->AddLine(ImVec2(cvPos.x + x, cvPos.y),
-                                          ImVec2(cvPos.x + x, cvDestEnd.y), color, 1.0f);
+                            ImVec2(cvPos.x + x, cvDestEnd.y), color, 1.0f);
                     }
                 }
                 //Rect
@@ -284,7 +287,7 @@ namespace ImGui
         }
     }
 
-    inline bool ColorInt(const char *label, unsigned int &color)
+    inline bool ColorInt(const char* label, unsigned int& color)
     {
         bool change = false;
         int r = color & 255;
@@ -292,7 +295,7 @@ namespace ImGui
         int b = (color >> 16) & 255;
         int a = (color >> 24) & 255;
 
-        float mcolor[] = {r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f};
+        float mcolor[] = { r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
         if (ImGui::ColorEdit4(label, mcolor))
         {
             color = IM_F4_2_I32COLOR(mcolor);
@@ -301,22 +304,22 @@ namespace ImGui
         return change;
     }
 
-    inline void BeginDialog(const char *name, float width, float height)
+    inline void BeginDialog(const char* name, float width, float height)
     {
         auto pos = ImGui::GetWindowPos();
-        ImGui::SetNextWindowPos({pos.x + 5, pos.y + 60});
+        ImGui::SetNextWindowPos({ pos.x + 5, pos.y + 60 });
 
-        ImGui::SetNextWindowSize({width, height});
+        ImGui::SetNextWindowSize({ width, height });
         ImGui::OpenPopup(name);
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
         ImGui::BeginPopupModal(name, NULL, window_flags);
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.33f, 0.33f, 0.33f, 0.8f));
     }
 
-    inline void EndDialog(bool &show)
+    inline void EndDialog(bool& show)
     {
         auto size = ImGui::GetWindowSize();
-        ImGui::SetCursorPos({size.x - 60.0f, size.y - 35.0f});
+        ImGui::SetCursorPos({ size.x - 60.0f, size.y - 35.0f });
         if (ImGui::Button("Cancel##modal-1"))
             show = false;
         ImGui::PopStyleColor();

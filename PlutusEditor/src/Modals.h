@@ -5,9 +5,9 @@
 #include <Platform/Windows/FileUtils.h>
 #include <string>
 #include "ImGuiEx.h"
-#include <Assets/Textures.h>
+#include <Assets/AssetManager.h>
 
-inline void TextureModal(const char *label, bool &open)
+inline void TextureModal(const char* label, bool& open)
 {
     if (open)
     {
@@ -52,10 +52,10 @@ inline void TextureModal(const char *label, bool &open)
             }
             ImGui::PopItemWidth();
             ImGui::Separator();
-            ImGui::SetCursorPos({195.0f, 235.0f});
+            ImGui::SetCursorPos({ 195.0f, 235.0f });
             if (ImGui::Button("save##modal"))
             {
-                Plutus::Textures::get()->addTexture(name, path, columns, tileWidth, tileWidth);
+                Plutus::AssetManager::get()->mTextures.addTexture(name, path, columns, tileWidth, tileWidth);
                 std::string texName(name);
                 if (!texName.empty())
                 {
