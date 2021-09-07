@@ -44,7 +44,7 @@ namespace Plutus
     {
         mRenderer.init();
         mCamera = camera;
-        mShader.CreateProgWithShader(vertexShader2.c_str(), fragShader2.c_str());
+        mShader.CreateProgWithShader(GLSL::vertexShader.c_str(), GLSL::fragShader.c_str());
         addLayer("Layer0");
     }
 

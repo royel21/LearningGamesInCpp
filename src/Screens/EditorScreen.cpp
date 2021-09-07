@@ -26,12 +26,13 @@ void EditorScreen::build()
     mDebug = Plutus::DebugRender::geInstances();
     mDebug->init(&mCamera);
 
-    mAssets->mTextures.addTexture("player", "assets/textures/zombie.png");
 
     mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
     mCamera.init(static_cast<int>(size.x), static_cast<int>(size.y));
     mRender.init();
     mInput = Plutus::Input::getInstance();
+
+    mAssets->mTextures.addTexture("player", "assets/textures/zombie.png");
 
     mAssets->mFonts.addFont("arial", "./assets/fonts/arial.ttf", 32);
     mAssets->mFonts.addFont("OpenSansBold", "./assets/fonts/OpenSans-Bold.ttf", 32);
@@ -62,19 +63,19 @@ void EditorScreen::draw()
 
     mRender.begin(&mShader, &mCamera, true);
 
-    auto text = mAssets->mFonts.renderText("arial", "hello world_Royel - Arial", 32.0f, h - 175.0f, 1.0f, {255, 255, 255, 255});
+    auto text = mAssets->mFonts.renderText("arial", "hello world_Royel - Arial", 32.0f, h - 175.0f, 1.0f, { 255, 255, 255, 255 });
     for (auto r : text)
     {
         mRender.submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY);
     }
 
-    text = mAssets->mFonts.renderText("OpenSansBold", "hello world_Royel - OpenSans", 32.0f, h - 120.0f, 1.0f, {255, 255, 255, 255});
+    text = mAssets->mFonts.renderText("OpenSansBold", "hello world_Royel - OpenSans", 32.0f, h - 120.0f, 1.0f, { 255, 255, 255, 255 });
     for (auto r : text)
     {
         mRender.submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY);
     }
 
-    text = mAssets->mFonts.renderText("Zoika", "hello world_Royel _=+/&^%$# Zoika", 32.0f, h - 65.0f, 1.0f, {255, 255, 255, 255});
+    text = mAssets->mFonts.renderText("Zoika", "hello world_Royel _=+/&^%$# Zoika", 32.0f, h - 65.0f, 1.0f, { 255, 255, 255, 255 });
     for (auto r : text)
     {
         mRender.submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY);
@@ -82,11 +83,11 @@ void EditorScreen::draw()
     mRender.end();
 
     mRender.begin(&mShader, &mCamera);
-    mRender.submit({50, 100, 200, 200}, 45.0f);
+    mRender.submit(mAssets->mTextures.getTexture("player")->texId, { 50, 100, 64, 64 });
     mRender.end();
 
-    mDebug->drawBox({10, 10, 150, 150}, {255, 255, 255, 255}, 0.0f);
-    mDebug->drawCircle({85.0f, 85.0f}, {255, 255, 255, 255}, 70.0f);
+    mDebug->drawBox({ 10, 10, 150, 150 }, { 255, 255, 255, 255 }, 0.0f);
+    mDebug->drawCircle({ 85.0f, 85.0f }, { 255, 255, 255, 255 }, 70.0f);
     mDebug->end();
     mDebug->render(2);
 }

@@ -22,7 +22,7 @@ namespace Plutus
     {
     public:
         EntityEditor() = default;
-        void setContext(const Ref<Scene> &context, EditorUI *parent);
+        void setContext(const Ref<Scene>& context, EditorUI* parent);
         void draw();
         void loadScene(std::string path);
 
@@ -34,17 +34,17 @@ namespace Plutus
         void drawTileset();
         void removeLayer();
         void newWEntity();
-        std::string LayerModal(char *label, bool *open);
+        std::string LayerModal(char* label, bool* open);
 
     private:
         int mMode;
         glm::vec2 modalPos;
         std::vector<ImVec2> mSelectedtiles;
         bool mShowCreateLayer = false;
-        Input *mInput = nullptr;
+        Input* mInput = nullptr;
 
         Ref<Scene> mScene;
-        std::unordered_map<std::string, Layer> *mLayers;
-        EditorUI *mParentUI;
+        std::unordered_map<std::string, Layer>* mLayers;
+        EditorUI* mParentUI;
     };
 } // namespace Plutus

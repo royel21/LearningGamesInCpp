@@ -36,7 +36,7 @@ namespace Plutus
     void TileMapPanel::setContext(Ref<Scene>& scene)
     {
         mScene = scene;
-        mShader.CreateProgWithShader(vertexShader2, fragShader2);
+        mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
         mRenderer.init();
     }
 

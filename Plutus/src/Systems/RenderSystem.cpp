@@ -8,7 +8,7 @@ namespace Plutus
 {
     RenderSystem::RenderSystem(Scene* scene) : ISystem(scene)
     {
-        mShader.CreateProgWithShader(vertexShader2, fragShader2);
+        mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
         mRenderer.init();
     }
 

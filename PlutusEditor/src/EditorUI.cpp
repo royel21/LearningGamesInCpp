@@ -210,23 +210,31 @@ namespace Plutus
 		ImGui::Text("ViewPort Props");
 		ImGui::PushItemWidth(150);
 
-		if (ImGui::InputFloat("Zoom##vp", &mVPScale, 0.05f))
-		{
-			mVPScale = CHECKLIMIT(mVPScale, 0.20f, 6.0f);
-		}
-
 		ImGui::ColorEdit4("VP BG", glm::value_ptr(mVPColor), ImGuiColorEditFlags_AlphaBar);
 		ImGui::PopItemWidth();
 		ImGui::NextColumn();
 		ImGui::Text("Camera Control");
 		{
-			ImGui::Checkbox("Move Camera", &mMoveCam);
-			ImGui::SameLine();
-
-			if (ImGui::Button("Reset ##cam"))
+			ImGui::PushItemWidth(113);
+			mVPScale = mCamera->getScale();
+			if (ImGui::InputFloat("Zoom##vp", &mVPScale, 0.05f))
 			{
-				mCamera->setPosition(glm::vec2(0, 0));
+				mCamera->setScale(CHECKLIMIT(mVPScale, 0.20f, 6.0f));
 			}
+			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			if (ImGui::Button("Reset##cam")) mCamera->setScale(1.0f);
+
+			ImGui::PushItemWidth(120);
+			auto pos = mCamera->getPosition();
+			if (ImGui::DragFloat2("Position##cam", glm::value_ptr(pos), 1, -1, -1, "%.2")) {
+				mCamera->setPosition(pos);
+			}
+			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			if (ImGui::Button("Reset##campos")) mCamera->setPosition({ 0,0 });
+			static int scale = 100;
+			ZoomViewPort(&scale, 1, 0, 100);
 		}
 		ImGui::NextColumn();
 		ImGui::Text("Grid Controls");
@@ -312,20 +320,27 @@ namespace Plutus
 			if (mInput->onKeyDown("MouseLeft"))
 				mComPanel.createTiles(mouseGridCoords);
 
-			if (mInput->onKeyPressed("r"))
+			if (mInput->onKeyPressed("R"))
 				mCamera->setPosition(0, 0);
 
-			if (mInput->onKeyPressed("z"))
+			if (mInput->onKeyPressed("Z"))
 				mCamera->setScale(1);
 
+			if (mInput->onKeyPressed("MouseLeft"))
+			{
+				lastCoords = { xPos, yPos };
+				lastCamPos = mCamera->getPosition();
+				if (mEnt->hasComponent<Plutus::Transform>()) {
+					auto& trans = mEnt->getComponent<Plutus::Transform>();
+					if (xPos >= trans.x && xPos <= trans.x + trans.w && xPos >= trans.x && yPos <= trans.y + trans.h) {
+						entLastPos = { trans.x, trans.y };
+					}
+					selectedEnt = mEnt;
+				}
+			}
 			// move the camera
 			if (mInput->onKeyDown("Ctrl"))
 			{
-				if (mInput->onKeyPressed("MouseLeft"))
-				{
-					lastCoords = { xPos, yPos };
-					lastCamPos = mCamera->getPosition();
-				}
 				if (mInput->onKeyDown("MouseLeft"))
 				{
 					glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
@@ -340,6 +355,19 @@ namespace Plutus
 					auto newVal = mCamera->getScale() + (scroll > 0 ? 0.05f : -0.05f);
 					mCamera->setScale(CHECKLIMIT(newVal, 0.20f, 6));
 				}
+			}
+			else  if (mInput->onKeyDown("MouseLeft") && selectedEnt != nullptr)
+			{
+				auto& trans = mEnt->getComponent<Plutus::Transform>();
+				glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
+				result /= mCamera->getScale();
+
+				std::printf("res: %.2f, %.2f\n", result.x, result.y);
+				trans.x = entLastPos.x + result.x;
+				trans.y = entLastPos.y + result.y;
+			}
+			else {
+				selectedEnt = nullptr;
 			}
 		}
 		ImGui::End();

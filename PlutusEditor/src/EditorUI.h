@@ -33,12 +33,12 @@ namespace Plutus
 		};
 
 	private:
-		static EditorUI *mInstance;
+		static EditorUI* mInstance;
 
-		Camera2D *mCamera = nullptr;
-		ImGuiIO *mImGui_IO = nullptr;
-		DebugRender *mDebugRender = nullptr;
-		Input *mInput = nullptr;
+		Camera2D* mCamera = nullptr;
+		ImGuiIO* mImGui_IO = nullptr;
+		DebugRender* mDebugRender = nullptr;
+		Input* mInput = nullptr;
 		SpriteBatch2D mRender;
 		FrameBuffer mFb;
 		ImVec2 mViewportSize;
@@ -47,12 +47,15 @@ namespace Plutus
 		//Panels
 		EntityEditor mEntityEditor;
 		Ref<Scene> mScene;
-		Entity *mEnt = nullptr;
+		Entity* mEnt = nullptr;
 
 		bool mMoveCam = false;
 
 		glm::vec2 lastCoords;
 		glm::vec2 lastCamPos;
+		glm::vec2 entLastPos;
+		Entity* selectedEnt = nullptr;
+
 		float mVPScale = .9f;
 		bool mShowDemo = false;
 		glm::ivec2 mouseGridCoords;
@@ -66,11 +69,11 @@ namespace Plutus
 		std::vector<ImVec2> Selectedtiles;
 
 	public:
-		static EditorUI *getInstance();
+		static EditorUI* getInstance();
 
 		~EditorUI();
 
-		void Init(Camera2D *cam);
+		void Init(Camera2D* cam);
 		void update(float dt);
 
 		void DrawUI();
@@ -83,16 +86,16 @@ namespace Plutus
 		void resizeFB(int w, int h);
 		void resizeFB(glm::vec2 size);
 
-		ImGuiIO *getIO() { return mImGui_IO; }
-		const glm::vec2 &getLastCoords() { return lastCoords; }
+		ImGuiIO* getIO() { return mImGui_IO; }
+		const glm::vec2& getLastCoords() { return lastCoords; }
 
-		inline void setLastCoord(const glm::vec2 &coords) { lastCoords = coords; }
+		inline void setLastCoord(const glm::vec2& coords) { lastCoords = coords; }
 		inline bool isHover() { return ImGui::IsAnyItemHovered(); }
 		inline void drawDemo() { ImGui::ShowDemoWindow(); }
 		void viewPortBGColor(float r, float b, float g, float a);
-		void setEntity(Entity *ent) { mEnt = ent; }
-		Entity *getEntity() { return mEnt; }
-		void addRecent(const std::string &path);
+		void setEntity(Entity* ent) { mEnt = ent; }
+		Entity* getEntity() { return mEnt; }
+		void addRecent(const std::string& path);
 
 	private:
 		EditorUI();
