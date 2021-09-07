@@ -47,7 +47,7 @@ Plutus.o: $(OBJ_Assets) $(OBJ_Core) $(OBJ_ECS) $(OBJ_Graphics) $(OBJ_Input) \
 	emcc $(shell find ./ -name "*.o") -r -o../../webbuild/Plutus.o
 
 $(OBJ_Assets): ${SRC_Assets}
-	${CC} -c ${SRC_Assets} -I../libs/glm -I../libs/stb -I../src -I../libs/rapidjson/include
+	${CC} -c ${SRC_Assets} -I../libs/glm -I../libs/stb -I../src -I../libs/freetype/include
 $(OBJ_Core): ${SRC_Core}
 	${CC} -c ${SRC_Core} ${CFLAGS}
 $(OBJ_ECS): ${SRC_ECS}
@@ -62,8 +62,6 @@ $(OBJ_Physics): ${SRC_Physics}
 	${CC} -c ${SRC_Physics}  -I../src -I../libs/glm
 $(OBJ_Systems): ${SRC_Systems}
 	${CC} -c ${SRC_Systems} ${CFLAGS}
-$(OBJ_TextRender): ${SRC_TextRender}
-	${CC} -c ${SRC_TextRender} -I../libs/freetype/include -I../src -I../libs/glm
 $(OBJ_Time): ${SRC_Time}
 	${CC} -c ${SRC_Time} -I../src
 $(OBJ_Utils): ${SRC_Utils}

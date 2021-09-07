@@ -32,7 +32,7 @@ void EditorScreen::onEntry()
 
     mAssets->mTextures.addTexture("player", "assets/textures/zombie.png");
 
-    mShader.CreateProgWithShader(vertexShader2, fragShader2);
+    mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
     mCamera.init(static_cast<int>(size.x), static_cast<int>(size.y));
     mRender.init();
     mInput = Plutus::Input::getInstance();

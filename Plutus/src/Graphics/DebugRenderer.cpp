@@ -1,53 +1,14 @@
 #include "DebugRenderer.h"
 #include "Camera2D.h"
+#include "GLSL.h"
 
 const float PI = 3.14159265359f;
 
-namespace
-{
-	const char* VERT_SRC = R"(#version 330
-		layout(location = 0) in vec2 vertexPosition;
-		layout(location = 1) in vec4 vertexColor;
-		
-		out vec2 fragmentPosition;
-		out vec4 fragmentColor;
-
-		uniform mat4 camera;
-
-		void main() {
-			//Set the x,y position on the screen
-			gl_Position.xy = (camera * vec4(vertexPosition, 0, 1.0)).xy;
-			//the z position is zero since we are in 2D
-			gl_Position.z = 0.0;
-    
-			//Indicate that the coordinates are normalized
-			gl_Position.w = 1.0;
-    
-			fragmentColor = vertexColor;
-			fragmentPosition = vertexPosition;
-		})";
-
-	const char* FRAG_SRC = R"(#version 330 core
-			//The fragment shader operates on each pixel in a given polygon
-
-			in vec2 fragmentPosition;
-			in vec4 fragmentColor;
-
-			//This is the 3 component float vector that gets outputted to the screen
-			//for each pixel.
-			out vec4 color;
-
-			void main() {
-
-				color = fragmentColor;
-			})";
-} // namespace
-
 namespace Plutus
 {
-	DebugRender* DebugRender::geInstances()
+	DebugRender *DebugRender::geInstances()
 	{
-		static DebugRender* instance = new DebugRender();
+		static DebugRender *instance = new DebugRender();
 		return instance;
 	}
 
@@ -71,10 +32,10 @@ namespace Plutus
 		mShader.dispose();
 	}
 
-	void DebugRender::init(Camera2D* _camera)
+	void DebugRender::init(Camera2D *_camera)
 	{
 		mCamera = _camera;
-		mShader.CreateProgWithShader(VERT_SRC, FRAG_SRC);
+		mShader.CreateProgWithShader(GLSL::debug_vertshader, GLSL::debug_fragshader);
 		mShader.setAtribute("vertexPosition");
 		mShader.setAtribute("vertexColor");
 
@@ -89,10 +50,10 @@ namespace Plutus
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(DebugVertex), (void*)offsetof(DebugVertex, position));
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(DebugVertex), (void *)offsetof(DebugVertex, position));
 
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(DebugVertex), (void*)offsetof(DebugVertex, color));
+		glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(DebugVertex), (void *)offsetof(DebugVertex, color));
 
 		glBindVertexArray(0);
 	}
@@ -121,7 +82,7 @@ namespace Plutus
 		mVertexs.clear();
 	}
 
-	void DebugRender::drawLine(const glm::vec2& a, const glm::vec2& b, const ColorRGBA8& color = ColorRGBA8())
+	void DebugRender::drawLine(const glm::vec2 &a, const glm::vec2 &b, const ColorRGBA8 &color = ColorRGBA8())
 	{
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 2);
@@ -142,15 +103,15 @@ namespace Plutus
 
 		return {
 			pos.x * cosAng - pos.y * sinAng,
-			pos.x * sinAng + pos.y * cosAng
-		};
+			pos.x * sinAng + pos.y * cosAng};
 	}
 
-	void DebugRender::drawBox(const glm::vec4& destRect, const ColorRGBA8& color, float angle)
+	void DebugRender::drawBox(const glm::vec4 &destRect, const ColorRGBA8 &color, float angle)
 	{
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 4);
-		if (angle) {
+		if (angle)
+		{
 			glm::vec2 halfDim(destRect.z / 2.0f, destRect.w / 2.0f);
 
 			glm::vec2 tl(-halfDim.x, halfDim.y);
@@ -165,11 +126,12 @@ namespace Plutus
 			mVertexs[i + 2].position = rotatePoint(br, angle) + halfDim + positionOffset;
 			mVertexs[i + 3].position = rotatePoint(tr, angle) + halfDim + positionOffset;
 		}
-		else {
-			mVertexs[i].position = { destRect.x,  destRect.y };
-			mVertexs[i + 1].position = { destRect.x,  destRect.y + destRect.w };
-			mVertexs[i + 2].position = { destRect.x + destRect.z, destRect.y + destRect.w };
-			mVertexs[i + 3].position = { destRect.x + destRect.z, destRect.y };
+		else
+		{
+			mVertexs[i].position = {destRect.x, destRect.y};
+			mVertexs[i + 1].position = {destRect.x, destRect.y + destRect.w};
+			mVertexs[i + 2].position = {destRect.x + destRect.z, destRect.y + destRect.w};
+			mVertexs[i + 3].position = {destRect.x + destRect.z, destRect.y};
 		}
 		for (uint32_t j = i; j < i + 4; j++)
 			mVertexs[j].color = color;
@@ -189,7 +151,7 @@ namespace Plutus
 		mIndices.push_back(i);
 	}
 
-	void DebugRender::drawCircle(const glm::vec2& center, const ColorRGBA8& color, float radius)
+	void DebugRender::drawCircle(const glm::vec2 &center, const ColorRGBA8 &color, float radius)
 	{
 		static const uint32_t NUmVERTS = 100;
 
@@ -272,7 +234,7 @@ namespace Plutus
 		return glm::vec2(x, y);
 	}
 
-	glm::vec2 DebugRender::getSquareCoords(glm::vec2 mousePos, const glm::vec2& size)
+	glm::vec2 DebugRender::getSquareCoords(glm::vec2 mousePos, const glm::vec2 &size)
 	{
 		glm::vec2 cmpos = mCamera->convertScreenToWold(mousePos);
 
