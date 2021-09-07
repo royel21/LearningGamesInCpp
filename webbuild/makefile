@@ -13,7 +13,7 @@ INCLUDE = -I../Plutus/libs/box2d/include \
 	--memory-init-file 0 -O3 \
 	-std=c++1z
 	
-OUTPUT_FLAG =  --shell-file game.html --preload-file ./assets -s WASM=1 
+OUTPUT_FLAG =  --shell-file game.html --preload-file ./assets -s WASM=1 -s ALLOW_MEMORY_GROWTH=1
 
 SRC_Plutus != find ../Plutus/src -name "*.cpp" -not -path ../Plutus/src/Platform/Windows
 
