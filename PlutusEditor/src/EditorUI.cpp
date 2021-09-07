@@ -28,7 +28,7 @@
 
 namespace Plutus
 {
-	EditorUI *EditorUI::mInstance = nullptr;
+	EditorUI* EditorUI::mInstance = nullptr;
 
 	EditorUI::EditorUI() : mVPColor(1, 1, 1, 1), mGridColor(0)
 	{
@@ -40,7 +40,7 @@ namespace Plutus
 			std::filesystem::create_directories("assets/fonts");
 		}
 
-		Input::getInstance()->onFileDrop = [](const char *file)
+		Input::getInstance()->onFileDrop = [](const char* file)
 		{
 			std::printf("file: %s", file);
 		};
@@ -66,7 +66,7 @@ namespace Plutus
 		delete mInstance;
 	}
 
-	EditorUI *EditorUI::getInstance()
+	EditorUI* EditorUI::getInstance()
 	{
 		if (!mInstance)
 		{
@@ -76,7 +76,7 @@ namespace Plutus
 		return mInstance;
 	}
 
-	void EditorUI::Init(Camera2D *cam)
+	void EditorUI::Init(Camera2D* cam)
 	{
 
 		mCamera = cam;
@@ -99,7 +99,7 @@ namespace Plutus
 		//Settup font
 
 		// merge in icons from Font Awesome
-		static const ImWchar icons_ranges[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
+		static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
 		ImFontConfig icons_config;
 		icons_config.MergeMode = true;
 		icons_config.PixelSnapH = true;
@@ -134,10 +134,10 @@ namespace Plutus
 	void EditorUI::endUI()
 	{
 		ImGui::Render();
-		int display_w, display_h;
-		GLFWwindow *window = glfwGetCurrentContext();
-		glfwGetFramebufferSize(window, &display_w, &display_h);
-		glViewport(0, 0, display_w, display_h);
+		// int display_w, display_h;
+		GLFWwindow* window = glfwGetCurrentContext();
+		// glfwGetFramebufferSize(window, &display_w, &display_h);
+		// glViewport(0, 0, display_w, display_h);
 		glClear(GL_COLOR_BUFFER_BIT);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -165,7 +165,7 @@ namespace Plutus
 		endUI();
 	}
 
-	bool ZoomViewPort(int *value, int step, int min, int max)
+	bool ZoomViewPort(int* value, int step, int min, int max)
 	{
 		bool zoom = false;
 		float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
@@ -239,7 +239,7 @@ namespace Plutus
 			}
 
 			auto cellc = mDebugRender->getCellCount();
-			int cellCount[] = {cellc.x, cellc.y};
+			int cellCount[] = { cellc.x, cellc.y };
 			if (ImGui::DragInt2("Count XY", cellCount))
 			{
 				cellc.x = CHECKLIMIT(cellCount[0], 0, 200);
@@ -248,7 +248,7 @@ namespace Plutus
 			}
 
 			auto cellS = mDebugRender->getCellSize();
-			int cellSize[] = {cellS.x, cellS.y};
+			int cellSize[] = { cellS.x, cellS.y };
 			if (ImGui::DragInt2("Cell Size", cellSize))
 			{
 				cellS.x = CHECKLIMIT(cellSize[0], 0, 200);
@@ -256,7 +256,7 @@ namespace Plutus
 			}
 			mDebugRender->setCellSize(cellS.x, cellS.y);
 
-			float color[] = {mGridColor.x, mGridColor.y, mGridColor.z, mGridColor.w};
+			float color[] = { mGridColor.x, mGridColor.y, mGridColor.z, mGridColor.w };
 			if (ImGui::ColorEdit3("Grid Color", color))
 			{
 				mDebugRender->setColor(ColorRGBA8(static_cast<GLubyte>(color[0]) * 255, static_cast<GLubyte>(color[1]) * 255, static_cast<GLubyte>(color[2]) * 255));
@@ -296,18 +296,18 @@ namespace Plutus
 		float x = max((winPos.x - newSize.x), 0) * 0.5f;
 		float y = max((winPos.y - newSize.y), 0) * 0.5f;
 		//set the new posotion
-		ImGui::SetCursorPos({x, y});
+		ImGui::SetCursorPos({ x, y });
 
 		ImVec2 canvas_pos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
 
 		float xPos = mapIn(ImGui::GetIO().MousePos.x - canvas_pos.x, 0, newSize.x, 0, winSize.x);
-		float yPos = mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.x, 0, winSize.x);
+		float yPos = mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
 
-		ImGui::Image(reinterpret_cast<void *>(mFb.getTextureId()), {newSize.x, newSize.y}, {0, 1}, {1, 0}, {1.0, 1.0, 1.0, 1.0}, {0.0, 0.0, 0.0, 1.0});
+		ImGui::Image(reinterpret_cast<void*>(mFb.getTextureId()), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, { 1.0, 1.0, 1.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 });
 
 		if (mCanvasHover = ImGui::IsItemHovered())
 		{
-			mouseGridCoords = mDebugRender->getSquareCoords({xPos, yPos});
+			mouseGridCoords = mDebugRender->getSquareCoords({ xPos, yPos });
 
 			if (mInput->onKeyDown("MouseLeft"))
 				mComPanel.createTiles(mouseGridCoords);
@@ -323,12 +323,12 @@ namespace Plutus
 			{
 				if (mInput->onKeyPressed("MouseLeft"))
 				{
-					lastCoords = {xPos, yPos};
+					lastCoords = { xPos, yPos };
 					lastCamPos = mCamera->getPosition();
 				}
 				if (mInput->onKeyDown("MouseLeft"))
 				{
-					glm::vec2 result = {xPos - lastCoords.x, yPos - lastCoords.y};
+					glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
 					result /= mCamera->getScale();
 
 					mCamera->setPosition(lastCamPos - result);
@@ -347,7 +347,7 @@ namespace Plutus
 		ImGui::PopStyleColor(1);
 	}
 
-	void EditorUI::addRecent(const std::string &path)
+	void EditorUI::addRecent(const std::string& path)
 	{
 		auto found = std::find(mRecents.begin(), mRecents.end(), path);
 		if (found != mRecents.end())
@@ -375,7 +375,7 @@ namespace Plutus
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 		if (opt_fullscreen)
 		{
-			ImGuiViewport *viewport = ImGui::GetMainViewport();
+			ImGuiViewport* viewport = ImGui::GetMainViewport();
 			ImGui::SetNextWindowPos(viewport->Pos);
 			ImGui::SetNextWindowSize(viewport->Size);
 			ImGui::SetNextWindowViewport(viewport->ID);
@@ -396,7 +396,7 @@ namespace Plutus
 			ImGui::PopStyleVar(2);
 
 		// DockSpace
-		ImGuiIO &io = ImGui::GetIO();
+		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
@@ -510,7 +510,7 @@ namespace Plutus
 		}
 	}
 
-	void addColor(Plutus::Serializer *sr, const char *label, const glm::vec4 &color)
+	void addColor(Plutus::Serializer* sr, const char* label, const glm::vec4& color)
 	{
 		auto writer = sr->getWriter();
 		writer->String(label);
@@ -551,7 +551,7 @@ namespace Plutus
 		Plutus::Utils::toJsonFile(path, sr.getString());
 	}
 
-	void initColor(const rapidjson::Document &doc, const char *label, glm::vec4 &color)
+	void initColor(const rapidjson::Document& doc, const char* label, glm::vec4& color)
 	{
 		if (doc.HasMember(label))
 		{
