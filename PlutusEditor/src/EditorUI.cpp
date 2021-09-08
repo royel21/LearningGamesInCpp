@@ -330,6 +330,7 @@ namespace Plutus
 			{
 				lastCoords = { xPos, yPos };
 				lastCamPos = mCamera->getPosition();
+				mScene->getEntity(xPos, yPos);
 				if (mEnt->hasComponent<Plutus::Transform>()) {
 					auto& trans = mEnt->getComponent<Plutus::Transform>();
 					if (xPos >= trans.x && xPos <= trans.x + trans.w && xPos >= trans.x && yPos <= trans.y + trans.h) {

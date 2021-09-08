@@ -110,6 +110,16 @@ namespace Plutus
         Camera2D* getCamera() { return mCamera; }
         Shader* getShader() { return &mShader; }
 
+        Entity* getEntity(float x, float y) {
+            if (mEnt->hasComponent<Plutus::Transform>()) {
+                auto& trans = mEnt->getComponent<Plutus::Transform>();
+                if (xPos >= trans.x && xPos <= trans.x + trans.w && xPos >= trans.x && yPos <= trans.y + trans.h) {
+                    entLastPos = { trans.x, trans.y };
+                    selectedEnt = mEnt;
+                }
+            }
+        }
+
     private:
         entt::registry mRegistry;
         SpriteBatch2D mRenderer;
