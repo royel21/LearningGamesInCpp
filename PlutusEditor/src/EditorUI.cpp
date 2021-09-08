@@ -334,8 +334,8 @@ namespace Plutus
 					auto& trans = mEnt->getComponent<Plutus::Transform>();
 					if (xPos >= trans.x && xPos <= trans.x + trans.w && xPos >= trans.x && yPos <= trans.y + trans.h) {
 						entLastPos = { trans.x, trans.y };
+						selectedEnt = mEnt;
 					}
-					selectedEnt = mEnt;
 				}
 			}
 			// move the camera
