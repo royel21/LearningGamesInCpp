@@ -94,17 +94,6 @@ namespace Plutus
 		}
 
 		/*
-			Create a Vertex Object with all the data needed for show an object on the screen
-			@param x,y represent the position
-			@param w,h represent the width and height
-			@param uv vec4 for texture coordinate
-			@param c is a RGBA color struct
-			@param r is the rotaion - optional = 0
-			@param flipx flip the texture in x direction
-			@param flipy flip the texture in y direction
-		*/
-		void createVertice(const glm::vec4& rect, const glm::vec4& uv, ColorRGBA8 c, float r = 0, bool flipX = false, bool flipY = false);
-		/*
 			rotate a point by a angle in degre
 			@param pos point
 			@param angle angle in degre

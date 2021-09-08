@@ -78,46 +78,6 @@ namespace Plutus
 		vertices.resize(RENDERER_MAX_SPRITES * 4);
 	}
 
-	void SpriteBatch2D::createVertice(const glm::vec4& rect, const glm::vec4& _uv, ColorRGBA8 c, float r, bool flipX, bool flipY)
-	{
-		glm::vec4 uv(_uv);
-
-		if (flipX)
-			std::swap(uv.x, uv.z);
-
-		if (flipY)
-			std::swap(uv.y, uv.w);
-
-		if (r)
-		{
-			glm::vec2 halfDim(rect.z / 2, rect.w / 2);
-
-			glm::vec2 tl(-halfDim.x, halfDim.y);
-			glm::vec2 bl(-halfDim.x, -halfDim.y);
-			glm::vec2 br(halfDim.x, -halfDim.y);
-			glm::vec2 tr(halfDim.x, halfDim.y);
-
-			tl = rotatePoint(tl, r) + halfDim;
-			bl = rotatePoint(bl, r) + halfDim;
-			br = rotatePoint(br, r) + halfDim;
-			tr = rotatePoint(tr, r) + halfDim;
-
-
-			vertices[mVertexCount] = { rect.x + tl.x, rect.y + tl.y, uv.x, uv.w, c };
-			vertices[mVertexCount + 1] = { rect.x + bl.x, rect.y + bl.y, uv.x, uv.y, c };
-			vertices[mVertexCount + 2] = { rect.x + br.x, rect.y + br.y, uv.z, uv.y, c };
-			vertices[mVertexCount + 3] = { rect.x + tr.x, rect.y + tr.y, uv.z, uv.w, c };
-		}
-		else
-		{
-			vertices[mVertexCount] = { rect.x, rect.y, uv.x, uv.w, c };
-			vertices[mVertexCount + 1] = { rect.x, rect.y + rect.w, uv.x, uv.y, c };
-			vertices[mVertexCount + 2] = { rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, c };
-			vertices[mVertexCount + 3] = { rect.x + rect.z, rect.y, uv.z, uv.w, c };
-		}
-		mVertexCount += 4;
-	}
-
 	void SpriteBatch2D::begin(Shader* shader, Camera2D* camera, bool isText)
 	{
 		mIsText = isText;
@@ -126,12 +86,48 @@ namespace Plutus
 		camSize = mCamera->getViewPortDim();
 	}
 
-	void SpriteBatch2D::submit(GLuint texture, glm::vec4 rect, glm::vec4 uv, ColorRGBA8 c, float r, bool flipX, bool flipY)
+	void SpriteBatch2D::submit(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 c, float r, bool flipX, bool flipY)
 	{
-		// Check if is inside the view port
+		// Check if is it inside the view port
 		if (rect.x + rect.z > camSize.x && rect.y + rect.w > camSize.y && rect.x < camSize.z && rect.y < camSize.w) {
 			createBatch(texture);
-			createVertice(rect, uv, c, r, flipX, flipY);
+
+			glm::vec4 uv(_uv);
+
+			if (flipX)
+				std::swap(uv.x, uv.z);
+
+			if (flipY)
+				std::swap(uv.y, uv.w);
+
+			if (r)
+			{
+				glm::vec2 halfDim(rect.z / 2, rect.w / 2);
+
+				glm::vec2 tl(-halfDim.x, halfDim.y);
+				glm::vec2 bl(-halfDim.x, -halfDim.y);
+				glm::vec2 br(halfDim.x, -halfDim.y);
+				glm::vec2 tr(halfDim.x, halfDim.y);
+
+				tl = rotatePoint(tl, r) + halfDim;
+				bl = rotatePoint(bl, r) + halfDim;
+				br = rotatePoint(br, r) + halfDim;
+				tr = rotatePoint(tr, r) + halfDim;
+
+
+				vertices[mVertexCount] = { rect.x + tl.x, rect.y + tl.y, uv.x, uv.w, c };
+				vertices[mVertexCount + 1] = { rect.x + bl.x, rect.y + bl.y, uv.x, uv.y, c };
+				vertices[mVertexCount + 2] = { rect.x + br.x, rect.y + br.y, uv.z, uv.y, c };
+				vertices[mVertexCount + 3] = { rect.x + tr.x, rect.y + tr.y, uv.z, uv.w, c };
+			}
+			else
+			{
+				vertices[mVertexCount] = { rect.x, rect.y, uv.x, uv.w, c };
+				vertices[mVertexCount + 1] = { rect.x, rect.y + rect.w, uv.x, uv.y, c };
+				vertices[mVertexCount + 2] = { rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, c };
+				vertices[mVertexCount + 3] = { rect.x + rect.z, rect.y, uv.z, uv.w, c };
+			}
+			mVertexCount += 4;
 		}
 	}
 
