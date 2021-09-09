@@ -98,7 +98,7 @@ void EditorScreen::draw()
     mRender.submit(mAssets->mTextures.getTexture("player")->texId, { 50, 100, 64, 64 }, { 0,1,1,0 }, { 255,255,255,255 }, 0, false, false, 25);
     mRender.submit(mAssets->mTextures.getTexture("bats")->texId, { 50, 200, 96, 96 }, { 0,1,1,0 }, { 255,255,255,255 }, 0, false, false, 99);
 
-    mRender.begin(&mShaderPicking, &mCamera);
+    mRender.begin(&mShader, &mCamera);
 
     mPicker.bind();
     mRender.draw(true);
