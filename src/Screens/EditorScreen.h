@@ -7,6 +7,8 @@
 #include <Graphics/SpriteBatch2D.h>
 #include <Graphics/DebugRenderer.h>
 #include <Assets/AssetManager.h>
+#include "PickingFrameBuffer.h"
+#include "FrameBuffer.h"
 
 class EditorScreen : public Plutus::IGameScreen
 {
@@ -31,8 +33,11 @@ public:
 private:
     Plutus::Input* mInput = nullptr;
     Plutus::Shader mShader;
+    Plutus::Shader mShaderPicking;
     Plutus::Camera2D mCamera;
     Plutus::SpriteBatch2D mRender;
     Plutus::AssetManager* mAssets;
     Plutus::DebugRender* mDebug;
+    Plutus::PickingFrameBuffer mPicker;
+    Plutus::FrameBuffer mFB;
 };

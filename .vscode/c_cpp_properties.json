@@ -11,7 +11,8 @@
                 "${workspaceFolder}/Plutus/libs/glm/**",
                 "${workspaceFolder}/PlutusEditor/src/**",
                 "${workspaceFolder}/PlutusEditor/libs/imgui/src/**"
-            ]
+            ],
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4

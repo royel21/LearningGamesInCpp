@@ -47,7 +47,6 @@ namespace Plutus
 		Camera2D* mCamera = nullptr;
 		Shader* mShader = nullptr;
 		glm::vec4 camSize;
-		bool mIsText = false;
 
 	public:
 		SpriteBatch2D() = default;
@@ -69,9 +68,11 @@ namespace Plutus
 			@param flipX optional flip the image from X coordinate
 			@param flipY optional flip the image from Y coordinate
 		*/
-		void submit(GLuint texture, glm::vec4 rect, glm::vec4 uv = { 0, 0, 1, 1 }, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false);
+		void submit(GLuint texture, glm::vec4 rect, glm::vec4 uv = { 0, 0, 1, 1 }, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
 
 		void submit(glm::vec4 rect, float r) { submit(0, rect, { 0,0,1,1 }, { 255,255,255 }, r); }
+
+		void draw(bool usePicking = false);
 		//Flush the Vertex buffer to the screen
 		void end();
 

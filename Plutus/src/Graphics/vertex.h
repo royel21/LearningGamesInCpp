@@ -47,9 +47,10 @@ namespace Plutus
 		Position position; /* Positon X,Y */
 		UV uv;	/* Texture coord from where to sample */
 		ColorRGBA8 color; /* RGBA Color for the sample */
+		float entId;
 
 		Vertex() : position(), uv() {}
-		Vertex(float x, float y, float uvX, float uvY, ColorRGBA8 c) : position(x, y), uv(uvX, uvY), color(c) {}
+		Vertex(float x, float y, float uvX, float uvY, ColorRGBA8 c, float _entId = 0) : position(x, y), uv(uvX, uvY), color(c), entId(_entId) {}
 
 		void setPosition(float x, float y)
 		{

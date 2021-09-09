@@ -95,7 +95,6 @@ namespace Plutus
 
     void Scene::draw()
     {
-        mRenderer.begin(&mShader, mCamera);
         // auto  start = Timer::millis();
         for (auto& layer : mLayers)
         {
@@ -128,12 +127,14 @@ namespace Plutus
                     {
                         auto& trans = ent->getComponent<Transform>();
                         auto& sprite = ent->getComponent<Sprite>();
-                        mRenderer.submit(sprite.mTexId, trans.getRect(), sprite.mUVCoord, sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY);
+                        mRenderer.submit(sprite.mTexId, trans.getRect(), sprite.mUVCoord, sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY, (uint32_t)ent->mId);
                     }
                 }
             }
         }
 
+        mRenderer.begin(&mShader, mCamera);
+        mRenderer.draw();
         mRenderer.end();
         // std::printf("time: %llu\n", Timer::millis() - start);
     }

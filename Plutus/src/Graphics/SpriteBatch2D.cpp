@@ -23,6 +23,7 @@
 #define SHADER_VERTEX_INDEX 0
 #define SHADER_UV_INDEX 1
 #define SHADER_COLOR_INDEX 2
+#define SHADER_ENTITYID_INDEX 3
 
 #define PI 3.141592f
 #define DEC2RA(dec) dec *(PI / 180.0f)
@@ -53,6 +54,9 @@ namespace Plutus
 		//bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
 		glEnableVertexAttribArray(SHADER_COLOR_INDEX);
 		glVertexAttribPointer(SHADER_COLOR_INDEX, 4, GL_UNSIGNED_BYTE, GL_TRUE, RENDERER_VERTEX_SIZE, (void*)offsetof(Vertex, color));
+		//
+		glEnableVertexAttribArray(SHADER_ENTITYID_INDEX);
+		glVertexAttribPointer(SHADER_ENTITYID_INDEX, 1, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void*)offsetof(Vertex, entId));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -78,17 +82,10 @@ namespace Plutus
 		vertices.resize(RENDERER_MAX_SPRITES * 4);
 	}
 
-	void SpriteBatch2D::begin(Shader* shader, Camera2D* camera, bool isText)
-	{
-		mIsText = isText;
-		mCamera = camera;
-		mShader = shader;
-		camSize = mCamera->getViewPortDim();
-	}
-
-	void SpriteBatch2D::submit(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 c, float r, bool flipX, bool flipY)
+	void SpriteBatch2D::submit(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
 	{
 		// Check if is it inside the view port
+		float id = static_cast<float>(entId);
 		if (rect.x + rect.z > camSize.x && rect.y + rect.w > camSize.y && rect.x < camSize.z && rect.y < camSize.w) {
 			createBatch(texture);
 
@@ -115,29 +112,32 @@ namespace Plutus
 				tr = rotatePoint(tr, r) + halfDim;
 
 
-				vertices[mVertexCount] = { rect.x + tl.x, rect.y + tl.y, uv.x, uv.w, c };
-				vertices[mVertexCount + 1] = { rect.x + bl.x, rect.y + bl.y, uv.x, uv.y, c };
-				vertices[mVertexCount + 2] = { rect.x + br.x, rect.y + br.y, uv.z, uv.y, c };
-				vertices[mVertexCount + 3] = { rect.x + tr.x, rect.y + tr.y, uv.z, uv.w, c };
+				vertices[mVertexCount] = { rect.x + tl.x, rect.y + tl.y, uv.x, uv.w, c,     id };
+				vertices[mVertexCount + 1] = { rect.x + bl.x, rect.y + bl.y, uv.x, uv.y, c, id };
+				vertices[mVertexCount + 2] = { rect.x + br.x, rect.y + br.y, uv.z, uv.y, c, id };
+				vertices[mVertexCount + 3] = { rect.x + tr.x, rect.y + tr.y, uv.z, uv.w, c, id };
 			}
 			else
 			{
-				vertices[mVertexCount] = { rect.x, rect.y, uv.x, uv.w, c };
-				vertices[mVertexCount + 1] = { rect.x, rect.y + rect.w, uv.x, uv.y, c };
-				vertices[mVertexCount + 2] = { rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, c };
-				vertices[mVertexCount + 3] = { rect.x + rect.z, rect.y, uv.z, uv.w, c };
+				vertices[mVertexCount] = { rect.x, rect.y, uv.x, uv.w, c, id };
+				vertices[mVertexCount + 1] = { rect.x, rect.y + rect.w, uv.x, uv.y, c, id };
+				vertices[mVertexCount + 2] = { rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, c, id };
+				vertices[mVertexCount + 3] = { rect.x + rect.z, rect.y, uv.z, uv.w, c, id };
 			}
 			mVertexCount += 4;
 		}
 	}
 
-	void SpriteBatch2D::end()
+	void SpriteBatch2D::begin(Shader* shader, Camera2D* camera, bool isText)
 	{
+		mCamera = camera;
+		mShader = shader;
+		camSize = mCamera->getViewPortDim();
+		shader->enable();
+		shader->setUniform1b("isText", isText);
+		shader->setUniform1i("mySampler", 0);
+		shader->setUniformMat4("camera", mCamera->getCameraMatrix());
 
-		mShader->enable();
-		mShader->setUniform1b("isText", mIsText);
-		mShader->setUniform1i("mySampler", 0);
-		mShader->setUniformMat4("camera", mCamera->getCameraMatrix());
 		glClearDepth(1.0f);
 
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
@@ -145,13 +145,21 @@ namespace Plutus
 
 		mIBO->bind();
 		glBindVertexArray(mVAO);
+	}
+
+	void SpriteBatch2D::draw(bool usePicking)
+	{
+		mShader->setUniform1b("picking", usePicking);
 		for (size_t i = 0; i < mRenderBatches.size(); i++)
 		{
 			mShader->setUniform1i("hasTexture", mRenderBatches[i].texture);
 			glBindTexture(GL_TEXTURE_2D, mRenderBatches[i].texture);
 			glDrawElements(GL_TRIANGLES, mRenderBatches[i].numVertices, GL_UNSIGNED_INT, (void*)(mRenderBatches[i].offset * sizeof(GLuint)));
 		}
+	}
 
+	void SpriteBatch2D::end()
+	{
 		//Clean up
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);

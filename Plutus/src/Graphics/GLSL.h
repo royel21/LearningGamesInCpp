@@ -8,15 +8,17 @@
 #define VERTEX_HEADER "#version 330 core\n"
 #endif
 
-namespace GLSL{
+namespace GLSL {
 
-const std::string vertexShader = std::string(VERTEX_HEADER) + R"END(
+    const std::string vertexShader = std::string(VERTEX_HEADER) + R"END(
 layout(location = 0) in vec2 vertexPosition;
 layout(location = 1) in vec2 vertexUV;
 layout(location = 2) in vec4 vertexColor;
+layout(location = 3) in float entId;
 
 out vec2 uv;
 out vec4 color;
+out float entityId;
 
 uniform mat4 camera;
 uniform vec2 offset;
@@ -33,13 +35,17 @@ void main() {
     uv = vertexUV;
     
     color = vertexColor;
+
+    entityId = entId + 1;
 })END";
 
-const std::string fragShader = std::string(VERTEX_HEADER) + R"END(
+    const std::string fragShader = std::string(VERTEX_HEADER) + R"END(
 in vec2 uv;
 in vec4 color;
+in float entityId;
 
 uniform bool isText;
+uniform bool picking;
 uniform int hasTexture;
 uniform sampler2D mySampler;
 
@@ -49,6 +55,18 @@ void main() {
 
     if(isText){
         fragColor = vec4(texture(mySampler, uv).r) * color;
+    } else if(picking){
+        if(hasTexture > 0){
+            vec4 textColor = vec4(1,1,1,1);
+
+            textColor = color * texture(mySampler, uv);
+
+            if(textColor.a < 0.5f){
+                discard;
+            }
+        }
+
+        fragColor = vec4(entityId, entityId, entityId, 1);
     }else if(hasTexture > 0){
         fragColor = color * texture(mySampler, uv); 
     }else{
@@ -57,7 +75,35 @@ void main() {
 
 })END";
 
-const std::string debug_vertshader = std::string(VERTEX_HEADER) + R"END(
+    const std::string pickingFragShader = std::string(VERTEX_HEADER) + R"END(
+in vec2 uv;
+in vec4 color;
+in float entityId;
+
+uniform bool isText;
+uniform bool picking;
+uniform int hasTexture;
+uniform sampler2D mySampler;
+
+out vec3 fragColor;
+
+void main() {
+
+   if(hasTexture > 0){
+        vec4 textColor = vec4(1,1,1,1);
+
+        textColor = color * texture(mySampler, uv);
+
+        if(textColor.a < 0.5f){
+            discard;
+        }
+    }
+
+    fragColor = vec3(entityId, entityId, entityId);
+
+})END";
+
+    const std::string debug_vertshader = std::string(VERTEX_HEADER) + R"END(
 layout(location = 0) in vec2 vertexPosition;
 layout(location = 1) in vec4 vertexColor;
 
@@ -79,7 +125,7 @@ void main() {
     fragmentPosition = vertexPosition;
 })END";
 
-const std::string debug_fragshader = std::string(VERTEX_HEADER) + R"END(
+    const std::string debug_fragshader = std::string(VERTEX_HEADER) + R"END(
 //The fragment shader operates on each pixel in a given polygon
 
 in vec2 fragmentPosition;

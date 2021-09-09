@@ -19,9 +19,9 @@ namespace Plutus
         //Genenerate a texture for draw our buffer
         glGenTextures(1, &textId);
         glBindTexture(GL_TEXTURE_2D, textId);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
         //See https://en.wikipedia.org/wiki/Mipmap
         glGenerateMipmap(GL_TEXTURE_2D);
         //attach the buffer to the texture
