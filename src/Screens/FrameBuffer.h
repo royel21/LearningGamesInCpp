@@ -11,9 +11,11 @@ namespace Plutus
     public:
         FrameBuffer() = default;
         ~FrameBuffer();
-        void init(int width, int height);
+        void init(int width, int height, bool isForPicking = false);
         void bind();
         void unBind();
+
+        u32 getEntId(glm::vec2 pos);
 
         void resize(const glm::ivec2& size)
         {
@@ -33,19 +35,20 @@ namespace Plutus
 
         void setDirty() { isDirty = true; };
 
-        u32 getTextureId() const { return textId; }
+        u32 getTextureId() const { return mTexId; }
 
         void cleanUp();
-
     private:
         //Framebuffer Id
-        u32 fboId = 0;
+        u32 mFbId = 0;
         //texture Id
-        u32 textId = 0;
+        u32 mTexId = 0;
         //renderbuffer Id
-        u32 rboId = 0;
+        u32 mRbufferId = 0;
         bool isDirty = false;
         glm::ivec2 mSize;
+
+        bool mIsPicking = false;
     };
 } // namespace Plutus
 

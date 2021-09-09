@@ -1,11 +1,12 @@
 #include "FrameBuffer.h"
-#include <glad/glad.h>
+#include <Graphics/GLheaders.h>
 #include <assert.h>
 
 namespace Plutus
 {
-    void FrameBuffer::init(int w, int h)
+    void FrameBuffer::init(int w, int h, bool isForPicking)
     {
+        mIsPicking = isForPicking;
         mSize = { w, h };
         if (isDirty)
         {
@@ -13,24 +14,22 @@ namespace Plutus
             cleanUp();
         }
         //Grenerate a frame buffer
-        glGenFramebuffers(1, &fboId);
+        glGenFramebuffers(1, &mFbId);
         //bind the buffer for imediate use
-        glBindFramebuffer(GL_FRAMEBUFFER, fboId);
-        //Genenerate a texture for draw our buffer
-        glGenTextures(1, &textId);
-        glBindTexture(GL_TEXTURE_2D, textId);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-        //See https://en.wikipedia.org/wiki/Mipmap
-        glGenerateMipmap(GL_TEXTURE_2D);
-        //attach the buffer to the texture
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textId, 0);
-        // Create render buffer for store the depth info
-        glGenRenderbuffers(1, &rboId);
-        glBindRenderbuffer(GL_RENDERBUFFER, rboId);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h); // use a single renderbuffer object for both a depth AND stencil buffer.
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rboId);
+        glBindFramebuffer(GL_FRAMEBUFFER, mFbId);
+
+        if (!isForPicking) {
+            mTexId = createTexture(w, h, 0, GL_RGB, GL_RGB);
+            // Create render buffer for store the depth info
+            glGenRenderbuffers(1, &mRbufferId);
+            glBindRenderbuffer(GL_RENDERBUFFER, mRbufferId);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h); // use a single renderbuffer object for both a depth AND stencil buffer.
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mRbufferId);
+        }
+        else {
+            mTexId = createTexture(w, h, 0, GL_RGB32F, GL_RGB, GL_FLOAT);
+        }
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexId, 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             assert("ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
@@ -45,26 +44,43 @@ namespace Plutus
         cleanUp();
     }
 
+    u32 FrameBuffer::getEntId(glm::vec2 pos)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, mFbId);
+
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        float pixels[] = { 0,0,0 };
+        glReadPixels(static_cast<int>(pos.x), static_cast<int>(pos.y), 1, 1, GL_RGB, GL_FLOAT, pixels);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        return (u32)pixels[0] - 1;
+    }
     void FrameBuffer::bind()
     {
         if (isDirty)
             init(mSize.x, mSize.y);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, fboId);
-        glBindTexture(GL_TEXTURE_2D, textId);
+        glBindFramebuffer(GL_FRAMEBUFFER, mFbId);
+        if (mIsPicking) {
+            glDisable(GL_BLEND);
+            glClearColor(0, 0, 0, 0);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
     }
 
     void FrameBuffer::unBind()
     {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        if (mIsPicking) {
+            glEnable(GL_BLEND);
+        }
     }
 
     void FrameBuffer::cleanUp()
     {
-        glDeleteFramebuffers(1, &fboId);
-        glDeleteTextures(1, &textId);
-        glDeleteRenderbuffers(1, &rboId);
+        glDeleteFramebuffers(1, &mFbId);
+        glDeleteTextures(1, &mTexId);
+        glDeleteRenderbuffers(1, &mRbufferId);
     }
 
 } // namespace Plutus

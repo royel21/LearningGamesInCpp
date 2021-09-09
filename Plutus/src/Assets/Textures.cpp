@@ -99,25 +99,12 @@ namespace Plutus
     GLTexture Textures::loadTexture(std::string filePath, GLint minFilter, GLint magFilter)
     {
         GLTexture texture = {};
-#ifndef __EMSCRIPTEN__
-        std::filesystem::path path = filePath.c_str();
-        filePath = std::filesystem::absolute(path).string();
-#endif
+
         int BPP;
         uint8_t* out = stbi_load(filePath.c_str(), &texture.width, &texture.height, &BPP, 4);
 
-        glGenTextures(1, &texture.id);
-        //link the image to a texture in the gpu texture array
 
-        glBindTexture(GL_TEXTURE_2D, texture.id);
-        //flag to render the image
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
-        //Load the image to the memory of the gpu
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texture.width, texture.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, out);
-
+        texture.id = createTexture(texture.width, texture.height, out, GL_RGBA8, GL_RGBA);
         //See https://en.wikipedia.org/wiki/Mipmap
         glGenerateMipmap(GL_TEXTURE_2D);
         //unlink the texture

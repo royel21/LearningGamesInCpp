@@ -40,8 +40,7 @@ void EditorScreen::build()
     mAssets->mFonts.addFont("OpenSansBold", "./assets/fonts/OpenSans-Bold.ttf", 32);
     mAssets->mFonts.addFont("Zoika", "./assets/fonts/Zoika.ttf", 32);
 
-    mPicker.init(static_cast<int>(size.x), static_cast<int>(size.y));
-    mFB.init(static_cast<int>(size.x), static_cast<int>(size.y));
+    mFB.init(static_cast<int>(size.x), static_cast<int>(size.y), true);
 }
 
 void EditorScreen::onEntry()
@@ -63,7 +62,7 @@ void EditorScreen::update(float dt)
         int h = mEngine->getHeight();
         auto pos = mCamera.convertScreenToWold(mInput->getMouseCoords());
         pos.y = h - pos.y;
-        std::printf("Id: %i %.0f %.0f\n", mPicker.getEntId(pos), pos.x, pos.y);
+        std::printf("Id: %i %.0f %.0f\n", mFB.getEntId(pos), pos.x, pos.y);
     }
 }
 
@@ -100,15 +99,15 @@ void EditorScreen::draw()
 
     mRender.begin(&mShader, &mCamera);
 
-    mPicker.bind();
+    mFB.bind();
     mRender.draw(true);
-    mPicker.unBind();
+    mFB.unBind();
 
     mRender.begin(&mShader, &mCamera);
     mRender.draw();
     mRender.end();
 
-    mRender.submit(mPicker.getTextureId(), { 300, 300, 300, 300 }, { 0,1,1,0 }, { 255,255,255,255 }, 0, false, false, 32);
+    mRender.submit(mFB.getTextureId(), { 300, 300, 300, 300 }, { 0,1,1,0 }, { 255,255,255,255 }, 0, false, false, 32);
     mRender.begin(&mShader, &mCamera);
     mRender.draw();
     mRender.end();
