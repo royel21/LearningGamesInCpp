@@ -210,4 +210,17 @@ namespace Plutus
     {
         return mCamera->getViewPortSize();
     }
+
+    Entity* Scene::getEntity(float xPos, float yPos)
+    {
+        for (auto& ent : mCurrentLayer->mEntities) {
+            if (ent->hasComponent<Transform>()) {
+                auto& trans = ent->getComponent<Transform>();
+                if (xPos >= trans.x && xPos <= trans.x + trans.w && xPos >= trans.x && yPos <= trans.y + trans.h) {
+                    return ent.get();
+                }
+            }
+        }
+        return nullptr;
+    }
 } // namespace Plutus
