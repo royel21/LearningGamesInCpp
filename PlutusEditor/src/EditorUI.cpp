@@ -524,6 +524,7 @@ namespace Plutus
 		writer->Double(color.w);
 		writer->EndArray();
 	}
+
 	void EditorUI::saveRecents()
 	{
 		Plutus::Serializer sr;
@@ -559,10 +560,7 @@ namespace Plutus
 		if (doc.HasMember(label))
 		{
 			auto arr = doc[label].GetArray();
-			color.x = static_cast<float>(arr[0].GetDouble());
-			color.y = static_cast<float>(arr[1].GetDouble());
-			color.z = static_cast<float>(arr[2].GetDouble());
-			color.w = static_cast<float>(arr[3].GetDouble());
+			color = { arr[0].GetFloat(), arr[0].GetFloat(), arr[0].GetFloat(), arr[0].GetFloat() };
 		}
 	}
 
