@@ -64,8 +64,11 @@ namespace Plutus
         if (mIsPicking) {
             glDisable(GL_BLEND);
             glClearColor(0, 0, 0, 0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
+        else {
+            glClearColor(mBGColor.x, mBGColor.y, mBGColor.z, mBGColor.w);
+        }
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     void FrameBuffer::unBind()

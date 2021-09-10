@@ -9,6 +9,7 @@
 
 #include <Graphics/DebugRenderer.h>
 #include <Graphics/Camera2D.h>
+#include <Graphics/GLSL.h>
 #include <Input/Input.h>
 #include <Utils/Utils.h>
 
@@ -81,7 +82,7 @@ namespace Plutus
 
 		mCamera = cam;
 		mRender.init();
-
+		mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		mImGui_IO = &ImGui::GetIO();
@@ -109,7 +110,6 @@ namespace Plutus
 		mImGui_IO->Fonts->AddFontDefault();
 
 		mScene = CreateRef<Scene>();
-		mScene->Init(mCamera);
 		mComPanel.setContext(mScene);
 		mEntityEditor.setContext(mScene, this);
 
@@ -121,7 +121,6 @@ namespace Plutus
 
 	void EditorUI::update(float dt)
 	{
-		mScene->update(dt);
 	}
 
 	void EditorUI::beginUI()
@@ -150,7 +149,7 @@ namespace Plutus
 		}
 	}
 
-	void EditorUI::DrawUI()
+	void EditorUI::drawUI()
 	{
 		beginUI();
 		drawMainDockingWin();
@@ -331,18 +330,12 @@ namespace Plutus
 			{
 				lastCoords = { xPos, yPos };
 				lastCamPos = mCamera->getPosition();
-				selectedEnt = mScene->getEntity(xPos, yPos);
-				if (selectedEnt != nullptr) {
+				mEnt = mScene->getEntity(mPicker.getEntId({ xPos, winSize.y - yPos }));
+
+				if (mEnt != nullptr) {
 					auto& trans = mEnt->getComponent<Plutus::Transform>();
-					entLastPos = { trans.x, trans.y };
+					entLastPos = trans.getPosition();
 				}
-				// if (mEnt->hasComponent<Plutus::Transform>()) {
-				// 	auto& trans = mEnt->getComponent<Plutus::Transform>();
-				// 	if (xPos >= trans.x && xPos <= trans.x + trans.w && xPos >= trans.x && yPos <= trans.y + trans.h) {
-				// 		entLastPos = { trans.x, trans.y };
-				// 		selectedEnt = mEnt;
-				// 	}
-				// }
 			}
 			// move the camera
 			if (mInput->onKeyDown("Ctrl"))
@@ -362,18 +355,14 @@ namespace Plutus
 					mCamera->setScale(CHECKLIMIT(newVal, 0.20f, 6));
 				}
 			}
-			else  if (mInput->onKeyDown("MouseLeft") && selectedEnt != nullptr)
+			else  if (mInput->onKeyDown("MouseLeft") && mEnt != nullptr)
 			{
 				auto& trans = mEnt->getComponent<Plutus::Transform>();
 				glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
 				result /= mCamera->getScale();
 
-				std::printf("res: %.2f, %.2f\n", result.x, result.y);
 				trans.x = entLastPos.x + result.x;
 				trans.y = entLastPos.y + result.y;
-			}
-			else {
-				selectedEnt = nullptr;
 			}
 		}
 		ImGui::End();
@@ -400,50 +389,34 @@ namespace Plutus
 	void EditorUI::drawMainDockingWin()
 	{
 		static bool isOpen;
-		static bool opt_fullscreen_persistant = true;
-		bool opt_fullscreen = opt_fullscreen_persistant;
-		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_AutoHideTabBar;
 
 		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
 		// because it would be confusing to have two docking targets within each others.
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-		if (opt_fullscreen)
-		{
-			ImGuiViewport* viewport = ImGui::GetMainViewport();
-			ImGui::SetNextWindowPos(viewport->Pos);
-			ImGui::SetNextWindowSize(viewport->Size);
-			ImGui::SetNextWindowViewport(viewport->ID);
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-		}
 
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		ImGui::PopStyleVar(2);
 		// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background and handle the pass-thru hole, so we ask Begin() to not render a background.
 		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
 			window_flags |= ImGuiWindowFlags_NoBackground;
+
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", &isOpen, window_flags);
 		ImGui::PopStyleVar();
 
-		if (opt_fullscreen)
-			ImGui::PopStyleVar(2);
 
-		// DockSpace
-		ImGuiIO& io = ImGui::GetIO();
-		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-		{
-			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-		}
+		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 
-		drawMenu(dockspace_flags);
-
-		ImGui::End();
-	}
-
-	void EditorUI::drawMenu(int dockspace_flags)
-	{
+		/**************************************** Draw Editor Menu *******************************************************/
 		if (ImGui::BeginMenuBar())
 		{
 			if (ImGui::BeginMenu("Files"))
@@ -498,38 +471,34 @@ namespace Plutus
 			}
 			ImGui::EndMenuBar();
 		}
+
+		ImGui::End();
 	}
 
 	void EditorUI::bindFB()
 	{
-		mFb.bind();
-		glColorMask(true, true, true, true);
-		glClearColor(mVPColor.x, mVPColor.y, mVPColor.z, mVPColor.w);
-		glClear(GL_COLOR_BUFFER_BIT);
-		mScene->draw();
+		mScene->draw(&mRender);
 		if (mCanvasHover)
 		{
-			mComPanel.render(mScene->getRenderer(), mouseGridCoords);
+			mComPanel.render(&mRender, mouseGridCoords);
 		}
+		mRender.begin(&mShader, mCamera);
+
+		mPicker.bind();
+		mRender.draw(true);
+		mPicker.unBind();
+
+		mFb.bind();
+		mFb.setColor(mVPColor);
+		mRender.draw();
 	}
 
 	void EditorUI::unBindFB()
 	{
+
+		mRender.end();
 		mDebugRender->drawGrid();
 		mFb.unBind();
-	}
-
-	void EditorUI::resizeFB(int w, int h)
-	{
-		// auto fbSize = mFb.getSize();
-		// if (fbSize.x == w && fbSize.y != h)
-		// {
-		// 	mFb.resize(w, h);
-		// }
-	}
-	void EditorUI::resizeFB(glm::vec2 size)
-	{
-		// resizeFB(static_cast<int>(size.x), static_cast<int>(size.y));
 	}
 
 	void EditorUI::saveScene()

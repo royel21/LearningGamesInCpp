@@ -6,7 +6,7 @@
 
 namespace Plutus
 {
-    int my_exception_handler(lua_State *L, sol::optional<const std::exception &> maybe_exception, sol::string_view description)
+    int my_exception_handler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description)
     {
         // L is the lua state, which you can wrap in a state_view if necessary
         // maybe_exception will contain exception, if it exists
@@ -15,7 +15,7 @@ namespace Plutus
         if (maybe_exception)
         {
             std::cout << "(straight from the exception): ";
-            const std::exception &ex = *maybe_exception;
+            const std::exception& ex = *maybe_exception;
             std::cout << ex.what() << std::endl;
         }
         else
@@ -32,7 +32,7 @@ namespace Plutus
         return sol::stack::push(L, description);
     }
 
-    Script::Script(std::string _path, Entity *ent, Scene *scene) : path(_path)
+    Script::Script(std::string _path, Entity* ent, Scene* scene) : path(_path)
     {
 
         lua.open_libraries(sol::lib::base, sol::lib::math);
@@ -67,10 +67,10 @@ namespace Plutus
 
         lua.set("input", Input::getInstance());
 
-        auto size = scene->getScreen();
+        // auto size = scene->getScreen();
 
-        lua.set("SceenWidth", size.x);
-        lua.set("SceenHeight", size.y);
+        // lua.set("SceenWidth", size.x);
+        // lua.set("SceenHeight", size.y);
 
         lua[ent->getName()] = ent;
 

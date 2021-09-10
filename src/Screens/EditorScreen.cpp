@@ -1,6 +1,10 @@
 #include "EditorScreen.h"
 #include <Graphics/GLSL.h>
 #include <Core/Engine.h>
+
+
+#define CHECKLIMIT(val, min, max) val<min ? min : val> max ? max : val
+
 EditorScreen::EditorScreen()
 {
 }
@@ -62,8 +66,20 @@ void EditorScreen::update(float dt)
         int h = mEngine->getHeight();
         auto pos = mInput->getMouseCoords();
         pos.y = h - pos.y;
-        std::printf("Id: %i %.0f %.0f\n", mFB.getEntId(pos), pos.x, pos.y);
+        auto sizeS = mCamera.getScaleScreen();
+
     }
+
+    if (mInput->onKeyDown("Ctrl"))
+    {
+        auto scroll = mInput->getMouseWheel();
+        if (scroll != 0)
+        {
+            auto newVal = mCamera.getScale() + (scroll > 0 ? 0.05f : -0.05f);
+            mCamera.setScale(CHECKLIMIT(newVal, 0.20f, 6));
+        }
+    }
+    mCamera.update();
 }
 
 void EditorScreen::draw()

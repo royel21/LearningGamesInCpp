@@ -9,7 +9,7 @@ namespace Plutus
     class FrameBuffer
     {
     public:
-        FrameBuffer() = default;
+        FrameBuffer() : mBGColor(0) {};
         ~FrameBuffer();
         void init(int width, int height, bool isForPicking = false);
         void bind();
@@ -37,6 +37,8 @@ namespace Plutus
 
         u32 getTextureId() const { return mTexId; }
 
+        void setColor(glm::vec4 bgColor) { mBGColor = bgColor; }
+
         void cleanUp();
     private:
         //Framebuffer Id
@@ -47,6 +49,8 @@ namespace Plutus
         u32 mRbufferId = 0;
         bool isDirty = false;
         glm::ivec2 mSize;
+
+        glm::vec4 mBGColor;
 
         bool mIsPicking = false;
     };

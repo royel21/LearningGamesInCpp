@@ -66,7 +66,7 @@ void EditorScreen::draw()
     // mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, glm::vec4(1, 0, 0, 1));
 
     mEditor->unBindFB();
-    mEditor->DrawUI();
+    mEditor->drawUI();
 }
 
 void EditorScreen::onScreenResize(int w, int h)

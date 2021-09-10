@@ -2,26 +2,27 @@
 #include "Serialize/Serialize.h"
 
 #include "Graphics/Camera2D.h"
-#include "Graphics/GLSL.h"
 #include "./Components.h"
+
+#include <Graphics/SpriteBatch2D.h>
 
 #include <Input/Input.h>
 #include <memory>
 #include <Time/Timer.h>
 #include <cstdio>
 
-constexpr float ROW2 = 32;
-constexpr float ROW3 = 2 * 32;
-constexpr float ROW4 = 3 * 32;
-constexpr float ROW6 = 5 * 32;
-constexpr float ROW7 = 6 * 32;
-constexpr float ROW8 = 7 * 32;
-constexpr float ROW9 = 8 * 32;
-constexpr float LASTROW = 33 * 32;
-constexpr float SPEED = 1;
-
 namespace Plutus
 {
+    Scene::Scene() {
+        addLayer("Layer0");
+    }
+
+    Scene::~Scene()
+    {
+        mRegistry.clear();
+        mLayers.clear();
+    }
+
     const std::string Entity::getName()
     {
         auto tag = getComponent<Tag>();
@@ -31,21 +32,6 @@ namespace Plutus
     {
         auto tag = getComponent<Tag>();
         tag.Name = name;
-    }
-
-    Scene::~Scene()
-    {
-        mRegistry.clear();
-        mLayers.clear();
-        mShader.dispose();
-    }
-
-    void Scene::Init(Camera2D* camera)
-    {
-        mRenderer.init();
-        mCamera = camera;
-        mShader.CreateProgWithShader(GLSL::vertexShader.c_str(), GLSL::fragShader.c_str());
-        addLayer("Layer0");
     }
 
     Entity* Scene::createEntity(const std::string& name)
@@ -93,7 +79,7 @@ namespace Plutus
         return &mLayers[name];
     }
 
-    void Scene::draw()
+    void Scene::draw(SpriteBatch2D* renderbatch)
     {
         // auto  start = Timer::millis();
         for (auto& layer : mLayers)
@@ -118,7 +104,7 @@ namespace Plutus
                             {
                                 auto tileset = map.mTextures[tile.texture];
                                 glm::vec4 rect{ tile.x, tile.y, w, h };
-                                mRenderer.submit(tileset->texId, rect, tileset->getUV(tile.texcoord), { tile.color }, tile.rotate, tile.flipX, tile.flipY);
+                                renderbatch->submit(tileset->texId, rect, tileset->getUV(tile.texcoord), { tile.color }, tile.rotate, tile.flipX, tile.flipY);
                             }
                         }
                     }
@@ -127,77 +113,11 @@ namespace Plutus
                     {
                         auto& trans = ent->getComponent<Transform>();
                         auto& sprite = ent->getComponent<Sprite>();
-                        mRenderer.submit(sprite.mTexId, trans.getRect(), sprite.mUVCoord, sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY, (uint32_t)ent->mId);
+                        renderbatch->submit(sprite.mTexId, trans.getRect(), sprite.mUVCoord, sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY, (uint32_t)ent->mId);
                     }
                 }
             }
         }
-
-        mRenderer.begin(&mShader, mCamera);
-        mRenderer.draw();
-        mRenderer.end();
-        // std::printf("time: %llu\n", Timer::millis() - start);
-    }
-
-    void Scene::update(float dt)
-    {
-        auto view = mRegistry.view<Script>();
-        view.each([dt](auto& script)
-            { script.update(dt); });
-
-        auto view2 = mRegistry.view<Animation>();
-        view2.each([dt](auto& anim)
-            { anim.update(dt); });
-
-        // auto view3 = mRegistry.view<TileMap>();
-
-        // view3.each([dt](TileMap &t)
-        //            {
-        //                auto speed = dt * SPEED;
-        //                for (auto &tile : t.mTiles)
-        //                {
-        //                    if (tile.y == ROW2 || tile.y == ROW4 || tile.y == ROW6 || tile.y == ROW8)
-        //                    {
-        //                        tile.x = tile.x - speed;
-        //                        if (tile.x < -33)
-        //                        {
-        //                            tile.x = LASTROW;
-        //                        }
-        //                    }
-
-        //                    if (tile.y == ROW3 || tile.y == ROW7 || tile.y == ROW9)
-        //                    {
-        //                        tile.x = tile.x + speed;
-        //                        if (tile.x > LASTROW)
-        //                        {
-        //                            tile.x = -33;
-        //                        }
-        //                    }
-        //                }
-        //            });
-
-        // LOG_I("time: {0} {1}", Timer::millis() - start, Timer::millis());
-
-        // auto view2 = mRegistry.view<Transform>();
-        // // auto size = mCamera->getViewPortSize();
-        // view2.each([dt](auto& trans) {
-        //     LOG_I("x: {0} y: {1}", trans.x, trans.y);
-        //     });
-        //     trans.position.x -= vel.speed.x;
-        //     // if (trans.position.y + trans.size..x > size.y || trans.position.y <= 0)
-        //     // {
-        //     //     vel.speed.y *= -1;
-        //     // }
-        //     if (vel.speed.x > 0 && trans.position.x + trans.size.x <= 0)
-        //     {
-        //         trans.position.x = 1568;
-        //     }
-
-        //     if (vel.speed.x < 0 && trans.position.x >= size.x)
-        //     {
-        //         trans.position.x = -1568 + size.x;
-        //     }
-        //     })
     }
 
     void Scene::clear()
@@ -205,11 +125,6 @@ namespace Plutus
         mLayers.clear();
         mRegistry.clear();
         addLayer("Layer0");
-    }
-
-    const glm::vec2 Scene::getScreen()
-    {
-        return mCamera->getViewPortSize();
     }
 
     Entity* Scene::getEntity(float xPos, float yPos)
@@ -220,6 +135,17 @@ namespace Plutus
                 if (xPos >= trans.x && xPos <= trans.x + trans.w && xPos >= trans.x && yPos <= trans.y + trans.h) {
                     return ent.get();
                 }
+            }
+        }
+        return nullptr;
+    }
+
+    Entity* Scene::getEntity(uint32_t Id)
+    {
+        for (auto& ent : mCurrentLayer->mEntities) {
+            if (ent->hasComponent<Transform>()) {
+                if (entt::to_integral(ent->mId) == Id)
+                    return ent.get();
             }
         }
         return nullptr;

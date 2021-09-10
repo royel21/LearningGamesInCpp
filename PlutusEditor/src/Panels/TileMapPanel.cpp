@@ -221,7 +221,6 @@ namespace Plutus
             // mShader.setUniform1i("mySampler", 0);
             // mShader.setUniformMat4("camera", mScene->getCamera()->getCameraMatrix());
             // mRenderer.begin();
-            renderer->begin(mScene->getShader(), mScene->getCamera());
 
             std::vector<Tile> tiles;
             int w = mTileMap->mTileWidth;
@@ -239,9 +238,6 @@ namespace Plutus
                 }
                 renderer->submit(tex->texId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation);
             }
-            renderer->end();
-            // mRenderer.end();
-            // mShader.disable();
         }
     }
 

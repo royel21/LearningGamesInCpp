@@ -42,7 +42,7 @@ void GameScreen::build()
     mSystemManager.init(mScene.get());
     mSystemManager.AddSystem<Plutus::RenderSystem>();
     mWorldCamera.init(w, h);
-    mScene->Init(&mWorldCamera);
+    // mScene->Init(&mWorldCamera);
     // mTextLayer.Init(static_cast<float>(w), static_cast<float>(h), "assets/fonts/Zoika.ttf", 28);
 
     mInput = Plutus::Input::getInstance();
@@ -58,7 +58,7 @@ void GameScreen::update(float dt)
 {
     mWorldCamera.update();
 
-    mScene->update(dt);
+    // mScene->update(dt);
     if (mInput->onKeyPressed("PageUp"))
     {
         mCurrentState = Plutus::ScreenState::CHANGE_PREV;

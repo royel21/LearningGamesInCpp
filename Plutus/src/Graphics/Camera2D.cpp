@@ -31,8 +31,10 @@ namespace Plutus
 		}
 	}
 
-	glm::vec2 Camera2D::convertScreenToWold(glm::vec2 coords)
+	glm::vec2 Camera2D::convertScreenToWold(glm::vec2 coords, bool invertY)
 	{
+		if (invertY)
+			coords.y = mScreenHeight - coords.y;
 		// translate coord to center of the screen
 		coords -= glm::vec2(mScreenWidth >> 1, mScreenHeight >> 1);
 		//have to scale the coordinate and the camera current pos

@@ -1,13 +1,16 @@
 #pragma once
 
-#include "Core/IGameScreen.h"
-#include "Input/Input.h"
+#include <Core/IGameScreen.h>
+
+#include <Input/Input.h>
+
 #include <Graphics/Shader.h>
 #include <Graphics/Camera2D.h>
+#include <Graphics/FrameBuffer.h>
 #include <Graphics/SpriteBatch2D.h>
 #include <Graphics/DebugRenderer.h>
+
 #include <Assets/AssetManager.h>
-#include "FrameBuffer.h"
 
 class EditorScreen : public Plutus::IGameScreen
 {

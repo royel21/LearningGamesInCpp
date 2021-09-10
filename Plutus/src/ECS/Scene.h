@@ -4,8 +4,6 @@
 #include <vector>
 #include <cstring>
 #include <unordered_map>
-#include <Graphics/SpriteBatch2D.h>
-#include <Graphics/Shader.h>
 #include <Core/type.h>
 #include <entt.hpp>
 #include <algorithm>
@@ -17,6 +15,7 @@ namespace Plutus
     class Scene;
     class Camera2D;
     class Script;
+    class SpriteBatch2D;
 
     class Entity
     {
@@ -77,9 +76,9 @@ namespace Plutus
     class Scene
     {
     public:
-        Scene() = default;
+        Scene();
         ~Scene();
-        void Init(Camera2D* camera);
+        void Init();
         void enableShader();
         void disableShader();
 
@@ -97,27 +96,17 @@ namespace Plutus
 
         const entt::registry* getRegistry() { return &mRegistry; }
 
-        void draw();
+        void draw(SpriteBatch2D* renderbatch);
         void update(float dt);
         void serialize(Serializer& serializer);
 
         void clear();
 
-        SpriteBatch2D* getRenderer() { return &mRenderer; }
-
-        const glm::vec2 getScreen();
-
-        Camera2D* getCamera() { return mCamera; }
-        Shader* getShader() { return &mShader; }
-
         Entity* getEntity(float x, float y);
+        Entity* getEntity(uint32_t Id);
 
     private:
         entt::registry mRegistry;
-        SpriteBatch2D mRenderer;
-        Shader mShader;
-
-        Camera2D* mCamera = nullptr;
         Layer* mCurrentLayer;
 
         std::unordered_map<std::string, Layer> mLayers;

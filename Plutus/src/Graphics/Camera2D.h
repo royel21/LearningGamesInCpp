@@ -71,9 +71,9 @@ namespace Plutus
 		// return the 4x4 camera matrix
 		glm::mat4 getCameraMatrix() { return mCameraMatrix; }
 		//Convert screen coordination to camera coordination and return it
-		glm::vec2 convertScreenToWold(float x, float y) { return convertScreenToWold({ x, y }); };
+		glm::vec2 convertScreenToWold(float x, float y, bool invertY = false) { return convertScreenToWold({ x, y }, invertY); };
 		//Convert screen coordination to camera coordination and return it
-		glm::vec2 convertScreenToWold(glm::vec2 screenCoords);
+		glm::vec2 convertScreenToWold(glm::vec2 screenCoords, bool invertY = false);
 
 		const glm::vec2 getScaleScreen() { return glm::vec2(mScreenWidth, mScreenHeight) / mScale; }
 

@@ -26,7 +26,9 @@ namespace Plutus
         {
         }
 
-        glm::vec4 getRect() { return {x, y, w, h}; };
+        glm::vec4 getRect() { return { x, y, w, h }; }
+        glm::vec2 getPosition() { return { x,y }; }
+        glm::ivec2 getSize() { return { w, h }; }
     };
 
 } // namespace Plutus

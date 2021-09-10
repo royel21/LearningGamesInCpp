@@ -9,62 +9,61 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include "Panels/EntityEditor.h"
-#include "FrameBuffer.h"
-#include "Panels/ComponentPanel.h"
-#include "Graphics/SpriteBatch2D.h"
-#include "Core/type.h"
+#include <Panels/EntityEditor.h>
+#include <Graphics/FrameBuffer.h>
+#include <Panels/ComponentPanel.h>
+#include <Graphics/SpriteBatch2D.h>
+#include <Graphics/Shader.h>
+#include <Core/type.h>
 
 namespace Plutus
 {
-	class Camera2D;
 	class Scene;
-	class DebugRender;
 	class Input;
 	class Entity;
+	class Camera2D;
+	class DebugRender;
 
 	class EditorUI
 	{
-		struct props
-		{
-			bool flipX = false;
-			bool flipY = false;
-			int coord = 0;
-		};
 
 	private:
 		static EditorUI* mInstance;
 
+		Input* mInput = nullptr;
 		Camera2D* mCamera = nullptr;
 		ImGuiIO* mImGui_IO = nullptr;
 		DebugRender* mDebugRender = nullptr;
-		Input* mInput = nullptr;
-		SpriteBatch2D mRender;
+
+		Entity* mEnt = nullptr;
+		Entity* selectedEnt = nullptr;
+
 		FrameBuffer mFb;
 		FrameBuffer mPicker;
-		ImVec2 mViewportSize;
+
+		Shader mShader;
+		SpriteBatch2D mRender;
+
 		glm::vec4 mVPColor;
 		glm::vec4 mGridColor;
-		//Panels
-		EntityEditor mEntityEditor;
-		Ref<Scene> mScene;
-		Entity* mEnt = nullptr;
 
-		bool mMoveCam = false;
+		Ref<Scene> mScene;
 
 		glm::vec2 lastCoords;
 		glm::vec2 lastCamPos;
 		glm::vec2 entLastPos;
-		Entity* selectedEnt = nullptr;
-
-		float mVPScale = .9f;
-		bool mShowDemo = false;
 		glm::ivec2 mouseGridCoords;
 
-		std::vector<std::string> mRecents;
+		float mVPScale = .9f;
+		bool mMoveCam = false;
+		bool mShowDemo = false;
 		bool mCanvasHover = false;
 
+		//Panels
 		ComponentPanel mComPanel;
+		EntityEditor mEntityEditor;
+
+		std::vector<std::string> mRecents;
 
 	public:
 		std::vector<ImVec2> Selectedtiles;
@@ -77,36 +76,38 @@ namespace Plutus
 		void Init(Camera2D* cam);
 		void update(float dt);
 
-		void DrawUI();
+		void drawUI();
 		void beginUI();
 		void endUI();
 		void destroy();
 		//Bind Framebuffer
 		void bindFB();
 		void unBindFB();
-		void resizeFB(int w, int h);
-		void resizeFB(glm::vec2 size);
 
-		ImGuiIO* getIO() { return mImGui_IO; }
 		const glm::vec2& getLastCoords() { return lastCoords; }
+		void setLastCoord(const glm::vec2& coords) { lastCoords = coords; }
 
-		inline void setLastCoord(const glm::vec2& coords) { lastCoords = coords; }
-		inline bool isHover() { return ImGui::IsAnyItemHovered(); }
-		inline void drawDemo() { ImGui::ShowDemoWindow(); }
+		bool isHover() { return ImGui::IsAnyItemHovered(); }
+
 		void viewPortBGColor(float r, float b, float g, float a);
-		void setEntity(Entity* ent) { mEnt = ent; }
+
 		Entity* getEntity() { return mEnt; }
+		void setEntity(Entity* ent) { mEnt = ent; }
+
 		void addRecent(const std::string& path);
+
+		void drawDemo() { ImGui::ShowDemoWindow(); }
 
 	private:
 		EditorUI();
 		//ImGui Panels
 		void drawMainDockingWin();
-		void drawMenu(int dockspace_flags);
+
 		void viewPort();
 		void viewPortControl();
-		void saveScene();
+
 		void newScene();
+		void saveScene();
 
 		void loadRecents();
 		void saveRecents();
