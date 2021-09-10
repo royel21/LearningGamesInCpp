@@ -115,6 +115,7 @@ namespace Plutus
 
 		auto size = cam->getScaleScreen();
 		mFb.init(static_cast<int>(size.x), static_cast<int>(size.y));
+		mPicker.init(static_cast<int>(size.x), static_cast<int>(size.y), true);
 		loadRecents();
 	}
 

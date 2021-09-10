@@ -41,6 +41,7 @@ namespace Plutus
 		Input* mInput = nullptr;
 		SpriteBatch2D mRender;
 		FrameBuffer mFb;
+		FrameBuffer mPicker;
 		ImVec2 mViewportSize;
 		glm::vec4 mVPColor;
 		glm::vec4 mGridColor;
