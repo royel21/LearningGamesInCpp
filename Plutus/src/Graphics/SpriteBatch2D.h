@@ -6,7 +6,6 @@
 #include "vertex.h"
 #include <unordered_map>
 
-
 namespace Plutus
 {
 	struct Tile;
@@ -94,12 +93,6 @@ namespace Plutus
 			mIndexCount += 6;
 		}
 
-		/*
-			rotate a point by a angle in degre
-			@param pos point
-			@param angle angle in degre
-		*/
-		static glm::vec2 rotatePoint(glm::vec2 pos, float angle);
 	};
 
 } // namespace Plutus

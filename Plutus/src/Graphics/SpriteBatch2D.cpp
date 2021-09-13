@@ -13,6 +13,7 @@
 #include "Shader.h"
 
 #include "Time/Timer.h"
+#include "GraphicsUtil.h"
 
 #define RENDERER_MAX_SPRITES 60000
 #define RENDERER_VERTEX_SIZE sizeof(Vertex)
@@ -24,9 +25,6 @@
 #define SHADER_UV_INDEX 1
 #define SHADER_COLOR_INDEX 2
 #define SHADER_ENTITYID_INDEX 3
-
-#define PI 3.141592f
-#define DEC2RA(dec) dec *(PI / 180.0f)
 
 namespace Plutus
 {
@@ -106,10 +104,10 @@ namespace Plutus
 				glm::vec2 br(halfDim.x, -halfDim.y);
 				glm::vec2 tr(halfDim.x, halfDim.y);
 
-				tl = rotatePoint(tl, r) + halfDim;
-				bl = rotatePoint(bl, r) + halfDim;
-				br = rotatePoint(br, r) + halfDim;
-				tr = rotatePoint(tr, r) + halfDim;
+				tl = rotatePoint2D(tl, r) + halfDim;
+				bl = rotatePoint2D(bl, r) + halfDim;
+				br = rotatePoint2D(br, r) + halfDim;
+				tr = rotatePoint2D(tr, r) + halfDim;
 
 
 				vertices[mVertexCount] = { rect.x + tl.x, rect.y + tl.y, uv.x, uv.w, c,     id };
@@ -172,15 +170,6 @@ namespace Plutus
 
 		mVertexCount = 0;
 		mIndexCount = 0;
-	}
-
-	glm::vec2 SpriteBatch2D::rotatePoint(glm::vec2 pos, float angle)
-	{
-		float rad = DEC2RA(angle);
-		float cosAng = cos(rad);
-		float sinAng = sin(rad);
-		return { pos.x * cosAng - pos.y * sinAng,
-				pos.x * sinAng + pos.y * cosAng };
 	}
 
 } // namespace Plutus
