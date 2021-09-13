@@ -15,6 +15,7 @@ namespace Plutus
         glm::vec4 mUVCoord;
         ColorRGBA8 mColor;
         std::string mTextureId;
+        uint8_t mLayer = 0;
 
     public:
         Sprite();
