@@ -111,7 +111,7 @@ namespace Plutus
             writer->StartArray();
             for (auto tx : anim.mTextures)
             {
-                writer->String(tx->name.c_str());
+                writer->String(tx.c_str());
             }
             writer->EndArray();
 

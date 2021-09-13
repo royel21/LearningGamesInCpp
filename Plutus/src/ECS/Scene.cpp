@@ -82,6 +82,10 @@ namespace Plutus
     void Scene::draw(SpriteBatch2D* renderbatch)
     {
         // auto  start = Timer::millis();
+        mRegistry.each([&](auto entity) {
+
+            });
+
         for (auto& layer : mLayers)
         {
             if (layer.second.isVisible)
@@ -113,7 +117,7 @@ namespace Plutus
                     {
                         auto& trans = ent->getComponent<Transform>();
                         auto& sprite = ent->getComponent<Sprite>();
-                        renderbatch->submit(sprite.mTexId, trans.getRect(), sprite.mUVCoord, sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY, (uint32_t)ent->mId);
+                        renderbatch->submit(sprite.getTexId(), trans.getRect(), sprite.mUVCoord, sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY, (uint32_t)ent->mId);
                     }
                 }
             }

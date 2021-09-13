@@ -14,9 +14,9 @@ namespace Plutus
         {
             static bool newAnin = false;
 
-            auto& animate = ent->getComponent<Animation>();
+            auto& animation = ent->getComponent<Animation>();
             //Animations
-            auto& sequences = animate.mSequences;
+            auto& sequences = animation.mSequences;
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
             if (ImGui::Button(ICON_FA_PLUS_CIRCLE "##add-anin"))
             {
@@ -51,7 +51,7 @@ namespace Plutus
                 // auto tilesets = mAManager->getTilesets();
                 // ImGui::ComboBox<Texture>("TileSheet", tilesets, );
             }
-            SequenceEditor(newAnin, animate);
+            SequenceEditor(newAnin, animation);
         }
     }
 
@@ -70,7 +70,7 @@ namespace Plutus
                 auto& textures = anim.mTextures;
                 if (textures.size())
                 {
-                    ImGui::ComboBox<Texture>("TileSheet", textures, textureIndex);
+                    ImGui::ComboBox("TileSheet", textures, textureIndex);
                 }
                 ImGui::End();
             }
@@ -90,7 +90,7 @@ ImGui::InputText("Name##anim", name, IM_ARRAYSIZE(name));
 ImGui::SetCursorPos({180.0f, 200.0f - 35.0f});
 if (ImGui::Button("Save"))
 {
-    // animate.AddSequences(name);
+    // animation.AddSequences(name);
     show = false;
 }
 ImGui::EndDialog(show);

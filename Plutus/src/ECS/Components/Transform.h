@@ -11,6 +11,8 @@ namespace Plutus
         int w;
         int h;
         float r;
+        uint8_t layer = 0;
+        bool sortY = false;
 
     public:
         Transform() = default;
@@ -22,8 +24,28 @@ namespace Plutus
             @param h Height
             @param r Rotation
         */
-        Transform(float _x = 0, float _y = 0, int _w = 0, int _h = 0, float _r = 0) : x(_x), y(_y), w(_w), h(_h), r(-_r)
+        Transform(float _x = 0, float _y = 0, int _w = 0, int _h = 0, float _r = 0, bool sY = false) : x(_x), y(_y), w(_w), h(_h), r(-_r), sortY(sY)
         {
+        }
+
+        // copy constructor 
+        Transform(const Transform& tran) {
+            x = tran.x;
+            y = tran.y;
+            w = tran.w;
+            h = tran.h;
+            r = tran.r;
+            layer = tran.layer;
+            sortY = tran.sortY;
+        }
+
+        bool operator < (Transform& tran) const {
+            if (sortY && tran.sortY) {
+                return std::tie(layer, y) < std::tie(tran.layer, tran.y);
+            }
+            else {
+                return layer < tran.layer;
+            }
         }
 
         glm::vec4 getRect() { return { x, y, w, h }; }

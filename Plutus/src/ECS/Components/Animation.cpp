@@ -29,13 +29,14 @@ namespace Plutus
                 currentTime = 0;
             }
 
-            sprite.mUVCoord = mTextures[seq.mTexIndex]->getUV(frames[seq.mFrame]);
+            sprite.mTextureId = mTextures[seq.mTexIndex];
+            sprite.mUVCoord = AssetManager::get()->getTexCoords(sprite.mTextureId, frames[seq.mFrame]);
         }
     }
 
     void Animation::addTexture(const std::string& id)
     {
-        mTextures.push_back(AssetManager::get()->mTextures.getTexture(id));
+        mTextures.push_back(id);
     }
 
     void Animation::AddSequence(const std::string id, Sequence seq)

@@ -50,8 +50,9 @@ namespace Plutus
     {
         bool open = true;
         ImGui::Begin("Scene Editor", &open, ImGuiWindowFlags_NoScrollbar);
-        layers();
-        entity();
+        // layers();
+        // entity();
+        entityList();
         ImGui::End();
     }
 

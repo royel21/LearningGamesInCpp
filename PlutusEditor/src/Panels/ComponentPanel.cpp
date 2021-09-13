@@ -179,7 +179,9 @@ namespace Plutus
                 static std::string selected = sprite.mTextureId;
                 static int sc = 100;
                 static float scale = 1.0f;
-                ImGui::ComboBox<Texture>("TileSheet", tilesets, selected);
+                if (ImGui::ComboBox<Texture>("TileSheet", tilesets, selected)) {
+                    sprite.mTextureId = selected;
+                }
 
                 if (ImGui::ColorInt("Color", color))
                 {
@@ -192,13 +194,6 @@ namespace Plutus
                     scale = sc / 100.0f;
                 }
                 auto tileset = &tilesets[selected];
-                uint32_t id = tileset->texId;
-
-                if (sprite.mTexId != id && id > 0)
-                {
-                    sprite.mTextureId = selected;
-                    sprite.mTexId = id;
-                }
 
                 static char text[120];
                 snprintf(text, 120, "Texture Size W:%d H:%d", tileset->texWidth, tileset->texHeight);

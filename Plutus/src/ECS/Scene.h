@@ -78,21 +78,17 @@ namespace Plutus
     public:
         Scene();
         ~Scene();
-        void Init();
-        void enableShader();
-        void disableShader();
 
         Entity* createEntity(const std::string& name);
         void removeEntity(Entity* ent);
 
-        std::unordered_map<std::string, Layer>* getLayers() { return &mLayers; };
 
         Layer* addLayer(const std::string& name);
+        Layer* setLayer(const std::string& name);
+        std::unordered_map<std::string, Layer>* getLayers() { return &mLayers; };
+        Layer* getCurrentLayer() { return mCurrentLayer; };
 
         bool removeLayer(std::string name);
-
-        Layer* setLayer(const std::string& name);
-        Layer* getCurrentLayer() { return mCurrentLayer; };
 
         const entt::registry* getRegistry() { return &mRegistry; }
 
