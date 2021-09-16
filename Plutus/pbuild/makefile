@@ -24,7 +24,6 @@ SRC_Input != find ../src/Input -name *.cpp
 SRC_ParticleSystem != find ../src/ParticleSystem -name *.cpp
 SRC_Physics != find ../src/Physics -name *.cpp
 SRC_Systems != find ../src/Systems -name *.cpp
-SRC_TextRender != find ../src/TextRender -name *.cpp
 SRC_Time != find ../src/Time -name *.cpp
 SRC_Utils != find ../src/Utils -name *.cpp
 
@@ -36,14 +35,13 @@ OBJ_Input = $(patsubst %.cpp,%.o, $(notdir ${SRC_Input}))
 OBJ_ParticleSystem = $(patsubst %.cpp,%.o, $(notdir ${SRC_ParticleSystem}))
 OBJ_Physics = $(patsubst %.cpp,%.o, $(notdir ${SRC_Physics}))
 OBJ_Systems = $(patsubst %.cpp,%.o, $(notdir ${SRC_Systems}))
-OBJ_TextRender = $(patsubst %.cpp,%.o, $(notdir ${SRC_TextRender}))
 OBJ_Time = $(patsubst %.cpp,%.o, $(notdir ${SRC_Time}))
 OBJ_Utils = $(patsubst %.cpp,%.o, $(notdir ${SRC_Utils}))
 
 #  Core ECS Graphics Input ParticleSystem Physics Systems TextRender Time Utils
 # Targets start here. 
 Plutus.o: $(OBJ_Assets) $(OBJ_Core) $(OBJ_ECS) $(OBJ_Graphics) $(OBJ_Input) \
-	$(OBJ_ParticleSystem) $(OBJ_Physics) $(OBJ_Systems) $(OBJ_TextRender) $(OBJ_Time) $(OBJ_Utils)
+	$(OBJ_ParticleSystem) $(OBJ_Physics) $(OBJ_Systems) $(OBJ_Time) $(OBJ_Utils)
 	emcc $(shell find ./ -name "*.o") -r -o../../webbuild/Plutus.o
 
 $(OBJ_Assets): ${SRC_Assets}

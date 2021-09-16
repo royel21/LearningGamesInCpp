@@ -1,6 +1,9 @@
 #pragma once
 #include <memory>
 
+using u32 = unsigned int;
+using u8 = unsigned char;
+
 namespace Plutus {
 
     template<typename T>

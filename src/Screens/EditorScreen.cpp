@@ -66,8 +66,7 @@ void EditorScreen::update(float dt)
         int h = mEngine->getHeight();
         auto pos = mInput->getMouseCoords();
         pos.y = h - pos.y;
-        auto sizeS = mCamera.getScaleScreen();
-
+        std::printf("Id: %i\n", mFB.getEntId(pos));
     }
 
     if (mInput->onKeyDown("Ctrl"))
@@ -123,10 +122,10 @@ void EditorScreen::draw()
     mRender.draw();
     mRender.end();
 
-    mRender.submit(mFB.getTextureId(), { 300, 300, 300, 300 }, { 0,1,1,0 }, { 255,255,255,255 }, 0, false, false, 32);
-    mRender.begin(&mShader, &mCamera);
-    mRender.draw();
-    mRender.end();
+    // mRender.submit(mFB.getTextureId(), { 300, 300, 300, 300 }, { 0,1,1,0 }, { 255,255,255,255 }, 0, false, false, 32);
+    // mRender.begin(&mShader, &mCamera);
+    // mRender.draw();
+    // mRender.end(); 
 
     mDebug->drawBox({ 10, 10, 150, 150 }, { 255, 255, 255, 255 }, 0.0f);
     mDebug->drawCircle({ 85.0f, 85.0f }, { 255, 255, 255, 255 }, 70.0f);

@@ -62,7 +62,7 @@ namespace Plutus
             }
 
             glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, g->bitmap.width, g->bitmap.rows, GL_RED, GL_UNSIGNED_BYTE, g->bitmap.buffer);
-
+            std::cout << (char)i << "  buff:" << (int)*g->bitmap.buffer << std::endl;
 
             font.ch[i].ax = static_cast<float>(g->advance.x >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
             font.ch[i].ay = static_cast<float>(g->advance.y >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))

@@ -36,7 +36,7 @@ void main() {
     
     color = vertexColor;
 
-    entityId = entId + 1;
+    entityId = entId + 1.0;
 })END";
 
     const std::string fragShader = std::string(VERTEX_HEADER) + R"END(

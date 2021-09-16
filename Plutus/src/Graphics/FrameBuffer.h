@@ -1,7 +1,7 @@
 #ifndef __FRAMEBUFFER_H__
 #define __FRAMEBUFFER_H__
 
-#include "types.h"
+#include <Core/type.h>
 #include <glm/glm.hpp>
 namespace Plutus
 {
