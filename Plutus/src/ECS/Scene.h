@@ -100,6 +100,7 @@ namespace Plutus
 
         Entity* getEntity(float x, float y);
         Entity* getEntity(uint32_t Id);
+        void update();
 
     private:
         entt::registry mRegistry;

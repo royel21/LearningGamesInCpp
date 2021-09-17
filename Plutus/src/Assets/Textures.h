@@ -60,6 +60,7 @@ namespace Plutus
         Textures() = default;
         ~Textures();
         Texture* getTexture(const std::string& id) { return &mTileSets[id]; }
+        glm::vec4 getTexture(const std::string& id, int uvIndex) { return mTileSets[id].getUV(uvIndex); }
         /***
             Create a texture atlas from the image from the tile width and height
             @param id the Id of the texture

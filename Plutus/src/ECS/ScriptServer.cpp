@@ -5,8 +5,6 @@
 
 namespace Plutus
 {
-
-
     void my_panic(sol::optional<std::string> maybe_msg)
     {
         std::cerr << "Lua is in a panic state and will now abort() the application" << std::endl;

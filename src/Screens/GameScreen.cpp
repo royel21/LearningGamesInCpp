@@ -41,7 +41,7 @@ void GameScreen::build()
     // Plutus::SceneLoader::loadFromJson("assets/scene1.json", mScene);
     auto& textures = Plutus::AssetManager::get()->mTextures;
     textures.addTexture("bats", "assets/textures/monster/bat.png", 3, 32, 32);
-    textures.addTexture("Player", "assets/textures/player1.png");
+    textures.addTexture("player1", "assets/textures/player1.png");
     textures.addTexture("cave", "assets/textures/goblin_cave.png", 8, 32, 32);
 
     std::printf("font-loaded\n");
@@ -51,37 +51,37 @@ void GameScreen::onEntry()
 {
     const int w = mEngine->getWidth();
     const int h = mEngine->getHeight();
-    // mEngine->setFPS(60);
+    mEngine->setFPS(60);
 
     mScene = Plutus::CreateRef<Plutus::Scene>();
     mWorldCamera.init(w, h);
 
     auto player = mScene->createEntity("Player");
-    player->addComponent<Plutus::Transform>(256.0f, h - 32.0f, 32, 32, 0.0f);
-    player->addComponent<Plutus::Sprite>("cave");
-    // player->addComponent<Plutus::Script>("assets/script/player1.lua", player, mScene.get());
+    player->addComponent<Plutus::Transform>(192.0f, h - 70.0f, 64, 64, 0.0f);
+    player->addComponent<Plutus::Sprite>("player1");
+    player->addComponent<Plutus::Script>("assets/script/player1.lua", player, mScene.get());
 
-    // mEngine->setViewPort(w, h);
+    mEngine->setViewPort(w, h);
 
-    // auto bat = mScene->createEntity("Bat");
-    // bat->addComponent<Plutus::Transform>(288.0f, h - 64.0f, 64, 64, 0.0f);
-    // bat->addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
-    // bat->addComponent<Plutus::Sprite>("bats");
+    auto bat = mScene->createEntity("Bat");
+    bat->addComponent<Plutus::Transform>(288.0f, h - 64.0f, 64, 64, 0.0f);
+    bat->addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
+    bat->addComponent<Plutus::Sprite>("bats");
 
-    // auto& anim = bat->addComponent<Plutus::Animation>(bat);
+    auto& anim = bat->addComponent<Plutus::Animation>(bat);
 
-    // anim.addTexture("bats");
-    // anim.AddSequence("up", { {0, 1, 2}, 0, 120 });
-    // anim.AddSequence("left", { {3, 4, 5}, 0, 120 });
-    // anim.AddSequence("down", { {6, 7, 8}, 0, 120 });
-    // anim.AddSequence("right", { {9, 10, 11}, 0, 120 });
+    anim.addTexture("bats");
+    anim.AddSequence("up", { {0, 1, 2}, 0, 120 });
+    anim.AddSequence("left", { {3, 4, 5}, 0, 120 });
+    anim.AddSequence("down", { {6, 7, 8}, 0, 120 });
+    anim.AddSequence("right", { {9, 10, 11}, 0, 120 });
 
-    // anim.PlaySequence("down");
+    anim.PlaySequence("down");
 
-    // auto bed = mScene->createEntity("bed");
-    // bed->addComponent<Plutus::Transform>(128.0f, h - 256.0f, 128, 128);
-    // auto& sprite = bed->addComponent<Plutus::Sprite>("cave");
-    // sprite.mUVCoord = Plutus::AssetManager::get()->getTexCoords("cave", { 1, 10, 96, 96 });
+    auto bed = mScene->createEntity("bed");
+    bed->addComponent<Plutus::Transform>(128.0f, h - 256.0f, 128, 128);
+    auto& sprite = bed->addComponent<Plutus::Sprite>("cave");
+    sprite.mUVCoord = Plutus::AssetManager::get()->getTexCoords("cave", { 1, 10, 96, 96 });
 }
 
 void GameScreen::update(float dt)
@@ -96,7 +96,7 @@ void GameScreen::update(float dt)
     {
         mCurrentState = Plutus::ScreenState::CHANGE_NEXT;
     }
-
+    mScene->update(dt);
     // if (mInput->onKeyDown("Ctrl") && mInput->getMouseWheel() != 0)
     // {
     //     std::printf("wheel: %i\n", mInput->getMouseWheel());
@@ -106,8 +106,10 @@ void GameScreen::update(float dt)
 void GameScreen::draw()
 {
     setBackgoundColor(1, 0, 0, 1);
+
+    mScene->draw(&mRender);
+
     mRender.begin(&mShader, &mWorldCamera);
-    mRender.submit(Plutus::AssetManager::get()->mTextures.getTexture("Player")->texId, { 50, 100, 64, 64 }, { 0, 1, 1, 0 }, { 255, 255, 255, 255 }, 0, false, false, 25);
     mRender.draw();
     mRender.end();
 }

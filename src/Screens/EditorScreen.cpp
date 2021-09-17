@@ -24,8 +24,6 @@ int EditorScreen::getPrevScreentIndex() const
 
 void EditorScreen::build()
 {
-    auto size = mEngine->getWindowSize();
-
     mAssets = Plutus::AssetManager::get();
     mAssets->mTextures.addTexture("player", "assets/textures/zombie.png");
     mAssets->mTextures.addTexture("bats", "assets/textures/monster/bat.png", 3, 32, 32);
@@ -37,11 +35,15 @@ void EditorScreen::build()
     mRender.init();
     mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
 
-    mCamera.init(static_cast<int>(size.x), static_cast<int>(size.y));
+    const int w = mEngine->getWidth();
+    const int h = mEngine->getHeight();
+
+    mCamera.init(w, h);
+
+    mFB.init(w, h, true);
+
     mDebug = Plutus::DebugRender::geInstances();
     mDebug->init(&mCamera);
-
-    mFB.init(static_cast<int>(size.x), static_cast<int>(size.y), true);
 }
 
 void EditorScreen::onEntry()
@@ -100,6 +102,7 @@ void EditorScreen::draw()
 
     mRender.submit(mAssets->mTextures.getTexture("player")->texId, { 50, 100, 64, 64 }, { 0, 1, 1, 0 }, { 255, 255, 255, 255 }, 0, false, false, 25);
     mRender.submit(mAssets->mTextures.getTexture("bats")->texId, { 50, 200, 96, 96 }, { 0, 1, 1, 0 }, { 255, 255, 255, 255 }, 0, false, false, 99);
+    mRender.submit(Plutus::AssetManager::get()->mTextures.getTexture("bats")->texId, { 50, 100, 64, 64 }, { 0, 1, 1, 0 }, { 255, 255, 255, 255 }, 0, false, false, 25);
 
     mRender.begin(&mShader, &mCamera);
 
