@@ -17,9 +17,10 @@ namespace Plutus
         ScreenList(Engine *enine);
         ~ScreenList();
 
-        IGameScreen *moveNext();
-        IGameScreen *movePrev();
+        inline IGameScreen *moveNext() { return moveScreen(true); }
+        inline IGameScreen *movePrev() { return moveScreen(false); }
         IGameScreen *getCurrent();
+        IGameScreen *moveScreen(bool next);
 
         void setScreent(int nextScreen);
         void addScreen(IGameScreen *newScreen);

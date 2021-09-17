@@ -2,7 +2,8 @@
 #include "Core/IGameScreen.h"
 #include "ECS/Scene.h"
 #include "Graphics/Camera2D.h"
-#include "Input/Input.h"
+#include <Graphics/SpriteBatch2D.h>
+#include <Graphics/Shader.h>
 
 class GameScreen : public Plutus::IGameScreen
 {
@@ -28,5 +29,6 @@ public:
 private:
     Plutus::Ref<Plutus::Scene> mScene;
     Plutus::Camera2D mWorldCamera;
-    Plutus::Input* mInput;
+    Plutus::Shader mShader;
+    Plutus::SpriteBatch2D mRender;
 };

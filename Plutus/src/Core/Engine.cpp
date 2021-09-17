@@ -5,6 +5,7 @@
 #include <Time/Timer.h>
 #include <chrono>
 #include <cstdio>
+#include <Graphics/GLSL.h>
 
 #ifdef __EMSCRIPTEN__
 #include <functional>
@@ -27,6 +28,8 @@ namespace Plutus
 		mWindow.init(name, w, h);
 		mInput = Input::getInstance();
 		mScreenList = std::make_unique<ScreenList>(this);
+		mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
+		mRenderer.init();
 	}
 
 	Engine::~Engine()
@@ -115,24 +118,12 @@ namespace Plutus
 			}
 			case ScreenState::CHANGE_NEXT:
 			{
-				mCurrentScreen->onExit();
 				mCurrentScreen = mScreenList->moveNext();
-				if (mCurrentScreen != nullptr)
-				{
-					mCurrentScreen->setRunning();
-					mCurrentScreen->onEntry();
-				}
 				break;
 			}
 			case ScreenState::CHANGE_PREV:
 			{
-				mCurrentScreen->onExit();
 				mCurrentScreen = mScreenList->movePrev();
-				if (mCurrentScreen != nullptr)
-				{
-					mCurrentScreen->setRunning();
-					mCurrentScreen->onEntry();
-				}
 				break;
 			}
 			case ScreenState::EXIT_APPLICATION:

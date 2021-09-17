@@ -6,6 +6,8 @@
 #include "glm/glm.hpp"
 #include "Window.h"
 #include "ScreenList.h"
+#include <Graphics/Shader.h>
+#include <Graphics/SpriteBatch2D.h>
 
 namespace Plutus
 {
@@ -18,19 +20,22 @@ namespace Plutus
         bool mIsRunning = false;
         int mScreenWidth = 1280;
         int mScreenHeight = 768;
-        const char* mWinName;
+        const char *mWinName;
         bool limitFPS = true;
         double mSpecFPS = 0.016666667;
         //Screen
         std::unique_ptr<ScreenList> mScreenList = nullptr;
-        IGameScreen* mCurrentScreen = nullptr;
+        IGameScreen *mCurrentScreen = nullptr;
         // return the window object
         Window mWindow;
         ///Handler all the input of the window mouse, keyboard or gamepad
-        Input* mInput = nullptr;
+        Input *mInput = nullptr;
+
+        Shader mShader;
+        SpriteBatch2D mRenderer;
 
     public:
-        Engine(const char* winName = "Default", int screenWidth = 1280, int screenHeight = 768);
+        Engine(const char *winName = "Default", int screenWidth = 1280, int screenHeight = 768);
         virtual ~Engine();
         // Run and initialize the game logic
         void run();
@@ -57,10 +62,10 @@ namespace Plutus
         inline int getWidth() { return mScreenWidth; }
         inline glm::vec2 getWindowSize()
         {
-            return { mScreenWidth, mScreenHeight };
+            return {mScreenWidth, mScreenHeight};
         }
 
-        inline Window* getWindow() { return &mWindow; }
+        inline Window *getWindow() { return &mWindow; }
 
     private:
         bool init();

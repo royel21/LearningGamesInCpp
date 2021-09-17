@@ -1,4 +1,5 @@
 #pragma once
+#include <Input/Input.h>
 
 #define SCREEN_INDEX_NO_SCREEN -1
 
@@ -6,6 +7,7 @@ namespace Plutus
 {
 
 	class Engine;
+	class Input;
 
 	enum class ScreenState
 	{
@@ -21,12 +23,13 @@ namespace Plutus
 	protected:
 		int mScreenIndex = -1;
 		ScreenState mCurrentState = ScreenState::NONE;
-		Engine* mEngine = nullptr;
+		Engine *mEngine = nullptr;
+		Input *mInput;
 
 	public:
 		friend class ScreenList;
 
-		IGameScreen() {};
+		IGameScreen(){};
 
 		virtual ~IGameScreen() {}
 
@@ -57,8 +60,11 @@ namespace Plutus
 
 		ScreenState getState() const { return mCurrentState; }
 		// Set the parent of the screen
-		void setEngine(Engine* engine) { mEngine = engine; }
-
+		void setEngine(Engine *engine)
+		{
+			mEngine = engine;
+			mInput = Input::getInstance();
+		}
 	};
 
 } // namespace Plutus

@@ -2,8 +2,6 @@
 
 #include <Core/IGameScreen.h>
 
-#include <Input/Input.h>
-
 #include <Graphics/Shader.h>
 #include <Graphics/Camera2D.h>
 #include <Graphics/FrameBuffer.h>
@@ -33,12 +31,11 @@ public:
     void onScreenResize(int w, int h) override;
 
 private:
-    Plutus::Input* mInput = nullptr;
-    Plutus::Shader mShader;
-    Plutus::Shader mShaderPicking;
-    Plutus::Camera2D mCamera;
-    Plutus::SpriteBatch2D mRender;
     Plutus::AssetManager* mAssets;
     Plutus::DebugRender* mDebug;
     Plutus::FrameBuffer mFB;
+
+    Plutus::Shader mShader;
+    Plutus::Camera2D mCamera;
+    Plutus::SpriteBatch2D mRender;
 };

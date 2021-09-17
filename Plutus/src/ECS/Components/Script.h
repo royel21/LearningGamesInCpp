@@ -17,21 +17,11 @@ namespace Plutus
     public:
         Script(std::string _path, Entity* ent, Scene* scene);
 
-        void update(float dt) { lua["update"](dt); }
-        inline sol::state* getState() { return &lua; };
+        void update(float dt) {
+            // mEnv["update"](dt); 
+        }
 
     private:
-        sol::state lua;
+        sol::environment mEnv;
     };
-
-    inline void my_panic(sol::optional<std::string> maybe_msg)
-    {
-        std::cerr << "Lua is in a panic state and will now abort() the application" << std::endl;
-        if (maybe_msg)
-        {
-            const std::string& msg = maybe_msg.value();
-            std::cerr << "\terror message: " << msg << std::endl;
-        }
-        // When this function exits, Lua will exhibit default behavior and abort()
-    }
 } // namespace Plutus class Script
