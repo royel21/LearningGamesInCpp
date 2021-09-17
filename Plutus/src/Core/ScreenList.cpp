@@ -5,7 +5,6 @@ namespace Plutus
 {
     ScreenList::ScreenList(Engine *engine) : mEngine(engine)
     {
-        //Empty
     }
 
     ScreenList::~ScreenList()
@@ -13,23 +12,18 @@ namespace Plutus
         destroy();
     }
 
-    IGameScreen *ScreenList::moveNext()
+    IGameScreen *ScreenList::moveScreen(bool next)
     {
         IGameScreen *currentScreen = getCurrent();
-        if (currentScreen->getNextScreenIndex() != SCREEN_INDEX_NO_SCREEN)
-        {
-            mCurrenScreenIndex = currentScreen->getNextScreenIndex();
-        }
-        return getCurrent();
-    }
+        int nextScreen = next ? currentScreen->getNextScreenIndex() : currentScreen->getPrevScreentIndex();
 
-    IGameScreen *ScreenList::movePrev()
-    {
-        IGameScreen *currentScreen = getCurrent();
-        if (currentScreen->getPrevScreentIndex() != SCREEN_INDEX_NO_SCREEN)
+        if (nextScreen != SCREEN_INDEX_NO_SCREEN)
         {
-            mCurrenScreenIndex = currentScreen->getPrevScreentIndex();
+            mCurrenScreenIndex = nextScreen;
+            mScreens[mCurrenScreenIndex]->setRunning();
+            mScreens[mCurrenScreenIndex]->onEntry();
         }
+
         return getCurrent();
     }
 

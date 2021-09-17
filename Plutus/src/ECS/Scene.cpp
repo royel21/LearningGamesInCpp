@@ -82,9 +82,9 @@ namespace Plutus
     void Scene::draw(SpriteBatch2D* renderbatch)
     {
         // auto  start = Timer::millis();
-        mRegistry.each([&](auto entity) {
+        // mRegistry.each([&](auto entity) {
 
-            });
+        //     });
 
         for (auto& layer : mLayers)
         {

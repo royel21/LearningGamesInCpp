@@ -41,10 +41,10 @@ namespace Plutus
 		//Array of 4 Vertix per Single Object
 		std::vector<Vertex> vertices;
 		//Index Buffer Array Object
-		IndexBuffer* mIBO = nullptr;
+		IndexBuffer *mIBO = nullptr;
 		// Camera with the screen coordinate where we are drawing
-		Camera2D* mCamera = nullptr;
-		Shader* mShader = nullptr;
+		Camera2D *mCamera = nullptr;
+		Shader *mShader = nullptr;
 		glm::vec4 camSize;
 
 	public:
@@ -52,9 +52,10 @@ namespace Plutus
 		~SpriteBatch2D();
 		void init();
 		//Prepare the Vertex buffer to add objects
-		void begin(Shader* shader, Camera2D* camera, bool isText = false);
+		void begin(Shader *shader, Camera2D *camera, bool isText = false);
 		//Reserve the memory for the objects
-		void reserve(uint32_t size) {
+		void reserve(uint32_t size)
+		{
 			vertices.reserve(vertices.size() + (size << 2));
 		};
 		/*
@@ -67,9 +68,11 @@ namespace Plutus
 			@param flipX optional flip the image from X coordinate
 			@param flipY optional flip the image from Y coordinate
 		*/
-		void submit(GLuint texture, glm::vec4 rect, glm::vec4 uv = { 0, 0, 1, 1 }, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
+		void submit(GLuint texture, glm::vec4 rect, glm::vec4 uv = {0, 0, 1, 1}, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
 
-		void submit(glm::vec4 rect, float r) { submit(0, rect, { 0,0,1,1 }, { 255,255,255 }, r); }
+		void submit(glm::vec4 rect, float r) { submit(0, rect, {0, 0, 1, 1}, {255, 255, 255}, r); }
+
+		void submit(std::vector<Renderable> &renderables);
 
 		void draw(bool usePicking = false);
 		//Flush the Vertex buffer to the screen
@@ -87,12 +90,11 @@ namespace Plutus
 			}
 			else
 			{
-				mRenderBatches.push_back({ mIndexCount, 6, texture });
+				mRenderBatches.push_back({mIndexCount, 6, texture});
 			}
 
 			mIndexCount += 6;
 		}
-
 	};
 
 } // namespace Plutus

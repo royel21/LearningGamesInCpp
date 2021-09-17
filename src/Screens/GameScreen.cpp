@@ -1,3 +1,4 @@
+
 #include "GameScreen.h"
 
 #include <cstdio>
@@ -7,6 +8,7 @@
 #include <Assets/AssetManager.h>
 #include <Serialize/SceneLoader.h>
 #include <ECS/Components.h>
+#include <Graphics/GLSL.h>
 
 #include <Core/Engine.h>
 #include <Utils/Utils.h>
@@ -33,15 +35,8 @@ int GameScreen::getPrevScreentIndex() const
 
 void GameScreen::build()
 {
-    const int w = mEngine->getWidth();
-    const int h = mEngine->getHeight();
-    mEngine->setFPS(60);
-
-    mScene = Plutus::CreateRef<Plutus::Scene>();
-    mWorldCamera.init(w, h);
-
-    std::printf("font-loaded\n");
-    mInput = Plutus::Input::getInstance();
+    mRender.init();
+    mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
 
     // Plutus::SceneLoader::loadFromJson("assets/scene1.json", mScene);
     auto& textures = Plutus::AssetManager::get()->mTextures;
@@ -49,37 +44,44 @@ void GameScreen::build()
     textures.addTexture("Player", "assets/textures/player1.png");
     textures.addTexture("cave", "assets/textures/goblin_cave.png", 8, 32, 32);
 
-    auto player = mScene->createEntity("Player");
-    player->addComponent<Plutus::Transform>(256.0f, h - 32.0f, 32, 32, 0.0f);
-    player->addComponent<Plutus::Sprite>("Player");
-    player->addComponent<Plutus::Script>("assets/script/player1.lua", player, mScene.get());
-
-    mEngine->setViewPort(w, h);
-
-    auto bat = mScene->createEntity("Bat");
-    bat->addComponent<Plutus::Transform>(288.0f, h - 64.0f, 64, 64, 0.0f);
-    bat->addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
-    bat->addComponent<Plutus::Sprite>("bats");
-
-    auto& anim = bat->addComponent<Plutus::Animation>(bat);
-
-    anim.addTexture("bats");
-    anim.AddSequence("up", { {0, 1, 2}, 0, 120 });
-    anim.AddSequence("left", { {3, 4, 5}, 0, 120 });
-    anim.AddSequence("down", { {6, 7, 8}, 0, 120 });
-    anim.AddSequence("right", { {9, 10, 11}, 0, 120 });
-
-    anim.PlaySequence("down");
-
-    auto bed = mScene->createEntity("bed");
-    bed->addComponent<Plutus::Transform>(128.0f, h - 256.0f, 128, 128);
-    auto& sprite = bed->addComponent<Plutus::Sprite>("cave");
-    auto uv = textures.getTexture("cave")->getUV(1, 10, 96, 96);
-    sprite.mUVCoord = uv;
+    std::printf("font-loaded\n");
 }
 
 void GameScreen::onEntry()
 {
+    const int w = mEngine->getWidth();
+    const int h = mEngine->getHeight();
+    // mEngine->setFPS(60);
+
+    mScene = Plutus::CreateRef<Plutus::Scene>();
+    mWorldCamera.init(w, h);
+
+    auto player = mScene->createEntity("Player");
+    player->addComponent<Plutus::Transform>(256.0f, h - 32.0f, 32, 32, 0.0f);
+    player->addComponent<Plutus::Sprite>("cave");
+    // player->addComponent<Plutus::Script>("assets/script/player1.lua", player, mScene.get());
+
+    // mEngine->setViewPort(w, h);
+
+    // auto bat = mScene->createEntity("Bat");
+    // bat->addComponent<Plutus::Transform>(288.0f, h - 64.0f, 64, 64, 0.0f);
+    // bat->addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
+    // bat->addComponent<Plutus::Sprite>("bats");
+
+    // auto& anim = bat->addComponent<Plutus::Animation>(bat);
+
+    // anim.addTexture("bats");
+    // anim.AddSequence("up", { {0, 1, 2}, 0, 120 });
+    // anim.AddSequence("left", { {3, 4, 5}, 0, 120 });
+    // anim.AddSequence("down", { {6, 7, 8}, 0, 120 });
+    // anim.AddSequence("right", { {9, 10, 11}, 0, 120 });
+
+    // anim.PlaySequence("down");
+
+    // auto bed = mScene->createEntity("bed");
+    // bed->addComponent<Plutus::Transform>(128.0f, h - 256.0f, 128, 128);
+    // auto& sprite = bed->addComponent<Plutus::Sprite>("cave");
+    // sprite.mUVCoord = Plutus::AssetManager::get()->getTexCoords("cave", { 1, 10, 96, 96 });
 }
 
 void GameScreen::update(float dt)
@@ -104,10 +106,10 @@ void GameScreen::update(float dt)
 void GameScreen::draw()
 {
     setBackgoundColor(1, 0, 0, 1);
-    // mScene->draw();
-    // char text[20];
-    // snprintf(text, 20, "%.1f FPS", mEngine->getFPS());
-    // mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, { 0, 0, 0.7f, 1 });
+    mRender.begin(&mShader, &mWorldCamera);
+    mRender.submit(Plutus::AssetManager::get()->mTextures.getTexture("Player")->texId, { 50, 100, 64, 64 }, { 0, 1, 1, 0 }, { 255, 255, 255, 255 }, 0, false, false, 25);
+    mRender.draw();
+    mRender.end();
 }
 
 void GameScreen::onScreenResize(int w, int h)
