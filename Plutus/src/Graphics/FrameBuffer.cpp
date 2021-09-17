@@ -27,7 +27,7 @@ namespace Plutus
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mRbufferId);
         }
         else {
-            mTexId = createTexture(w, h, 0, GL_RGB32F, GL_RG, GL_FLOAT);
+            mTexId = createTexture(w, h, 0, GL_RGBA32F, GL_RGBA, GL_FLOAT);
         }
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexId, 0);
 
@@ -50,7 +50,7 @@ namespace Plutus
 
         glReadBuffer(GL_COLOR_ATTACHMENT0);
         float pixels[] = { 0,0,0 };
-        glReadPixels(static_cast<int>(pos.x), static_cast<int>(pos.y), 1, 1, GL_RGB, GL_FLOAT, pixels);
+        glReadPixels(static_cast<int>(pos.x), static_cast<int>(pos.y), 1, 1, GL_RGBA, GL_FLOAT, pixels);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         return (u32)pixels[0] - 1;
