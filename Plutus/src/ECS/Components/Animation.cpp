@@ -23,6 +23,11 @@ namespace Plutus
         mSequences[id] = seq;
     }
 
+    void Animation::addSeq(const std::string id, std::vector<int> frames, int texIndex, int frameTime)
+    {
+        mSequences[id] = { frames, texIndex, frameTime };
+    }
+
     void Animation::play(const std::string& id)
     {
         if (currentSeq != id && !loop) {

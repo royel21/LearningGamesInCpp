@@ -62,63 +62,29 @@ void GameScreen::build()
 void GameScreen::onEntry()
 {
     const int h = mEngine->getHeight();
-
+    // Player 1
     auto player = mScene->createEntity("Player");
     player->addComponent<Plutus::Transform>(192.0f, h - 70.0f, 64, 64, 0.0f);
     player->addComponent<Plutus::Sprite>("player1");
+    std::printf("player2 script\n");
     player->addComponent<Plutus::Script>("assets/script/player1.lua", player, mScene.get());
-    //Player
+    // Player 2
     auto player2 = mScene->createEntity("Player2");
     player2->addComponent<Plutus::Transform>(400.0f, h - 128.0f, 128, 128, 0.0f);
     player2->addComponent<Plutus::Sprite>("player2");
-    player2->addComponent<Plutus::Script>("assets/script/player2.lua", player2, mScene.get());
-
     auto& anim2 = player2->addComponent<Plutus::Animation>(player2);
     anim2.addTexture("player2");
+    player2->addComponent<Plutus::Script>("assets/script/player2.lua", player2, mScene.get());
 
-    anim2.addSequence("stand-u", { { 6 }, 0, 100 });
-    anim2.addSequence("run-up", { {7, 8, 9, 10}, 0, 100 });
-
-    anim2.addSequence("stand-d", { { 18 }, 0, 100 });
-    anim2.addSequence("run-down", { {19, 20, 21, 22, 23}, 0, 100 });
-
-    anim2.addSequence("stand-r", { { 0 }, 0, 100 });
-    anim2.addSequence("run-right", { {1, 2,3,4,5}, 0, 100 });
-
-    anim2.addSequence("stand-l", { { 12 }, 0, 100 });
-    anim2.addSequence("run-left", { {13, 14,15,16}, 0, 100 });
-
-
-    anim2.addSequence("attack-right", { {24, 25, 26, 27}, 0, 150 });
-    anim2.addSequence("attack-up", { {28, 29, 30, 31}, 0, 60 });
-    anim2.addSequence("attack-left", { {32, 33, 34, 35}, 0, 60 });
-    anim2.addSequence("attack-down", { {36, 37, 38, 39}, 0, 60 });
-
-
-    anim2.addSequence("jump-right", { {40, 41, 42, 43, 44}, 0, 90 });
-    anim2.addSequence("jump-up", { { 45, 46, 47, 48, 49}, 0, 90 });
-    anim2.addSequence("jump-left", { {50, 51, 52, 53, 54}, 0, 90 });
-    anim2.addSequence("jump-down", { { 55, 56, 57, 58, 59}, 0, 90 });
-
-
-    anim2.play("stand-r");
-    anim2.mState = "standing";
-    //Player2
-
+    // Bat1
     auto bat = mScene->createEntity("Bat");
     bat->addComponent<Plutus::Transform>(288.0f, h - 64.0f, 64, 64, 0.0f);
-    bat->addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
     bat->addComponent<Plutus::Sprite>("bats");
 
     auto& anim = bat->addComponent<Plutus::Animation>(bat);
-
     anim.addTexture("bats");
-    anim.addSequence("up", { {0, 1, 2}, 0, 120 });
-    anim.addSequence("left", { {3, 4, 5}, 0, 120 });
-    anim.addSequence("down", { {6, 7, 8}, 0, 120 });
-    anim.addSequence("right", { {9, 10, 11}, 0, 120 });
+    bat->addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
 
-    anim.play("down");
 
     auto bed = mScene->createEntity("bed");
     bed->addComponent<Plutus::Transform>(128.0f, h - 256.0f, 128, 128);

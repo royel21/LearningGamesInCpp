@@ -13,6 +13,8 @@ namespace Plutus
         mEnv[ent->getName()] = ent;
 
         lua->do_file(_path, mEnv);
+
+        mEnv["init"]();
     }
 
 } // namespace Plutus

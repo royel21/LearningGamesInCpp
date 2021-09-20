@@ -26,6 +26,7 @@ namespace Plutus
 
         void addTexture(const std::string& id);
         void addSequence(const std::string id, Sequence seq);
+        void addSeq(const std::string id, std::vector<int> frames, int texIndex, int frameTime);
 
         void setLoop(bool _loop) { loop = _loop; }
         void play(const std::string& id);
