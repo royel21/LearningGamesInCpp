@@ -16,12 +16,10 @@ stand["down"] = "stand-d"
 
 local direction = "right";
 local state = ""
-local loop = false;
 
 function update(dt)
     local trans = Player2:getTransform();
     local anim = Player2:getAnimate();
-    
     
     if not anim.loop then
         state = ""
@@ -30,6 +28,7 @@ function update(dt)
     end
 
     if state ~= "attacking" then
+        -- Move Up - Down
         if input:onKeyDown("Up") then
             direction = "up"
             state = "running"
@@ -43,7 +42,7 @@ function update(dt)
                 trans.y = trans.y + SPEED
             end
         end
-
+        -- Move Right - Left
         if input:onKeyDown("Right") then
             direction = "right"
             state = "running"
@@ -57,8 +56,8 @@ function update(dt)
                 trans.x = trans.x - SPEED
             end
         end
-
-        if input:onKeyPressed("X") then
+        -- Jump animation
+        if input:onKeyPressed("X") and state == "running" then
             if direction == "right" then
                 curAnime = "jump-right"
             elseif direction == "left" then
@@ -83,9 +82,8 @@ function update(dt)
             end
             anim:play(curAnime)
         end
-        
     end
-
+    -- Attack Animation
     if input:onKeyPressed("Z") and state ~= "jumping" then
         if direction == "right" then
             curAnime = "attack-right"
@@ -100,6 +98,4 @@ function update(dt)
         anim:setLoop(true);
         state = "attacking"
     end
-
-    print(state, curAnime)
 end
