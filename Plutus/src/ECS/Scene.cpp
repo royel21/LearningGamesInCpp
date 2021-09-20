@@ -154,15 +154,4 @@ namespace Plutus
         }
         return nullptr;
     }
-
-    void Scene::update(float dt)
-    {
-        auto view = mRegistry.view<Script>();
-        view.each([dt](auto& script)
-            { script.update(dt); });
-
-        auto view2 = mRegistry.view<Animation>();
-        view2.each([dt](auto& anim)
-            { anim.update(dt); });
-    }
 } // namespace Plutus

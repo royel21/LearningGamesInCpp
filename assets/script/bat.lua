@@ -19,14 +19,14 @@ function update(dt)
 
     if input:onKeyDown("Down") then
         curAnime = "down";
-        if trans.y < SceenHeight-trans.h then
+        if trans.y < ScreenHeight-trans.h then
             trans.y = trans.y + SPEED
         end
     end
 
     if input:onKeyDown("Right") then
         curAnime = "right";
-        if trans.x < SceenWidth-trans.w then
+        if trans.x < ScreenWidth-trans.w then
             trans.x = trans.x + SPEED
         end
     end
@@ -38,6 +38,6 @@ function update(dt)
         end
     end
     
-    anim:play(curAnime, true)
+    anim:play(curAnime)
 
 end

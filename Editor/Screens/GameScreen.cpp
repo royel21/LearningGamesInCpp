@@ -40,7 +40,7 @@ void GameScreen::build()
 
     mScene = Plutus::CreateRef<Plutus::Scene>();
     mSystemManager.init(mScene.get());
-    mSystemManager.AddSystem<Plutus::RenderSystem>();
+    mSystemManager.AddSystem<Plutus::RenderSystem>(&mWorldCamera);
     mWorldCamera.init(w, h);
     // mScene->Init(&mWorldCamera);
     // mTextLayer.Init(static_cast<float>(w), static_cast<float>(h), "assets/fonts/Zoika.ttf", 28);

@@ -10,8 +10,9 @@ namespace Plutus
         auto lua = ScriptServer::get()->getState();
 
         mEnv = sol::environment(*lua, sol::create, lua->globals());
+        mEnv[ent->getName()] = ent;
 
-        sol::load_result script = lua->load_file(_path);
+        lua->do_file(_path, mEnv);
     }
 
 } // namespace Plutus

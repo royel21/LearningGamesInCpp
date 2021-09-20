@@ -4,34 +4,53 @@
 #include <memory>
 #include <unordered_map>
 #include <algorithm>
+#include <typeinfo>
 
 namespace Plutus
 {
+    class Scene;
+
     class SystemManager
     {
 
     public:
         SystemManager() = default;
         ~SystemManager() { cleanup(); };
-        void init(Scene *scene) { mScene = scene; }
+
+        void init(Scene* scene) { mScene = scene; }
+
+        template <typename T, typename... TArgs>
+        T* AddSystem(TArgs &&... args)
+        {
+            if (!hasSystem<T>()) {
+                T* newSystem = new T(mScene, std::forward<TArgs>(args)...);
+
+                mSystems[&typeid(*newSystem)] = newSystem;
+                return newSystem;
+            }
+            return getSystem<T>();
+        }
 
         template <typename T>
-        void AddSystem()
+        T* getSystem()
         {
-            auto typeName = typeid(T).name();
-            mSystems[typeName] = std::make_unique<T>(mScene);
+            return static_cast<T*>(mSystems[&typeid(T)]);
         }
-        void update(float dt)
+
+        template <typename T>
+        bool hasSystem()
         {
-            for (auto &sys : mSystems)
-            {
-                sys.second->update(dt);
-            }
+            return mSystems[&typeid(T)] != nullptr;
         }
-        void cleanup() { mSystems.clear(); }
+
+        void update(float dt);
+
+        void cleanup();
 
     private:
-        std::unordered_map<const char *, std::unique_ptr<ISystem>> mSystems;
-        Scene *mScene;
+        Scene* mScene;
+        std::unordered_map<const std::type_info*, ISystem*> mSystems;
+
+        friend class ISystem;
     };
 } // namespace Plutus

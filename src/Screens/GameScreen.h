@@ -4,6 +4,7 @@
 #include "Graphics/Camera2D.h"
 #include <Graphics/SpriteBatch2D.h>
 #include <Graphics/Shader.h>
+#include <Systems/SystemManager.h>
 
 class GameScreen : public Plutus::IGameScreen
 {
@@ -31,4 +32,5 @@ private:
     Plutus::Camera2D mWorldCamera;
     Plutus::Shader mShader;
     Plutus::SpriteBatch2D mRender;
+    Plutus::SystemManager mSystemManager;
 };

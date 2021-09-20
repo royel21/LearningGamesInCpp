@@ -90,10 +90,9 @@ namespace Plutus
 
         bool removeLayer(std::string name);
 
-        const entt::registry* getRegistry() { return &mRegistry; }
+        entt::registry* getRegistry() { return &mRegistry; }
 
         void draw(SpriteBatch2D* renderbatch);
-        void update(float dt);
         void serialize(Serializer& serializer);
 
         void clear();

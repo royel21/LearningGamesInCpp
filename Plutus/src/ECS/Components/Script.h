@@ -18,7 +18,7 @@ namespace Plutus
         Script(std::string _path, Entity* ent, Scene* scene);
 
         void update(float dt) {
-            // mEnv["update"](dt); 
+            mEnv["update"](dt);
         }
 
     private:

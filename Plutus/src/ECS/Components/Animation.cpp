@@ -13,41 +13,26 @@ namespace Plutus
         mSeqTime = _seqTime / 1000.0f;
     }
 
-    void Animation::update(float dt)
-    {
-        if (mEnt->hasComponent<Sprite>() && mSequences.size())
-        {
-            auto& sprite = mEnt->getComponent<Sprite>();
-            currentTime += dt;
-
-            auto& seq = mSequences[currentSeq];
-            auto& frames = seq.mFrames;
-
-            if (currentTime > seq.mSeqTime)
-            {
-                seq.mFrame = ++seq.mFrame % frames.size();
-                currentTime = 0;
-            }
-
-            sprite.mTextureId = mTextures[seq.mTexIndex];
-            sprite.mUVCoord = AssetManager::get()->getTexCoords(sprite.mTextureId, frames[seq.mFrame]);
-        }
-    }
-
     void Animation::addTexture(const std::string& id)
     {
         mTextures.push_back(id);
     }
 
-    void Animation::AddSequence(const std::string id, Sequence seq)
+    void Animation::addSequence(const std::string id, Sequence seq)
     {
         mSequences[id] = seq;
     }
 
-    void Animation::PlaySequence(const std::string& id, bool _loop)
+    void Animation::play(const std::string& id)
     {
-        currentSeq = id;
-        loop = _loop;
+        if (currentSeq != id && !loop) {
+            currentSeq = id;
+        }
+    }
+
+    Sequence* Animation::getCurrentSeq()
+    {
+        return &mSequences[currentSeq];
     }
 
 } // namespace Plutus

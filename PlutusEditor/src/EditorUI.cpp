@@ -134,10 +134,6 @@ namespace Plutus
 	void EditorUI::endUI()
 	{
 		ImGui::Render();
-		// int display_w, display_h;
-		GLFWwindow* window = glfwGetCurrentContext();
-		// glfwGetFramebufferSize(window, &display_w, &display_h);
-		// glViewport(0, 0, display_w, display_h);
 		glClear(GL_COLOR_BUFFER_BIT);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -145,7 +141,7 @@ namespace Plutus
 		{
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(window);
+			glfwMakeContextCurrent(glfwGetCurrentContext());
 		}
 	}
 

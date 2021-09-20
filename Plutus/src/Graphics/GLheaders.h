@@ -57,4 +57,8 @@ inline GLuint createTexture(int w, int h, unsigned char* buff, GLuint intFormat 
     return id;
 }
 
+inline void getViewPortSize(int size[4]) {
+    glGetIntegerv(GL_VIEWPORT, size);
+}
+
 #endif // !_GLHEADERS_H

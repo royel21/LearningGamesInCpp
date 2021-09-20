@@ -5,12 +5,10 @@
 
 namespace Plutus
 {
-    class Camera2D;
-
     class RenderSystem : public ISystem
     {
     public:
-        RenderSystem(Scene *scene);
+        RenderSystem(Scene* scene, Camera2D* camera);
         void update(float dt);
         void destroy();
 

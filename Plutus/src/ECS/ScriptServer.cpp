@@ -2,6 +2,8 @@
 #include "Components.h"
 #include <Time/Timer.h>
 #include <Input/Input.h>
+#include <Graphics/GLheaders.h>
+#include <cstdio>
 
 namespace Plutus
 {
@@ -58,28 +60,43 @@ namespace Plutus
         auto input = lua.new_usertype<Input>("Input");
         input["onKeyDown"] = &Input::onKeyDown;
         input["onKeyPressed"] = &Input::onKeyPressed;
-
+        /*****************************Register Transform**********************************************/
         auto transform = lua.new_usertype<Transform>("Transform");
         transform["x"] = &Transform::x;
         transform["y"] = &Transform::y;
         transform["w"] = &Transform::w;
         transform["h"] = &Transform::h;
-        transform["r"] = &Transform::r;
+        transform["rotation"] = &Transform::r;
+
+        /*****************************Register Tilemap and Tile**********************************************/
+        auto tileMap = lua.new_usertype<TileMap>("TileMap");
+        tileMap["tiles"] = &TileMap::mTiles;
 
         auto tile = lua.new_usertype<Tile>("Tile");
         tile["x"] = &Tile::x;
         tile["y"] = &Tile::y;
 
+        /*****************************Register Animation**********************************************/
         auto animate = lua.new_usertype<Animation>("Animation");
-        animate["play"] = &Animation::PlaySequence;
+        animate["play"] = &Animation::play;
+        animate["setLoop"] = &Animation::setLoop;
+        animate["loop"] = &Animation::loop;
+        animate["state"] = &Animation::mState;
+        animate["prevState"] = &Animation::mPrevState;
 
-        auto tileMap = lua.new_usertype<TileMap>("TileMap");
-        tileMap["tiles"] = &TileMap::mTiles;
 
+        /*****************************Register Entity**********************************************/
         auto entity = lua.new_usertype<Entity>("Entity");
         entity["getTransform"] = &Entity::getComponent<Transform>;
         entity["getTileMap"] = &Entity::getComponent<TileMap>;
         entity["getAnimate"] = &Entity::getComponent<Animation>;
+        entity["getSprite"] = &Entity::getComponent<Sprite>;
+
+        int size[4];
+        getViewPortSize(size);
+
+        lua["ScreenWidth"] = size[2];
+        lua["ScreenHeight"] = size[3];
 
         lua.set("input", Input::getInstance());
     }
