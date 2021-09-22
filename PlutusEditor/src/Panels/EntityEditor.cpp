@@ -33,7 +33,7 @@ namespace Plutus
             if (mLayers->size())
             {
                 auto it = mLayers->begin();
-                auto layer = mScene->setLayer(it->first);
+                auto layer = mScene->setCurrentLayer(it->first);
                 if (layer->mEntities.size())
                 {
                     mParentUI->setEntity(layer->mEntities[0].get());
@@ -78,7 +78,7 @@ namespace Plutus
         auto name = mScene->getCurrentLayer()->name;
         if (ImGui::ComboBox<Layer>("##Layers", *mLayers, name))
         {
-            auto layer = mScene->setLayer(name);
+            auto layer = mScene->setCurrentLayer(name);
             if (layer->mEntities.size() > 0)
             {
                 mParentUI->setEntity(layer->mEntities[0].get());
@@ -92,7 +92,7 @@ namespace Plutus
             std::string newLayer = LayerModal("New Layer", &openLayerModal);
             if (!openLayerModal && !newLayer.empty())
             {
-                mScene->addLayer(newLayer);
+                mScene->addNewLayer(newLayer);
                 mParentUI->setEntity(nullptr);
             }
         }

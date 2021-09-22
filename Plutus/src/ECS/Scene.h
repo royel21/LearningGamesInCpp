@@ -7,15 +7,10 @@
 #include <Core/type.h>
 #include <entt.hpp>
 #include <algorithm>
-#include <Assets/Textures.h>
 
 namespace Plutus
 {
-    class Serializer;
     class Scene;
-    class Camera2D;
-    class Script;
-    class SpriteBatch2D;
 
     class Entity
     {
@@ -54,24 +49,12 @@ namespace Plutus
         Layer() = default;
         Layer(const std::string& _name) : name(_name) {};
 
-        Ref<Entity> add(Ref<Entity> item)
-        {
-            auto index = mEntities.size();
-            mEntities.push_back(item);
-            return mEntities[index];
-        }
+        Ref<Entity> add(Ref<Entity> item);
 
-        void remove(const Entity* item)
-        {
-            auto e1 = std::remove_if(mEntities.begin(), mEntities.end(), [item](auto e) -> bool
-                { return e->mId == item->mId; });
-
-            if (e1 != mEntities.end())
-            {
-                mEntities.erase(e1, mEntities.end());
-            }
-        }
+        void remove(const Entity* item);
     };
+
+    using LayerMap = std::unordered_map<std::string, Layer>;
 
     class Scene
     {
@@ -79,33 +62,24 @@ namespace Plutus
         Scene();
         ~Scene();
 
-        Entity* createEntity(const std::string& name);
         void removeEntity(Entity* ent);
-
-
-        Layer* addLayer(const std::string& name);
-        Layer* setLayer(const std::string& name);
-        std::unordered_map<std::string, Layer>* getLayers() { return &mLayers; };
-        Layer* getCurrentLayer() { return mCurrentLayer; };
-
-        bool removeLayer(std::string name);
-
+        Entity* getEntity(uint32_t Id);
+        Entity* createEntity(const std::string& name);
         entt::registry* getRegistry() { return &mRegistry; }
 
-        void draw(SpriteBatch2D* renderbatch);
-        void serialize(Serializer& serializer);
+        bool removeLayer(std::string name);
+        Layer* addNewLayer(const std::string& name);
+        Layer* setCurrentLayer(const std::string& name);
+        Layer* getCurrentLayer() { return mCurrentLayer; };
+        LayerMap* getLayers() { return &mLayers; };
 
         void clear();
-
-        Entity* getEntity(float x, float y);
-        Entity* getEntity(uint32_t Id);
-        void update();
 
     private:
         entt::registry mRegistry;
         Layer* mCurrentLayer;
 
-        std::unordered_map<std::string, Layer> mLayers;
+        LayerMap mLayers;
         friend class Entity;
         friend class System;
     };

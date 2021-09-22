@@ -1,12 +1,13 @@
 #include "SceneLoader.h"
 #include <string>
 
-#include "rapidjson/document.h"
-
 #include "ECS/Scene.h"
 #include "ECS/Components.h"
+
 #include <Assets/AssetManager.h>
+
 #include <Serialize/Serialize.h>
+#include <rapidjson/document.h>
 
 namespace Plutus
 {
@@ -82,7 +83,7 @@ namespace Plutus
                     auto objLayer = layers[i].GetJsonObject();
 
                     auto layerName = objLayer["name"].GetString();
-                    auto layer = scene->addLayer(layerName);
+                    auto layer = scene->addNewLayer(layerName);
 
                     //get the entities
                     auto entities = objLayer["entities"].GetArray();
@@ -138,7 +139,7 @@ namespace Plutus
                 if (layers.Size() > 0)
                 {
                     auto name = nlayers->begin()->first;
-                    scene->setLayer(name);
+                    scene->setCurrentLayer(name);
                 }
                 success = true;
             }

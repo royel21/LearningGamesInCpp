@@ -76,4 +76,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   add_executable("Test" Test/test.cpp)
   target_link_libraries("Editor" PUBLIC Plutus)
 
+
+  
+  # Add source files
+  file(GLOB_RECURSE BOX2D_SRC box2dtest/*.cpp box2dtest/*.hpp)
+
+  add_executable(box2dtest ${BOX2D_SRC})
+  target_link_libraries(box2dtest PUBLIC Plutus)
+
 endif()

@@ -111,6 +111,8 @@ namespace Plutus
 
 		void loadRecents();
 		void saveRecents();
+
+		void drawScene();
 	};
 
 } // namespace Plutus

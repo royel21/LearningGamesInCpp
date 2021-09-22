@@ -1,10 +1,11 @@
 #pragma once
 #include <Core/type.h>
+#include <string>
 
 namespace Plutus
 {
     class Scene;
     class Serializer;
 
-    void sceneSerializer(Serializer& ser, Ref<Scene>& scene);
+    std::string sceneSerializer(Ref<Scene>& scene);
 }

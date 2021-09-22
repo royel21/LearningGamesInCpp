@@ -9,9 +9,8 @@
 namespace Plutus
 {
 
-    void Textures_JSON(Serializer& serializer)
+    void Textures_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer)
     {
-        auto writer = serializer.getWriter();
         writer->String("textures");
         writer->StartArray();
         for (auto tile : AssetManager::get()->mTextures.mTileSets)
@@ -34,9 +33,8 @@ namespace Plutus
         writer->EndArray();
     }
 
-    void Tag_JSON(Serializer& serializer, const Tag& tag)
+    void Tag_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Tag& tag)
     {
-        auto writer = serializer.getWriter();
         writer->StartObject();
         {
             writer->String("name");
@@ -46,9 +44,8 @@ namespace Plutus
         }
     }
 
-    void Transform_JSON(Serializer& serializer, const Transform& trans)
+    void Transform_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Transform& trans)
     {
-        auto writer = serializer.getWriter();
         writer->StartObject();
         {
             writer->String("name");
@@ -67,9 +64,8 @@ namespace Plutus
         writer->EndObject();
     }
 
-    void Sprite_json(Serializer& serializer, const Sprite& sprite)
+    void Sprite_json(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Sprite& sprite)
     {
-        auto writer = serializer.getWriter();
         writer->StartObject();
         {
             writer->String("name");
@@ -86,9 +82,8 @@ namespace Plutus
         writer->EndObject();
     }
 
-    void Script_JSON(Serializer& serializer, const Script& script)
+    void Script_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Script& script)
     {
-        auto writer = serializer.getWriter();
         writer->StartObject();
         {
             writer->String("name");
@@ -99,9 +94,8 @@ namespace Plutus
         writer->EndObject();
     }
 
-    void Animate_JSON(Serializer& ser, const Animation& anim)
+    void Animate_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Animation& anim)
     {
-        auto writer = ser.getWriter();
         writer->StartObject();
         {
             writer->String("name");
@@ -142,9 +136,8 @@ namespace Plutus
         writer->EndObject();
     }
 
-    void TileMap_json(Serializer& serializer, const TileMap& tilemap)
+    void TileMap_json(rapidjson::Writer<rapidjson::StringBuffer>* writer, const TileMap& tilemap)
     {
-        auto writer = serializer.getWriter();
         writer->StartObject();
         {
             writer->String("name");
@@ -199,12 +192,13 @@ namespace Plutus
         writer->EndObject();
     }
 
-    void sceneSerializer(Serializer& ser, Ref<Scene>& scene)
+    std::string sceneSerializer(Ref<Scene>& scene)
     {
+        Serializer ser;
         auto writer = ser.getWriter();
         writer->StartObject();
 
-        Textures_JSON(ser);
+        Textures_JSON(writer);
 
         writer->String("layers");
         writer->StartArray();
@@ -228,23 +222,23 @@ namespace Plutus
                         {
                             if (ent->hasComponent<Transform>())
                             {
-                                Transform_JSON(ser, ent->getComponent<Transform>());
+                                Transform_JSON(writer, ent->getComponent<Transform>());
                             }
                             if (ent->hasComponent<Sprite>())
                             {
-                                Sprite_json(ser, ent->getComponent<Sprite>());
+                                Sprite_json(writer, ent->getComponent<Sprite>());
                             }
                             if (ent->hasComponent<Animation>())
                             {
-                                Animate_JSON(ser, ent->getComponent<Animation>());
+                                Animate_JSON(writer, ent->getComponent<Animation>());
                             }
                             if (ent->hasComponent<Script>())
                             {
-                                Script_JSON(ser, ent->getComponent<Script>());
+                                Script_JSON(writer, ent->getComponent<Script>());
                             }
                             if (ent->hasComponent<TileMap>())
                             {
-                                TileMap_json(ser, ent->getComponent<TileMap>());
+                                TileMap_json(writer, ent->getComponent<TileMap>());
                             }
                         }
                         writer->EndArray();
@@ -258,6 +252,8 @@ namespace Plutus
         writer->EndArray();
 
         writer->EndObject();
+
+        return ser.getString();
     }
 
 } // namespace Plutus
