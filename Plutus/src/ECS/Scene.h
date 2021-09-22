@@ -2,7 +2,7 @@
 #pragma warning(disable : 4307) //disable warning integral constant overflow for entt
 
 #include <vector>
-#include <cstring>
+#include <string>
 #include <unordered_map>
 #include <Core/type.h>
 #include <entt.hpp>
