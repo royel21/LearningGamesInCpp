@@ -11,7 +11,7 @@ namespace Plutus
         int w;
         int h;
         float r;
-        uint8_t layer = 0;
+        int layer = 0;
         bool sortY = false;
 
     public:
@@ -24,7 +24,7 @@ namespace Plutus
             @param h Height
             @param r Rotation
         */
-        Transform(float _x = 0, float _y = 0, int _w = 0, int _h = 0, float _r = 0, bool sY = false) : x(_x), y(_y), w(_w), h(_h), r(-_r), sortY(sY)
+        Transform(float _x = 0, float _y = 0, int _w = 0, int _h = 0, float _r = 0, int _layer = 0, bool sY = false) : x(_x), y(_y), w(_w), h(_h), r(-_r), layer(_layer), sortY(sY)
         {
         }
 

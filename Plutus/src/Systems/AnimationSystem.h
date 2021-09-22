@@ -9,8 +9,5 @@ namespace Plutus
         AnimationSystem(Scene* scene) : ISystem(scene) {}
         void update(float dt);
 
-    private:
-        float mCurrentTime;
-
     };
 } // namespace Plutus

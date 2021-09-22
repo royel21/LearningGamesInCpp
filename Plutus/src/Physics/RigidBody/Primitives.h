@@ -2,7 +2,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#include "Physics/RigidBody/RigidBody2d.h"
+#include "RigidBody2d.h"
 
 namespace Plutus
 {

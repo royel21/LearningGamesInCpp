@@ -1,8 +1,10 @@
 #ifndef _VERTEX_H
 #define _VERTEX_H
 
-#include <glm/glm.hpp>
 #include "GLheaders.h"
+
+#include <tuple>
+#include <glm/glm.hpp>
 
 namespace Plutus
 {
@@ -78,6 +80,24 @@ namespace Plutus
 		float r = 0;
 		bool flipX = false;
 		bool flipY = false;
+		uint32_t entId;
+		GLubyte layer = 0;
+		bool sortY = false;
+		Renderable(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c) : TexId(texture), trans(rect), uv(_uv), color(_c) {}
+
+		Renderable(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, uint32_t id, uint8_t _layer, bool sY)
+			: TexId(texture), trans(rect), uv(_uv), color(_c), r(_r), flipX(fx), flipY(fy), entId(id), layer(_layer), sortY(sY) {
+
+		}
+
+		bool operator < (Renderable& rend) const {
+			if (sortY && rend.sortY) {
+				return std::tie(rend.trans.y, layer, TexId) < std::tie(rend.trans.y, rend.layer, TexId);
+			}
+			else {
+				return std::tie(layer, TexId) < std::tie(rend.layer, rend.TexId);
+			}
+		}
 	};
 } // namespace Plutus
 

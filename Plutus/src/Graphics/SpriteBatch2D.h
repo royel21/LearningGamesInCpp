@@ -36,23 +36,26 @@ namespace Plutus
 		// Represent how many Vertice was created
 		GLuint mIndexCount = 0;
 		GLuint mVertexCount = 0;
-		// Array of Rnder batcher per Image
-		std::vector<RenderBatch2D> mRenderBatches;
 		//Array of 4 Vertix per Single Object
 		std::vector<Vertex> vertices;
 		//Index Buffer Array Object
-		IndexBuffer *mIBO = nullptr;
+		IndexBuffer* mIBO = nullptr;
 		// Camera with the screen coordinate where we are drawing
-		Camera2D *mCamera = nullptr;
-		Shader *mShader = nullptr;
+		Camera2D* mCamera = nullptr;
+		Shader* mShader = nullptr;
 		glm::vec4 camSize;
+		// Array of Renderables batcher per Image
+		std::vector<Renderable> mRenderables;
+		std::vector<Renderable*> mRenderablesPointers;
+		// Array of Rnder batcher per Image
+		std::vector<RenderBatch2D> mRenderBatches;
 
 	public:
 		SpriteBatch2D() = default;
 		~SpriteBatch2D();
 		void init();
 		//Prepare the Vertex buffer to add objects
-		void begin(Shader *shader, Camera2D *camera, bool isText = false);
+		void begin(Shader* shader, Camera2D* camera, bool isText = false);
 		//Reserve the memory for the objects
 		void reserve(uint32_t size)
 		{
@@ -68,33 +71,25 @@ namespace Plutus
 			@param flipX optional flip the image from X coordinate
 			@param flipY optional flip the image from Y coordinate
 		*/
-		void submit(GLuint texture, glm::vec4 rect, glm::vec4 uv = {0, 0, 1, 1}, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
+		void submit(GLuint texture, glm::vec4 rect, glm::vec4 uv = { 0, 0, 1, 1 }, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
 
-		void submit(glm::vec4 rect, float r) { submit(0, rect, {0, 0, 1, 1}, {255, 255, 255}, r); }
+		void submit(glm::vec4 rect, float r) { submit(0, rect, { 0, 0, 1, 1 }, { 255, 255, 255 }, r); }
 
-		void submit(std::vector<Renderable> &renderables);
+		void submit(const std::vector<Renderable>& renderables);
+
+		void submitRenderable(GLuint texture, glm::vec4 rect, glm::vec4 uv = { 0, 0, 1, 1 }, ColorRGBA8 c = {}, float r = 0,
+			bool flipX = false, bool flipY = false, uint32_t entId = 0, uint8_t layer = 0, bool sortY = false);
 
 		void draw(bool usePicking = false);
 		//Flush the Vertex buffer to the screen
 		void end();
 
 	private:
+		void prepareData();
 		/*
 			Create a render Batch for this texture
 		*/
-		inline void createBatch(GLuint texture)
-		{
-			if (mRenderBatches.size() > 0 && mRenderBatches.back().texture == texture)
-			{
-				mRenderBatches.back().numVertices += 6;
-			}
-			else
-			{
-				mRenderBatches.push_back({mIndexCount, 6, texture});
-			}
-
-			mIndexCount += 6;
-		}
+		inline void createBatch(GLuint texture);
 	};
 
 } // namespace Plutus

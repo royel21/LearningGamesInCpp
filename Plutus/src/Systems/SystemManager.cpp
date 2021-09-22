@@ -12,6 +12,7 @@ namespace Plutus
     void SystemManager::cleanup()
     {
         for (auto& sys : mSystems) {
+            sys.second->destroy();
             delete sys.second;
         }
         mSystems.clear();

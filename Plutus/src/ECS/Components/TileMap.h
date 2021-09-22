@@ -47,6 +47,7 @@ namespace Plutus
     {
         int mTileWidth;
         int mTileHeight;
+        uint8_t layer = 0;
         std::vector<Tile> mTiles;
         Texture* mTileset = nullptr;
         std::vector<Texture*> mTextures;

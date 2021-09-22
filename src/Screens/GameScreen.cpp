@@ -64,13 +64,13 @@ void GameScreen::onEntry()
     const int h = mEngine->getHeight();
     // Player 1
     auto player = mScene->createEntity("Player");
-    player->addComponent<Plutus::Transform>(192.0f, h - 70.0f, 64, 64, 0.0f);
+    player->addComponent<Plutus::Transform>(192.0f, h - 70.0f, 64, 64, 0.0f, 0, true);
     player->addComponent<Plutus::Sprite>("player1");
     std::printf("player2 script\n");
     player->addComponent<Plutus::Script>("assets/script/player1.lua", player, mScene.get());
     // Player 2
     auto player2 = mScene->createEntity("Player2");
-    player2->addComponent<Plutus::Transform>(400.0f, h - 128.0f, 128, 128, 0.0f);
+    player2->addComponent<Plutus::Transform>(400.0f, h - 128.0f, 128, 128, 0.0f, 0, true);
     player2->addComponent<Plutus::Sprite>("player2");
     auto& anim2 = player2->addComponent<Plutus::Animation>(player2);
     anim2.addTexture("player2");
@@ -78,7 +78,7 @@ void GameScreen::onEntry()
 
     // Bat1
     auto bat = mScene->createEntity("Bat");
-    bat->addComponent<Plutus::Transform>(288.0f, h - 64.0f, 64, 64, 0.0f);
+    bat->addComponent<Plutus::Transform>(288.0f, h - 64.0f, 64, 64, 0.0f, 0, true);
     bat->addComponent<Plutus::Sprite>("bats");
 
     auto& anim = bat->addComponent<Plutus::Animation>(bat);
@@ -94,16 +94,18 @@ void GameScreen::onEntry()
 
 void GameScreen::update(float dt)
 {
-    mWorldCamera.update();
 
     if (mInput->onKeyPressed("PageUp"))
     {
         mCurrentState = Plutus::ScreenState::CHANGE_PREV;
     }
+
     if (mInput->onKeyPressed("PageDown"))
     {
         mCurrentState = Plutus::ScreenState::CHANGE_NEXT;
     }
+
+    mWorldCamera.update();
     mSystemManager.update(dt);
 }
 

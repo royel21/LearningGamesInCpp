@@ -6,11 +6,6 @@
 
 namespace Plutus
 {
-    ScriptSystem::ScriptSystem(Scene* scene, Camera2D* camera) : ISystem(scene, camera)
-    {
-
-    }
-
     void ScriptSystem::update(float dt)
     {
         auto view = mScene->getRegistry()->view<Script>();

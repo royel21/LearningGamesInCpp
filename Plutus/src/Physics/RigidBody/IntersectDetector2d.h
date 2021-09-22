@@ -1,7 +1,8 @@
 #pragma once
+#include "Primitives.h"
+
 #include <glm/glm.hpp>
 #include <Physics/Line.h>
-#include <Physics/Primitives/Box2d.h>
 
 namespace Plutus
 {
