@@ -195,7 +195,7 @@ namespace Plutus
 		std::sort(mRenderables.begin(), mRenderables.end());
 		for (auto r : mRenderables) {
 			submit(mRenderables);
-			std::printf("time: %i %i\n", r.trans.y, r.layer);
+			std::printf("time: %.0f %i\n", r.trans.y, r.layer);
 		}
 		std::printf("\n---next---\n");
 		// std::printf("time: %llu\n", Timer::millis() - start);
