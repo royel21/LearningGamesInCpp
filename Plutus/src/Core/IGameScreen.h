@@ -23,15 +23,15 @@ namespace Plutus
 	protected:
 		int mScreenIndex = -1;
 		ScreenState mCurrentState = ScreenState::NONE;
-		Engine *mEngine = nullptr;
-		Input *mInput;
+		Engine* mEngine = nullptr;
+		Input* mInput;
 
 	public:
 		friend class ScreenList;
 
-		IGameScreen(){};
+		IGameScreen() = default;
 
-		virtual ~IGameScreen() {}
+		virtual ~IGameScreen() = default;
 
 		// Return the index of the next or previous screen when changing screen
 		virtual int getNextScreenIndex() const = 0;
@@ -60,7 +60,7 @@ namespace Plutus
 
 		ScreenState getState() const { return mCurrentState; }
 		// Set the parent of the screen
-		void setEngine(Engine *engine)
+		void setEngine(Engine* engine)
 		{
 			mEngine = engine;
 			mInput = Input::getInstance();
