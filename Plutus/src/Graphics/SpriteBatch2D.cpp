@@ -7,12 +7,12 @@
 #include "ECS/Components/Transform.h"
 #include "ECS/Components/Sprite.h"
 #include "ECS/Components/TileMap.h"
-#include "Utils/Utils.h"
+#include <Utils/Utils.h>
+
 #include "IndexBuffer.h"
 #include "Camera2D.h"
 #include "Shader.h"
 
-#include "Time/Timer.h"
 #include "GraphicsUtil.h"
 
 #define RENDERER_MAX_SPRITES 60000
@@ -134,7 +134,7 @@ namespace Plutus
 		}
 	}
 
-	void SpriteBatch2D::submitRenderable(GLuint texture, glm::vec4 rect, glm::vec4 uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId, uint8_t layer, bool sortY)
+	void SpriteBatch2D::submitRenderable(GLuint texture, const glm::vec4& rect, const glm::vec4& uv, const ColorRGBA8& c, float r, bool flipX, bool flipY, uint32_t entId, uint8_t layer, bool sortY)
 	{
 		mRenderables.emplace_back(texture, rect, uv, c, r, flipX, flipY, entId, layer, sortY);
 	}
@@ -191,14 +191,11 @@ namespace Plutus
 
 	void SpriteBatch2D::prepareData()
 	{
-		// auto start = Timer::millis();
 		std::sort(mRenderables.begin(), mRenderables.end());
+		vertices.resize(mRenderables.size() * 4);
 		for (auto r : mRenderables) {
-			submit(mRenderables);
-			std::printf("time: %.0f %i %i\n", r.trans.y, r.layer, r.entId);
+			submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY, r.entId);
 		}
-		std::printf("\n---next---\n");
-		// std::printf("time: %llu\n", Timer::millis() - start);
 	}
 
 	inline void SpriteBatch2D::createBatch(GLuint texture)

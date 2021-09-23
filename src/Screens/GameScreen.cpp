@@ -57,6 +57,7 @@ void GameScreen::build()
     mSystemManager.AddSystem<Plutus::RenderSystem>(&mWorldCamera);
     mSystemManager.AddSystem<Plutus::ScriptSystem>(&mWorldCamera);
     mSystemManager.AddSystem<Plutus::AnimationSystem>();
+
 }
 
 void GameScreen::onEntry()
@@ -64,13 +65,13 @@ void GameScreen::onEntry()
     const int h = mEngine->getHeight();
     // Player 1
     auto player = mScene->createEntity("Player");
-    player->addComponent<Plutus::Transform>(192.0f, h - 70.0f, 64, 64, 0.0f, 0, true);
+    auto trasn1 = player->addComponent<Plutus::Transform>(192.0f, h - 64.0f, 64, 64, 0.0f, 0, true);
     player->addComponent<Plutus::Sprite>("player1");
     std::printf("player2 script\n");
     player->addComponent<Plutus::Script>("assets/script/player1.lua", player, mScene.get());
     // Player 2
     auto player2 = mScene->createEntity("Player2");
-    player2->addComponent<Plutus::Transform>(400.0f, h - 128.0f, 128, 128, 0.0f, 0, true);
+    auto trasn2 = player2->addComponent<Plutus::Transform>(400.0f, h - 128.0f, 128, 128, 0.0f, 0, true);
     player2->addComponent<Plutus::Sprite>("player2");
     auto& anim2 = player2->addComponent<Plutus::Animation>(player2);
     anim2.addTexture("player2");
@@ -78,7 +79,7 @@ void GameScreen::onEntry()
 
     // Bat1
     auto bat = mScene->createEntity("Bat");
-    bat->addComponent<Plutus::Transform>(288.0f, h - 64.0f, 64, 64, 0.0f, 0, true);
+    auto trasn3 = bat->addComponent<Plutus::Transform>(288.0f, h - 64.0f, 64, 64, 0.0f, 0, true);
     bat->addComponent<Plutus::Sprite>("bats");
 
     auto& anim = bat->addComponent<Plutus::Animation>(bat);
@@ -86,10 +87,10 @@ void GameScreen::onEntry()
     bat->addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
 
 
-    auto bed = mScene->createEntity("bed");
-    bed->addComponent<Plutus::Transform>(128.0f, h - 256.0f, 128, 128);
-    auto& sprite = bed->addComponent<Plutus::Sprite>("cave");
-    sprite.mUVCoord = Plutus::AssetManager::get()->getTexCoords("cave", { 1, 10, 96, 96 });
+    // auto bed = mScene->createEntity("bed");
+    // bed->addComponent<Plutus::Transform>(128.0f, h - 256.0f, 128, 128);
+    // auto& sprite = bed->addComponent<Plutus::Sprite>("cave");
+    // sprite.mUVCoord = Plutus::AssetManager::get()->getTexCoords("cave", { 1, 10, 96, 96 });
 }
 
 void GameScreen::update(float dt)

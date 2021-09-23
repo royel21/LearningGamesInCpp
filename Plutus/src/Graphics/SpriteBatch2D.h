@@ -59,7 +59,7 @@ namespace Plutus
 		//Reserve the memory for the objects
 		void reserve(uint32_t size)
 		{
-			vertices.reserve(vertices.size() + (size << 2));
+			// vertices.reserve(vertices.size() + (size << 2));
 		};
 		/*
 			Submit a single Object to draw in the screen
@@ -77,7 +77,7 @@ namespace Plutus
 
 		void submit(const std::vector<Renderable>& renderables);
 
-		void submitRenderable(GLuint texture, glm::vec4 rect, glm::vec4 uv = { 0, 0, 1, 1 }, ColorRGBA8 c = {}, float r = 0,
+		void submitRenderable(GLuint texture, const glm::vec4& rect, const glm::vec4& uv = { 0, 0, 1, 1 }, const ColorRGBA8& c = {}, float r = 0,
 			bool flipX = false, bool flipY = false, uint32_t entId = 0, uint8_t layer = 0, bool sortY = false);
 
 		void draw(bool usePicking = false);

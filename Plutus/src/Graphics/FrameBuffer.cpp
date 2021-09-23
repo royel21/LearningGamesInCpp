@@ -46,13 +46,15 @@ namespace Plutus
 
     u32 FrameBuffer::getEntId(glm::vec2 pos)
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, mFbId);
+        float pixels[] = { 0, 0, 0 };
+        if (mIsPicking) {
+            glBindFramebuffer(GL_FRAMEBUFFER, mFbId);
 
-        glReadBuffer(GL_COLOR_ATTACHMENT0);
-        float pixels[] = { 0,0,0 };
-        glReadPixels(static_cast<int>(pos.x), static_cast<int>(pos.y), 1, 1, GL_RGBA, GL_FLOAT, pixels);
+            glReadBuffer(GL_COLOR_ATTACHMENT0);
+            glReadPixels(static_cast<int>(pos.x), static_cast<int>(pos.y), 1, 1, GL_RGBA, GL_FLOAT, pixels);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
         return (u32)pixels[0] - 1;
     }
     void FrameBuffer::bind()

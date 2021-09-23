@@ -81,11 +81,12 @@ namespace Plutus
 		bool flipX = false;
 		bool flipY = false;
 		uint32_t entId;
-		GLubyte layer = 0;
+		int layer = 0;
 		bool sortY = false;
+		Renderable() = default;
 		Renderable(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c) : TexId(texture), trans(rect), uv(_uv), color(_c) {}
 
-		Renderable(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, uint32_t id, uint8_t _layer, bool sY)
+		Renderable(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, uint32_t id, int _layer, bool sY)
 			: TexId(texture), trans(rect), uv(_uv), color(_c), r(_r), flipX(fx), flipY(fy), entId(id), layer(_layer), sortY(sY) {
 
 		}

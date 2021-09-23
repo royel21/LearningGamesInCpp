@@ -46,7 +46,6 @@ void GameScreen::build()
     // mTextLayer.Init(static_cast<float>(w), static_cast<float>(h), "assets/fonts/Zoika.ttf", 28);
 
     mInput = Plutus::Input::getInstance();
-    auto start = Plutus::Timer::millis();
     Plutus::SceneLoader::loadFromJson("assets/scenes/scene1.json", mScene);
 }
 

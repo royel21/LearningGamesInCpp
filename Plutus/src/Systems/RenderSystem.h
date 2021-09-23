@@ -5,6 +5,7 @@
 
 namespace Plutus
 {
+    class DebugRender;
     class RenderSystem : public ISystem
     {
     public:
@@ -15,5 +16,7 @@ namespace Plutus
     private:
         Shader mShader;
         SpriteBatch2D mRenderer;
+        DebugRender* mDebug;
+        std::vector<Renderable> mRenderables;
     };
 } // namespace Plutus
