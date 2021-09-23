@@ -42,7 +42,10 @@ namespace Plutus
 		operator GLuint() const { return rgba; }
 	};
 	/*
-		Represent a single Vertex information
+		Represent a single Vertex information:
+		Position Y,X
+		Texture UV
+		Color
 	*/
 	struct Vertex
 	{
@@ -71,17 +74,27 @@ namespace Plutus
 			color.setColor(r, g, b, a);
 		}
 	};
-
+	//An object containing all data need for creating vertice
 	struct Renderable {
+		// Texture Id
 		GLuint TexId;
+		// Rectangle with position x,y and width, height
 		glm::vec4 trans;
+		// Texture coords "UV"
 		glm::vec4 uv = { 0,0,1,1 };
+		// Color
 		ColorRGBA8 color = {};
+		// Rotation
 		float r = 0;
+		// Flip the texture coord on x
 		bool flipX = false;
+		// Flip the texture coord on y
 		bool flipY = false;
+		// Entity Id for mouse picking
 		uint32_t entId;
+		// Layer Id
 		int layer = 0;
+		// Sort in Y order
 		bool sortY = false;
 		Renderable() = default;
 		Renderable(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c) : TexId(texture), trans(rect), uv(_uv), color(_c) {}

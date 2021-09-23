@@ -74,7 +74,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
 
   
   add_executable("Test" Test/test.cpp)
-  target_link_libraries("Editor" PUBLIC Plutus)
+  target_link_libraries("Test" PUBLIC Plutus)
 
 
   

@@ -10,10 +10,14 @@ namespace Plutus
     class IntersectDetector2d
     {
     public:
-        static bool pointOnLine(const glm::vec2& point, const Line& line);
+        static bool pointOnLine(const glm::vec2& point, Line& line);
 
-        static bool pointInCircle(const glm::vec2& point, const Circle& circle);
+        static bool pointInCircle(const glm::vec2& point, Circle& circle);
 
-        static bool pointAABB(const glm::vec2& point, const AABB& aabb);
+        static bool pointAABB(const glm::vec2& point, AABB& aabb);
+
+        static bool pointBox(const glm::vec2& point, Box2d& box);
+
+        static bool lineInCircle(Line line, Circle circle);
     };
 } // namespace Plutus

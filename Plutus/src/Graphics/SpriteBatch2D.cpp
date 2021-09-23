@@ -128,15 +128,13 @@ namespace Plutus
 
 	void SpriteBatch2D::submit(const std::vector<Renderable>& renderables)
 	{
+		//Resize to hold all the vertice needed
+		vertices.resize(renderables.size() * 4);
+
 		for (auto r : renderables)
 		{
-			submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY);
+			submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY, r.entId);
 		}
-	}
-
-	void SpriteBatch2D::submitRenderable(GLuint texture, const glm::vec4& rect, const glm::vec4& uv, const ColorRGBA8& c, float r, bool flipX, bool flipY, uint32_t entId, uint8_t layer, bool sortY)
-	{
-		mRenderables.emplace_back(texture, rect, uv, c, r, flipX, flipY, entId, layer, sortY);
 	}
 
 	void SpriteBatch2D::begin(Shader* shader, Camera2D* camera, bool isText)
@@ -152,9 +150,6 @@ namespace Plutus
 		glClearDepth(1.0f);
 
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-		if (mRenderables.size()) {
-			prepareData();
-		}
 		glBufferData(GL_ARRAY_BUFFER, mVertexCount * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
 
 		mIBO->bind();
@@ -166,9 +161,10 @@ namespace Plutus
 		mShader->setUniform1b("picking", usePicking);
 		for (size_t i = 0; i < mRenderBatches.size(); i++)
 		{
-			mShader->setUniform1i("hasTexture", mRenderBatches[i].texture);
-			glBindTexture(GL_TEXTURE_2D, mRenderBatches[i].texture);
-			glDrawElements(GL_TRIANGLES, mRenderBatches[i].numVertices, GL_UNSIGNED_INT, (void*)(mRenderBatches[i].offset * sizeof(GLuint)));
+			auto& batch = mRenderBatches[i];
+			mShader->setUniform1i("hasTexture", batch.texture);
+			glBindTexture(GL_TEXTURE_2D, batch.texture);
+			glDrawElements(GL_TRIANGLES, batch.numVertices, GL_UNSIGNED_INT, (void*)(batch.offset * sizeof(GLuint)));
 		}
 	}
 
@@ -179,23 +175,12 @@ namespace Plutus
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		mIBO->unbind();
-		// vertices.clear();
-		mRenderBatches.clear();
-
 		mShader->disable();
+
+		mRenderBatches.clear();
 
 		mVertexCount = 0;
 		mIndexCount = 0;
-		mRenderables.clear();
-	}
-
-	void SpriteBatch2D::prepareData()
-	{
-		std::sort(mRenderables.begin(), mRenderables.end());
-		vertices.resize(mRenderables.size() * 4);
-		for (auto r : mRenderables) {
-			submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY, r.entId);
-		}
 	}
 
 	inline void SpriteBatch2D::createBatch(GLuint texture)

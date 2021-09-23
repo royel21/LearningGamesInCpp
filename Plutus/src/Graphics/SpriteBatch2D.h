@@ -6,6 +6,8 @@
 #include "vertex.h"
 #include <unordered_map>
 
+#define DEF_UV glm::vec4(0,0,1,1)
+
 namespace Plutus
 {
 	struct Tile;
@@ -46,7 +48,6 @@ namespace Plutus
 		glm::vec4 camSize;
 		// Array of Renderables batcher per Image
 		std::vector<Renderable> mRenderables;
-		std::vector<Renderable*> mRenderablesPointers;
 		// Array of Rnder batcher per Image
 		std::vector<RenderBatch2D> mRenderBatches;
 
@@ -61,6 +62,10 @@ namespace Plutus
 		{
 			// vertices.reserve(vertices.size() + (size << 2));
 		};
+
+		void submit(const std::vector<Renderable>& renderables);
+
+		void submit(glm::vec4 rect, float r) { submit(0, rect, DEF_UV, {}, r); }
 		/*
 			Submit a single Object to draw in the screen
 			@param texture Texture image from where to draw
@@ -71,21 +76,13 @@ namespace Plutus
 			@param flipX optional flip the image from X coordinate
 			@param flipY optional flip the image from Y coordinate
 		*/
-		void submit(GLuint texture, glm::vec4 rect, glm::vec4 uv = { 0, 0, 1, 1 }, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
-
-		void submit(glm::vec4 rect, float r) { submit(0, rect, { 0, 0, 1, 1 }, { 255, 255, 255 }, r); }
-
-		void submit(const std::vector<Renderable>& renderables);
-
-		void submitRenderable(GLuint texture, const glm::vec4& rect, const glm::vec4& uv = { 0, 0, 1, 1 }, const ColorRGBA8& c = {}, float r = 0,
-			bool flipX = false, bool flipY = false, uint32_t entId = 0, uint8_t layer = 0, bool sortY = false);
+		void submit(GLuint texture, glm::vec4 rect, glm::vec4 uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
 
 		void draw(bool usePicking = false);
 		//Flush the Vertex buffer to the screen
 		void end();
 
 	private:
-		void prepareData();
 		/*
 			Create a render Batch for this texture
 		*/
