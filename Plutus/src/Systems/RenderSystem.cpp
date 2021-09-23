@@ -31,14 +31,18 @@ namespace Plutus
         auto viewMap = mScene->getRegistry()->view<TileMap>();
         auto view = mScene->getRegistry()->view<Transform, Sprite>();
 
+        /******************Resize temp buffer************************/
         int size = view.size_hint();
 
         for (auto [ent, map] : viewMap.each()) {
             size += map.mTiles.size();
         }
+
         if (mRenderables.size() != size) {
             mRenderables.resize(size);
         }
+        /******************************************/
+
         int i = 0;
         for (auto ent : viewMap)
         {
@@ -68,7 +72,9 @@ namespace Plutus
             mDebug->render(2);
 
         }
+        // sort by layer, y position, texture
         std::sort(mRenderables.begin(), mRenderables.end());
+
         mRenderer.submit(mRenderables);
 
         mRenderer.begin(&mShader, mCamera);
@@ -80,6 +86,7 @@ namespace Plutus
     void RenderSystem::destroy()
     {
         mShader.dispose();
+        mRenderables.clear();
     }
 
 } // namespace Plutus

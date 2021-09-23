@@ -64,12 +64,12 @@ namespace Plutus
             half = size * 0.5f;
         }
 
-        glm::vec2 getMin()
+        glm::vec2 getMin() const
         {
             return rBody->position - half;
         }
 
-        glm::vec2 getMax()
+        glm::vec2 getMax() const
         {
             return rBody->position + half;
         }
@@ -80,7 +80,7 @@ namespace Plutus
         RigidBody2d* rBody = nullptr;
         float radius = 1.0f;
 
-        glm::vec2 getCenter() {
+        glm::vec2 getCenter() const {
             return rBody->position;
         }
     };
