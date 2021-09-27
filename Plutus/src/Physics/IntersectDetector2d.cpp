@@ -7,8 +7,11 @@ namespace Plutus
     {
         float dy = line.end.y - line.start.y;
         float dx = line.end.x - line.start.x;
+        if (dx == 0) {
+            return compareF(point.x, line.start.x);
+        }
 
-        float m = dx == 0 ? 0 : dy / dx;
+        float m = dy / dx;
 
 
 

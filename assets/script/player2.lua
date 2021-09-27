@@ -50,6 +50,8 @@ function update(dt)
     local trans = Player2:getTransform();
     local anim = Player2:getAnimate();
 
+    vel = {x = 0, y = 0}
+
     if not anim.loop then
         state = ""
         curAnime = stand[direction]
@@ -91,6 +93,8 @@ function update(dt)
             -- Running animation
             anim:play("run-" .. direction)
         end
+
+        if state == "jumping" then end
     end
     -- Attack Animation
     if input:onKeyPressed("Z") and state ~= "jumping" then
