@@ -67,7 +67,8 @@ void EditorScreen::update(float dt)
         int h = mEngine->getHeight();
         auto pos = mInput->getMouseCoords();
         pos.y = h - pos.y;
-        std::printf("Id: %i\n", mFB.getEntId(pos));
+        auto mpos = mCamera.convertScreenToWold(pos);
+        std::printf("Id: %i\n x:%0.0f y:%0.0f\n", mFB.getEntId(pos), mpos.x, mpos.y);
     }
 
     if (mInput->onKeyDown("Ctrl"))
@@ -87,22 +88,22 @@ void EditorScreen::draw()
     setBackgoundColor(0, 0, 0, 1);
     int h = mEngine->getHeight();
 
-    auto text = mAssets->mFonts.renderText("arial", "hello world_Royel _=+/&^%$#ñÑá - Arial", 32.0f, h - 175.0f, 1.0f, { 255, 255, 255, 255 });
-    mRender.submit(text);
+    std::vector<Plutus::Renderable> renderables;
+    mAssets->mFonts.createRenderable(renderables, "arial", "hello world_Royel _=+/&^%$#ñÑá - Arial", 32.0f, 175.0f, 1.0f, { 255, 255, 255, 255 });
+    mAssets->mFonts.createRenderable(renderables, "OpenSansBold", "hello world_Royel _=+/&^%$#ñÑá - OpenSans", 32.0f, 120.0f, 1.0f, { 255, 255, 255, 255 });
+    mAssets->mFonts.createRenderable(renderables, "Zoika", "hello world_Royel _=+/&^%$# Zoika", 32.0f, 65.0f, 1.0f, { 255, 255, 255, 255 });
 
-    text = mAssets->mFonts.renderText("OpenSansBold", "hello world_Royel _=+/&^%$#ñÑá - OpenSans", 32.0f, h - 120.0f, 1.0f, { 255, 255, 255, 255 });
-    mRender.submit(text);
-
-    text = mAssets->mFonts.renderText("Zoika", "hello world_Royel _=+/&^%$# Zoika", 32.0f, h - 65.0f, 1.0f, { 255, 255, 255, 255 });
-    mRender.submit(text);
+    mRender.submit(renderables);
 
     mRender.begin(&mShader, &mCamera, true);
     mRender.draw();
     mRender.end();
 
-    mRender.submit(mAssets->mTextures.getTexture("player")->texId, { 50, 100, 64, 64 }, { 0, 1, 1, 0 }, { 255, 255, 255, 255 }, 0, false, false, 25);
-    mRender.submit(mAssets->mTextures.getTexture("bats")->texId, { 50, 200, 96, 96 }, { 0, 1, 1, 0 }, { 255, 255, 255, 255 }, 0, false, false, 99);
-    mRender.submit(Plutus::AssetManager::get()->mTextures.getTexture("bats")->texId, { 50, 100, 64, 64 }, { 0, 1, 1, 0 }, { 255, 255, 255, 255 }, 0, false, false, 25);
+    std::vector<Plutus::Renderable> renderables2;
+    renderables2.push_back({ mAssets->mTextures.getTexture("player")->texId, { 50, h - 100, 64, 64 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 0, 0, false });
+    renderables2.push_back({ mAssets->mTextures.getTexture("bats")->texId, { 180, h - 280, 96, 96 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 99, 0, false });
+    renderables2.push_back({ Plutus::AssetManager::get()->mTextures.getTexture("bats")->texId, { 180, 220, 64, 64 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 30, 0, false });
+    mRender.submit(renderables2);
 
     mRender.begin(&mShader, &mCamera);
 
@@ -118,8 +119,8 @@ void EditorScreen::draw()
     // mRender.draw();
     // mRender.end();
 
-    mDebug->drawBox({ 10, 10, 150, 150 }, { 255, 255, 255, 255 }, 0.0f);
-    mDebug->drawCircle({ 85.0f, 85.0f }, { 255, 255, 255, 255 }, 70.0f);
+    mDebug->drawBox({ 10, h - 160, 150, 150 }, { 255, 255, 255, 255 }, 0.0f);
+    mDebug->drawCircle({ 85.0f, h - 85.0f }, { 255, 255, 255, 255 }, 70.0f);
     mDebug->end();
     mDebug->render(2);
 }

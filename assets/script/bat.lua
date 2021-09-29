@@ -23,14 +23,14 @@ function update(dt)
 
     if input:onKeyDown("Up") then
         anim:play("up")
-        if trans.y > 0 then trans.y = trans.y - SPEED end
+        if trans.y < ScreenHeight - trans.h then
+            trans.y = trans.y + SPEED
+        end
     end
 
     if input:onKeyDown("Down") then
         anim:play("down")
-        if trans.y < ScreenHeight - trans.h then
-            trans.y = trans.y + SPEED
-        end
+        if trans.y > 0 then trans.y = trans.y - SPEED end
     end
 
     if input:onKeyDown("Right") then

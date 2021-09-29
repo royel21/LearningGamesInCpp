@@ -20,6 +20,7 @@ namespace Plutus
 	class DebugRender
 	{
 	public:
+		DebugRender();
 		static DebugRender* geInstances();
 		~DebugRender();
 		void init(Camera2D* _camera);
@@ -47,8 +48,6 @@ namespace Plutus
 		void setColor(ColorRGBA8 color) { mGridColor = color; }
 
 	private:
-		DebugRender();
-
 		glm::ivec2 mCellSize;
 		glm::ivec2 mCellCount;
 

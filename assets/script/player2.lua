@@ -7,10 +7,10 @@ local curAnime = "stand-r"
 local vel = 0;
 
 local stand = {
-    right = "stand-r",
-    left = "stand-l",
-    up = "stand-u",
-    down = "stand-d"
+    right = "stand-right",
+    left = "stand-up",
+    up = "stand-left",
+    down = "stand-down"
 }
 
 local direction = "right";
@@ -22,10 +22,10 @@ function init()
     if anim then
         -- -- Standing
         -- local seq = Sequence.new({0}, 0, 0)
-        anim:addSeq("stand-r", {0}, 0, 0)
-        anim:addSeq("stand-u", {6}, 0, 0)
-        anim:addSeq("stand-l", {12}, 0, 0)
-        anim:addSeq("stand-d", {18}, 0, 0)
+        anim:addSeq("stand-right", {0}, 0, 0)
+        anim:addSeq("stand-up", {6}, 0, 0)
+        anim:addSeq("stand-left", {12}, 0, 0)
+        anim:addSeq("stand-down", {18}, 0, 0)
         -- -- Running
         anim:addSeq("run-right", {1, 2, 3, 4, 5}, 0, 100)
         anim:addSeq("run-up", {7, 8, 9, 10, 11}, 0, 100)
@@ -63,13 +63,13 @@ function update(dt)
         if input:onKeyDown("Up") then
             direction = "up"
             state = "running"
-            if trans.y > -32 then trans.y = trans.y - SPEED end
-        elseif input:onKeyDown("Down") then
-            direction = "down"
-            state = "running"
             if trans.y < ScreenHeight - 96 then
                 trans.y = trans.y + SPEED
             end
+        elseif input:onKeyDown("Down") then
+            direction = "down"
+            state = "running"
+            if trans.y > -32 then trans.y = trans.y - SPEED end
         end
         -- Move Right - Left
         if input:onKeyDown("Right") then

@@ -101,15 +101,14 @@ namespace Plutus
 
 		Renderable(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, uint32_t id, int _layer, bool sY)
 			: TexId(texture), trans(rect), uv(_uv), color(_c), r(_r), flipX(fx), flipY(fy), entId(id), layer(_layer), sortY(sY) {
-
 		}
 
 		bool operator < (Renderable& rend) const {
 			if (sortY && rend.sortY) {
-				return std::tie(trans.y, layer, TexId) < std::tie(rend.trans.y, rend.layer, TexId);
+				return std::tie(trans.y, layer, TexId) > std::tie(rend.trans.y, rend.layer, TexId);
 			}
 			else {
-				return std::tie(layer, TexId) < std::tie(rend.layer, rend.TexId);
+				return std::tie(layer, TexId) > std::tie(rend.layer, rend.TexId);
 			}
 		}
 	};

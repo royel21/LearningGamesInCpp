@@ -186,27 +186,27 @@ namespace Plutus
 		{
 			glm::ivec2 endLine = mCellCount * mCellSize;
 
-			glm::ivec2 lineStart;
-			glm::ivec2 lineEnd;
+			glm::vec2 lineStart;
+			glm::vec2 lineEnd;
 
 			for (int x = 0; x <= mCellCount.x; x++)
 			{
 				int curPoint = x * mCellSize.x;
-				lineStart.x = curPoint;
-				lineStart.y = 0;
+				lineStart.x = (float)curPoint;
+				lineStart.y = 0.0f;
 
-				lineEnd.x = curPoint;
-				lineEnd.y = endLine.y;
+				lineEnd.x = (float)curPoint;
+				lineEnd.y = (float)endLine.y;
 				drawLine(lineStart, lineEnd, mGridColor);
 			}
 			for (int y = 0; y <= mCellCount.y; y++)
 			{
 				int curPoint = y * mCellSize.y;
-				lineStart.y = curPoint;
-				lineStart.x = 0;
+				lineStart.y = (float)curPoint;
+				lineStart.x = 0.0f;
 
-				lineEnd.y = curPoint;
-				lineEnd.x = endLine.x;
+				lineEnd.y = (float)curPoint;
+				lineEnd.x = (float)endLine.x;
 				drawLine(lineStart, lineEnd, mGridColor);
 			}
 			end();
@@ -218,8 +218,10 @@ namespace Plutus
 	glm::vec2 DebugRender::getSquareCoords(glm::vec2 mousePos)
 	{
 		glm::vec2 cmpos = mCamera->convertScreenToWold(mousePos);
+
 		int x = (int)floor(cmpos.x / mCellSize.x) * mCellSize.x;
 		int y = (int)floor(cmpos.y / mCellSize.y) * mCellSize.y;
+
 		return glm::vec2(x, y);
 	}
 

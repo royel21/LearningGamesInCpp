@@ -29,7 +29,7 @@ namespace Plutus
         else
         {
             mTexCount = 1;
-            uvs.push_back({ 0, 0, 1, 1 });
+            uvs.push_back({ 0, 1, 1, 0 });
         }
     }
 
@@ -44,9 +44,9 @@ namespace Plutus
                 int x = i % columns;
                 glm::vec4 UV;
                 UV.x = ((float)(x * tileWidth) / (float)texWidth);
-                UV.y = ((float)(y * tileHeight + tileHeight) / (float)texHeight);
+                UV.y = ((float)(y * tileHeight) / (float)texHeight);
                 UV.z = ((float)(x * tileWidth + tileWidth) / (float)texWidth);
-                UV.w = ((float)(y * tileHeight) / (float)texHeight);
+                UV.w = ((float)(y * tileHeight + tileHeight) / (float)texHeight);
                 uvs.push_back(UV);
             }
         }
@@ -56,7 +56,7 @@ namespace Plutus
     {
         float xw = column * tileWidth;
         float yh = row * tileHeight;
-        return { xw / texWidth, (yh + h) / texHeight, (xw + w) / texWidth, yh / texHeight };
+        return { xw / texWidth, yh / texHeight, (xw + w) / texWidth, (yh + h) / texHeight };
     }
 
     Textures::~Textures()

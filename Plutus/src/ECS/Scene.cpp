@@ -106,4 +106,10 @@ namespace Plutus
         }
         return nullptr;
     }
+
+    Entity Scene::getEntity2(uint32_t Id)
+    {
+        auto ent = entt::entity(Id);
+        return { mRegistry.valid(ent) ? ent : entt::null , this };
+    }
 } // namespace Plutus

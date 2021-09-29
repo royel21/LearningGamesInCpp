@@ -12,6 +12,7 @@
 #include <ECS/Components.h>
 #include <ECS/Scene.h>
 #include <Utils/Utils.h>
+#include "../EditorUI.h"
 
 #define COMP_TRASNFORM 0
 #define COMP_SPRITE 1
@@ -23,8 +24,10 @@ const uint32_t color3 = IM_COL32(60, 60, 70, 255);
 
 namespace Plutus
 {
-    void ComponentPanel::setContext(Ref<Scene>& scene)
+    void ComponentPanel::setContext(Ref<Scene>& scene, EditorUI* parent)
     {
+        mParentUI = parent;
+
         mScene = scene;
         mInput = Input::getInstance();
         mTileMapPanel.setContext(scene);
@@ -34,7 +37,7 @@ namespace Plutus
             if (ImGui::Button("Create##Comp"))
             {
                 open = false;
-                mEntity->addComponent<Animation>(mEntity);
+                mEntity.addComponent<Animation>(mEntity);
             }
         };
 
@@ -59,7 +62,7 @@ namespace Plutus
             if (ImGui::Button("Create##Comp"))
             {
                 open = false;
-                mEntity->addComponent<Transform>(transPos[1], transPos[0], transSize[0], transSize[1], transRotate);
+                mEntity.addComponent<Transform>(transPos[1], transPos[0], transSize[0], transSize[1], transRotate);
             }
         };
         createComps["Sprite"] = [&](bool& open)
@@ -69,7 +72,7 @@ namespace Plutus
             ImGui::ComboBox<Texture>("TileSheet", AssetManager::get()->mTextures.mTileSets, selected);
             if (ImGui::Button("Create##Comp"))
             {
-                mEntity->addComponent<Sprite>(selected);
+                mEntity.addComponent<Sprite>(selected);
                 open = false;
             }
         };
@@ -78,7 +81,7 @@ namespace Plutus
             if (ImGui::Button("Create##Comp"))
             {
                 open = false;
-                mEntity->addComponent<TileMap>(32, 32);
+                mEntity.addComponent<TileMap>(32, 32);
             }
         };
         createComps["Script"] = [&](bool& open)
@@ -91,22 +94,22 @@ namespace Plutus
                 if (ImGui::Button("Create##Comp"))
                 {
                     open = false;
-                    mEntity->addComponent<Script>(files[selected], mEntity, mScene.get());
+                    mEntity.addComponent<Script>(files[selected], mEntity, mScene.get());
                 }
             }
         };
     }
 
-    void ComponentPanel::drawUI(Entity* ent)
+    void ComponentPanel::drawUI()
     {
         static bool isOpen = true;
         ImGui::Begin("Components", &isOpen, ImGuiWindowFlags_HorizontalScrollbar);
         {
-            if (ent != nullptr)
+            mEntity = mParentUI->getEntity();
+            if (mEntity)
             {
-                mEntity = ent;
                 static bool showCreate;
-                if (!ent->hasComponent<TileMap>() || !ent->hasComponent<Script>())
+                if (!mEntity.hasComponent<TileMap>() || !mEntity.hasComponent<Script>())
                 {
                     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
                     if (ImGui::Button(ICON_FA_PLUS_CIRCLE " Add Component##createComp"))
@@ -118,16 +121,16 @@ namespace Plutus
                     ImGui::Separator();
                 }
 
-                if (ent->hasComponent<Animation>())
+                if (mEntity.hasComponent<Animation>())
                 {
-                    mAnimPanel.draw(mEntity);
+                    // mAnimPanel.draw(mEntity);
                 }
                 drawTransform();
                 drawSprite();
                 drawScript();
-                if (mEntity->hasComponent<TileMap>())
+                if (mEntity.hasComponent<TileMap>())
                 {
-                    mTileMapPanel.draw(&mEntity->getComponent<TileMap>());
+                    mTileMapPanel.draw(&mEntity.getComponent<TileMap>());
                 }
             }
         }
@@ -141,11 +144,11 @@ namespace Plutus
 
     void ComponentPanel::drawTransform()
     {
-        if (mEntity->hasComponent<Transform>())
+        if (mEntity.hasComponent<Transform>())
         {
             if (ImGui::CollapsingHeader("Transform##comp"))
             {
-                auto& trans = mEntity->getComponent<Transform>();
+                auto& trans = mEntity.getComponent<Transform>();
                 float position[] = { trans.x, trans.y };
 
                 ImGui::PushItemWidth(100);
@@ -168,11 +171,11 @@ namespace Plutus
 
     void ComponentPanel::drawSprite()
     {
-        if (mEntity->hasComponent<Sprite>())
+        if (mEntity.hasComponent<Sprite>())
         {
             if (ImGui::CollapsingHeader("Sprite##comp"))
             {
-                auto& sprite = mEntity->getComponent<Sprite>();
+                auto& sprite = mEntity.getComponent<Sprite>();
                 auto& tilesets = AssetManager::get()->mTextures.mTileSets;
 
                 auto color = sprite.mColor.rgba;
@@ -222,19 +225,19 @@ namespace Plutus
 
     void ComponentPanel::drawScript()
     {
-        if (mEntity->hasComponent<Script>())
+        if (mEntity.hasComponent<Script>())
         {
             if (ImGui::CollapsingHeader("Script##comp"))
             {
-                auto& script = mEntity->getComponent<Script>();
+                auto& script = mEntity.getComponent<Script>();
                 auto files = Utils::listFiles("assets/script", ".lua");
                 if (files.size())
                 {
                     int selected = Utils::getIndex(files, script.path);
                     if (ImGui::ComboBox("Script", files, selected))
                     {
-                        mEntity->removeComponent<Script>();
-                        mEntity->addComponent<Script>(files[selected], mEntity, mScene.get());
+                        mEntity.removeComponent<Script>();
+                        mEntity.addComponent<Script>(files[selected], mEntity, mScene.get());
                     }
                 }
             }
@@ -445,26 +448,26 @@ namespace Plutus
     std::vector<std::string> ComponentPanel::getCompList()
     {
         std::vector<std::string> datas;
-        if (!mEntity->hasComponent<TileMap>())
+        if (!mEntity.hasComponent<TileMap>())
         {
-            if (!mEntity->hasComponent<Animation>())
+            if (!mEntity.hasComponent<Animation>())
             {
                 datas.push_back("Animation");
             }
-            if (!mEntity->hasComponent<Transform>())
+            if (!mEntity.hasComponent<Transform>())
             {
                 datas.push_back("Transform");
             }
-            if (!mEntity->hasComponent<Sprite>())
+            if (!mEntity.hasComponent<Sprite>())
             {
                 datas.push_back("Sprite");
             }
         }
-        if (!mEntity->hasComponent<Script>())
+        if (!mEntity.hasComponent<Script>())
         {
             datas.push_back("Script");
         }
-        if (datas.size() == 3 && !mEntity->hasComponent<TileMap>())
+        if (datas.size() == 3 && !mEntity.hasComponent<TileMap>())
         {
             datas.push_back("TileMap");
         }

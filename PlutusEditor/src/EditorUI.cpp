@@ -17,8 +17,11 @@
 #include "ImGuiEx.h"
 
 #include <ECS/Scene.h>
+#include <Serialize/SceneLoader.h>
 #include <Platform/Windows/FileUtils.h>
+
 #include <cstdio>
+
 
 #define mapIn(x, min_in, max_in, min_out, max_out) (x - min_in) * (max_out - min_out) / (max_in - min_in) + min_out
 
@@ -79,7 +82,6 @@ namespace Plutus
 
 	void EditorUI::Init(Camera2D* cam)
 	{
-
 		mCamera = cam;
 		mRender.init();
 		mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
@@ -96,7 +98,7 @@ namespace Plutus
 
 		ImGui::CaptureMouseFromApp();
 		mDebugRender = Plutus::DebugRender::geInstances();
-		mDebugRender->init(cam);
+		mDebugRender->init(mCamera);
 		//Settup font
 
 		// merge in icons from Font Awesome
@@ -110,7 +112,7 @@ namespace Plutus
 		mImGui_IO->Fonts->AddFontDefault();
 
 		mScene = CreateRef<Scene>();
-		mComPanel.setContext(mScene);
+		// mComPanel.setContext(mScene);
 		mEntityEditor.setContext(mScene, this);
 
 		auto size = cam->getScaleScreen();
@@ -152,7 +154,7 @@ namespace Plutus
 		viewPort();
 		viewPortControl();
 		mEntityEditor.draw();
-		mComPanel.drawUI(mEnt);
+		// mComPanel.drawUI(mEnt);
 
 		if (mShowDemo)
 		{
@@ -223,16 +225,17 @@ namespace Plutus
 
 			ImGui::PushItemWidth(120);
 			auto pos = mCamera->getPosition();
-			if (ImGui::DragFloat2("Position##cam", glm::value_ptr(pos), 1, -1, -1, "%.2")) {
+			if (ImGui::DragFloat2("Position##cam", glm::value_ptr(pos), 1, 0, 0, "%.0f")) {
 				mCamera->setPosition(pos);
 			}
 			ImGui::PopItemWidth();
 			ImGui::SameLine();
 			if (ImGui::Button("Reset##campos")) mCamera->setPosition({ 0,0 });
 			static int scale = 100;
-			ZoomViewPort(&scale, 1, 0, 100);
+			// ZoomViewPort(&scale, 1, 0, 100);
 		}
 		ImGui::NextColumn();
+
 		ImGui::Text("Grid Controls");
 		ImGui::Separator();
 		{
@@ -305,7 +308,7 @@ namespace Plutus
 		ImVec2 canvas_pos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
 
 		float xPos = mapIn(ImGui::GetIO().MousePos.x - canvas_pos.x, 0, newSize.x, 0, winSize.x);
-		float yPos = mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
+		float yPos = winSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
 
 		ImGui::Image(reinterpret_cast<void*>(mFb.getTextureId()), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, { 1.0, 1.0, 1.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 });
 
@@ -313,8 +316,9 @@ namespace Plutus
 		{
 			mouseGridCoords = mDebugRender->getSquareCoords({ xPos, yPos });
 
-			if (mInput->onKeyDown("MouseLeft"))
-				mComPanel.createTiles(mouseGridCoords);
+			if (mInput->onKeyDown("MouseLeft")) {
+				// mComPanel.createTiles(mouseGridCoords);
+			}
 
 			if (mInput->onKeyPressed("R"))
 				mCamera->setPosition(0, 0);
@@ -326,11 +330,14 @@ namespace Plutus
 			{
 				lastCoords = { xPos, yPos };
 				lastCamPos = mCamera->getPosition();
-				mEnt = mScene->getEntity(mPicker.getEntId({ xPos, winSize.y - yPos }));
+				auto ent = mScene->getEntity2(mPicker.getEntId({ xPos, yPos }));
 
-				if (mEnt != nullptr) {
-					auto& trans = mEnt->getComponent<Plutus::Transform>();
-					entLastPos = trans.getPosition();
+				if (ent) {
+					mEnt = ent;
+					if (ent.hasComponent<Plutus::Transform>()) {
+						auto& trans = ent.getComponent<Plutus::Transform>();
+						entLastPos = trans.getPosition();
+					}
 				}
 			}
 			// move the camera
@@ -351,14 +358,16 @@ namespace Plutus
 					mCamera->setScale(CHECKLIMIT(newVal, 0.20f, 6));
 				}
 			}
-			else  if (mInput->onKeyDown("MouseLeft") && mEnt != nullptr)
+			else  if (mInput->onKeyDown("MouseLeft") && mEnt)
 			{
-				auto& trans = mEnt->getComponent<Plutus::Transform>();
-				glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
-				result /= mCamera->getScale();
+				if (mEnt.hasComponent<Plutus::Transform>()) {
+					auto& trans = mEnt.getComponent<Plutus::Transform>();
+					glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
+					result /= mCamera->getScale();
 
-				trans.x = entLastPos.x + result.x;
-				trans.y = entLastPos.y + result.y;
+					trans.x = entLastPos.x + result.x;
+					trans.y = entLastPos.y + result.y;
+				}
 			}
 		}
 		ImGui::End();
@@ -424,7 +433,11 @@ namespace Plutus
 				if (ImGui::MenuItem("Open", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))
 				{
 					newScene();
-					mEntityEditor.loadScene("");
+					std::string path;
+					if (Plutus::windowDialog(OPEN_FILE, path))
+					{
+						Plutus::SceneLoader::loadFromJson(path.c_str(), mScene);
+					}
 				}
 				if (ImGui::BeginMenu("Recent"))
 				{
@@ -443,7 +456,7 @@ namespace Plutus
 						if (ImGui::MenuItem(item.c_str()))
 						{
 							newScene();
-							mEntityEditor.loadScene(recent);
+							Plutus::SceneLoader::loadFromJson(recent.c_str(), mScene);
 						}
 					}
 					ImGui::EndMenu();
@@ -476,7 +489,7 @@ namespace Plutus
 		drawScene();
 		if (mCanvasHover)
 		{
-			mComPanel.render(&mRender, mouseGridCoords);
+			// mComPanel.render(&mRender, mouseGridCoords);
 		}
 		mRender.begin(&mShader, mCamera);
 
@@ -552,43 +565,50 @@ namespace Plutus
 
 	void EditorUI::drawScene()
 	{
+		auto viewMap = mScene->getRegistry()->view<TileMap>();
+		auto view = mScene->getRegistry()->view<Transform, Sprite>();
 
-		for (auto& layer : *mScene->getLayers())
+		/******************Resize temp buffer************************/
+		int size = view.size_hint();
+
+		for (auto [ent, map] : viewMap.each()) {
+			size += map.mTiles.size();
+		}
+
+		if (mRenderables.size() != size) {
+			mRenderables.resize(size);
+		}
+		/******************************************/
+
+		int i = 0;
+		for (auto ent : viewMap)
 		{
-			if (layer.second.isVisible)
+			auto [tilemap] = viewMap.get(ent);
+			if (tilemap.mTiles.size())
 			{
-				for (auto ent : layer.second.mEntities)
+				auto tileset = tilemap.mTextures[0];
+				const int w = tilemap.mTileWidth;
+				const int h = tilemap.mTileHeight;
+
+				for (auto& tile : tilemap.mTiles)
 				{
-					if (ent->hasComponent<TileMap>())
-					{
-						auto& map = ent->getComponent<TileMap>();
-						auto tileset = map.mTextures[0];
-						const int w = map.mTileWidth;
-						const int h = map.mTileHeight;
-
-						if (map.mTiles.size())
-						{
-							std::sort(map.mTiles.begin(), map.mTiles.end(), [](Tile& t1, Tile& t2) -> bool
-								{ return t1.texture < t2.texture; });
-
-							for (auto& tile : map.mTiles)
-							{
-								auto tileset = map.mTextures[tile.texture];
-								glm::vec4 rect{ tile.x, tile.y, w, h };
-								mRender.submit(tileset->texId, rect, tileset->getUV(tile.texcoord), { tile.color }, tile.rotate, tile.flipX, tile.flipY);
-							}
-						}
-					}
-
-					if (ent->hasComponent<Sprite>())
-					{
-						auto& trans = ent->getComponent<Transform>();
-						auto& sprite = ent->getComponent<Sprite>();
-						mRender.submit(sprite.getTexId(), trans.getRect(), sprite.mUVCoord, sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY, (uint32_t)ent->mId);
-					}
+					auto tileset = tilemap.mTextures[tile.texture];
+					glm::vec4 rect{ tile.x, tile.y, w, h };
+					mRenderables[i++] = { tileset->texId, rect, tileset->getUV(tile.texcoord), { tile.color }, tile.rotate, tile.flipX, tile.flipY, 0, tilemap.layer, false };
 				}
 			}
 		}
+
+		for (auto ent : view)
+		{
+			auto [trans, sprite] = view.get(ent);
+			mRenderables[i++] = { sprite.getTexId(), trans.getRect(), sprite.mUVCoord, sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY, entt::to_integral(ent), trans.layer, trans.sortY };
+
+		}
+		// sort by layer, y position, texture
+		std::sort(mRenderables.begin(), mRenderables.end());
+
+		mRender.submit(mRenderables);
 	}
 
 	void initColor(const rapidjson::Document& doc, const char* label, glm::vec4& color)
@@ -619,7 +639,7 @@ namespace Plutus
 			if (doc["recents"].IsArray())
 			{
 				auto arr = doc["recents"].GetArray();
-				std::cout << "aar S:" << arr.Size() << std::endl;
+
 				for (uint32_t i = 0; i < arr.Size(); i++)
 				{
 					mRecents.push_back(arr[i].GetString());
@@ -628,8 +648,11 @@ namespace Plutus
 
 				if (mRecents.size())
 				{
-					mEntityEditor.loadScene(mRecents[0]);
-					std::cout << "load recent" << std::endl;
+					auto path = mRecents[0];
+					if (!path.empty())
+					{
+						Plutus::SceneLoader::loadFromJson(path.c_str(), mScene);
+					}
 				}
 			}
 		}
@@ -638,7 +661,7 @@ namespace Plutus
 	void EditorUI::newScene()
 	{
 		mScene->clear();
-		mEnt = nullptr;
+		mEnt = { entt::null, nullptr };
 	}
 
 } // namespace Plutus

@@ -8,7 +8,7 @@ namespace Plutus
 		mScreenWidth = screenWidth;
 		mScreenHeight = screenHeight;
 		//Convert the opengl espace -1.0 - 1.0 to 0 - screenW and height
-		mOrthoMatrix = glm::ortho(0.0f, (float)mScreenWidth, (float)mScreenHeight, 0.0f);
+		mOrthoMatrix = glm::ortho(0.0f, (float)mScreenWidth, 0.0f, (float)mScreenHeight);
 		update();
 	}
 

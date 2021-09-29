@@ -1,11 +1,12 @@
 #pragma once
 #include "System.h"
-#include "Graphics/Shader.h"
-#include "Graphics/SpriteBatch2D.h"
+
+#include <Graphics/Shader.h>
+#include <Graphics/SpriteBatch2D.h>
+#include <Graphics/DebugRenderer.h>
 
 namespace Plutus
 {
-    class DebugRender;
     class RenderSystem : public ISystem
     {
     public:
@@ -16,7 +17,7 @@ namespace Plutus
     private:
         Shader mShader;
         SpriteBatch2D mRenderer;
-        DebugRender* mDebug;
+        DebugRender mDebug;
         std::vector<Renderable> mRenderables;
     };
 } // namespace Plutus

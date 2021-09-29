@@ -7,6 +7,7 @@
 
 #include "AnimationPanel.h"
 #include "TileMapPanel.h"
+#include <ECS/Scene.h>
 
 namespace Plutus
 {
@@ -20,7 +21,7 @@ namespace Plutus
     class ComponentPanel
     {
     private:
-        Entity* mEntity = nullptr;
+        Entity mEntity;
         Input* mInput = nullptr;
         std::vector<ImVec2> mSelectedtiles;
         Ref<Scene> mScene;
@@ -28,12 +29,13 @@ namespace Plutus
         std::unordered_map<std::string, std::function<void(bool&)>> createComps;
         TileMapPanel mTileMapPanel;
         AnimationPanel mAnimPanel;
+        EditorUI* mParentUI;
 
     public:
         ComponentPanel() = default;
 
-        void setContext(Ref<Scene>& scene);
-        void drawUI(Entity* ent);
+        void setContext(Ref<Scene>& scene, EditorUI* parentUI);
+        void drawUI();
         void render(SpriteBatch2D* renderer, glm::vec2 mcoords);
         inline void createTiles(const glm::vec2& mCoords) { mTileMapPanel.createTiles(mCoords); }
 

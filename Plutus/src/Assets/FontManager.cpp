@@ -70,7 +70,7 @@ namespace Plutus
             font.ch[i].bh = static_cast<float>(g->bitmap.rows);
             font.ch[i].bl = static_cast<float>(g->bitmap_left);
             font.ch[i].bt = static_cast<float>(g->bitmap_top);
-            font.ch[i].uv = { x / 500.0f, (y + g->bitmap.rows) / 500.0f, (x + g->bitmap.width) / 500.0f, y / 500.0f };
+            font.ch[i].uv = { x / 500.0f, y / 500.0f, (x + g->bitmap.width) / 500.0f, (y + g->bitmap.rows) / 500.0f };
             x += g->bitmap.width;
         }
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -84,14 +84,13 @@ namespace Plutus
         return true;
     }
 
-    std::vector<Renderable> FontManager::renderText(const std::string& text, float x, float y, float scale, ColorRGBA8 color)
+    void  FontManager::createRenderable(std::vector<Renderable>& renderables, const std::string& text, float x, float y, float scale, ColorRGBA8 color)
     {
-        std::vector<Renderable> renderables;
         auto font = mFonts[mCurrentFont];
         for (auto i : text) {
             auto& ch = font.ch[i];
             GLfloat xpos = x + ch.bl * scale;
-            GLfloat ypos = y + (font.ch['T'].bt - ch.bt) * scale; // shift the letter down for Top-Left origin camera
+            GLfloat ypos = y - (ch.bh - ch.bt) * scale; // shift the letter down for Top-Left origin camera
 
             GLfloat w = ch.bw * scale;
             GLfloat h = ch.bh * scale;
@@ -99,7 +98,6 @@ namespace Plutus
             // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
             x += ch.ax * scale;
         }
-        return renderables;
     }
 
     void FontManager::cleanUp()

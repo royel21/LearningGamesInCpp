@@ -12,6 +12,7 @@ EditorScreen::EditorScreen()
 
 EditorScreen::~EditorScreen()
 {
+    mEditor->destroy();
 }
 
 int EditorScreen::getNextScreenIndex() const
@@ -51,8 +52,8 @@ void EditorScreen::update(float dt)
     {
         mCurrentState = Plutus::ScreenState::CHANGE_NEXT;
     }
-    mEditor->update(dt);
     mCamera.update();
+    mEditor->update(dt);
 }
 
 void EditorScreen::draw()

@@ -11,16 +11,14 @@
 
 #include <Panels/EntityEditor.h>
 #include <Graphics/FrameBuffer.h>
-#include <Panels/ComponentPanel.h>
 #include <Graphics/SpriteBatch2D.h>
 #include <Graphics/Shader.h>
 #include <Core/type.h>
+#include <ECS/Scene.h>
 
 namespace Plutus
 {
-	class Scene;
 	class Input;
-	class Entity;
 	class Camera2D;
 	class DebugRender;
 
@@ -35,8 +33,7 @@ namespace Plutus
 		ImGuiIO* mImGui_IO = nullptr;
 		DebugRender* mDebugRender = nullptr;
 
-		Entity* mEnt = nullptr;
-		Entity* selectedEnt = nullptr;
+		Entity mEnt;
 
 		FrameBuffer mFb;
 		FrameBuffer mPicker;
@@ -60,10 +57,11 @@ namespace Plutus
 		bool mCanvasHover = false;
 
 		//Panels
-		ComponentPanel mComPanel;
 		EntityEditor mEntityEditor;
 
 		std::vector<std::string> mRecents;
+
+		std::vector<Renderable> mRenderables;
 
 	public:
 		std::vector<ImVec2> Selectedtiles;
@@ -91,8 +89,8 @@ namespace Plutus
 
 		void viewPortBGColor(float r, float b, float g, float a);
 
-		Entity* getEntity() { return mEnt; }
-		void setEntity(Entity* ent) { mEnt = ent; }
+		Entity getEntity() { return mEnt; }
+		void setEntity(Entity ent) { mEnt = ent; }
 
 		void addRecent(const std::string& path);
 

@@ -2,7 +2,6 @@
 
 #include <Graphics/GLSL.h>
 #include <Graphics/Camera2D.h>
-#include <Graphics/DebugRenderer.h>
 
 #include <ECS/Scene.h>
 #include <ECS/Components/Sprite.h>
@@ -20,8 +19,7 @@ namespace Plutus
         mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
         mRenderer.init();
 
-        mDebug = Plutus::DebugRender::geInstances();
-        mDebug->init(camera);
+        mDebug.init(camera);
     }
 
     void RenderSystem::update(float dt)
@@ -67,9 +65,9 @@ namespace Plutus
             auto [trans, sprite] = view.get(ent);
             mRenderables[i++] = { sprite.getTexId(), trans.getRect(), sprite.mUVCoord, sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY, entt::to_integral(ent), trans.layer, trans.sortY };
 
-            mDebug->drawBox(trans.getRect(), {}, trans.r);
-            mDebug->end();
-            mDebug->render(2);
+            mDebug.drawBox(trans.getRect(), {}, trans.r);
+            mDebug.end();
+            mDebug.render(2);
 
         }
         // sort by layer, y position, texture

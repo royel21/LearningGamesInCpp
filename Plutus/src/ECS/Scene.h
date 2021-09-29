@@ -20,6 +20,7 @@ namespace Plutus
 
     public:
         Entity() = default;
+        Entity(const Entity& ent) : mId(ent.mId), mScene(ent.mScene) { }
         Entity(entt::entity ent, Scene* scene) : mId(ent), mScene(scene) {}
 
         template <typename T>
@@ -38,6 +39,31 @@ namespace Plutus
 
         const std::string getName();
         void setName(const std::string& name);
+
+        operator bool() const { return mId != entt::null; }
+        operator entt::entity() const { return mId; }
+        operator uint32_t() const { return (uint32_t)mId; }
+
+        bool operator==(const Entity& other) const
+        {
+            return mId == other.mId && mScene == other.mScene;
+        }
+
+        bool operator==(uint32_t id) const
+        {
+            return id == (uint32_t)mId;
+        }
+
+        bool operator!=(const Entity& other) const
+        {
+            return !(*this == other);
+        }
+
+        bool operator!=(uint32_t id) const
+        {
+            return id != (uint32_t)mId;
+        }
+
     };
 
     struct Layer
@@ -64,6 +90,7 @@ namespace Plutus
 
         void removeEntity(Entity* ent);
         Entity* getEntity(uint32_t Id);
+        Entity getEntity2(uint32_t Id);
         Entity* createEntity(const std::string& name);
         entt::registry* getRegistry() { return &mRegistry; }
 

@@ -46,7 +46,7 @@ namespace Plutus
 
     u32 FrameBuffer::getEntId(glm::vec2 pos)
     {
-        float pixels[] = { 0, 0, 0 };
+        float pixels[] = { 0, 0, 0, 0 };
         if (mIsPicking) {
             glBindFramebuffer(GL_FRAMEBUFFER, mFbId);
 
