@@ -22,36 +22,36 @@
 
 namespace Plutus
 {
-    std::unordered_map<int, const char *> unkeys;
+    std::unordered_map<int, const char*> unkeys;
 
     void initKeys();
 
-    static void error_callback(int error, const char *description)
+    static void error_callback(int error, const char* description)
     {
         std::printf("Error: %s\n", description);
     }
 
-    void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+    void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         auto name = unkeys[key];
-        Input::getInstance()->keyStateChange(name == nullptr ? "Unkown" : name, action > 0);
+        Input::getInstance()->keyStateChange(name == nullptr ? "Unkown" : name, action);
     }
 
-    void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
+    void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
     {
         Input::getInstance()->keyStateChange(unkeys[button], action > 0);
     }
 
-    void mousePosCallback(GLFWwindow *window, double xpos, double ypos)
+    void mousePosCallback(GLFWwindow* window, double xpos, double ypos)
     {
         Input::getInstance()->setMouseCoords(static_cast<float>(xpos), static_cast<float>(ypos));
     }
 
-    void scrollCallback(GLFWwindow *window, double xoffset, double yoffset)
+    void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
     {
         Input::getInstance()->setMouseWheel(static_cast<int>(yoffset));
     }
-    void drop_callback(GLFWwindow *window, int count, const char **paths)
+    void drop_callback(GLFWwindow* window, int count, const char** paths)
     {
         for (int i = 0; i < count; i++)
             if (Input::getInstance()->onFileDrop != nullptr)
@@ -71,7 +71,7 @@ namespace Plutus
         }
     }
 
-    bool Window::init(const char *name, int width, int height, GLFWwindow *parent)
+    bool Window::init(const char* name, int width, int height, GLFWwindow* parent)
     {
         initKeys();
         // set a error call back for glfw internal error

@@ -218,28 +218,21 @@ namespace Plutus
     {
         if (mIsOpen && mTempTiles.size() && mMode == MODE_PLACE)
         {
-            // mShader.enable();
-            // mShader.setUniform1i("hasTexture", 0);
-            // mShader.setUniform1i("mySampler", 0);
-            // mShader.setUniformMat4("camera", mScene->getCamera()->getCameraMatrix());
-            // mRenderer.begin();
-
             std::vector<Tile> tiles;
             int w = mTileMap->mTileWidth;
             int h = mTileMap->mTileHeight;
+            std::vector<Renderable> renderables(mTempTiles.size());
+            int i = 0;
             for (auto tile : mTempTiles)
             {
                 int x = mCoords.x + (tile.x * w);
-                int y = mCoords.y + (tile.y * h);
+                int y = mCoords.y - (tile.y * h);
 
                 auto& tex = mTileMap->mTextures[mCurrentTexture];
-                // mRenderer.submit(tex->mTexture.id, rect, tex->getUV(tile.z), {}, mRotation);
-                if (x < 0)
-                {
-                    x = x;
-                }
-                renderer->submit(tex->texId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation);
+
+                renderables[i++] = { tex->texId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation, false, false, 0, 99, false };
             }
+            renderer->submit(renderables);
         }
     }
 

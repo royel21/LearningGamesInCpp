@@ -37,6 +37,7 @@ namespace Plutus
 	EditorUI::EditorUI() : mVPColor(1, 1, 1, 1), mGridColor(0)
 	{
 		mInput = Input::getInstance();
+		mInput->addEventListener(this);
 		if (!std::filesystem::exists("assets"))
 		{
 			std::filesystem::create_directories("assets/textures");
@@ -53,6 +54,7 @@ namespace Plutus
 	EditorUI::~EditorUI()
 	{
 		saveRecents();
+		mInput->addRemoveListener(this);
 	}
 
 	void EditorUI::destroy()
@@ -390,6 +392,14 @@ namespace Plutus
 		mRecents.insert(mRecents.begin(), path);
 	}
 
+	void EditorUI::onKeyDown(const std::string& key)
+	{
+	}
+
+	void EditorUI::onKeyUp(const std::string& key)
+	{
+	}
+
 	void EditorUI::drawMainDockingWin()
 	{
 		static bool isOpen;
@@ -425,17 +435,18 @@ namespace Plutus
 		{
 			if (ImGui::BeginMenu("Files"))
 			{
-				if (ImGui::MenuItem("New", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))
+				if (ImGui::MenuItem("New", "Ctrl+N", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))
 				{
 					newScene();
 				}
-				if (ImGui::MenuItem("Open", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))
+				if (ImGui::MenuItem("Open", "Ctrl+O", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))
 				{
 					newScene();
 					std::string path;
 					if (Plutus::windowDialog(OPEN_FILE, path))
 					{
 						Plutus::SceneLoader::loadFromJson(path.c_str(), mScene);
+						addRecent(path);
 					}
 				}
 				if (ImGui::BeginMenu("Recent"))
@@ -456,6 +467,7 @@ namespace Plutus
 						{
 							newScene();
 							Plutus::SceneLoader::loadFromJson(recent.c_str(), mScene);
+							addRecent(recent);
 						}
 					}
 					ImGui::EndMenu();
@@ -465,7 +477,7 @@ namespace Plutus
 						mRecents.erase(mRecents.begin() + index);
 					}
 				}
-				if (ImGui::MenuItem("Save", "", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))
+				if (ImGui::MenuItem("Save As", "Ctrl+S", (dockspace_flags & ImGuiDockNodeFlags_NoSplit) != 0))
 				{
 					saveScene();
 				}
@@ -488,7 +500,7 @@ namespace Plutus
 		drawScene();
 		if (mCanvasHover)
 		{
-			// mComPanel.render(&mRender, mouseGridCoords);
+			mEntityEditor.render(&mRender, mouseGridCoords);
 		}
 		mRender.begin(&mShader, mCamera);
 
@@ -604,8 +616,8 @@ namespace Plutus
 			auto [trans, sprite] = view.get(ent);
 			mRenderables[i++] = { sprite.getTexId(), trans.getRect(), sprite.mUVCoord,
 			sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY, entt::to_integral(ent), trans.layer, trans.sortY };
-
 		}
+		// mEntityEditor.draw();
 		// sort by layer, y position, texture
 		std::sort(mRenderables.begin(), mRenderables.end());
 

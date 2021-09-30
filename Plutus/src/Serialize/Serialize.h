@@ -1,7 +1,7 @@
 #pragma once
 
 #include <rapidjson/writer.h> // for stringify JSON
-#include "rapidjson/document.h"
+#include <rapidjson/document.h>
 #include <unordered_map>
 
 namespace Plutus

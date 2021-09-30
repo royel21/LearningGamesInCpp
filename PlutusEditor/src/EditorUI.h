@@ -15,6 +15,7 @@
 #include <Graphics/Shader.h>
 #include <Core/type.h>
 #include <ECS/Scene.h>
+#include <Input/InputListener.h>
 
 namespace Plutus
 {
@@ -22,7 +23,7 @@ namespace Plutus
 	class Camera2D;
 	class DebugRender;
 
-	class EditorUI
+	class EditorUI : InputListener
 	{
 
 	private:
@@ -95,6 +96,10 @@ namespace Plutus
 		void addRecent(const std::string& path);
 
 		void drawDemo() { ImGui::ShowDemoWindow(); }
+
+		//Input Listener
+		void onKeyDown(const std::string& key);
+		void onKeyUp(const std::string& key);
 
 	private:
 		EditorUI();

@@ -13,6 +13,9 @@
 #include <Serialize/SceneLoader.h>
 #include <Time/Timer.h>
 #include <Systems/RenderSystem.h>
+#include <Systems/ScriptSystem.h>
+#include <Systems/AnimationSystem.h>
+
 
 GameScreen::GameScreen()
 {
@@ -38,26 +41,27 @@ void GameScreen::build()
     const int w = mEngine->getWidth();
     const int h = mEngine->getHeight();
 
+    mWorldCamera.init(w, h);
+
     mScene = Plutus::CreateRef<Plutus::Scene>();
+
     mSystemManager.init(mScene.get());
     mSystemManager.AddSystem<Plutus::RenderSystem>(&mWorldCamera);
-    mWorldCamera.init(w, h);
-    // mScene->Init(&mWorldCamera);
-    // mTextLayer.Init(static_cast<float>(w), static_cast<float>(h), "assets/fonts/Zoika.ttf", 28);
+    mSystemManager.AddSystem<Plutus::ScriptSystem>(&mWorldCamera);
+    mSystemManager.AddSystem<Plutus::AnimationSystem>();
 
     mInput = Plutus::Input::getInstance();
-    Plutus::SceneLoader::loadFromJson("assets/scenes/scene1.json", mScene);
 }
 
 void GameScreen::onEntry()
 {
+    Plutus::SceneLoader::loadFromJson("assets/scenes/scene1.json", mScene);
 }
 
 void GameScreen::update(float dt)
 {
     mWorldCamera.update();
 
-    // mScene->update(dt);
     if (mInput->onKeyPressed("PageUp"))
     {
         mCurrentState = Plutus::ScreenState::CHANGE_PREV;
@@ -72,15 +76,6 @@ void GameScreen::update(float dt)
 
 void GameScreen::draw()
 {
-    // mScene->draw();
-    // auto start = Plutus::Timer::millis();
-    // mScene->draw();
-    // std::printf("end: %llu\n", Plutus::Timer::millis() - start);
-    // char text[20];
-    // snprintf(text, 20, "%.1f FPS", mEngine->getFPS());
-    // mTextLayer.drawString(text, 5.0f, 5.0f, 1.0f, { 1, 0, 0, 1 });
-    // mTextLayer.drawString("This is a pretty large text for testing purpose and some more test", 5.0f, 30.0f);
-    // glClearColor(0, 0, 0, 1);
 }
 
 void GameScreen::onScreenResize(int w, int h)
@@ -89,6 +84,7 @@ void GameScreen::onScreenResize(int w, int h)
 
 void GameScreen::onExit()
 {
+    mScene->clear();
 }
 
 void GameScreen::destroy()

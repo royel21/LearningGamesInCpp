@@ -28,6 +28,11 @@ namespace Plutus
         ImGui::End();
     }
 
+    void EntityEditor::render(SpriteBatch2D* renderer, glm::vec2 coords)
+    {
+        mComponentPanel.render(renderer, coords);
+    }
+
     void EntityEditor::entityList()
     {
         static uint32_t selected = 0;

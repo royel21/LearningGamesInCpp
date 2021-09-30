@@ -1,1 +1,7 @@
-{"textures":[],"entities":[{"name":"Empty Entity","components":[]},{"name":"Empty Entity","components":[]}]}
+{
+  "textures": [],
+  "entities": [
+    { "name": "Empty Entity", "components": [] },
+    { "name": "Empty Entity", "components": [] }
+  ]
+}

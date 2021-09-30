@@ -76,8 +76,6 @@ namespace Plutus
 
 		mIBO = new IndexBuffer(indices, RENDERER_INDICES_SIZE);
 		delete[] indices;
-
-		vertices.resize(RENDERER_MAX_SPRITES * 4);
 	}
 
 	void SpriteBatch2D::submit(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
@@ -129,7 +127,9 @@ namespace Plutus
 	void SpriteBatch2D::submit(const std::vector<Renderable>& renderables)
 	{
 		//Resize to hold all the vertice needed
-		vertices.resize(renderables.size() * 4);
+		if (renderables.size() > vertices.size() * 4) {
+			vertices.resize(renderables.size() * 4 + mVertexCount);
+		}
 
 		for (auto r : renderables)
 		{
@@ -141,7 +141,7 @@ namespace Plutus
 	{
 		mCamera = camera;
 		mShader = shader;
-		camSize = mCamera->getViewPortDim();
+		camSize = mCamera->getViewPortDim() + glm::vec4(-200, -200, 200, 200);
 		shader->enable();
 		shader->setUniform1b("isText", isText);
 		shader->setUniform1i("mySampler", 0);
@@ -176,7 +176,6 @@ namespace Plutus
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		mIBO->unbind();
 		mShader->disable();
-
 		mRenderBatches.clear();
 
 		mVertexCount = 0;

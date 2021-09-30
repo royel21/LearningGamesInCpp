@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <glm/glm.hpp>
 #include <functional>
+#include "InputListener.h"
 
 namespace Plutus
 {
@@ -24,15 +25,16 @@ namespace Plutus
 		std::unordered_map<std::string, bool> m_prevKeyMap;
 
 	public:
-		std::function<void(const char *)> onFileDrop = nullptr;
+		bool isCtrl = false;
+		std::function<void(const char*)> onFileDrop = nullptr;
 
 	public:
 		Input();
-		static Input *getInstance();
+		static Input* getInstance();
 
 		void update();
 
-		void keyStateChange(const std::string &keyId, bool state);
+		void keyStateChange(const std::string& keyId, int state);
 
 		void setMouseCoords(float x, float y);
 
@@ -48,8 +50,12 @@ namespace Plutus
 
 		glm::vec2 getMouseCoords() const { return m_mouseCoords; }
 
+		void addEventListener(InputListener* listener);
+		void addRemoveListener(InputListener* listener);
+
 	private:
-		bool wasKeyDown(const std::string &keyId);
+		bool wasKeyDown(const std::string& keyId);
+		std::vector<InputListener*> mEventListeners;
 	};
 } // namespace Plutus
 

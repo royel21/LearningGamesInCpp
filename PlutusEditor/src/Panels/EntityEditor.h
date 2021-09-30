@@ -6,6 +6,7 @@
 #include "glm/glm.hpp"
 #include "Core/type.h"
 #include <Panels/ComponentPanel.h>
+#include <Graphics/vertex.h>
 
 #define EDIT_PLACE 0
 #define EDIT_SELECT 1
@@ -17,6 +18,7 @@ namespace Plutus
     class Scene;
     class Entity;
     class EditorUI;
+    class SpriteBatch2D;
     struct Layer;
 
     class EntityEditor
@@ -25,6 +27,7 @@ namespace Plutus
         EntityEditor() = default;
 
         void draw();
+        void render(SpriteBatch2D* renderer, glm::vec2 coords);
         void setContext(const Ref<Scene>& context, EditorUI* parent);
 
     private:

@@ -5,9 +5,9 @@
 
 namespace Plutus
 {
-    std::vector<unsigned char> readFile(const char *path2File, const char *mode)
+    std::vector<unsigned char> readFile(const char* path2File, const char* mode)
     {
-        FILE *fp = fopen(path2File, mode);
+        FILE* fp = fopen(path2File, mode);
         std::vector<unsigned char> vec;
 
         if (fp != NULL)
@@ -36,10 +36,10 @@ namespace Plutus
         return vec;
     }
 
-    std::string readFileAsString(const char *path)
+    std::string readFileAsString(const char* path)
     {
-        FILE *fp = fopen(path, "r");
-        char *data = nullptr;
+        FILE* fp = fopen(path, "rb");
+        char* data = nullptr;
 
         if (fp != NULL)
         {
