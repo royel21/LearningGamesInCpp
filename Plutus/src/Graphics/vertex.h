@@ -105,10 +105,10 @@ namespace Plutus
 
 		bool operator < (Renderable& rend) const {
 			if (sortY && rend.sortY) {
-				return std::tie(trans.y, layer, TexId) > std::tie(rend.trans.y, rend.layer, TexId);
+				return std::tie(layer, rend.trans.y, TexId) < std::tie(rend.layer, trans.y, TexId);
 			}
 			else {
-				return std::tie(layer, TexId) > std::tie(rend.layer, rend.TexId);
+				return std::tie(layer, TexId) < std::tie(rend.layer, rend.TexId);
 			}
 		}
 	};

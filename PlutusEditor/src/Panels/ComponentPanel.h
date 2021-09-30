@@ -1,4 +1,5 @@
 #pragma once
+
 #include <vector>
 #include <imgui.h>
 #include <Core/type.h>
@@ -11,10 +12,8 @@
 
 namespace Plutus
 {
-    class Entity;
     struct Texture;
     class Input;
-    class Scene;
     class EditorUI;
     class SpriteBatch2D;
 

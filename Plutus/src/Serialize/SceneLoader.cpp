@@ -11,17 +11,18 @@
 
 namespace Plutus
 {
-    void loadAnimation(Entity* ent, rapidjson::Value::Object value)
+    void loadAnimation(Entity& ent, rapidjson::Value::Object value)
     {
-        auto& anim = ent->addComponent<Animation>(ent);
+        auto& anim = ent.addComponent<Animation>(ent);
     }
 
-    void loadTileMap(Entity* ent, rapidjson::Value::Object value)
+    void loadTileMap(Entity& ent, rapidjson::Value::Object value)
     {
         int w = value["tilewidth"].GetInt();
         int h = value["tileheight"].GetInt();
+        int layer = value["layer"].GetInt();
         auto tileset = value["tileset"].GetString();
-        auto& tmap = ent->addComponent<TileMap>(w, h);
+        auto& tmap = ent.addComponent<TileMap>(w, h, layer);
 
         tmap.mTileset = AssetManager::get()->mTextures.getTexture(tileset);
         auto textures = value["textures"].GetArray();
@@ -58,8 +59,6 @@ namespace Plutus
             //Load All Textures
             if (doc["textures"].IsArray())
             {
-                // Textures::get()->cleanUp();
-
                 auto textures = doc["textures"].GetArray();
                 for (size_t i = 0; i < textures.Size(); i++)
                 {
@@ -73,74 +72,59 @@ namespace Plutus
                 }
             }
 
-            if (doc["layers"].IsArray())
+            if (doc["entities"].IsArray())
             {
-
                 //Get the layers
-                auto layers = doc["layers"].GetArray();
-                for (size_t i = 0; i < layers.Size(); i++)
+                auto entities = doc["entities"].GetArray();
+                for (size_t i = 0; i < entities.Size(); i++)
                 {
-                    auto objLayer = layers[i].GetJsonObject();
+                    auto entObj = entities[i].GetJsonObject();
 
-                    auto layerName = objLayer["name"].GetString();
-                    auto layer = scene->addNewLayer(layerName);
+                    auto name = entObj["name"].GetString();
+                    auto entity = scene->createEntity(name);
 
-                    //get the entities
-                    auto entities = objLayer["entities"].GetArray();
-                    for (size_t i = 0; i < entities.Size(); i++)
+                    auto components = entObj["components"].GetArray();
+                    for (size_t i = 0; i < components.Size(); i++)
                     {
-                        auto objEntity = entities[i].GetJsonObject();
-                        auto entityName = objEntity["name"].GetString();
-                        auto entity = scene->createEntity(entityName);
-
-                        auto components = objEntity["components"].GetArray();
-                        for (size_t i = 0; i < components.Size(); i++)
+                        auto component = components[i].GetJsonObject();
+                        std::string compType = component["name"].GetString();
+                        if (compType == "Transform")
                         {
-                            auto component = components[i].GetJsonObject();
-                            std::string compType = component["name"].GetString();
-                            if (compType == "Transform")
-                            {
-                                float x = component["x"].GetFloat();
-                                float y = component["y"].GetFloat();
-                                int w = component["w"].GetInt();
-                                int h = component["h"].GetInt();
-                                float r = component["r"].GetFloat();
-                                entity->addComponent<Transform>(x, y, w, h, r);
-                                continue;
-                            }
-                            if (compType == "Sprite")
-                            {
-                                auto spr = entity->addComponent<Sprite>(component["texture"].GetString());
-                                spr.mFlipX = component["mFlipX"].GetBool();
-                                spr.mFlipY = component["mFlipY"].GetBool();
-                                spr.mColor.setColor(component["color"].GetInt());
-                                continue;
-                            }
-                            if (compType == "Animation")
-                            {
-                                loadAnimation(entity, components[i].GetJsonObject());
-                                continue;
-                            }
-                            if (compType == "TileMap")
-                            {
-                                loadTileMap(entity, components[i].GetJsonObject());
-                                continue;
-                            }
-                            if (compType == "Script")
-                            {
-                                entity->addComponent<Script>(component["path"].GetString(), entity, scene.get());
-                            }
+                            float x = component["x"].GetFloat();
+                            float y = component["y"].GetFloat();
+                            int w = component["w"].GetInt();
+                            int h = component["h"].GetInt();
+                            float r = component["r"].GetFloat();
+                            int layer = component["layer"].GetInt();
+                            bool sortY = component["sortY"].GetBool();
+                            entity.addComponent<Transform>(x, y, w, h, r, layer, sortY);
+                            continue;
+                        }
+                        if (compType == "Sprite")
+                        {
+                            auto spr = entity.addComponent<Sprite>(component["texture"].GetString());
+                            spr.mFlipX = component["mFlipX"].GetBool();
+                            spr.mFlipY = component["mFlipY"].GetBool();
+                            spr.mColor.setColor(component["color"].GetInt());
+                            continue;
+                        }
+                        if (compType == "Animation")
+                        {
+                            loadAnimation(entity, components[i].GetJsonObject());
+                            continue;
+                        }
+                        if (compType == "TileMap")
+                        {
+                            loadTileMap(entity, components[i].GetJsonObject());
+                            continue;
+                        }
+                        if (compType == "Script")
+                        {
+                            entity.addComponent<Script>(component["path"].GetString(), entity, scene.get());
                         }
                     }
                 }
 
-                auto nlayers = scene->getLayers();
-
-                if (layers.Size() > 0)
-                {
-                    auto name = nlayers->begin()->first;
-                    scene->setCurrentLayer(name);
-                }
                 success = true;
             }
         }

@@ -47,13 +47,13 @@ namespace Plutus
     {
         int mTileWidth;
         int mTileHeight;
-        uint8_t layer = 0;
+        int mLayer = 0;
         std::vector<Tile> mTiles;
         Texture* mTileset = nullptr;
         std::vector<Texture*> mTextures;
 
         TileMap() = default;
-        TileMap(int tileWidth, int tileHeight) : mTileWidth(tileWidth), mTileHeight(tileHeight) {}
+        TileMap(int tileWidth, int tileHeight, int _layer = 0) : mTileWidth(tileWidth), mTileHeight(tileHeight) {}
 
         void addTexture(const std::string& texture);
         void removeTexture(const std::string& texture);

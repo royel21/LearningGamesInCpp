@@ -44,14 +44,13 @@ namespace Plutus
         if (ImGui::BeginPopupContextWindow(0, 1, false))
         {
             if (ImGui::MenuItem("Create Empty Entity")) {
-                mParentUI->setEntity(*mScene->createEntity("Empty Entity"));
+                mParentUI->setEntity(mScene->createEntity("Empty Entity"));
             }
 
             ImGui::EndPopup();
         }
-        if (mParentUI->getEntity()) {
-            mComponentPanel.draw();
-        }
+
+        mComponentPanel.drawUI();
     }
 
     void EntityEditor::drawEntity(Entity ent)
@@ -75,7 +74,7 @@ namespace Plutus
             {
                 if (mParentUI->getEntity() == ent)
                     mParentUI->setEntity({});
-                mScene->removeEntity(&ent);
+                mScene->removeEntity(ent);
             }
 
             ImGui::EndPopup();

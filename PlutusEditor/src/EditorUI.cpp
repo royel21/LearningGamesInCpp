@@ -330,12 +330,11 @@ namespace Plutus
 			{
 				lastCoords = { xPos, yPos };
 				lastCamPos = mCamera->getPosition();
-				auto ent = mScene->getEntity2(mPicker.getEntId({ xPos, yPos }));
+				mEnt = mScene->getEntity(mPicker.getEntId({ xPos, yPos }));
 
-				if (ent) {
-					mEnt = ent;
-					if (ent.hasComponent<Plutus::Transform>()) {
-						auto& trans = ent.getComponent<Plutus::Transform>();
+				if (mEnt) {
+					if (mEnt.hasComponent<Plutus::Transform>()) {
+						auto& trans = mEnt.getComponent<Plutus::Transform>();
 						entLastPos = trans.getPosition();
 					}
 				}
@@ -594,7 +593,8 @@ namespace Plutus
 				{
 					auto tileset = tilemap.mTextures[tile.texture];
 					glm::vec4 rect{ tile.x, tile.y, w, h };
-					mRenderables[i++] = { tileset->texId, rect, tileset->getUV(tile.texcoord), { tile.color }, tile.rotate, tile.flipX, tile.flipY, 0, tilemap.layer, false };
+					mRenderables[i++] = { tileset->texId, rect, tileset->getUV(tile.texcoord),
+					 { tile.color }, tile.rotate, tile.flipX, tile.flipY, 0, tilemap.mLayer, false };
 				}
 			}
 		}
@@ -602,7 +602,8 @@ namespace Plutus
 		for (auto ent : view)
 		{
 			auto [trans, sprite] = view.get(ent);
-			mRenderables[i++] = { sprite.getTexId(), trans.getRect(), sprite.mUVCoord, sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY, entt::to_integral(ent), trans.layer, trans.sortY };
+			mRenderables[i++] = { sprite.getTexId(), trans.getRect(), sprite.mUVCoord,
+			sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY, entt::to_integral(ent), trans.layer, trans.sortY };
 
 		}
 		// sort by layer, y position, texture

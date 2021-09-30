@@ -65,26 +65,28 @@ void GameScreen::onEntry()
     const int h = mEngine->getHeight();
     // Player 1
     auto player = mScene->createEntity("Player");
-    auto trasn1 = player->addComponent<Plutus::Transform>(192.0f, 0.0f, 64, 64, 0.0f, 0, true);
-    player->addComponent<Plutus::Sprite>("player1");
-    std::printf("player2 script\n");
-    player->addComponent<Plutus::Script>("assets/script/player1.lua", player, mScene.get());
+    auto trasn1 = player.addComponent<Plutus::Transform>(192.0f, 0.0f, 64, 64, 0.0f, 0, true);
+    player.addComponent<Plutus::Sprite>("player1");
+    player.addComponent<Plutus::Script>("assets/script/player1.lua", player, mScene.get());
+
     // Player 2
     auto player2 = mScene->createEntity("Player2");
-    auto trasn2 = player2->addComponent<Plutus::Transform>(400.0f, 0.0f, 128, 128, 0.0f, 0, true);
-    player2->addComponent<Plutus::Sprite>("player2");
-    auto& anim2 = player2->addComponent<Plutus::Animation>(player2);
+    player2.addComponent<Plutus::Transform>(400.0f, 0.0f, 128, 128, 0.0f, 0, true);
+    player2.addComponent<Plutus::Sprite>("player2");
+
+    auto& anim2 = player2.addComponent<Plutus::Animation>(player2);
     anim2.addTexture("player2");
-    player2->addComponent<Plutus::Script>("assets/script/player2.lua", player2, mScene.get());
+
+    player2.addComponent<Plutus::Script>("assets/script/player2.lua", player2, mScene.get());
 
     // Bat1
     auto bat = mScene->createEntity("Bat");
-    auto trasn3 = bat->addComponent<Plutus::Transform>(288.0f, 0.0f, 64, 64, 0.0f, 0, true);
-    bat->addComponent<Plutus::Sprite>("bats");
+    auto trasn3 = bat.addComponent<Plutus::Transform>(288.0f, 0.0f, 64, 64, 0.0f, 0, true);
+    bat.addComponent<Plutus::Sprite>("bats");
 
-    auto& anim = bat->addComponent<Plutus::Animation>(bat);
+    auto& anim = bat.addComponent<Plutus::Animation>(bat);
     anim.addTexture("bats");
-    bat->addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
+    bat.addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
 
 
     // auto bed = mScene->createEntity("bed");

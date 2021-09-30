@@ -21,6 +21,7 @@ namespace Plutus
     public:
         Entity() = default;
         Entity(const Entity& ent) : mId(ent.mId), mScene(ent.mScene) { }
+        Entity(const Entity* ent) : mId(ent->mId), mScene(ent->mScene) { }
         Entity(entt::entity ent, Scene* scene) : mId(ent), mScene(scene) {}
 
         template <typename T>
@@ -66,47 +67,22 @@ namespace Plutus
 
     };
 
-    struct Layer
-    {
-        bool isVisible = true;
-        std::string name;
-        std::vector<Ref<Entity>> mEntities;
-
-        Layer() = default;
-        Layer(const std::string& _name) : name(_name) {};
-
-        Ref<Entity> add(Ref<Entity> item);
-
-        void remove(const Entity* item);
-    };
-
-    using LayerMap = std::unordered_map<std::string, Layer>;
-
     class Scene
     {
     public:
-        Scene();
+        Scene() = default;
         ~Scene();
 
-        void removeEntity(Entity* ent);
-        Entity* getEntity(uint32_t Id);
-        Entity getEntity2(uint32_t Id);
-        Entity* createEntity(const std::string& name);
+        Entity createEntity(const std::string& name);
+        Entity getEntity(uint32_t Id);
+        void removeEntity(entt::entity ent);
+
         entt::registry* getRegistry() { return &mRegistry; }
 
-        bool removeLayer(std::string name);
-        Layer* addNewLayer(const std::string& name);
-        Layer* setCurrentLayer(const std::string& name);
-        Layer* getCurrentLayer() { return mCurrentLayer; };
-        LayerMap* getLayers() { return &mLayers; };
-
-        void clear();
+        void clear() { mRegistry.clear(); }
 
     private:
         entt::registry mRegistry;
-        Layer* mCurrentLayer;
-
-        LayerMap mLayers;
         friend class Entity;
         friend class System;
     };

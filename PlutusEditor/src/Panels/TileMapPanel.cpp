@@ -153,6 +153,8 @@ namespace Plutus
             mIsOpen = true;
             mTileMap = tileMap;
             int size[] = { mTileMap->mTileWidth, mTileMap->mTileHeight };
+
+            ImGui::InputInt("Layer", &mTileMap->mLayer, 1);
             ImGui::PushItemWidth(60);
             if (ImGui::DragInt2("Tile Size", size, 1))
             {

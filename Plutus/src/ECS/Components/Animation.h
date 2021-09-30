@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include "../Scene.h"
 
 namespace Plutus
 {
@@ -22,7 +23,7 @@ namespace Plutus
     class Animation
     {
     public:
-        Animation(Entity* ent) : mEnt(ent) {};
+        Animation(Entity& ent) : mEnt(ent) {};
 
         void addTexture(const std::string& id);
         void addSequence(const std::string id, Sequence seq);
@@ -42,6 +43,6 @@ namespace Plutus
         std::string currentSeq;
         std::unordered_map<std::string, Sequence> mSequences;
         std::vector<std::string> mTextures;
-        Entity* mEnt = nullptr;
+        Entity mEnt;
     };
 } // namespace Plutus

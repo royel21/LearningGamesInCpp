@@ -18,7 +18,6 @@ namespace Plutus
     class Entity;
     class EditorUI;
     struct Layer;
-    ComponentPanel mComponentPanel;
 
     class EntityEditor
     {
@@ -37,5 +36,6 @@ namespace Plutus
 
         Ref<Scene> mScene;
         EditorUI* mParentUI;
+        ComponentPanel mComponentPanel;
     };
 } // namespace Plutus

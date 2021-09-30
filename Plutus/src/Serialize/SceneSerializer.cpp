@@ -58,6 +58,10 @@ namespace Plutus
             writer->Int(trans.h);
             writer->String("w");
             writer->Int(trans.w);
+            writer->String("layer");
+            writer->Int(trans.layer);
+            writer->String("sortY");
+            writer->Bool(trans.sortY);
             writer->String("r");
             writer->Double(trans.r);
         }
@@ -146,9 +150,12 @@ namespace Plutus
             writer->Int(tilemap.mTileWidth);
             writer->String("tileheight");
             writer->Int(tilemap.mTileHeight);
+            writer->String("layer");
+            writer->Int(tilemap.mLayer);
             //Array of tileset name
             writer->String("tileset");
             writer->String(tilemap.mTileset->name.c_str());
+
 
             //Array of textures
             writer->String("textures");
@@ -200,55 +207,40 @@ namespace Plutus
 
         Textures_JSON(writer);
 
-        writer->String("layers");
+        writer->String("entities");
         writer->StartArray();
-        auto layers = scene->getLayers();
-        for (auto layer : *layers)
-        {
+        scene->getRegistry()->each([&](entt::entity e) {
+            Plutus::Entity ent = { e, scene.get() };
             writer->StartObject();
+            writer->String("name");
+            writer->String(ent.getName().c_str());
+            writer->String("components");
+            writer->StartArray();
             {
-                writer->String("name");
-                writer->String(layer.first.c_str());
-                writer->String("entities");
-                writer->StartArray();
+                if (ent.hasComponent<Transform>())
                 {
-                    for (auto ent : layer.second.mEntities)
-                    {
-                        writer->StartObject();
-                        writer->String("name");
-                        writer->String(ent->getName().c_str());
-                        writer->String("components");
-                        writer->StartArray();
-                        {
-                            if (ent->hasComponent<Transform>())
-                            {
-                                Transform_JSON(writer, ent->getComponent<Transform>());
-                            }
-                            if (ent->hasComponent<Sprite>())
-                            {
-                                Sprite_json(writer, ent->getComponent<Sprite>());
-                            }
-                            if (ent->hasComponent<Animation>())
-                            {
-                                Animate_JSON(writer, ent->getComponent<Animation>());
-                            }
-                            if (ent->hasComponent<Script>())
-                            {
-                                Script_JSON(writer, ent->getComponent<Script>());
-                            }
-                            if (ent->hasComponent<TileMap>())
-                            {
-                                TileMap_json(writer, ent->getComponent<TileMap>());
-                            }
-                        }
-                        writer->EndArray();
-                        writer->EndObject();
-                    }
+                    Transform_JSON(writer, ent.getComponent<Transform>());
                 }
-                writer->EndArray();
+                if (ent.hasComponent<Sprite>())
+                {
+                    Sprite_json(writer, ent.getComponent<Sprite>());
+                }
+                if (ent.hasComponent<Animation>())
+                {
+                    Animate_JSON(writer, ent.getComponent<Animation>());
+                }
+                if (ent.hasComponent<Script>())
+                {
+                    Script_JSON(writer, ent.getComponent<Script>());
+                }
+                if (ent.hasComponent<TileMap>())
+                {
+                    TileMap_json(writer, ent.getComponent<TileMap>());
+                }
             }
+            writer->EndArray();
             writer->EndObject();
-        }
+            });
         writer->EndArray();
 
         writer->EndObject();

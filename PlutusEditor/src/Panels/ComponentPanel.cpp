@@ -12,6 +12,8 @@
 #include <ECS/Components.h>
 #include <ECS/Scene.h>
 #include <Utils/Utils.h>
+#include <cstring>
+
 #include "../EditorUI.h"
 
 #define COMP_TRASNFORM 0
@@ -102,12 +104,20 @@ namespace Plutus
 
     void ComponentPanel::drawUI()
     {
-        static bool isOpen = true;
-        ImGui::Begin("Components", &isOpen, ImGuiWindowFlags_HorizontalScrollbar);
+        ImGui::Begin("Components", nullptr, ImGuiWindowFlags_HorizontalScrollbar);
         {
             mEntity = mParentUI->getEntity();
             if (mEntity)
             {
+                auto& tag = mEntity.getComponent<Tag>().Name;
+
+                char buffer[256];
+                memset(buffer, 0, sizeof(buffer));
+                strncpy_s(buffer, tag.c_str(), sizeof(buffer));
+                if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
+                {
+                    tag = std::string(buffer);
+                }
                 static bool showCreate;
                 if (!mEntity.hasComponent<TileMap>() || !mEntity.hasComponent<Script>())
                 {
@@ -164,6 +174,8 @@ namespace Plutus
                     trans.w = size[1];
                 }
                 ImGui::DragFloat("Rotation", &trans.r, 5, 0, 360, "%.0f");
+                ImGui::Checkbox("SortY", &trans.sortY);
+                ImGui::InputInt("Layer", &trans.layer, 1);
                 ImGui::PopItemWidth();
             }
         }

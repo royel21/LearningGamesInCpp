@@ -15,7 +15,7 @@ namespace Plutus
         std::string path;
 
     public:
-        Script(std::string _path, Entity ent, Scene* scene);
+        Script(std::string _path, Entity& ent, Scene* scene);
 
         void update(float dt) {
             mEnv["update"](dt);
