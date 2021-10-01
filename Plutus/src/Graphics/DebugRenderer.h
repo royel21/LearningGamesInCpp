@@ -29,6 +29,7 @@ namespace Plutus
 		void drawCircle(const glm::vec2& center, const ColorRGBA8& color, float radius);
 		void render(float lineWidth);
 		void drawGrid();
+		void drawGrid2();
 		void end();
 		void dispose();
 		//Grid Cell Size w = Width, h = Height

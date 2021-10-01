@@ -215,6 +215,54 @@ namespace Plutus
 		}
 	}
 
+	void DebugRender::drawGrid2()
+	{
+		float tw = (float)mCellSize.x;
+		float th = (float)mCellSize.y;
+
+		auto orgScreenHalf = mCamera->getViewPortSize() / 2.0f;
+		auto newPos = mCamera->getPosition() + orgScreenHalf;
+
+		glm::vec2 scaleScreen = mCamera->getScaleScreen();
+		auto half = (scaleScreen / 2.0f);
+
+		glm::vec2 screenStart = newPos - half;
+		glm::vec2 screenEnd = newPos + half;
+		glm::vec2 lineStart;
+		glm::vec2 lineEnd;
+
+		int sizeX = static_cast<int>((scaleScreen.x) / tw) + 2;
+		int sizeY = static_cast<int>((scaleScreen.y) / th) + 2;
+
+		float x = floor(screenStart.x / tw);
+		float y = floor(screenStart.y / th);
+
+		glm::vec2 cPos(x * tw, y * th);
+
+		for (int x = 0; x <= sizeX; x++)
+		{
+			lineStart.x = cPos.x + (x * tw);
+			lineStart.y = cPos.y;
+
+			lineEnd.x = cPos.x + (x * tw);
+			lineEnd.y = screenEnd.y;
+			drawLine(lineStart, lineEnd, mGridColor);
+		}
+
+		for (int y = 0; y <= sizeY; y++)
+		{
+			lineStart.x = cPos.x;
+			lineStart.y = cPos.y + (y * th);
+
+			lineEnd.x = screenEnd.x;
+			lineEnd.y = cPos.y + (y * th);
+			drawLine(lineStart, lineEnd, mGridColor);
+		}
+		end();
+
+		render(1.0f);
+	}
+
 	glm::vec2 DebugRender::getSquareCoords(glm::vec2 mousePos)
 	{
 		glm::vec2 cmpos = mCamera->convertScreenToWold(mousePos);

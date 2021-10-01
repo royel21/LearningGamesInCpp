@@ -123,6 +123,8 @@ void EditorScreen::draw()
     mDebug->drawCircle({ 85.0f, h - 85.0f }, { 255, 255, 255, 255 }, 70.0f);
     mDebug->end();
     mDebug->render(2);
+    mDebug->setColor({ 255,255,255,25 });
+    mDebug->drawGrid2();
 }
 
 void EditorScreen::onScreenResize(int w, int h)

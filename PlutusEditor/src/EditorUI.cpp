@@ -517,7 +517,7 @@ namespace Plutus
 	{
 
 		mRender.end();
-		mDebugRender->drawGrid();
+		mDebugRender->drawGrid2();
 		mFb.unBind();
 	}
 
