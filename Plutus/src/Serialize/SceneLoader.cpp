@@ -24,12 +24,11 @@ namespace Plutus
         auto tileset = value["tileset"].GetString();
         auto& tmap = ent.addComponent<TileMap>(w, h, layer);
 
-        tmap.mTileset = AssetManager::get()->mTextures.getTexture(tileset);
         auto textures = value["textures"].GetArray();
 
         for (auto& t : value["textures"].GetArray())
         {
-            tmap.mTextures.push_back(AssetManager::get()->mTextures.getTexture(t.GetString()));
+            tmap.addTexture(t.GetString());
         }
 
         auto tiles = value["tiles"].GetArray();

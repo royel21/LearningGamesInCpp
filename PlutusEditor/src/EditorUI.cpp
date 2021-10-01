@@ -318,10 +318,6 @@ namespace Plutus
 		{
 			mouseGridCoords = mDebugRender->getSquareCoords({ xPos, yPos });
 
-			if (mInput->onKeyDown("MouseLeft")) {
-				// mComPanel.createTiles(mouseGridCoords);
-			}
-
 			if (mInput->onKeyPressed("R"))
 				mCamera->setPosition(0, 0);
 
@@ -332,9 +328,10 @@ namespace Plutus
 			{
 				lastCoords = { xPos, yPos };
 				lastCamPos = mCamera->getPosition();
-				mEnt = mScene->getEntity(mPicker.getEntId({ xPos, yPos }));
+				auto ent = mScene->getEntity(mPicker.getEntId({ xPos, yPos }));
 
-				if (mEnt) {
+				if (ent && mEnt != ent) {
+					mEnt = ent;
 					if (mEnt.hasComponent<Plutus::Transform>()) {
 						auto& trans = mEnt.getComponent<Plutus::Transform>();
 						entLastPos = trans.getPosition();
@@ -498,10 +495,6 @@ namespace Plutus
 	void EditorUI::bindFB()
 	{
 		drawScene();
-		if (mCanvasHover)
-		{
-			mEntityEditor.render(&mRender, mouseGridCoords);
-		}
 		mRender.begin(&mShader, mCamera);
 
 		mPicker.bind();
@@ -595,9 +588,8 @@ namespace Plutus
 		for (auto ent : viewMap)
 		{
 			auto [tilemap] = viewMap.get(ent);
-			if (tilemap.mTiles.size())
+			if (tilemap.mTiles.size() && tilemap.mTextures.size())
 			{
-				auto tileset = tilemap.mTextures[0];
 				const int w = tilemap.mTileWidth;
 				const int h = tilemap.mTileHeight;
 
@@ -606,7 +598,7 @@ namespace Plutus
 					auto tileset = tilemap.mTextures[tile.texture];
 					glm::vec4 rect{ tile.x, tile.y, w, h };
 					mRenderables[i++] = { tileset->texId, rect, tileset->getUV(tile.texcoord),
-					 { tile.color }, tile.rotate, tile.flipX, tile.flipY, 0, tilemap.mLayer, false };
+					 { tile.color }, tile.rotate, tile.flipX, tile.flipY, entt::to_integral(ent), tilemap.mLayer, false };
 				}
 			}
 		}

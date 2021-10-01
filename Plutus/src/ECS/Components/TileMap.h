@@ -49,18 +49,17 @@ namespace Plutus
         int mTileHeight;
         int mLayer = 0;
         std::vector<Tile> mTiles;
-        Texture* mTileset = nullptr;
-        std::vector<Texture*> mTextures;
+        std::unordered_map<int, Texture*> mTextures;
 
         TileMap() = default;
         TileMap(int tileWidth, int tileHeight, int _layer = 0) : mTileWidth(tileWidth), mTileHeight(tileHeight) {}
 
         void addTexture(const std::string& texture);
-        void removeTexture(const std::string& texture);
+        void removeTexture(int index);
 
         void addTile(const Tile& tile);
         Tile* getTile(const glm::ivec2& mCoords);
         int getIndex(const glm::ivec2& mCoords);
-        void removeTile(const glm::ivec2& mCoords);
+        bool removeTile(const glm::ivec2& mCoords);
     };
 } // namespace Plutus

@@ -101,6 +101,10 @@ namespace Plutus
 		void onKeyDown(const std::string& key);
 		void onKeyUp(const std::string& key);
 
+		bool isCanvaHover() { return mCanvasHover; }
+		SpriteBatch2D* getRenderer() { return &mRender; }
+		glm::ivec2 getGridCoords() { return mouseGridCoords; }
+
 	private:
 		EditorUI();
 		//ImGui Panels

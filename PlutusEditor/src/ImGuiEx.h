@@ -45,9 +45,14 @@ namespace ImGui
     template <typename T>
     inline bool ComboBox(const char* label, const std::vector<T*>& data, int& selected)
     {
+        std::string name;
+        if (data.size()) {
+            name = data[selected]->name;
+        }
+
         bool isSelected = false;
 
-        if (ImGui::BeginCombo(label, data[selected]->name.c_str()))
+        if (ImGui::BeginCombo(label, name.c_str()))
         {
             int i = 0;
             for (auto m : data)
@@ -71,8 +76,12 @@ namespace ImGui
     inline bool ComboBox(const char* label, const std::vector<std::string>& data, int& selected)
     {
         bool isSelected = false;
+        std::string name;
+        if (data.size()) {
+            name = data[selected];
+        }
 
-        if (ImGui::BeginCombo(label, data[selected].c_str()))
+        if (ImGui::BeginCombo(label, name.c_str()))
         {
             int i = 0;
             for (auto m : data)
@@ -92,6 +101,7 @@ namespace ImGui
 
         return isSelected;
     }
+
     template <typename T>
     inline bool ComboBox(const char* label, const std::unordered_map<std::string, T>& data, std::string& selected)
     {
@@ -103,6 +113,35 @@ namespace ImGui
             {
                 bool is_selected = m.first.compare(selected) == 0;
                 if (ImGui::Selectable(m.first.c_str(), is_selected))
+                {
+                    isSelected = true;
+                    selected = m.first;
+                }
+                if (isSelected)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        return isSelected;
+    }
+
+    template <typename T>
+    inline bool ComboBox(const char* label, const std::unordered_map<int, T>& data, int& selected)
+    {
+        std::string name;
+        if (data.size()) {
+            name = data.at(selected)->name;
+        }
+
+        bool isSelected = false;
+
+        if (ImGui::BeginCombo(label, name.c_str()))
+        {
+            for (auto m : data)
+            {
+                bool is_selected = m.first == selected;
+                if (ImGui::Selectable(data.at(m.first)->name.c_str(), is_selected))
                 {
                     isSelected = true;
                     selected = m.first;

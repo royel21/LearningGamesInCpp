@@ -15,6 +15,7 @@ namespace Plutus
         std::string path;
 
     public:
+        Script() = default;
         Script(std::string _path, Entity& ent, Scene* scene);
 
         void update(float dt) {

@@ -32,7 +32,7 @@ namespace Plutus
 
         mScene = scene;
         mInput = Input::getInstance();
-        mTileMapPanel.setContext(scene);
+        mTileMapPanel.setContext(scene, parent);
 
         createComps["Animation"] = [&](bool& open)
         {
@@ -118,38 +118,27 @@ namespace Plutus
                 {
                     tag = std::string(buffer);
                 }
+
                 static bool showCreate;
                 if (!mEntity.hasComponent<TileMap>() || !mEntity.hasComponent<Script>())
                 {
                     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
-                    if (ImGui::Button(ICON_FA_PLUS_CIRCLE " Add Component##createComp"))
+                    if (ImGui::Button(ICON_FA_PLUS_CIRCLE " Add Component##cp"))
                     {
                         showCreate = true;
                     }
                     showCreateComp(showCreate);
                     ImGui::PopStyleColor();
-                    ImGui::Separator();
                 }
+                ImGui::Separator();
 
-                if (mEntity.hasComponent<Animation>())
-                {
-                    // mAnimPanel.draw(mEntity);
-                }
                 drawTransform();
+                drawMapTile();
                 drawSprite();
                 drawScript();
-                if (mEntity.hasComponent<TileMap>())
-                {
-                    mTileMapPanel.draw(&mEntity.getComponent<TileMap>());
-                }
             }
         }
         ImGui::End();
-    }
-
-    void ComponentPanel::render(SpriteBatch2D* renderer, glm::vec2 mcoords)
-    {
-        mTileMapPanel.renderTiles(renderer, mcoords);
     }
 
     void ComponentPanel::drawTransform()
@@ -178,6 +167,14 @@ namespace Plutus
                 ImGui::InputInt("Layer", &trans.layer, 1);
                 ImGui::PopItemWidth();
             }
+        }
+    }
+
+    void ComponentPanel::drawMapTile()
+    {
+        if (mEntity.hasComponent<TileMap>())
+        {
+            mTileMapPanel.draw(&mEntity.getComponent<TileMap>());
         }
     }
 
@@ -351,7 +348,6 @@ namespace Plutus
 
     void ComponentPanel::drawTexCoords(Texture* tileset, float scale)
     {
-
         const int w = tileset->texWidth;
         const int h = tileset->texHeight;
         uint32_t id = tileset->texId;
@@ -397,7 +393,8 @@ namespace Plutus
                         StartCoords = ImVec2(mpos_in_canvas.x, mpos_in_canvas.y);
                         mDown = true;
                     }
-                    drawList->AddRect(ImVec2(cvPos.x + StartCoords.x, cvPos.y + StartCoords.y), ImVec2(cvPos.x + mpos_in_canvas.x, cvPos.y + mpos_in_canvas.y), IM_COL32(255, 255, 255, 255));
+                    drawList->AddRect(ImVec2(cvPos.x + StartCoords.x, cvPos.y + StartCoords.y),
+                        ImVec2(cvPos.x + mpos_in_canvas.x, cvPos.y + mpos_in_canvas.y), IM_COL32(255, 255, 255, 255));
                 }
 
                 if (!mInput->onKeyDown("MouseLeft"))
@@ -460,26 +457,23 @@ namespace Plutus
     std::vector<std::string> ComponentPanel::getCompList()
     {
         std::vector<std::string> datas;
-        if (!mEntity.hasComponent<TileMap>())
+        if (!mEntity.hasComponent<Animation>())
         {
-            if (!mEntity.hasComponent<Animation>())
-            {
-                datas.push_back("Animation");
-            }
-            if (!mEntity.hasComponent<Transform>())
-            {
-                datas.push_back("Transform");
-            }
-            if (!mEntity.hasComponent<Sprite>())
-            {
-                datas.push_back("Sprite");
-            }
+            datas.push_back("Animation");
+        }
+        if (!mEntity.hasComponent<Transform>())
+        {
+            datas.push_back("Transform");
+        }
+        if (!mEntity.hasComponent<Sprite>())
+        {
+            datas.push_back("Sprite");
         }
         if (!mEntity.hasComponent<Script>())
         {
             datas.push_back("Script");
         }
-        if (datas.size() == 3 && !mEntity.hasComponent<TileMap>())
+        if (!mEntity.hasComponent<TileMap>())
         {
             datas.push_back("TileMap");
         }

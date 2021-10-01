@@ -18,7 +18,6 @@ namespace Plutus
     class Scene;
     class Entity;
     class EditorUI;
-    class SpriteBatch2D;
     struct Layer;
 
     class EntityEditor
@@ -27,7 +26,6 @@ namespace Plutus
         EntityEditor() = default;
 
         void draw();
-        void render(SpriteBatch2D* renderer, glm::vec2 coords);
         void setContext(const Ref<Scene>& context, EditorUI* parent);
 
     private:

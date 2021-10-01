@@ -64,7 +64,8 @@ namespace Plutus
         for (auto ent : view)
         {
             auto [trans, sprite] = view.get(ent);
-            mRenderables[i++] = { sprite.getTexId(), trans.getRect(), sprite.mUVCoord, sprite.mColor,
+
+            mRenderables[i++] = { sprite.getTexId(), trans.getRect(), sprite.getUV(), sprite.mColor,
                 trans.r, sprite.mFlipX, sprite.mFlipY, entt::to_integral(ent), trans.layer, trans.sortY };
 
             mDebug.drawBox(trans.getRect(), {}, trans.r);

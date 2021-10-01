@@ -29,7 +29,7 @@ namespace Plutus
                 }
 
                 sprite.mTextureId = animation.mTextures[seq->mTexIndex];
-                sprite.mUVCoord = AssetManager::get()->getTexCoords(sprite.mTextureId, frames[seq->mFrame]);
+                sprite.mUvIndex = frames[seq->mFrame];
             }
         }
     }

@@ -15,31 +15,31 @@ namespace Plutus
     struct Texture;
     class Input;
     class EditorUI;
-    class SpriteBatch2D;
 
     class ComponentPanel
     {
     private:
         Entity mEntity;
         Input* mInput = nullptr;
-        std::vector<ImVec2> mSelectedtiles;
         Ref<Scene> mScene;
+        EditorUI* mParentUI;
         glm::vec2 mGridCoord;
-        std::unordered_map<std::string, std::function<void(bool&)>> createComps;
         TileMapPanel mTileMapPanel;
         AnimationPanel mAnimPanel;
-        EditorUI* mParentUI;
+
+        std::vector<ImVec2> mSelectedtiles;
+        std::unordered_map<std::string, std::function<void(bool&)>> createComps;
 
     public:
         ComponentPanel() = default;
 
         void setContext(Ref<Scene>& scene, EditorUI* parentUI);
+
         void drawUI();
-        void render(SpriteBatch2D* renderer, glm::vec2 mcoords);
-        inline void createTiles(const glm::vec2& mCoords) { mTileMapPanel.createTiles(mCoords); }
 
     private:
         void drawTransform();
+        void drawMapTile();
         void drawSprite();
         void drawScript();
 

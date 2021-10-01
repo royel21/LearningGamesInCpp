@@ -20,11 +20,9 @@ namespace Plutus
     {
         std::string name;
         std::string path;
-        int columns;
-        int tileWidth;
-        int tileHeight;
-        int totalTiles;
-        int mTexCount = 0;
+        int columns = 0;
+        int tileWidth = 0;
+        int tileHeight = 0;
         int texWidth = 0;
         int texHeight = 0;
         uint32_t texId = -1;
@@ -44,7 +42,7 @@ namespace Plutus
 
         glm::vec4 getUV(int texcoord)
         {
-            return texcoord < mTexCount ? uvs[texcoord] : glm::vec4();
+            return uvs[texcoord];
         }
 
     private:
@@ -60,7 +58,7 @@ namespace Plutus
         Textures() = default;
         ~Textures();
         Texture* getTexture(const std::string& id) { return &mTileSets[id]; }
-        glm::vec4 getTexture(const std::string& id, int uvIndex) { return mTileSets[id].getUV(uvIndex); }
+        glm::vec4 getTextureUV(const std::string& id, int uvIndex) { return mTileSets[id].getUV(uvIndex); }
         /***
             Create a texture atlas from the image from the tile width and height
             @param id the Id of the texture

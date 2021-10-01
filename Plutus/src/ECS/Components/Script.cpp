@@ -4,8 +4,7 @@
 
 namespace Plutus
 {
-
-    Script::Script(std::string _path, Entity& ent, Scene* scene) : path(_path)
+    Script::Script(std::string _path, Entity& ent, Scene* scene)
     {
         auto lua = ScriptServer::get()->getState();
 

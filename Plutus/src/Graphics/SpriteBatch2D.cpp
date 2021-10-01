@@ -108,17 +108,17 @@ namespace Plutus
 				br = rotatePoint2D(br, r) + halfDim;
 				tr = rotatePoint2D(tr, r) + halfDim;
 
-				vertices[mVertexCount] = { rect.x + tl.x, rect.y + tl.y, uv.x, uv.w, c, id };
+				vertices[mVertexCount + 0] = { rect.x + tl.x, rect.y + tl.y, uv.x, uv.w, c, id };
 				vertices[mVertexCount + 1] = { rect.x + bl.x, rect.y + bl.y, uv.x, uv.y, c, id };
 				vertices[mVertexCount + 2] = { rect.x + br.x, rect.y + br.y, uv.z, uv.y, c, id };
 				vertices[mVertexCount + 3] = { rect.x + tr.x, rect.y + tr.y, uv.z, uv.w, c, id };
 			}
 			else
 			{
-				vertices[mVertexCount] = { rect.x, rect.y, uv.x, uv.w, c, id };
-				vertices[mVertexCount + 1] = { rect.x, rect.y + rect.w, uv.x, uv.y, c, id };
+				vertices[mVertexCount + 0] = { rect.x/*     */, rect.y/*     */, uv.x, uv.w, c, id };
+				vertices[mVertexCount + 1] = { rect.x/*     */, rect.y + rect.w, uv.x, uv.y, c, id };
 				vertices[mVertexCount + 2] = { rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, c, id };
-				vertices[mVertexCount + 3] = { rect.x + rect.z, rect.y, uv.z, uv.w, c, id };
+				vertices[mVertexCount + 3] = { rect.x + rect.z, rect.y/*     */, uv.z, uv.w, c, id };
 			}
 			mVertexCount += 4;
 		}
@@ -127,8 +127,12 @@ namespace Plutus
 	void SpriteBatch2D::submit(const std::vector<Renderable>& renderables)
 	{
 		//Resize to hold all the vertice needed
-		if (renderables.size() > vertices.size() * 4) {
-			vertices.resize(renderables.size() * 4 + mVertexCount);
+		auto size = renderables.size();
+
+		size = (size ? size * 4 : 4) + mVertexCount;
+
+		if (size > vertices.size()) {
+			vertices.resize(size);
 		}
 
 		for (auto r : renderables)

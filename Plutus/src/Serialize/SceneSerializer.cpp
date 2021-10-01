@@ -154,7 +154,7 @@ namespace Plutus
             writer->Int(tilemap.mLayer);
             //Array of tileset name
             writer->String("tileset");
-            writer->String(tilemap.mTileset->name.c_str());
+            writer->String("");
 
 
             //Array of textures
@@ -162,7 +162,7 @@ namespace Plutus
             writer->StartArray();
             for (auto tex : tilemap.mTextures)
             {
-                writer->String(tex->name.c_str());
+                writer->String(tex.second->name.c_str());
             }
             writer->EndArray();
             //Tiles Array

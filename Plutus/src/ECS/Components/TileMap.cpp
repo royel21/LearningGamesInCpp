@@ -7,14 +7,23 @@ namespace Plutus
 
     void TileMap::addTexture(const std::string& texture)
     {
-        mTextures.push_back(AssetManager::get()->mTextures.getTexture(texture));
+        mTextures[mTextures.size()] = AssetManager::get()->mTextures.getTexture(texture);
     }
 
-    void TileMap::removeTexture(const std::string& texture)
+    void TileMap::removeTexture(int index)
     {
-        auto it = std::find_if(mTextures.begin(), mTextures.end(), [texture](const Texture* tileset) -> bool
-            { return tileset->name.compare(texture) == 0; });
-        mTextures.erase(it);
+        if (mTiles.size()) {
+            for (int i = (int)mTiles.size() - 1; i > -1; i--) {
+                if (mTiles[i].texture == index) {
+                    mTiles.erase(mTiles.begin() + i);
+                }
+            }
+        }
+
+        auto it = mTextures.find(index);
+        if (it != mTextures.end()) {
+            mTextures.erase(it);
+        }
     }
 
     void TileMap::addTile(const Tile& tile)
@@ -36,13 +45,14 @@ namespace Plutus
         return it != mTiles.end() ? it - mTiles.begin() : -1;
     }
 
-    void TileMap::removeTile(const glm::ivec2& mCoords)
+    bool TileMap::removeTile(const glm::ivec2& mCoords)
     {
         int index = getIndex(mCoords);
         if (index > -1)
         {
             mTiles.erase(mTiles.begin() + index);
         }
+        return index > -1;
     }
 
 } // namespace Plutus

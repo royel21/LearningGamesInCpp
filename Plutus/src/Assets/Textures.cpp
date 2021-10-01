@@ -10,25 +10,21 @@ namespace Plutus
     Texture::Texture(const std::string& id, int c, int w, int h, GLTexture tex, const std::string& _path) : name(id), path(_path)
     {
         path = _path;
+
+        columns = c;
         tileWidth = w;
         tileHeight = h;
-        columns = c;
-        totalTiles = 0;
+
+        texId = tex.id;
         texWidth = tex.width;
         texHeight = tex.height;
-        texId = tex.id;
 
-        if (h)
-        {
-            totalTiles = static_cast<int>(floor(tex.width / w) * floor(tex.height / h));
-        }
         if (c)
         {
             calculateUV();
         }
         else
         {
-            mTexCount = 1;
             uvs.push_back({ 0, 1, 1, 0 });
         }
     }
@@ -37,8 +33,9 @@ namespace Plutus
     {
         if (tileWidth > 0)
         {
-            mTexCount = columns * int(texHeight / tileHeight);
-            for (int i = 0; i < mTexCount; i++)
+            auto totalTiles = columns * int(texHeight / tileHeight);
+
+            for (int i = 0; i < totalTiles; i++)
             {
                 int y = i / columns;
                 int x = i % columns;

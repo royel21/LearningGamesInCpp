@@ -23,7 +23,10 @@ namespace Plutus
     class Animation
     {
     public:
+        Animation() = default;
         Animation(Entity& ent) : mEnt(ent) {};
+
+        void init(Entity& ent) { mEnt = ent; };
 
         void addTexture(const std::string& id);
         void addSequence(const std::string id, Sequence seq);

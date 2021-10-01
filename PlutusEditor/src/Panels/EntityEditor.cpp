@@ -28,11 +28,6 @@ namespace Plutus
         ImGui::End();
     }
 
-    void EntityEditor::render(SpriteBatch2D* renderer, glm::vec2 coords)
-    {
-        mComponentPanel.render(renderer, coords);
-    }
-
     void EntityEditor::entityList()
     {
         static uint32_t selected = 0;
@@ -62,16 +57,13 @@ namespace Plutus
     {
         auto& tag = ent.getName();
 
-        ImGuiTreeNodeFlags flags = ((mParentUI->getEntity() == ent) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+        ImGuiTreeNodeFlags flags = ((mParentUI->getEntity() == ent) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_NoTreePushOnOpen;
         flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
         bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)ent, flags, tag.c_str());
         if (ImGui::IsItemClicked())
         {
             mParentUI->setEntity(ent);
         }
-        // if (ImGui::Selectable(tag.c_str(), mParentUI->getEntity() == ent)) {
-        //     mParentUI->setEntity(ent);
-        // }
 
         if (ImGui::BeginPopupContextItem())
         {
