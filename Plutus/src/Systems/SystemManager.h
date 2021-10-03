@@ -19,6 +19,11 @@ namespace Plutus
 
         void init(Scene* scene) { mScene = scene; }
 
+        void start();
+        void stop();
+
+        void update(float dt);
+
         template <typename T, typename... TArgs>
         T* AddSystem(TArgs &&... args)
         {
@@ -42,8 +47,6 @@ namespace Plutus
         {
             return mSystems[&typeid(T)] != nullptr;
         }
-
-        void update(float dt);
 
         void cleanup();
 

@@ -49,22 +49,11 @@ namespace Plutus
 		return coords;
 	}
 
-	bool Camera2D::isBoxInView(const glm::vec2 position, const glm::vec2 dim)
+	bool Camera2D::isBoxInView(const glm::vec4 box, int offset)
 	{
-		glm::vec2 scaleDim = getScaleScreen();
+		auto camSize = getViewPortDim() + glm::vec4(-offset, -offset, offset, offset);
 
-		const float MIN_DISTANCE_X = dim.x / 2.0f + scaleDim.x / 2.0f;
-		const float MIN_DISTANCE_Y = dim.y / 2.0f + scaleDim.y / 2.0f;
-
-		glm::vec2 centerPos = position + dim / 2.0f;
-
-		glm::vec2 distVec = centerPos - mCamPos;
-
-		float xDepth = MIN_DISTANCE_X - abs(distVec.x);
-		float yDepth = MIN_DISTANCE_Y - abs(distVec.y);
-
-		if (xDepth > 0 && yDepth > 0)
-		{
+		if (box.x + box.z > camSize.x && box.y + box.w > camSize.y && box.x < camSize.z && box.y < camSize.w) {
 			return true;
 		}
 

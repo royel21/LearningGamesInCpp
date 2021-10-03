@@ -8,6 +8,5 @@ namespace Plutus
     public:
         AnimationSystem(Scene* scene) : ISystem(scene) {}
         void update(float dt);
-
     };
 } // namespace Plutus

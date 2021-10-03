@@ -11,6 +11,7 @@ namespace Plutus
     {
     public:
         RenderSystem(Scene* scene, Camera2D* camera);
+        ~RenderSystem();
         void update(float dt);
         void destroy();
 

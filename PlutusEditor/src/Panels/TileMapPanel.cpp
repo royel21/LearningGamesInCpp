@@ -229,14 +229,16 @@ namespace Plutus
     void TileMapPanel::renderTiles()
     {
         auto gridCoords = mParentUI->getGridCoords();
-
-        std::vector<Tile> tiles;
         int w = mTileMap->mTileWidth;
         int h = mTileMap->mTileHeight;
 
         auto& tex = mTileMap->mTextures[mCurrentTexture];
 
-        std::vector<Renderable> renderables(mTempTiles.size());
+        std::vector<Renderable>& renderables = mParentUI->getRenderables();
+        if (renderables.size() < mTempTiles.size()) {
+            renderables.resize(mTempTiles.size());
+        }
+        mParentUI->setTotalTemp(mTempTiles.size());
 
         int i = 0;
         for (auto tile : mTempTiles)
@@ -246,8 +248,6 @@ namespace Plutus
 
             renderables[i++] = { tex->texId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation, false, false, 0, 99, false };
         }
-
-        mParentUI->getRenderer()->submit(renderables);
     }
 
     void TileMapPanel::tileProps()

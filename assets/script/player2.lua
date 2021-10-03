@@ -8,8 +8,8 @@ local vel = 0;
 
 local stand = {
     right = "stand-right",
-    left = "stand-up",
-    up = "stand-left",
+    left = "stand-left",
+    up = "stand-up",
     down = "stand-down"
 }
 

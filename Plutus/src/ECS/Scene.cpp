@@ -37,6 +37,19 @@ namespace Plutus
         return { mRegistry.valid(ent) ? ent : entt::null , this };
     }
 
+    Entity Scene::getEntityByName(const std::string name)
+    {
+        entt::entity ent = entt::null;
+        mRegistry.each([&](auto e) {
+            auto& tag = mRegistry.get<Tag>(e);
+            if (tag.Name.compare(name) == 0) {
+                ent = e;
+            }
+            });
+
+        return { ent, this };
+    }
+
     void Scene::removeEntity(entt::entity ent)
     {
         mRegistry.destroy(ent);

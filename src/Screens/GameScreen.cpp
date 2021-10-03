@@ -38,7 +38,6 @@ int GameScreen::getPrevScreentIndex() const
 
 void GameScreen::build()
 {
-
     mScene = Plutus::CreateRef<Plutus::Scene>();
     const int w = mEngine->getWidth();
     const int h = mEngine->getHeight();
@@ -62,6 +61,7 @@ void GameScreen::build()
 
 void GameScreen::onEntry()
 {
+    mSystemManager.start();
     const int h = mEngine->getHeight();
     // Player 1
     auto player = mScene->createEntity("Player");
@@ -93,6 +93,10 @@ void GameScreen::onEntry()
     // bed->addComponent<Plutus::Transform>(128.0f, h - 256.0f, 128, 128);
     // auto& sprite = bed->addComponent<Plutus::Sprite>("cave");
     // sprite.mUVCoord = Plutus::AssetManager::get()->getTexCoords("cave", { 1, 10, 96, 96 });
+    // auto ent = mScene->getEntityByName("Player");
+    // if (ent) {
+    //     std::printf("name: %s", ent.getName().c_str());
+    // }
 }
 
 void GameScreen::update(float dt)
@@ -123,6 +127,7 @@ void GameScreen::onScreenResize(int w, int h)
 
 void GameScreen::onExit()
 {
+    mSystemManager.stop();
     mScene->clear();
 }
 

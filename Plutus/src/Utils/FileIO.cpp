@@ -19,15 +19,12 @@ namespace Plutus
                 unsigned long size = ftell(fp);
                 if (size == -1)
                 { /* Error */
+                    fclose(fp);
+                    return vec;
                 }
                 vec.resize(size);
-                /* Allocate our buffer to that size. */
 
-                /* Go back to the start of the file. */
-                if (fseek(fp, 0L, SEEK_SET) != 0)
-                { /* Error */
-                }
-
+                rewind(fp);
                 /* Read the entire file into memory. */
                 fread(vec.data(), sizeof(char), size, fp);
             }
@@ -39,37 +36,8 @@ namespace Plutus
     std::string readFileAsString(const char* path)
     {
         FILE* fp = fopen(path, "rb");
-        char* data = nullptr;
 
-        if (fp != NULL)
-        {
-            /* Go to the end of the file. */
-            if (fseek(fp, 0L, SEEK_END) == 0)
-            {
-                /* Get the size of the file. */
-                unsigned long size = ftell(fp);
-                if (size == -1)
-                {
-                    return "";
-                }
-
-                /* Allocate our buffer to that size. */
-
-                /* Go back to the start of the file. */
-                if (fseek(fp, 0L, SEEK_SET) != 0)
-                { /* Error */
-                }
-                data = new char[size];
-                /* Read the entire file into memory. */
-                fread(data, sizeof(char), size, fp);
-
-                fclose(fp);
-                std::string buffer(data, size);
-                delete data;
-                return buffer;
-            }
-            fclose(fp);
-        }
-        return "";
+        auto data = readFile(path, "rb");
+        return data.size() ? std::string(reinterpret_cast<char*>(data.data()), data.size()) : "";
     }
 }

@@ -9,13 +9,16 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include <Panels/EntityEditor.h>
+#include <Graphics/Shader.h>
 #include <Graphics/FrameBuffer.h>
 #include <Graphics/SpriteBatch2D.h>
-#include <Graphics/Shader.h>
+
 #include <Core/type.h>
 #include <ECS/Scene.h>
 #include <Input/InputListener.h>
+
+#include <Panels/AssetsTab.h>
+#include <Panels/EntityEditor.h>
 
 namespace Plutus
 {
@@ -56,9 +59,11 @@ namespace Plutus
 		bool mMoveCam = false;
 		bool mShowDemo = false;
 		bool mCanvasHover = false;
+		int totalTemp = 0;
 
 		//Panels
 		EntityEditor mEntityEditor;
+		AssetsTab mAssetsTab;
 
 		std::vector<std::string> mRecents;
 
@@ -82,6 +87,9 @@ namespace Plutus
 		//Bind Framebuffer
 		void bindFB();
 		void unBindFB();
+
+		void setTotalTemp(int total) { totalTemp = total; }
+		std::vector<Renderable>& getRenderables() { return mRenderables; }
 
 		const glm::vec2& getLastCoords() { return lastCoords; }
 		void setLastCoord(const glm::vec2& coords) { lastCoords = coords; }

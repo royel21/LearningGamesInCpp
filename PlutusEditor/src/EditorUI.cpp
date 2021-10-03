@@ -16,6 +16,8 @@
 #include "IconsFontAwesome5.h"
 #include "ImGuiEx.h"
 
+#include <Time/Timer.h>
+
 #include <ECS/Scene.h>
 #include <Serialize/SceneLoader.h>
 #include <Platform/Windows/FileUtils.h>
@@ -143,9 +145,10 @@ namespace Plutus
 
 		if (mImGui_IO->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
+			auto contextBackup = glfwGetCurrentContext();
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(glfwGetCurrentContext());
+			glfwMakeContextCurrent(contextBackup);
 		}
 	}
 
@@ -156,13 +159,16 @@ namespace Plutus
 		viewPort();
 		viewPortControl();
 		mEntityEditor.draw();
-		// mComPanel.drawUI(mEnt);
+		mAssetsTab.drawAssets();
 
 		if (mShowDemo)
 		{
 			drawDemo();
 		}
 		endUI();
+
+		bindFB();
+		unBindFB();
 	}
 
 	bool ZoomViewPort(int* value, int step, int min, int max)
@@ -234,7 +240,6 @@ namespace Plutus
 			ImGui::SameLine();
 			if (ImGui::Button("Reset##campos")) mCamera->setPosition({ 0,0 });
 			static int scale = 100;
-			// ZoomViewPort(&scale, 1, 0, 100);
 		}
 		ImGui::NextColumn();
 
@@ -247,32 +252,18 @@ namespace Plutus
 				mDebugRender->setShouldDraw(showGrid);
 			}
 
-			auto cellc = mDebugRender->getCellCount();
-			int cellCount[] = { cellc.x, cellc.y };
-			if (ImGui::DragInt2("Count XY", cellCount))
+			auto cellSize = mDebugRender->getCellSize();
+			if (ImGui::DragInt2("Cell Size", glm::value_ptr(cellSize)))
 			{
-				cellc.x = CHECKLIMIT(cellCount[0], 0, 200);
-				cellc.y = CHECKLIMIT(cellCount[1], 0, 200);
-				mDebugRender->setCellCount(cellc.x, cellc.y);
+				cellSize.x = cellSize.x < 0 ? 0 : cellSize.x;
+				cellSize.y = cellSize.y < 0 ? 0 : cellSize.y;
 			}
+			mDebugRender->setCellSize(cellSize);
 
-			auto cellS = mDebugRender->getCellSize();
-			int cellSize[] = { cellS.x, cellS.y };
-			if (ImGui::DragInt2("Cell Size", cellSize))
+			if (ImGui::ColorEdit3("Grid Color", glm::value_ptr(mGridColor)))
 			{
-				cellS.x = CHECKLIMIT(cellSize[0], 0, 200);
-				cellS.y = CHECKLIMIT(cellSize[1], 0, 200);
-			}
-			mDebugRender->setCellSize(cellS.x, cellS.y);
-
-			float color[] = { mGridColor.x, mGridColor.y, mGridColor.z, mGridColor.w };
-			if (ImGui::ColorEdit3("Grid Color", color))
-			{
-				mDebugRender->setColor(ColorRGBA8(static_cast<GLubyte>(color[0]) * 255, static_cast<GLubyte>(color[1]) * 255, static_cast<GLubyte>(color[2]) * 255));
-				mGridColor.x = color[0];
-				mGridColor.y = color[1];
-				mGridColor.z = color[2];
-				mGridColor.w = color[3];
+				mGridColor.w = 1;
+				mDebugRender->setColor({ mGridColor });
 			}
 		}
 		ImGui::End();
@@ -281,12 +272,12 @@ namespace Plutus
 
 	void EditorUI::viewPort()
 	{
+		ImVec4 WHITE = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		static bool open = true;
-		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, WHITE);
 		ImGui::Begin("Viewport", &open, flags);
-		// auto size = ImGui::GetWindowContentRegionMax();
 
 		auto winSize = mFb.getSize();
 		float aspectRation = mFb.getAspectRatio();
@@ -312,7 +303,7 @@ namespace Plutus
 		float xPos = mapIn(ImGui::GetIO().MousePos.x - canvas_pos.x, 0, newSize.x, 0, winSize.x);
 		float yPos = winSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
 
-		ImGui::Image(reinterpret_cast<void*>(mFb.getTextureId()), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, { 1.0, 1.0, 1.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 });
+		ImGui::Image(reinterpret_cast<void*>(mFb.getTextureId()), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
 
 		if (mCanvasHover = ImGui::IsItemHovered())
 		{
@@ -501,16 +492,17 @@ namespace Plutus
 		mRender.draw(true);
 		mPicker.unBind();
 
-		mFb.bind();
-		mFb.setColor(mVPColor);
-		mRender.draw();
 	}
 
 	void EditorUI::unBindFB()
 	{
 
+		mFb.bind();
+		mFb.setColor(mVPColor);
+		mRender.draw();
 		mRender.end();
-		mDebugRender->drawGrid2();
+
+		mDebugRender->drawGrid();
 		mFb.unBind();
 	}
 
@@ -541,16 +533,11 @@ namespace Plutus
 	{
 		Plutus::Serializer sr;
 		auto writer = sr.getWriter();
-		auto cellsCount = mDebugRender->getCellCount();
 		auto cellSize = mDebugRender->getCellSize();
 		writer->StartObject();
 		writer->String("gridwidth");
-		writer->Int(cellsCount.x);
-		writer->String("gridheight");
-		writer->Int(cellsCount.y);
-		writer->String("CellCountX");
 		writer->Int(cellSize.x);
-		writer->String("CellCountY");
+		writer->String("gridheight");
 		writer->Int(cellSize.y);
 		addColor(&sr, "vp-color", mVPColor);
 		addColor(&sr, "cell-color", mGridColor);
@@ -579,26 +566,32 @@ namespace Plutus
 			size += map.mTiles.size();
 		}
 
-		if (mRenderables.size() != size) {
-			mRenderables.resize(size);
+		if (mRenderables.size() != size + totalTemp) {
+			mRenderables.resize(size + totalTemp);
 		}
+
 		/******************************************/
 
-		int i = 0;
+		int i = totalTemp;
 		for (auto ent : viewMap)
 		{
 			auto [tilemap] = viewMap.get(ent);
-			if (tilemap.mTiles.size() && tilemap.mTextures.size())
+			if (tilemap.mTiles.size())
 			{
+				auto tileset = tilemap.mTextures[0];
 				const int w = tilemap.mTileWidth;
 				const int h = tilemap.mTileHeight;
 
 				for (auto& tile : tilemap.mTiles)
 				{
-					auto tileset = tilemap.mTextures[tile.texture];
 					glm::vec4 rect{ tile.x, tile.y, w, h };
-					mRenderables[i++] = { tileset->texId, rect, tileset->getUV(tile.texcoord),
-					 { tile.color }, tile.rotate, tile.flipX, tile.flipY, entt::to_integral(ent), tilemap.mLayer, false };
+					if (mCamera->isBoxInView(rect, 200))
+					{
+						auto tileset = tilemap.mTextures[tile.texture];
+
+						mRenderables[i++] = { tileset->texId, rect, tileset->getUV(tile.texcoord),
+							{ tile.color }, tile.rotate, tile.flipX, tile.flipY, 0, tilemap.mLayer, false };
+					}
 				}
 			}
 		}
@@ -606,10 +599,16 @@ namespace Plutus
 		for (auto ent : view)
 		{
 			auto [trans, sprite] = view.get(ent);
-			mRenderables[i++] = { sprite.getTexId(), trans.getRect(), sprite.mUVCoord,
-			sprite.mColor, trans.r, sprite.mFlipX, sprite.mFlipY, entt::to_integral(ent), trans.layer, trans.sortY };
+			auto rect = trans.getRect();
+			if (mCamera->isBoxInView(rect, 200))
+			{
+				mRenderables[i++] = { sprite.getTexId(), rect, sprite.getUV(), sprite.mColor,
+					trans.r, sprite.mFlipX, sprite.mFlipY, entt::to_integral(ent), trans.layer, trans.sortY };
+			}
+
 		}
-		// mEntityEditor.draw();
+
+		mRenderables.resize(i);
 		// sort by layer, y position, texture
 		std::sort(mRenderables.begin(), mRenderables.end());
 
@@ -632,11 +631,7 @@ namespace Plutus
 		{
 			if (doc.HasMember("gridwidth"))
 			{
-				mDebugRender->setCellCount(doc["gridwidth"].GetInt(), doc["gridheight"].GetInt());
-			}
-			if (doc.HasMember("CellCountX"))
-			{
-				mDebugRender->setCellSize(doc["CellCountX"].GetInt(), doc["CellCountY"].GetInt());
+				mDebugRender->setCellSize({ doc["gridwidth"].GetInt(), doc["gridheight"].GetInt() });
 			}
 			initColor(doc, "vp-color", mVPColor);
 			initColor(doc, "cell-color", mGridColor);

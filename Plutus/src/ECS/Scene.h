@@ -74,7 +74,9 @@ namespace Plutus
         ~Scene();
 
         Entity createEntity(const std::string& name);
+
         Entity getEntity(uint32_t Id);
+        Entity getEntityByName(const std::string name);
         void removeEntity(entt::entity ent);
 
         entt::registry* getRegistry() { return &mRegistry; }

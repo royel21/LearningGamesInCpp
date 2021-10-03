@@ -45,7 +45,6 @@ namespace Plutus
 		// Camera with the screen coordinate where we are drawing
 		Camera2D* mCamera = nullptr;
 		Shader* mShader = nullptr;
-		glm::vec4 camSize;
 		// Array of Renderables batcher per Image
 		std::vector<Renderable> mRenderables;
 		// Array of Rnder batcher per Image

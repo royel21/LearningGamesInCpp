@@ -12,9 +12,11 @@ namespace Plutus {
         @param angle angle in degre
     */
     glm::vec2 rotatePoint2D(const glm::vec2& pos, float angle) {
-        float rad = DEC2RA(angle);
+
+        float rad = DEC2RA(-angle);
         float cosAng = cos(rad);
         float sinAng = sin(rad);
+
         return { pos.x * cosAng - pos.y * sinAng,
                 pos.x * sinAng + pos.y * cosAng };
     }

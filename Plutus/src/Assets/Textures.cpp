@@ -25,7 +25,7 @@ namespace Plutus
         }
         else
         {
-            uvs.push_back({ 0, 1, 1, 0 });
+            uvs.push_back({ 0, 0, 1, 1 });
         }
     }
 

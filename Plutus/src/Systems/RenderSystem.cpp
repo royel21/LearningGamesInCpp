@@ -8,7 +8,6 @@
 #include <ECS/Components/TileMap.h>
 #include <ECS/Components/Transform.h>
 
-
 #include <Time/Timer.h>
 
 
@@ -20,6 +19,11 @@ namespace Plutus
         mRenderer.init();
 
         mDebug.init(camera);
+    }
+
+    RenderSystem::~RenderSystem()
+    {
+        mShader.dispose();
     }
 
     void RenderSystem::update(float dt)
@@ -35,10 +39,8 @@ namespace Plutus
         for (auto [ent, map] : viewMap.each()) {
             size += map.mTiles.size();
         }
+        mRenderables.resize(size);
 
-        if (mRenderables.size() != size) {
-            mRenderables.resize(size);
-        }
         /******************************************/
 
         int i = 0;
@@ -53,10 +55,14 @@ namespace Plutus
 
                 for (auto& tile : tilemap.mTiles)
                 {
-                    auto tileset = tilemap.mTextures[tile.texture];
                     glm::vec4 rect{ tile.x, tile.y, w, h };
-                    mRenderables[i++] = { tileset->texId, rect, tileset->getUV(tile.texcoord),
-                        { tile.color }, tile.rotate, tile.flipX, tile.flipY, 0, tilemap.mLayer, false };
+                    if (mCamera->isBoxInView(rect, 200))
+                    {
+                        auto tileset = tilemap.mTextures[tile.texture];
+
+                        mRenderables[i++] = { tileset->texId, rect, tileset->getUV(tile.texcoord),
+                            { tile.color }, tile.rotate, tile.flipX, tile.flipY, 0, tilemap.mLayer, false };
+                    }
                 }
             }
         }
@@ -64,15 +70,19 @@ namespace Plutus
         for (auto ent : view)
         {
             auto [trans, sprite] = view.get(ent);
+            auto rect = trans.getRect();
+            if (mCamera->isBoxInView(rect, 200))
+            {
+                mRenderables[i++] = { sprite.getTexId(), rect, sprite.getUV(), sprite.mColor,
+                    trans.r, sprite.mFlipX, sprite.mFlipY, entt::to_integral(ent), trans.layer, trans.sortY };
 
-            mRenderables[i++] = { sprite.getTexId(), trans.getRect(), sprite.getUV(), sprite.mColor,
-                trans.r, sprite.mFlipX, sprite.mFlipY, entt::to_integral(ent), trans.layer, trans.sortY };
-
-            mDebug.drawBox(trans.getRect(), {}, trans.r);
-            mDebug.end();
-            mDebug.render(2);
+                mDebug.drawBox(rect, {}, trans.r);
+                mDebug.end();
+                mDebug.render(2);
+            }
 
         }
+        mRenderables.resize(i);
         // sort by layer, y position, texture
         std::sort(mRenderables.begin(), mRenderables.end());
 
@@ -86,7 +96,6 @@ namespace Plutus
 
     void RenderSystem::destroy()
     {
-        mShader.dispose();
         mRenderables.clear();
     }
 

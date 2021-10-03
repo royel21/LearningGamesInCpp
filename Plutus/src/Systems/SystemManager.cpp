@@ -2,6 +2,21 @@
 
 namespace Plutus
 {
+
+    void SystemManager::start()
+    {
+        for (auto& sys : mSystems) {
+            sys.second->init();
+        }
+    }
+
+    void SystemManager::stop()
+    {
+        for (auto& sys : mSystems) {
+            sys.second->destroy();
+        }
+    }
+
     void SystemManager::update(float dt)
     {
         for (auto sys : mSystems) {
@@ -17,6 +32,5 @@ namespace Plutus
         }
         mSystems.clear();
     }
-
 
 } // namespace Plutus

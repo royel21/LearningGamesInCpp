@@ -12,7 +12,7 @@ namespace Plutus
 		return instance;
 	}
 
-	DebugRender::DebugRender() : mVao(0), mVbo(0), mIbo(0), mGridColor(0, 0, 0, 255), mCellCount(40, 24), mCellSize(32, 32)
+	DebugRender::DebugRender() : mVao(0), mVbo(0), mIbo(0), mGridColor(0, 0, 0, 255), mCellSize(32, 32)
 	{
 	}
 
@@ -167,100 +167,104 @@ namespace Plutus
 
 	void DebugRender::render(float lineWidth)
 	{
-		mShader.enable();
-		mShader.setUniformMat4("camera", mCamera->getCameraMatrix());
+		if (isDraw) {
+			mShader.enable();
+			mShader.setUniformMat4("camera", mCamera->getCameraMatrix());
 
-		glLineWidth(lineWidth);
-		glBindVertexArray(mVao);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
-		glDrawElements(GL_LINES, mNumElements, GL_UNSIGNED_INT, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
+			glLineWidth(lineWidth);
+			glBindVertexArray(mVao);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
+			glDrawElements(GL_LINES, mNumElements, GL_UNSIGNED_INT, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
 
-		mShader.disable();
+			mShader.disable();
+		}
 	}
+
+	// void DebugRender::drawGrid()
+	// {
+	// 	if (isDraw)
+	// 	{
+	// 		glm::ivec2 endLine = mCellCount * mCellSize;
+
+	// 		glm::vec2 lineStart;
+	// 		glm::vec2 lineEnd;
+
+	// 		for (int x = 0; x <= mCellCount.x; x++)
+	// 		{
+	// 			int curPoint = x * mCellSize.x;
+	// 			lineStart.x = (float)curPoint;
+	// 			lineStart.y = 0.0f;
+
+	// 			lineEnd.x = (float)curPoint;
+	// 			lineEnd.y = (float)endLine.y;
+	// 			drawLine(lineStart, lineEnd, mGridColor);
+	// 		}
+	// 		for (int y = 0; y <= mCellCount.y; y++)
+	// 		{
+	// 			int curPoint = y * mCellSize.y;
+	// 			lineStart.y = (float)curPoint;
+	// 			lineStart.x = 0.0f;
+
+	// 			lineEnd.y = (float)curPoint;
+	// 			lineEnd.x = (float)endLine.x;
+	// 			drawLine(lineStart, lineEnd, mGridColor);
+	// 		}
+	// 		end();
+
+	// 		render(1.0f);
+	// 	}
+	// }
 
 	void DebugRender::drawGrid()
 	{
-		if (isDraw)
-		{
-			glm::ivec2 endLine = mCellCount * mCellSize;
+		if (isDraw) {
+			float tw = (float)mCellSize.x;
+			float th = (float)mCellSize.y;
 
+			auto orgScreenHalf = mCamera->getViewPortSize() / 2.0f;
+			auto newPos = mCamera->getPosition() + orgScreenHalf;
+
+			glm::vec2 scaleScreen = mCamera->getScaleScreen();
+			auto half = (scaleScreen / 2.0f);
+
+			glm::vec2 screenStart = newPos - half;
+			glm::vec2 screenEnd = newPos + half;
 			glm::vec2 lineStart;
 			glm::vec2 lineEnd;
 
-			for (int x = 0; x <= mCellCount.x; x++)
-			{
-				int curPoint = x * mCellSize.x;
-				lineStart.x = (float)curPoint;
-				lineStart.y = 0.0f;
+			int sizeX = static_cast<int>((scaleScreen.x) / tw) + 2;
+			int sizeY = static_cast<int>((scaleScreen.y) / th) + 2;
 
-				lineEnd.x = (float)curPoint;
-				lineEnd.y = (float)endLine.y;
+			float x = floor(screenStart.x / tw);
+			float y = floor(screenStart.y / th);
+
+			glm::vec2 cPos(x * tw, y * th);
+
+			for (int x = 0; x <= sizeX; x++)
+			{
+				lineStart.x = cPos.x + (x * tw);
+				lineStart.y = cPos.y;
+
+				lineEnd.x = cPos.x + (x * tw);
+				lineEnd.y = screenEnd.y;
 				drawLine(lineStart, lineEnd, mGridColor);
 			}
-			for (int y = 0; y <= mCellCount.y; y++)
-			{
-				int curPoint = y * mCellSize.y;
-				lineStart.y = (float)curPoint;
-				lineStart.x = 0.0f;
 
-				lineEnd.y = (float)curPoint;
-				lineEnd.x = (float)endLine.x;
+			for (int y = 0; y <= sizeY; y++)
+			{
+				lineStart.x = cPos.x;
+				lineStart.y = cPos.y + (y * th);
+
+				lineEnd.x = screenEnd.x;
+				lineEnd.y = cPos.y + (y * th);
 				drawLine(lineStart, lineEnd, mGridColor);
 			}
 			end();
 
 			render(1.0f);
 		}
-	}
-
-	void DebugRender::drawGrid2()
-	{
-		float tw = (float)mCellSize.x;
-		float th = (float)mCellSize.y;
-
-		auto orgScreenHalf = mCamera->getViewPortSize() / 2.0f;
-		auto newPos = mCamera->getPosition() + orgScreenHalf;
-
-		glm::vec2 scaleScreen = mCamera->getScaleScreen();
-		auto half = (scaleScreen / 2.0f);
-
-		glm::vec2 screenStart = newPos - half;
-		glm::vec2 screenEnd = newPos + half;
-		glm::vec2 lineStart;
-		glm::vec2 lineEnd;
-
-		int sizeX = static_cast<int>((scaleScreen.x) / tw) + 2;
-		int sizeY = static_cast<int>((scaleScreen.y) / th) + 2;
-
-		float x = floor(screenStart.x / tw);
-		float y = floor(screenStart.y / th);
-
-		glm::vec2 cPos(x * tw, y * th);
-
-		for (int x = 0; x <= sizeX; x++)
-		{
-			lineStart.x = cPos.x + (x * tw);
-			lineStart.y = cPos.y;
-
-			lineEnd.x = cPos.x + (x * tw);
-			lineEnd.y = screenEnd.y;
-			drawLine(lineStart, lineEnd, mGridColor);
-		}
-
-		for (int y = 0; y <= sizeY; y++)
-		{
-			lineStart.x = cPos.x;
-			lineStart.y = cPos.y + (y * th);
-
-			lineEnd.x = screenEnd.x;
-			lineEnd.y = cPos.y + (y * th);
-			drawLine(lineStart, lineEnd, mGridColor);
-		}
-		end();
-
-		render(1.0f);
 	}
 
 	glm::vec2 DebugRender::getSquareCoords(glm::vec2 mousePos)
@@ -282,16 +286,10 @@ namespace Plutus
 		return glm::vec2(x, y);
 	}
 
-	void DebugRender::setCellSize(int w, int h)
+	void DebugRender::setCellSize(const glm::ivec2& cellSize)
 	{
-		mCellSize.x = w;
-		mCellSize.y = h;
+		mCellSize = cellSize;
 	}
-	void DebugRender::setCellCount(int w, int h)
-	{
-		mCellCount.x = w;
-		mCellCount.y = h;
-	};
 } // namespace Plutus
 
 namespace Plutus

@@ -77,7 +77,7 @@ namespace Plutus
 
 		const glm::vec2 getScaleScreen() { return glm::vec2(mScreenWidth, mScreenHeight) / mScale; }
 
-		bool isBoxInView(const glm::vec2 position, const glm::vec2 dim);
+		bool isBoxInView(const glm::vec4 box, int offset = 0);
 	};
 } // namespace Plutus
 

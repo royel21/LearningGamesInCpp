@@ -82,46 +82,47 @@ namespace Plutus
 	{
 		// Check if is it inside the view port
 		float id = static_cast<float>(entId);
-		if (rect.x + rect.z > camSize.x && rect.y + rect.w > camSize.y && rect.x < camSize.z && rect.y < camSize.w)
+
+		createBatch(texture);
+
+		glm::vec4 uv(_uv);
+
+		if (flipX)
+			std::swap(uv.x, uv.z);
+
+		if (flipY)
+			std::swap(uv.y, uv.w);
+
+		if (r)
 		{
-			createBatch(texture);
+			glm::vec2 halfDim(rect.z / 2, rect.w / 2);
+			//top left
+			glm::vec2 tl(-halfDim.x, halfDim.y);
+			//bottom left
+			glm::vec2 bl(-halfDim.x, -halfDim.y);
+			//bottom right
+			glm::vec2 br(halfDim.x, -halfDim.y);
+			//top right
+			glm::vec2 tr(halfDim.x, halfDim.y);
 
-			glm::vec4 uv(_uv);
+			tl = rotatePoint2D(tl, r) + halfDim;
+			bl = rotatePoint2D(bl, r) + halfDim;
+			br = rotatePoint2D(br, r) + halfDim;
+			tr = rotatePoint2D(tr, r) + halfDim;
 
-			if (flipX)
-				std::swap(uv.x, uv.z);
-
-			if (flipY)
-				std::swap(uv.y, uv.w);
-
-			if (r)
-			{
-				glm::vec2 halfDim(rect.z / 2, rect.w / 2);
-
-				glm::vec2 tl(-halfDim.x, halfDim.y);
-				glm::vec2 bl(-halfDim.x, -halfDim.y);
-				glm::vec2 br(halfDim.x, -halfDim.y);
-				glm::vec2 tr(halfDim.x, halfDim.y);
-
-				tl = rotatePoint2D(tl, r) + halfDim;
-				bl = rotatePoint2D(bl, r) + halfDim;
-				br = rotatePoint2D(br, r) + halfDim;
-				tr = rotatePoint2D(tr, r) + halfDim;
-
-				vertices[mVertexCount + 0] = { rect.x + tl.x, rect.y + tl.y, uv.x, uv.w, c, id };
-				vertices[mVertexCount + 1] = { rect.x + bl.x, rect.y + bl.y, uv.x, uv.y, c, id };
-				vertices[mVertexCount + 2] = { rect.x + br.x, rect.y + br.y, uv.z, uv.y, c, id };
-				vertices[mVertexCount + 3] = { rect.x + tr.x, rect.y + tr.y, uv.z, uv.w, c, id };
-			}
-			else
-			{
-				vertices[mVertexCount + 0] = { rect.x/*     */, rect.y/*     */, uv.x, uv.w, c, id };
-				vertices[mVertexCount + 1] = { rect.x/*     */, rect.y + rect.w, uv.x, uv.y, c, id };
-				vertices[mVertexCount + 2] = { rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, c, id };
-				vertices[mVertexCount + 3] = { rect.x + rect.z, rect.y/*     */, uv.z, uv.w, c, id };
-			}
-			mVertexCount += 4;
+			vertices[mVertexCount + 0] = { rect.x + bl.x, rect.y + bl.y, uv.x, uv.w, c, id };
+			vertices[mVertexCount + 1] = { rect.x + tl.x, rect.y + tl.y, uv.x, uv.y, c, id };
+			vertices[mVertexCount + 2] = { rect.x + tr.x, rect.y + tr.y, uv.z, uv.y, c, id };
+			vertices[mVertexCount + 3] = { rect.x + br.x, rect.y + br.y, uv.z, uv.w, c, id };
 		}
+		else
+		{
+			vertices[mVertexCount + 0] = { rect.x/*     */, rect.y/*     */, uv.x, uv.w, c, id };
+			vertices[mVertexCount + 1] = { rect.x/*     */, rect.y + rect.w, uv.x, uv.y, c, id };
+			vertices[mVertexCount + 2] = { rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, c, id };
+			vertices[mVertexCount + 3] = { rect.x + rect.z, rect.y/*     */, uv.z, uv.w, c, id };
+		}
+		mVertexCount += 4;
 	}
 
 	void SpriteBatch2D::submit(const std::vector<Renderable>& renderables)
@@ -145,7 +146,6 @@ namespace Plutus
 	{
 		mCamera = camera;
 		mShader = shader;
-		camSize = mCamera->getViewPortDim() + glm::vec4(-200, -200, 200, 200);
 		shader->enable();
 		shader->setUniform1b("isText", isText);
 		shader->setUniform1i("mySampler", 0);

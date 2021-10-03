@@ -1,8 +1,12 @@
 #include "ScriptServer.h"
-#include "Components.h"
 #include <Time/Timer.h>
 #include <Input/Input.h>
+
 #include <Graphics/GLheaders.h>
+
+#include "Scene.h"
+#include "Components.h"
+
 #include <cstdio>
 
 namespace Plutus
@@ -50,6 +54,11 @@ namespace Plutus
         return &server;
     }
 
+    void ScriptServer::setScene(Scene* scene)
+    {
+        lua.set("scene", scene);
+    }
+
     ScriptServer::ScriptServer()
     {
 
@@ -57,9 +66,15 @@ namespace Plutus
         lua.set_exception_handler(&my_exception_handler);
 
         lua.set("getMillis", &Timer::millis);
+        /*****************************Register EntityManager**********************************************/
+        auto scene = lua.new_usertype<Scene>("Scene");
+        scene["getEntity"] = &Scene::getEntityByName;
+
+        /*****************************Register Input manager**********************************************/
         auto input = lua.new_usertype<Input>("Input");
         input["onKeyDown"] = &Input::onKeyDown;
         input["onKeyPressed"] = &Input::onKeyPressed;
+
         /*****************************Register Transform**********************************************/
         auto transform = lua.new_usertype<Transform>("Transform");
         transform["x"] = &Transform::x;
@@ -86,7 +101,10 @@ namespace Plutus
         animate["addSeq"] = &Animation::addSeq;
         animate["addSeq2"] = &Animation::addSequence;
 
-        auto sequence = lua.new_usertype<Sequence>("Sequence", sol::constructors<Sequence(), Sequence(std::vector<int>, int, int)>());
+        auto sequence = lua.new_usertype<Sequence>("Sequence",
+            sol::constructors<Sequence(),
+            Sequence(std::vector<int>, int, int)>());
+
         sequence["frames"] = &Sequence::mFrames;
         sequence["texIndex"] = &Sequence::mTexIndex;
         sequence["time"] = &Sequence::mSeqTime;

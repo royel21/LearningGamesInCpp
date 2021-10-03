@@ -5,41 +5,48 @@
 
 #include <tuple>
 #include <glm/glm.hpp>
+#include <Utils/Utils.h>
 
 namespace Plutus
 {
 	struct Position
 	{
-		Position() : x(0), y(0) {}
-		Position(float _x, float _y) : x(_x), y(_y) {}
 		float x;
 		float y;
+
+		Position() : x(0), y(0) {}
+		Position(float _x, float _y) : x(_x), y(_y) {}
 	};
 
 	struct UV
 	{
-		UV() : u(0), v(0) {}
-		UV(float _u, float _v) : u(_u), v(_v) {}
 		float u;
 		float v;
+
+		UV() : u(0), v(0) {}
+		UV(float _u, float _v) : u(_u), v(_v) {}
 	};
 
 	struct ColorRGBA8
 	{
-		GLuint rgba;
+		uint32_t rgba;
 		//Empty Constructor
 		ColorRGBA8() : rgba(0xffffffff) {}
 
 		ColorRGBA8(uint32_t color) : rgba(color) {}
 
-		ColorRGBA8(GLubyte r, GLubyte g, GLubyte b, GLubyte a = 255)
-		{
-			rgba = a << 24 | b << 16 | g << 8 | r;
+		ColorRGBA8(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) { rgba = RGBA2Int(r, g, b, a); }
+
+		ColorRGBA8(const glm::vec4& c) {
+			rgba = RGBA2Int(float2ubyte(c.x), float2ubyte(c.y), float2ubyte(c.x), float2ubyte(c.w));
 		}
-		GLuint get() { return rgba; };
-		void setColor(GLuint c) { rgba = c; }
-		void setColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a = 255) { rgba = a << 24 | b << 16 | g << 8 | r; };
-		operator GLuint() const { return rgba; }
+
+		uint32_t get() { return rgba; };
+		void setColor(uint32_t c) { rgba = c; }
+		void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) { rgba = RGBA2Int(r, g, b, a); }
+
+
+		operator uint32_t() const { return rgba; }
 	};
 	/*
 		Represent a single Vertex information:
@@ -69,7 +76,7 @@ namespace Plutus
 			uv.v = v;
 		}
 
-		void setColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
+		void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 		{
 			color.setColor(r, g, b, a);
 		}
@@ -77,7 +84,7 @@ namespace Plutus
 	//An object containing all data need for creating vertice
 	struct Renderable {
 		// Texture Id
-		GLuint TexId;
+		uint32_t TexId;
 		// Rectangle with position x,y and width, height
 		glm::vec4 trans;
 		// Texture coords "UV"
@@ -97,9 +104,9 @@ namespace Plutus
 		// Sort in Y order
 		bool sortY = false;
 		Renderable() = default;
-		Renderable(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c) : TexId(texture), trans(rect), uv(_uv), color(_c) {}
+		Renderable(uint32_t texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c) : TexId(texture), trans(rect), uv(_uv), color(_c) {}
 
-		Renderable(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, uint32_t id, int _layer, bool sY)
+		Renderable(uint32_t texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, uint32_t id, int _layer, bool sY)
 			: TexId(texture), trans(rect), uv(_uv), color(_c), r(_r), flipX(fx), flipY(fy), entId(id), layer(_layer), sortY(sY) {
 		}
 

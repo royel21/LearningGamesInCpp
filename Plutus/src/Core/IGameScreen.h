@@ -5,9 +5,7 @@
 
 namespace Plutus
 {
-
 	class Engine;
-	class Input;
 
 	enum class ScreenState
 	{

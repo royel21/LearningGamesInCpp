@@ -46,7 +46,6 @@ namespace Plutus
             if (ImGui::MenuItem("Create Empty Entity")) {
                 mParentUI->setEntity(mScene->createEntity("Empty Entity"));
             }
-
             ImGui::EndPopup();
         }
 
@@ -55,10 +54,12 @@ namespace Plutus
 
     void EntityEditor::drawEntity(Entity ent)
     {
+        bool isCurrent = mParentUI->getEntity() == ent;
         auto& tag = ent.getName();
 
-        ImGuiTreeNodeFlags flags = ((mParentUI->getEntity() == ent) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_NoTreePushOnOpen;
-        flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
+        ImGuiTreeNodeFlags flags = (isCurrent ? ImGuiTreeNodeFlags_Selected : 0);
+        flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
         bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)ent, flags, tag.c_str());
         if (ImGui::IsItemClicked())
         {
@@ -69,7 +70,7 @@ namespace Plutus
         {
             if (ImGui::MenuItem(("Delete " + tag).c_str()))
             {
-                if (mParentUI->getEntity() == ent)
+                if (isCurrent)
                     mParentUI->setEntity({});
                 mScene->removeEntity(ent);
             }

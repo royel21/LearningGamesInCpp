@@ -29,15 +29,12 @@ namespace Plutus
 		void drawCircle(const glm::vec2& center, const ColorRGBA8& color, float radius);
 		void render(float lineWidth);
 		void drawGrid();
-		void drawGrid2();
 		void end();
 		void dispose();
 		//Grid Cell Size w = Width, h = Height
-		void setCellSize(int w, int h);
-		void setCellCount(int w, int h);
+		void setCellSize(const glm::ivec2& cellSize);
 
 		glm::ivec2 getCellSize() { return mCellSize; };
-		glm::ivec2 getCellCount() { return mCellCount; };
 
 		inline void resizeBuffer(unsigned int size) { mVertexs.reserve(size); }
 
@@ -50,7 +47,6 @@ namespace Plutus
 
 	private:
 		glm::ivec2 mCellSize;
-		glm::ivec2 mCellCount;
 
 		bool isDraw = true;
 

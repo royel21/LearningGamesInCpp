@@ -124,7 +124,7 @@ void EditorScreen::draw()
     mDebug->end();
     mDebug->render(2);
     mDebug->setColor({ 255,255,255,25 });
-    mDebug->drawGrid2();
+    mDebug->drawGrid();
 }
 
 void EditorScreen::onScreenResize(int w, int h)

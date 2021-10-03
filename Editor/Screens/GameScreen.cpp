@@ -56,6 +56,7 @@ void GameScreen::build()
 void GameScreen::onEntry()
 {
     Plutus::SceneLoader::loadFromJson("assets/scenes/scene1.json", mScene);
+    mSystemManager.start();
 }
 
 void GameScreen::update(float dt)
@@ -84,6 +85,7 @@ void GameScreen::onScreenResize(int w, int h)
 
 void GameScreen::onExit()
 {
+    mSystemManager.stop();
     mScene->clear();
 }
 

@@ -13,7 +13,9 @@ namespace Plutus
 
         lua->do_file(_path, mEnv);
 
-        mEnv["init"]();
+        if (mEnv["init"] != sol::nil) {
+            mEnv["init"]();
+        }
     }
 
 } // namespace Plutus
