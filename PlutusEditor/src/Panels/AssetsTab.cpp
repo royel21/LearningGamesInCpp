@@ -19,8 +19,8 @@
 #define SEPARATOR '/'
 #endif
 
-std::unordered_map<std::string, bool> imgTypes;
-std::unordered_map<std::string, bool> fontTypes;
+boolmap imgTypes;
+boolmap fontTypes;
 
 namespace Plutus
 {
@@ -33,15 +33,56 @@ namespace Plutus
         fontTypes["otf"] = true;
     }
 
+    std::string AssetsTab::getIcon(boolmap& nodes, std::string name)
+    {
+        std::string icon = nodes[name] ? ICON_FA_FOLDER_OPEN : ICON_FA_FOLDER;
+        return icon + " " + name;
+    }
+
+    template<typename T>
+    void AssetsTab::drawTreeNode(std::string name, T& assets, int& id)
+    {
+        nodes2[name] = ImGui::TreeNode((void*)(intptr_t)id++, getIcon(nodes2, name).c_str());
+
+        if (nodes2[name]) {
+            for (auto asset : assets.getItems()) {
+                ImGui::TreeNodeEx((void*)(intptr_t)id++, TreeNodeLeaf_NoPushOpen, (FA_FILE + asset.first).c_str());
+                if (ImGui::BeginPopupContextItem())
+                {
+                    if (ImGui::MenuItem(("Remove " + asset.first).c_str()))
+                    {
+                        assets.removeItem(asset.first);
+                    }
+                    ImGui::EndPopup();
+                }
+            }
+            ImGui::TreePop();
+        }
+    }
+
     void AssetsTab::drawAssets()
     {
         ImGui::Begin("Assets");
-
-        ImGui::Text("Assets");
-        ImGui::Separator();
-
+        auto mAsset = AssetManager::get();
         if (std::filesystem::exists("./assets/")) {
-            drawTreeNode("./assets/");
+            if (ImGui::BeginTabBar("##TabBar"))
+            {
+                if (ImGui::BeginTabItem("Assets"))
+                {
+                    drawTreeNode("./assets/");
+                    ImGui::EndTabItem();
+                }
+
+                if (ImGui::BeginTabItem("Scene Assets"))
+                {
+                    int id = 0;
+                    drawTreeNode("Fonts", mAsset->mFonts, id);
+                    drawTreeNode("Textures", mAsset->mTextures, id);
+                    ImGui::EndTabItem();
+                }
+                ImGui::EndTabBar();
+            }
+
         }
         ImGui::End();
 
@@ -56,28 +97,24 @@ namespace Plutus
             auto path = entry.path().string();
             auto name = entry.path().filename().string();
 
-            if (entry.is_directory()) {
-                std::string icon = nodes[name] ? ICON_FA_FOLDER_OPEN : ICON_FA_FOLDER;
-                std::string dirname = icon + " " + name;
+            if (entry.is_directory())
+            {
+                nodes[name] = ImGui::TreeNode((void*)(intptr_t)id, getIcon(nodes, name).c_str());
 
-                bool opened = ImGui::TreeNode((void*)(intptr_t)id, dirname.c_str());
-                nodes[name] = opened;
-
-                if (opened) {
+                if (nodes[name]) {
                     drawTreeNode(path);
                     ImGui::TreePop();
                 }
             }
-            else {
-                std::string icon = std::string(ICON_FA_FILE_ALT) + "\xef\x85\x9c " + name;
-
+            else
+            {
                 ImGui::TreeNodeEx((void*)(intptr_t)id, TreeNodeLeaf_NoPushOpen, (FA_FILE + name).c_str());
 
                 int found = path.find("scene");
 
                 if (found > 0 && ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
                 {
-                    std::printf("dblck\n");
+
                 }
 
                 if (found < 0 && ImGui::BeginPopupContextItem())
@@ -153,26 +190,5 @@ namespace Plutus
             }
         }
 
-    }
-
-    bool AssetsTab::addFont()
-    {
-        bool show = true;
-        ImGui::BeginDialog("Add Font", 300, 300);
-        static char fontId[120];
-        // AssetManager::get()->mFonts.addFont();
-        ImGui::EndDialog(show);
-        return show;
-    }
-
-    bool AssetsTab::addTexture()
-    {
-        bool show = true;
-        ImGui::BeginDialog("Add Texture", 300, 300);
-        static char texId[120];
-
-        ImGui::Text("Texture");
-        ImGui::EndDialog(show);
-        return show;
     }
 }

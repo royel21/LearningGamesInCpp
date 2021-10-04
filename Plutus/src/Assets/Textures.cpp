@@ -61,6 +61,15 @@ namespace Plutus
         cleanUp();
     }
 
+    void Textures::removeItem(std::string texture)
+    {
+        auto it = mTileSets.find(texture);
+        if (it != mTileSets.end()) {
+            mTextureMap[mTileSets[texture].path] = false;
+            mTileSets.erase(it);
+        }
+    }
+
     const Texture* Textures::addTexture(const std::string& id, const std::string& path, GLint minFilter, GLint magFilter)
     {
         return addTexture(id, path, 0, 0, 0, minFilter, magFilter);

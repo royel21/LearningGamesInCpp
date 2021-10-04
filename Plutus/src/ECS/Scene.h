@@ -75,7 +75,7 @@ namespace Plutus
 
         Entity createEntity(const std::string& name);
 
-        Entity getEntity(uint32_t Id);
+        Entity getEntity(int Id);
         Entity getEntityByName(const std::string name);
         void removeEntity(entt::entity ent);
 

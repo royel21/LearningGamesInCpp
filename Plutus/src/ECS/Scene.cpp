@@ -31,7 +31,7 @@ namespace Plutus
         return { ent.mId, this };
     }
 
-    Entity Scene::getEntity(uint32_t Id)
+    Entity Scene::getEntity(int Id)
     {
         auto ent = entt::entity(Id);
         return { mRegistry.valid(ent) ? ent : entt::null , this };

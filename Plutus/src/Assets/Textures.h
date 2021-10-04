@@ -59,6 +59,10 @@ namespace Plutus
         ~Textures();
         Texture* getTexture(const std::string& id) { return &mTileSets[id]; }
         glm::vec4 getTextureUV(const std::string& id, int uvIndex) { return mTileSets[id].getUV(uvIndex); }
+
+        std::unordered_map<std::string, Texture>& getItems() { return mTileSets; }
+
+        void removeItem(std::string texture);
         /***
             Create a texture atlas from the image from the tile width and height
             @param id the Id of the texture

@@ -98,7 +98,7 @@ namespace Plutus
 		// Flip the texture coord on y
 		bool flipY = false;
 		// Entity Id for mouse picking
-		uint32_t entId;
+		int entId = -1;
 		// Layer Id
 		int layer = 0;
 		// Sort in Y order
@@ -106,7 +106,7 @@ namespace Plutus
 		Renderable() = default;
 		Renderable(uint32_t texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c) : TexId(texture), trans(rect), uv(_uv), color(_c) {}
 
-		Renderable(uint32_t texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, uint32_t id, int _layer, bool sY)
+		Renderable(uint32_t texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, int id, int _layer, bool sY)
 			: TexId(texture), trans(rect), uv(_uv), color(_c), r(_r), flipX(fx), flipY(fy), entId(id), layer(_layer), sortY(sY) {
 		}
 

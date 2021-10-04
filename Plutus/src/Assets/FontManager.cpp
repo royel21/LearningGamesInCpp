@@ -84,6 +84,14 @@ namespace Plutus
         return true;
     }
 
+    void FontManager::removeItem(std::string font)
+    {
+        auto it = mFonts.find(font);
+        if (it != mFonts.end()) {
+            mFonts.erase(it);
+        }
+    }
+
     void  FontManager::createRenderable(std::vector<Renderable>& renderables, const std::string& text, float x, float y, float scale, ColorRGBA8 color)
     {
         auto font = mFonts[mCurrentFont];

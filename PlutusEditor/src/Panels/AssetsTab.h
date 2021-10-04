@@ -2,9 +2,11 @@
 #include <string>
 #include <unordered_map>
 
+#define umap std::unordered_map
+#define boolmap umap<std::string, bool>
+
 namespace Plutus
 {
-
     class Scene;
     class AssetsTab
     {
@@ -15,12 +17,16 @@ namespace Plutus
 
     private:
         void processFile();
-        bool addTexture();
-        bool addFont();
+        std::string getIcon(boolmap& nodes, const std::string name);
+
+        template<typename T>
+        void drawTreeNode(std::string name, T& assets, int& id);
+
     private:
         Scene* mScene;
         std::string selectedDir;
-        std::unordered_map<std::string, bool> nodes;
+        boolmap nodes;
+        boolmap nodes2;
     };
 
 } // namespace Plutus

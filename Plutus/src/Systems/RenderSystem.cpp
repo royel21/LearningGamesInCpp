@@ -74,7 +74,7 @@ namespace Plutus
             if (mCamera->isBoxInView(rect, 200))
             {
                 mRenderables[i++] = { sprite.getTexId(), rect, sprite.getUV(), sprite.mColor,
-                    trans.r, sprite.mFlipX, sprite.mFlipY, entt::to_integral(ent), trans.layer, trans.sortY };
+                    trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
 
                 mDebug.drawBox(rect, {}, trans.r);
                 mDebug.end();

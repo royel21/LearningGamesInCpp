@@ -51,6 +51,9 @@ namespace Plutus
 		void setFont(const std::string& Id) { mCurrentFont = Id; }
 		FontTexture* getFont(const std::string& Id) { return &mFonts[Id]; };
 
+		std::unordered_map<std::string, FontTexture>& getItems() { return mFonts; }
+		void removeItem(std::string font);
+
 		// Set font as current and Prepare list of renderable letter
 		std::vector<Renderable> renderText(const std::string& font, const std::string& text, float x, float y, float scale = 1.0f, ColorRGBA8 color = {})
 		{

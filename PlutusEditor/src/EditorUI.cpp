@@ -314,12 +314,12 @@ namespace Plutus
 
 			if (mInput->onKeyPressed("Z"))
 				mCamera->setScale(1);
-
+			static Entity ent;
 			if (mInput->onKeyPressed("MouseLeft"))
 			{
 				lastCoords = { xPos, yPos };
 				lastCamPos = mCamera->getPosition();
-				auto ent = mScene->getEntity(mPicker.getEntId({ xPos, yPos }));
+				ent = mScene->getEntity(mPicker.getEntId({ xPos, yPos }));
 
 				if (ent && mEnt != ent) {
 					mEnt = ent;
@@ -347,10 +347,10 @@ namespace Plutus
 					mCamera->setScale(CHECKLIMIT(newVal, 0.20f, 6));
 				}
 			}
-			else  if (mInput->onKeyDown("MouseLeft") && mEnt)
+			else  if (mInput->onKeyDown("MouseLeft") && ent)
 			{
-				if (mEnt.hasComponent<Plutus::Transform>()) {
-					auto& trans = mEnt.getComponent<Plutus::Transform>();
+				if (ent.hasComponent<Plutus::Transform>()) {
+					auto& trans = ent.getComponent<Plutus::Transform>();
 					glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
 					result /= mCamera->getScale();
 
@@ -590,7 +590,7 @@ namespace Plutus
 						auto tileset = tilemap.mTextures[tile.texture];
 
 						mRenderables[i++] = { tileset->texId, rect, tileset->getUV(tile.texcoord),
-							{ tile.color }, tile.rotate, tile.flipX, tile.flipY, 0, tilemap.mLayer, false };
+							{ tile.color }, tile.rotate, tile.flipX, tile.flipY, (int)entt::to_integral(ent), tilemap.mLayer, false };
 					}
 				}
 			}
@@ -603,7 +603,7 @@ namespace Plutus
 			if (mCamera->isBoxInView(rect, 200))
 			{
 				mRenderables[i++] = { sprite.getTexId(), rect, sprite.getUV(), sprite.mColor,
-					trans.r, sprite.mFlipX, sprite.mFlipY, entt::to_integral(ent), trans.layer, trans.sortY };
+					trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
 			}
 
 		}
