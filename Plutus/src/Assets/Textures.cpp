@@ -61,6 +61,21 @@ namespace Plutus
         cleanUp();
     }
 
+    Texture* Textures::getTexture(const std::string& id)
+    {
+        if (mTileSets.find(id) == mTileSets.end())
+            return nullptr;
+        return &mTileSets[id];
+    }
+
+    glm::vec4 Textures::getTextureUV(const std::string& id, int uvIndex)
+    {
+        if (mTileSets.find(id) == mTileSets.end())
+            return {};
+
+        return mTileSets[id].getUV(uvIndex);
+    }
+
     void Textures::removeItem(std::string texture)
     {
         auto it = mTileSets.find(texture);

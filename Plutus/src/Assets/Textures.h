@@ -57,8 +57,8 @@ namespace Plutus
     public:
         Textures() = default;
         ~Textures();
-        Texture* getTexture(const std::string& id) { return &mTileSets[id]; }
-        glm::vec4 getTextureUV(const std::string& id, int uvIndex) { return mTileSets[id].getUV(uvIndex); }
+        Texture* getTexture(const std::string& id);
+        glm::vec4 getTextureUV(const std::string& id, int uvIndex);
 
         std::unordered_map<std::string, Texture>& getItems() { return mTileSets; }
 

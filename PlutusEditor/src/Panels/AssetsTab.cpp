@@ -43,7 +43,7 @@ namespace Plutus
     void AssetsTab::drawTreeNode(std::string name, T& assets, int& id)
     {
         nodes2[name] = ImGui::TreeNode((void*)(intptr_t)id++, getIcon(nodes2, name).c_str());
-
+        std::string assetId = "";
         if (nodes2[name]) {
             for (auto asset : assets.getItems()) {
                 ImGui::TreeNodeEx((void*)(intptr_t)id++, TreeNodeLeaf_NoPushOpen, (FA_FILE + asset.first).c_str());
@@ -51,12 +51,15 @@ namespace Plutus
                 {
                     if (ImGui::MenuItem(("Remove " + asset.first).c_str()))
                     {
-                        assets.removeItem(asset.first);
+                        assetId = asset.first;
                     }
                     ImGui::EndPopup();
                 }
             }
             ImGui::TreePop();
+            if (!assetId.empty()) {
+                assets.removeItem(assetId);
+            }
         }
     }
 

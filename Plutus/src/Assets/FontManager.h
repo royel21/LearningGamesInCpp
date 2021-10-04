@@ -47,9 +47,9 @@ namespace Plutus
 	public:
 		FontManager() = default;
 		~FontManager();
-		bool addFont(const std::string& Id, const std::string& fontPath, u32 fontSize);
-		void setFont(const std::string& Id) { mCurrentFont = Id; }
-		FontTexture* getFont(const std::string& Id) { return &mFonts[Id]; };
+		bool addFont(const std::string& id, const std::string& fontPath, u32 fontSize);
+		void setFont(const std::string& id) { mCurrentFont = id; }
+		FontTexture* getFont(const std::string& id);
 
 		std::unordered_map<std::string, FontTexture>& getItems() { return mFonts; }
 		void removeItem(std::string font);

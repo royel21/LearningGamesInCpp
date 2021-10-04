@@ -84,6 +84,13 @@ namespace Plutus
         return true;
     }
 
+    FontTexture* FontManager::getFont(const std::string& id)
+    {
+        if (mFonts.find(id) == mFonts.end())
+            return nullptr;
+        return &mFonts[id];
+    }
+
     void FontManager::removeItem(std::string font)
     {
         auto it = mFonts.find(font);
@@ -92,7 +99,8 @@ namespace Plutus
         }
     }
 
-    void  FontManager::createRenderable(std::vector<Renderable>& renderables, const std::string& text, float x, float y, float scale, ColorRGBA8 color)
+    void  FontManager::createRenderable(std::vector<Renderable>& renderables,
+        const std::string& text, float x, float y, float scale, ColorRGBA8 color)
     {
         auto font = mFonts[mCurrentFont];
         for (auto i : text) {
