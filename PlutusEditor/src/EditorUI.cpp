@@ -156,10 +156,10 @@ namespace Plutus
 	{
 		beginUI();
 		drawMainDockingWin();
-		viewPort();
-		viewPortControl();
 		mEntityEditor.draw();
 		mAssetsTab.drawAssets();
+		viewPort();
+		viewPortControl();
 
 		if (mShowDemo)
 		{

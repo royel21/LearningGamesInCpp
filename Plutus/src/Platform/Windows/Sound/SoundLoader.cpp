@@ -8,10 +8,6 @@ namespace Plutus
 
 	bool SoundLoader::loadSoundFile(const std::string& filePath, WAVEFORMATEXTENSIBLE* wfx, std::vector<uint8_t>* buffer)
 	{
-		//#if m_WIN32
-		//	_setmode( m_fileno(stdin), m_0_BINARY );
-		//#endif
-
 		unsigned long buffSize = 0;
 		unsigned long offset = 0;
 		if (Utils::getExtension(filePath) == "ogg")
@@ -32,9 +28,6 @@ namespace Plutus
 				{
 					// Copy the temp buffer to the buffer vector
 					buffer->insert(buffer->end(), pDataBuffer, pDataBuffer + buffSize);
-					/*for (unsigned long i = 0; i < buffSize; i++) {
-						buffer->push_back(pDataBuffer[i]);
-					}*/
 					result = true;
 				}
 				delete[] pDataBuffer;
@@ -156,9 +149,6 @@ namespace Plutus
 		stb_vorbis_get_samples_short_interleaved(_file, v_info.channels, (short*)tbuffer, _length_samples);
 
 		buffer->insert(buffer->end(), tbuffer, tbuffer + buffSize);
-		/*for (unsigned long i = 0; i < buffSize; i++) {
-			buffer->push_back((u8)tbuffer[i]);
-		}*/
 
 		delete[] tbuffer;
 

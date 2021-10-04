@@ -75,7 +75,7 @@ namespace Plutus
             {
                 //Get the layers
                 auto entities = doc["entities"].GetArray();
-                for (size_t i = 0; i < entities.Size(); i++)
+                for (int i = entities.Size() - 1; i > -1; i--)
                 {
                     auto entObj = entities[i].GetJsonObject();
 

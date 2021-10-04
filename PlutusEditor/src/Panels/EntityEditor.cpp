@@ -13,7 +13,6 @@ namespace Plutus
 {
     void EntityEditor::setContext(const Ref<Scene>& context, EditorUI* parent)
     {
-
         mScene = context;
         mParentUI = parent;
         mComponentPanel.setContext(mScene, parent);

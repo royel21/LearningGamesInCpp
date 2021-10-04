@@ -109,14 +109,13 @@ namespace Plutus
             mEntity = mParentUI->getEntity();
             if (mEntity)
             {
-                auto& tag = mEntity.getComponent<Tag>().Name;
+                auto& tag = mEntity.getComponent<Tag>();
 
-                char buffer[256];
-                memset(buffer, 0, sizeof(buffer));
-                strncpy_s(buffer, tag.c_str(), sizeof(buffer));
+                char buffer[128] = { 0 };
+                strncpy_s(buffer, tag.Name.c_str(), tag.Name.length());
                 if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
                 {
-                    tag = std::string(buffer);
+                    tag.Name = std::string(buffer);
                 }
 
                 static bool showCreate;
