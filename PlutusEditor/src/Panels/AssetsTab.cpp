@@ -113,7 +113,7 @@ namespace Plutus
             {
                 ImGui::TreeNodeEx((void*)(intptr_t)id, TreeNodeLeaf_NoPushOpen, (FA_FILE + name).c_str());
 
-                int found = path.find("scene");
+                auto found = path.find("scene");
 
                 if (found > 0 && ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
                 {
@@ -147,8 +147,8 @@ namespace Plutus
         if (!selectedDir.empty()) {
             auto ex = Utils::getExtension(selectedDir);
 
-            int start = 9;
-            int end = selectedDir.find_first_of(SEPARATOR, start);
+            size_t start = 9;
+            size_t end = selectedDir.find_first_of(SEPARATOR, start);
             auto substr = selectedDir.substr(start, end - start);
 
             bool show = true;

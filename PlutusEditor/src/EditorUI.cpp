@@ -20,7 +20,7 @@
 
 #include <ECS/Scene.h>
 #include <Serialize/SceneLoader.h>
-#include <Platform/Windows/FileUtils.h>
+#include <Platforms/Windows/FileUtils.h>
 
 #include <cstdio>
 
@@ -560,7 +560,7 @@ namespace Plutus
 		auto view = mScene->getRegistry()->view<Transform, Sprite>();
 
 		/******************Resize temp buffer************************/
-		int size = view.size_hint();
+		auto size = view.size_hint();
 
 		for (auto [ent, map] : viewMap.each()) {
 			size += map.mTiles.size();

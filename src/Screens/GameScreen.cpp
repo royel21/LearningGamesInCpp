@@ -18,6 +18,8 @@
 #include <Systems/ScriptSystem.h>
 #include <Systems/AnimationSystem.h>
 
+#include <Assets/SoundEngine.h>
+
 GameScreen::GameScreen()
 {
 }
@@ -57,6 +59,7 @@ void GameScreen::build()
     mSystemManager.AddSystem<Plutus::ScriptSystem>(&mWorldCamera);
     mSystemManager.AddSystem<Plutus::AnimationSystem>();
 
+    Plutus::SoundEngine.add("bg-sound", "assets/sounds/XYZ2.ogg", Plutus::MUSIC);
 }
 
 void GameScreen::onEntry()
@@ -87,6 +90,7 @@ void GameScreen::onEntry()
     auto anim = bat.addComponent<Plutus::Animation>(bat);
     anim->addTexture("bats");
     bat.addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
+    Plutus::SoundEngine.play("bg-sound");
 }
 
 void GameScreen::update(float dt)
@@ -119,8 +123,10 @@ void GameScreen::onExit()
 {
     mSystemManager.stop();
     mScene->clear();
+    Plutus::SoundEngine.stop("bg-sound");
 }
 
 void GameScreen::destroy()
 {
+    Plutus::SoundEngine.cleanUp();
 }

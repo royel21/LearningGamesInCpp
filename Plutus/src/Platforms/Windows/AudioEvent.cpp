@@ -1,16 +1,13 @@
 #include "AudioEvent.h"
-#include "SoundLoader.h"
+#include <Assets/SoundLoader.h>
 
 #include <iostream>
 namespace Plutus
 {
-	AudioEvent::AudioEvent(std::string name, std::string filePath) : mSourceVoice(nullptr),
-		mWaveLength(0),
-		mFallof(0.0f),
-		mPriority(0),
-		mIndex(0)
+	AudioEvent::AudioEvent(std::string name, std::string filePath) : mSourceVoice(nullptr)
 	{
 		mName = name;
+		mPath = filePath;
 		mAudioData.clear();
 
 		std::cout << "Adding new Audio Event\n";

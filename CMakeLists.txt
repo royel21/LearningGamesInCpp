@@ -41,7 +41,6 @@ include_directories(${LIB_DIR}/rapidjson/include)
 include_directories(${LIB_DIR}/box2d/include)
 include_directories(${LIB_DIR}/freetype/include)
 include_directories(${LIB_DIR}/stb)
-include_directories(${LIB_DIR}/openal-soft/include)
 
 include_directories(PlutusEditor/src)
 include_directories(PlutusEditor/libs/imgui/src)
@@ -73,15 +72,19 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   add_executable("Editor" ${EDITOR_SRC} ${EDITOR_HEADER})
   target_link_libraries("Editor" PUBLIC Plutus PlutusEditor)
 
-  
-  file(GLOB_RECURSE TEST_SRC Test/Web/*.h Test/Web/*.cpp)
-  add_executable("Test" Test/test.cpp ${TEST_SRC})
-  target_link_libraries("Test" PUBLIC Plutus)
 
   # Add source files
   file(GLOB_RECURSE BOX2D_SRC box2dtest/*.cpp box2dtest/*.hpp)
 
   add_executable(box2dtest ${BOX2D_SRC})
   target_link_libraries(box2dtest PUBLIC Plutus)
+
+  set(OpenAL32 C:/vs-project/LearningGamesInCpp/Plutus/libs/openal-soft/build/Debug/OpenAL32.lib)
+
+  include_directories(${LIB_DIR}/openal-soft/include)
+
+  file(GLOB_RECURSE TEST_SRC Test/Web/*.h Test/Web/*.cpp)
+  add_executable("Test" Test/test.cpp ${TEST_SRC})
+  target_link_libraries("Test" PUBLIC Plutus ${OpenAL32})
 
 endif()

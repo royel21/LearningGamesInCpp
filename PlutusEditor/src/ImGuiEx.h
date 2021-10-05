@@ -86,7 +86,7 @@ namespace ImGui
         bool isSelected = false;
         std::string name;
 
-        selected = checkLimit(selected, 0, data.size() - 1);
+        selected = checkLimit(selected, 0, (int)data.size() - 1);
 
         if (data.size()) {
             name = data[selected];
@@ -169,7 +169,7 @@ namespace ImGui
     inline bool ListBox(const char* label, std::vector<Plutus::Entity*> data, Plutus::Entity* selected)
     {
         bool isSelected = false;
-        if (ImGui::ListBoxHeader(label, data.size()))
+        if (ImGui::ListBoxHeader(label, (int)data.size()))
         {
             for (auto ent : data)
             {

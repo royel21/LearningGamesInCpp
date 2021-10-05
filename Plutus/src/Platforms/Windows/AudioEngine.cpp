@@ -1,26 +1,29 @@
-#include "SoundManager.h"
+#include "AudioEngine.h"
 #include <iostream>
+
+#include "AudioEvent.h"
+
 namespace Plutus
 {
-	bool SoundManager::has_COINIT = false;
+	bool AudioEngine::has_COINIT = false;
 
-	SoundManager::SoundManager() : mXAuido2(NULL), mMasterVoice(NULL)
+	AudioEngine::AudioEngine() : mXAuido2(NULL), mMasterVoice(NULL)
 	{
 		Init();
 	}
 
-	SoundManager* SoundManager::get()
+	AudioEngine& AudioEngine::get()
 	{
 		has_COINIT = true;
-		static SoundManager* Instance = new SoundManager();
-		return Instance;
+		static AudioEngine instance;
+		return instance;
 	}
 
-	SoundManager::~SoundManager()
+	AudioEngine::~AudioEngine()
 	{
 		std::cout << "SM Destructor\n";
 
-		CleanUp();
+		cleanUp();
 
 		if (mMasterVoice)
 		{
@@ -36,7 +39,7 @@ namespace Plutus
 		if (has_COINIT)
 			CoUninitialize();
 	}
-	bool SoundManager::Init()
+	bool AudioEngine::Init()
 	{
 		if (has_COINIT)
 		{
@@ -74,9 +77,9 @@ namespace Plutus
 		return true;
 	}
 
-	uint32_t SoundManager::addAudio(std::string name, std::string path, SoundType type)
+	bool AudioEngine::add(std::string name, std::string path, SoundType type)
 	{
-		if (!mXAuido2 || !mMasterVoice || mAudioEvents[name])
+		if (!mXAuido2 || !mMasterVoice || mSounds[name])
 			return false;
 
 		auto event = new AudioEvent(name, path);
@@ -84,10 +87,10 @@ namespace Plutus
 		if (!event->mAudioData.size())
 		{
 			std::cout << "Critical error: can't load file!\n";
-			return 1;
+			return false;
 		}
 		event->type = type;
-		mAudioEvents[name] = event;
+		mSounds[name] = event;
 		HRESULT hr = S_OK;
 		// create source voice
 		if (type == MUSIC)
@@ -120,9 +123,20 @@ namespace Plutus
 		return 0;
 	}
 
-	bool SoundManager::PlayAudio(std::string name, bool loop)
+	void AudioEngine::remove(std::string name)
 	{
-		auto aEvent = mAudioEvents[name];
+		auto& aEvent = mSounds[name];
+		if (aEvent)
+		{
+			aEvent->mSourceVoice->Stop();
+			delete aEvent;
+			mSounds.erase(name);
+		}
+	}
+
+	bool AudioEngine::play(std::string name, bool loop)
+	{
+		auto aEvent = mSounds[name];
 		if (aEvent)
 		{
 			XAUDIO2_VOICE_STATE aState;
@@ -142,39 +156,30 @@ namespace Plutus
 		return false;
 	}
 
-	bool SoundManager::Pause(std::string name)
+	bool AudioEngine::pause(std::string name)
 	{
-		if (mAudioEvents[name])
-			return mAudioEvents[name]->pause();
+		if (mSounds[name])
+			return mSounds[name]->pause();
 
 		return false;
 	}
 
-	bool SoundManager::Stop(std::string name)
+	bool AudioEngine::stop(std::string name)
 	{
-		if (mAudioEvents[name])
-			return mAudioEvents[name]->stop();
+		if (mSounds[name])
+			return mSounds[name]->stop();
 
 		return false;
 	}
 
-	void SoundManager::removeAudio(std::string name)
+	void AudioEngine::cleanUp()
 	{
-		auto& aEvent = mAudioEvents[name];
-		if (aEvent)
-		{
-			aEvent->mSourceVoice->Stop();
-			delete aEvent;
-			mAudioEvents.erase(name);
-		}
-	}
-
-	void SoundManager::CleanUp()
-	{
-		for (auto& itr : mAudioEvents)
+		for (auto& itr : mSounds)
 		{
 			delete itr.second;
 		}
-		mAudioEvents.clear();
+		mSounds.clear();
 	}
+
+	AudioEngine& SoundEngine = AudioEngine::get();
 } // namespace Plutus

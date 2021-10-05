@@ -17,7 +17,7 @@ OUTPUT_FLAG =  --shell-file game.html --preload-file ./assets -s WASM=1 -s ALLOW
 
 SRC_Plutus != find ../Plutus/src -name "*.cpp" -not -path ../Plutus/src/Platform/Windows
 
-CFLAGS = -s USE_WEBGL2=1 -s USE_GLFW=3 -s WASM=1 -std=c++1z
+CFLAGS = -s USE_WEBGL2=1 -s USE_GLFW=3 -lopenal -s WASM=1 -std=c++1z
 
 SRC != find ../src -name "*.cpp"
 

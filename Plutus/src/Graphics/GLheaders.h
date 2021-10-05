@@ -1,17 +1,10 @@
 #ifndef _GLHEADERS_H
 #define _GLHEADERS_H
 
-#if __ANDROID__
-
-#include <GLES3/gl3.h>
-
-#elif __EMSCRIPTEN__
-
+#if __ANDROID__ || __EMSCRIPTEN__
 #include <GLES3/gl3.h>
 #define glClearDepth glClearDepthf
-
 #else
-
 extern "C"
 {
 #include <windows.h>

@@ -33,7 +33,7 @@ namespace Plutus
 
         auto tiles = value["tiles"].GetArray();
 
-        for (size_t i = 0; i < tiles.Size(); i++)
+        for (uint32_t i = 0; i < tiles.Size(); i++)
         {
             auto tile = tiles[i].GetJsonObject();
             int x = tile["x"].GetInt();
@@ -59,7 +59,7 @@ namespace Plutus
             if (doc["textures"].IsArray())
             {
                 auto textures = doc["textures"].GetArray();
-                for (size_t i = 0; i < textures.Size(); i++)
+                for (uint32_t i = 0; i < textures.Size(); i++)
                 {
                     auto tex = textures[i].GetJsonObject();
                     auto id = tex["id"].GetString();
@@ -83,7 +83,7 @@ namespace Plutus
                     auto entity = scene->createEntity(name);
 
                     auto components = entObj["components"].GetArray();
-                    for (size_t i = 0; i < components.Size(); i++)
+                    for (uint32_t i = 0; i < components.Size(); i++)
                     {
                         auto component = components[i].GetJsonObject();
                         std::string compType = component["name"].GetString();

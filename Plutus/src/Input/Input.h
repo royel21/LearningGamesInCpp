@@ -1,10 +1,12 @@
 #ifndef _INPUT_H
 #define _INPUT_H
 
+#include <vector>
 #include <string>
-#include <unordered_map>
-#include <glm/glm.hpp>
 #include <functional>
+#include <glm/glm.hpp>
+#include <unordered_map>
+
 #include "InputListener.h"
 
 namespace Plutus

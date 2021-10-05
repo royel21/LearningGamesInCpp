@@ -9,7 +9,7 @@
 #include <Utils/Utils.h>
 #include <Assets/AssetManager.h>
 #include <ECS/Components/TileMap.h>
-#include <Platform/Windows/FileUtils.h>
+#include <Platforms/Windows/FileUtils.h>
 
 #include "ImGuiEx.h"
 #include "../IconsFontAwesome5.h"
@@ -238,7 +238,7 @@ namespace Plutus
         if (renderables.size() < mTempTiles.size()) {
             renderables.resize(mTempTiles.size());
         }
-        mParentUI->setTotalTemp(mTempTiles.size());
+        mParentUI->setTotalTemp((int)mTempTiles.size());
 
         int i = 0;
         for (auto tile : mTempTiles)
@@ -266,8 +266,8 @@ namespace Plutus
         int texcoord = mCurrentTile->texcoord;
         if (ImGui::InputInt("Texture##ctile", &texcoord, 1))
         {
-            int size = mTileMap->mTextures[mCurrentTexture]->uvs.size();
-            mCurrentTile->texcoord = LIMIT(texcoord, 0, size - 1);
+            auto size = mTileMap->mTextures[mCurrentTexture]->uvs.size();
+            mCurrentTile->texcoord = LIMIT(texcoord, 0, (int)size - 1);
         }
         ImGui::PopItemWidth();
 

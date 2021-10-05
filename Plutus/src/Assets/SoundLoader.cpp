@@ -1,12 +1,12 @@
 #include "SoundLoader.h"
-#include "Utils/Utils.h"
-#include "stb_vorbis.h"
+
 #include <iostream>
+#include <stb_vorbis.h>
+#include <Utils/Utils.h>
 
 namespace Plutus
 {
-
-	bool SoundLoader::loadSoundFile(const std::string& filePath, WAVEFORMATEXTENSIBLE* wfx, std::vector<uint8_t>* buffer)
+	bool SoundLoader::loadSoundFile(const std::string& filePath, void* wfx, std::vector<u8>* buffer)
 	{
 		unsigned long buffSize = 0;
 		unsigned long offset = 0;
@@ -20,7 +20,7 @@ namespace Plutus
 			if (result)
 			{
 
-				uint8_t* pDataBuffer = new uint8_t[buffSize];
+				u8* pDataBuffer = new u8[buffSize];
 				readChunkToBuffer(filePath, pDataBuffer, buffSize, offset);
 				//buffer->reserve(buffSize);
 				result = false;
@@ -80,15 +80,13 @@ namespace Plutus
 			myfile.close();
 			return false;
 		}
-		//get the wave format size
+		// get the wave format size
 		myfile.read((char*)&chunkDataSize, 4);
-		/*if (chunkDataSize > sizeof(WAVEFORMATEX))
-			chunkDataSize = sizeof(WAVEFORMATEX);*/
-			////get the WAVE format
+		// get the WAVE format
 		myfile.read((char*)wfx, chunkDataSize);
 
 		bool found = true;
-		//loop until data position is found
+		// loop until data position is found
 		char temp;
 		unsigned long pos;
 		while (found)
@@ -118,7 +116,7 @@ namespace Plutus
 		return result;
 	}
 
-	bool SoundLoader::readOgg(std::string filePath, void* wfx, std::vector<uint8_t>* buffer)
+	bool SoundLoader::readOgg(std::string filePath, void* wfx, std::vector<u8>* buffer)
 	{
 		int error;
 		stb_vorbis* _file = stb_vorbis_open_filename(filePath.c_str(), &error, NULL);
@@ -127,7 +125,7 @@ namespace Plutus
 
 		stb_vorbis_info v_info = stb_vorbis_get_info(_file);
 
-		WAVEFORMATEX wfm;
+		WaveFormatEx wfm;
 		// Set the wave format
 		memset(&wfm, 0, sizeof(wfm));
 
@@ -138,7 +136,7 @@ namespace Plutus
 		wfm.nSamplesPerSec = v_info.sample_rate;
 		wfm.nAvgBytesPerSec = v_info.sample_rate * wfm.nChannels * 2;
 		wfm.nBlockAlign = 2 * wfm.nChannels;
-		wfm.wFormatTag = WAVE_FORMAT_PCM;
+		wfm.wFormatTag = 1; //PCM
 		memcpy(wfx, &wfm, sizeof(wfm));
 
 		const unsigned int _length_samples = (stb_vorbis_stream_length_in_samples(_file) * v_info.channels);

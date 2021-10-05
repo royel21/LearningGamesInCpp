@@ -110,7 +110,7 @@ namespace Plutus
 			: TexId(texture), trans(rect), uv(_uv), color(_c), r(_r), flipX(fx), flipY(fy), entId(id), layer(_layer), sortY(sY) {
 		}
 
-		bool operator < (Renderable& rend) const {
+		bool operator < (const Renderable& rend) const {
 			if (sortY && rend.sortY) {
 				return std::tie(layer, rend.trans.y, TexId) < std::tie(rend.layer, trans.y, TexId);
 			}
