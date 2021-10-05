@@ -41,6 +41,7 @@ include_directories(${LIB_DIR}/rapidjson/include)
 include_directories(${LIB_DIR}/box2d/include)
 include_directories(${LIB_DIR}/freetype/include)
 include_directories(${LIB_DIR}/stb)
+include_directories(${LIB_DIR}/openal-soft/include)
 
 include_directories(PlutusEditor/src)
 include_directories(PlutusEditor/libs/imgui/src)
@@ -73,7 +74,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   target_link_libraries("Editor" PUBLIC Plutus PlutusEditor)
 
   
-  add_executable("Test" Test/test.cpp)
+  file(GLOB_RECURSE TEST_SRC Test/Web/*.h Test/Web/*.cpp)
+  add_executable("Test" Test/test.cpp ${TEST_SRC})
   target_link_libraries("Test" PUBLIC Plutus)
 
   # Add source files

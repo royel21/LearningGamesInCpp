@@ -10,9 +10,9 @@ namespace Plutus
         char name[128] = {};
 
     public:
-        void draw(Entity *ent);
+        void draw(Entity* ent);
 
     private:
-        void SequenceEditor(bool &show, Animation &anim);
+        void SequenceEditor(bool& show, Animation* anim);
     };
 }

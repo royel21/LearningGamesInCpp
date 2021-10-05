@@ -28,10 +28,10 @@ namespace Plutus
         bool hasComponent();
 
         template <typename T, typename... Args>
-        T& addComponent(Args &&...args);
+        T* addComponent(Args &&...args);
 
         template <typename T>
-        T& getComponent();
+        T* getComponent();
 
         template <typename T>
         bool removeComponent();
@@ -91,15 +91,15 @@ namespace Plutus
 
     /**********************Entity definitions***************/
     template <typename T, typename... Args>
-    T& Entity::addComponent(Args &&...args)
+    T* Entity::addComponent(Args &&...args)
     {
-        return mScene->mRegistry.emplace_or_replace<T>(mId, std::forward<Args>(args)...);
+        return &(mScene->mRegistry.emplace_or_replace<T>(mId, std::forward<Args>(args)...));
     }
 
     template <typename T>
-    T& Entity::getComponent()
+    T* Entity::getComponent()
     {
-        return mScene->mRegistry.get<T>(mId);
+        return &(mScene->mRegistry.get<T>(mId));
     }
 
     template <typename T>

@@ -109,13 +109,13 @@ namespace Plutus
             mEntity = mParentUI->getEntity();
             if (mEntity)
             {
-                auto& tag = mEntity.getComponent<Tag>();
+                auto& tag = mEntity.getComponent<Tag>()->Name;
 
                 char buffer[128] = { 0 };
-                strncpy_s(buffer, tag.Name.c_str(), tag.Name.length());
+                strncpy_s(buffer, tag.c_str(), tag.length());
                 if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
                 {
-                    tag.Name = std::string(buffer);
+                    tag = std::string(buffer);
                 }
 
                 static bool showCreate;
@@ -146,24 +146,24 @@ namespace Plutus
         {
             if (ImGui::CollapsingHeader("Transform##comp"))
             {
-                auto& trans = mEntity.getComponent<Transform>();
-                float position[] = { trans.x, trans.y };
+                auto trans = mEntity.getComponent<Transform>();
+                float position[] = { trans->x, trans->y };
 
                 ImGui::PushItemWidth(100);
                 if (ImGui::DragFloat2("Position X Y", position, 1.0f, 0, 0, "%.2f"))
                 {
-                    trans.x = position[0];
-                    trans.y = position[1];
+                    trans->x = position[0];
+                    trans->y = position[1];
                 }
-                int size[] = { trans.h, trans.w };
+                int size[] = { trans->h, trans->w };
                 if (ImGui::DragInt2("Size W H", size))
                 {
-                    trans.h = size[0];
-                    trans.w = size[1];
+                    trans->h = size[0];
+                    trans->w = size[1];
                 }
-                ImGui::DragFloat("Rotation", &trans.r, 5, 0, 360, "%.0f");
-                ImGui::Checkbox("SortY", &trans.sortY);
-                ImGui::InputInt("Layer", &trans.layer, 1);
+                ImGui::DragFloat("Rotation", &trans->r, 5, 0, 360, "%.0f");
+                ImGui::Checkbox("SortY", &trans->sortY);
+                ImGui::InputInt("Layer", &trans->layer, 1);
                 ImGui::PopItemWidth();
             }
         }
@@ -173,7 +173,7 @@ namespace Plutus
     {
         if (mEntity.hasComponent<TileMap>())
         {
-            mTileMapPanel.draw(&mEntity.getComponent<TileMap>());
+            mTileMapPanel.draw(mEntity.getComponent<TileMap>());
         }
     }
 
@@ -183,20 +183,20 @@ namespace Plutus
         {
             if (ImGui::CollapsingHeader("Sprite##comp"))
             {
-                auto& sprite = mEntity.getComponent<Sprite>();
+                auto sprite = mEntity.getComponent<Sprite>();
                 auto& tilesets = AssetManager::get()->mTextures.mTileSets;
 
-                auto color = sprite.mColor.rgba;
-                static std::string selected = sprite.mTextureId;
+                auto color = sprite->mColor.rgba;
+                static std::string selected = sprite->mTextureId;
                 static int sc = 100;
                 static float scale = 1.0f;
                 if (ImGui::ComboBox<Texture>("TileSheet", tilesets, selected)) {
-                    sprite.mTextureId = selected;
+                    sprite->mTextureId = selected;
                 }
 
                 if (ImGui::ColorInt("Color", color))
                 {
-                    sprite.mColor.setColor(color);
+                    sprite->mColor.setColor(color);
                 }
                 ImGui::PushItemWidth(100);
                 if (ImGui::InputInt("Scale", &sc, 5))
@@ -237,11 +237,11 @@ namespace Plutus
         {
             if (ImGui::CollapsingHeader("Script##comp"))
             {
-                auto& script = mEntity.getComponent<Script>();
+                auto script = mEntity.getComponent<Script>();
                 auto files = Utils::listFiles("assets/script", ".lua");
                 if (files.size())
                 {
-                    int selected = Utils::getIndex(files, script.path);
+                    int selected = Utils::getIndex(files, script->path);
                     if (ImGui::ComboBox("Script", files, selected))
                     {
                         mEntity.removeComponent<Script>();

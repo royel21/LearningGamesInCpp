@@ -15,12 +15,12 @@ namespace Plutus
     const std::string Entity::getName()
     {
         auto tag = getComponent<Tag>();
-        return tag.Name;
+        return tag->Name;
     }
     void Entity::setName(const std::string& name)
     {
         auto tag = getComponent<Tag>();
-        tag.Name = name;
+        tag->Name = name;
     }
 
     Entity Scene::createEntity(const std::string& name)

@@ -324,8 +324,8 @@ namespace Plutus
 				if (ent && mEnt != ent) {
 					mEnt = ent;
 					if (mEnt.hasComponent<Plutus::Transform>()) {
-						auto& trans = mEnt.getComponent<Plutus::Transform>();
-						entLastPos = trans.getPosition();
+						auto trans = mEnt.getComponent<Plutus::Transform>();
+						entLastPos = trans->getPosition();
 					}
 				}
 			}
@@ -350,12 +350,12 @@ namespace Plutus
 			else  if (mInput->onKeyDown("MouseLeft") && ent)
 			{
 				if (ent.hasComponent<Plutus::Transform>()) {
-					auto& trans = ent.getComponent<Plutus::Transform>();
+					auto trans = ent.getComponent<Plutus::Transform>();
 					glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
 					result /= mCamera->getScale();
 
-					trans.x = entLastPos.x + result.x;
-					trans.y = entLastPos.y + result.y;
+					trans->x = entLastPos.x + result.x;
+					trans->y = entLastPos.y + result.y;
 				}
 			}
 		}

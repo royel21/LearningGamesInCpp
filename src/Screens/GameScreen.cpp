@@ -74,29 +74,19 @@ void GameScreen::onEntry()
     player2.addComponent<Plutus::Transform>(400.0f, 0.0f, 128, 128, 0.0f, 0, true);
     player2.addComponent<Plutus::Sprite>("player2");
 
-    auto& anim2 = player2.addComponent<Plutus::Animation>(player2);
-    anim2.addTexture("player2");
+    auto anim2 = player2.addComponent<Plutus::Animation>(player2);
+    anim2->addTexture("player2");
 
     player2.addComponent<Plutus::Script>("assets/script/player2.lua", player2, mScene.get());
 
     // Bat1
     auto bat = mScene->createEntity("Bat");
-    auto trasn3 = bat.addComponent<Plutus::Transform>(288.0f, 0.0f, 64, 64, 0.0f, 0, true);
+    bat.addComponent<Plutus::Transform>(288.0f, 0.0f, 64, 64, 0.0f, 0, true);
     bat.addComponent<Plutus::Sprite>("bats");
 
-    auto& anim = bat.addComponent<Plutus::Animation>(bat);
-    anim.addTexture("bats");
+    auto anim = bat.addComponent<Plutus::Animation>(bat);
+    anim->addTexture("bats");
     bat.addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
-
-
-    // auto bed = mScene->createEntity("bed");
-    // bed->addComponent<Plutus::Transform>(128.0f, h - 256.0f, 128, 128);
-    // auto& sprite = bed->addComponent<Plutus::Sprite>("cave");
-    // sprite.mUVCoord = Plutus::AssetManager::get()->getTexCoords("cave", { 1, 10, 96, 96 });
-    // auto ent = mScene->getEntityByName("Player");
-    // if (ent) {
-    //     std::printf("name: %s", ent.getName().c_str());
-    // }
 }
 
 void GameScreen::update(float dt)

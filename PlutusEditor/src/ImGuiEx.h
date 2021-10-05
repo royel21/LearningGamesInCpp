@@ -14,7 +14,10 @@
 
 #include "IconsFontAwesome5.h"
 
-#define IM_F4_2_I32COLOR(color) static_cast<int>(color[3] * 255) << 24 | static_cast<int>(color[2] * 255) << 16 | static_cast<int>(color[1] * 255) << 8 | static_cast<int>(color[0] * 255)
+#define IM_F4_2_I32COLOR(color) static_cast<int>(color[3] * 255) << 24 | \
+                                static_cast<int>(color[2] * 255) << 16 | \
+                                static_cast<int>(color[1] * 255) << 8 | \
+                                static_cast<int>(color[0] * 255)
 
 namespace Plutus
 {
@@ -42,6 +45,11 @@ namespace Plutus
 
 namespace ImGui
 {
+
+    inline int checkLimit(int& v, int min, int max) {
+        return v < min ? 0 : v > max ? max - 1 : v;
+    }
+
     template <typename T>
     inline bool ComboBox(const char* label, const std::vector<T*>& data, int& selected)
     {
@@ -77,6 +85,9 @@ namespace ImGui
     {
         bool isSelected = false;
         std::string name;
+
+        selected = checkLimit(selected, 0, data.size() - 1);
+
         if (data.size()) {
             name = data[selected];
         }

@@ -33,72 +33,72 @@ namespace Plutus
         writer->EndArray();
     }
 
-    void Tag_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Tag& tag)
+    void Tag_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Tag* tag)
     {
         writer->StartObject();
         {
             writer->String("name");
             writer->String("Tag");
             writer->String("Name");
-            writer->String(tag.Name.c_str());
+            writer->String(tag->Name.c_str());
         }
     }
 
-    void Transform_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Transform& trans)
+    void Transform_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Transform* trans)
     {
         writer->StartObject();
         {
             writer->String("name");
             writer->String("Transform");
             writer->String("x");
-            writer->Double(trans.x);
+            writer->Double(trans->x);
             writer->String("y");
-            writer->Double(trans.y);
+            writer->Double(trans->y);
             writer->String("h");
-            writer->Int(trans.h);
+            writer->Int(trans->h);
             writer->String("w");
-            writer->Int(trans.w);
+            writer->Int(trans->w);
             writer->String("layer");
-            writer->Int(trans.layer);
+            writer->Int(trans->layer);
             writer->String("sortY");
-            writer->Bool(trans.sortY);
+            writer->Bool(trans->sortY);
             writer->String("r");
-            writer->Double(trans.r);
+            writer->Double(trans->r);
         }
         writer->EndObject();
     }
 
-    void Sprite_json(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Sprite& sprite)
+    void Sprite_json(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Sprite* sprite)
     {
         writer->StartObject();
         {
             writer->String("name");
             writer->String("Sprite");
             writer->String("texture");
-            writer->String(sprite.mTextureId.c_str());
+            writer->String(sprite->mTextureId.c_str());
             writer->String("color");
-            writer->Int(sprite.mColor.rgba);
+            writer->Int(sprite->mColor.rgba);
             writer->String("mFlipX");
-            writer->Bool(sprite.mFlipX);
+            writer->Bool(sprite->mFlipX);
             writer->String("mFlipY");
-            writer->Bool(sprite.mFlipX);
+            writer->Bool(sprite->mFlipX);
         }
         writer->EndObject();
     }
 
-    void Script_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Script& script)
+    void Script_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Script* script)
     {
         writer->StartObject();
         {
             writer->String("name");
             writer->String("Script");
             writer->String("path");
-            writer->String(script.path.c_str());
+            writer->String(script->path.c_str());
         }
         writer->EndObject();
     }
 
-    void Animate_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Animation& anim)
+    void Animate_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Animation* anim)
     {
         writer->StartObject();
         {
@@ -107,7 +107,7 @@ namespace Plutus
 
             writer->String("texture");
             writer->StartArray();
-            for (auto tx : anim.mTextures)
+            for (auto tx : anim->mTextures)
             {
                 writer->String(tx.c_str());
             }
@@ -115,7 +115,7 @@ namespace Plutus
 
             writer->String("sequences");
             writer->StartArray();
-            for (auto& a : anim.mSequences)
+            for (auto& a : anim->mSequences)
             {
                 writer->StartObject();
                 {
@@ -140,18 +140,18 @@ namespace Plutus
         writer->EndObject();
     }
 
-    void TileMap_json(rapidjson::Writer<rapidjson::StringBuffer>* writer, const TileMap& tilemap)
+    void TileMap_json(rapidjson::Writer<rapidjson::StringBuffer>* writer, const TileMap* tilemap)
     {
         writer->StartObject();
         {
             writer->String("name");
             writer->String("TileMap");
             writer->String("tilewidth");
-            writer->Int(tilemap.mTileWidth);
+            writer->Int(tilemap->mTileWidth);
             writer->String("tileheight");
-            writer->Int(tilemap.mTileHeight);
+            writer->Int(tilemap->mTileHeight);
             writer->String("layer");
-            writer->Int(tilemap.mLayer);
+            writer->Int(tilemap->mLayer);
             //Array of tileset name
             writer->String("tileset");
             writer->String("");
@@ -160,7 +160,7 @@ namespace Plutus
             //Array of textures
             writer->String("textures");
             writer->StartArray();
-            for (auto tex : tilemap.mTextures)
+            for (auto tex : tilemap->mTextures)
             {
                 writer->String(tex.second->name.c_str());
             }
@@ -169,7 +169,7 @@ namespace Plutus
             writer->String("tiles");
             writer->StartArray();
             {
-                for (auto tile : tilemap.mTiles)
+                for (auto tile : tilemap->mTiles)
                 {
                     //Tile OBJ
                     writer->StartObject();

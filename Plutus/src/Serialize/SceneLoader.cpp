@@ -13,7 +13,7 @@ namespace Plutus
 {
     void loadAnimation(Entity& ent, rapidjson::Value::Object value)
     {
-        auto& anim = ent.addComponent<Animation>(ent);
+        // auto anim = ent.addComponent<Animation>(ent);
     }
 
     void loadTileMap(Entity& ent, rapidjson::Value::Object value)
@@ -22,13 +22,13 @@ namespace Plutus
         int h = value["tileheight"].GetInt();
         int layer = value["layer"].GetInt();
         auto tileset = value["tileset"].GetString();
-        auto& tmap = ent.addComponent<TileMap>(w, h, layer);
+        auto tmap = ent.addComponent<TileMap>(w, h, layer);
 
         auto textures = value["textures"].GetArray();
 
         for (auto& t : value["textures"].GetArray())
         {
-            tmap.addTexture(t.GetString());
+            tmap->addTexture(t.GetString());
         }
 
         auto tiles = value["tiles"].GetArray();
@@ -45,7 +45,7 @@ namespace Plutus
             float rotate = tile["r"].GetFloat();
             int color = tile["color"].GetInt();
 
-            tmap.mTiles.emplace_back(x, y, t, tx, fx, fy, rotate, color);
+            tmap->mTiles.emplace_back(x, y, t, tx, fx, fy, rotate, color);
         }
     }
 
@@ -102,9 +102,9 @@ namespace Plutus
                         if (compType == "Sprite")
                         {
                             auto spr = entity.addComponent<Sprite>(component["texture"].GetString());
-                            spr.mFlipX = component["mFlipX"].GetBool();
-                            spr.mFlipY = component["mFlipY"].GetBool();
-                            spr.mColor.setColor(component["color"].GetInt());
+                            spr->mFlipX = component["mFlipX"].GetBool();
+                            spr->mFlipY = component["mFlipY"].GetBool();
+                            spr->mColor.setColor(component["color"].GetInt());
                             continue;
                         }
                         if (compType == "Animation")
