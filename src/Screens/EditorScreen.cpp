@@ -68,7 +68,6 @@ void EditorScreen::update(float dt)
         auto pos = mInput->getMouseCoords();
         pos.y = h - pos.y;
         auto mpos = mCamera.convertScreenToWold(pos);
-        std::printf("Id: %i\n x:%0.0f y:%0.0f\n", mFB.getEntId(pos), mpos.x, mpos.y);
     }
 
     if (mInput->onKeyDown("Ctrl"))

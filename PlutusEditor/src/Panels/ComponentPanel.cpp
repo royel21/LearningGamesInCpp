@@ -15,6 +15,8 @@
 #include <cstring>
 
 #include "../EditorUI.h"
+#include "../ImGuiEx.h"
+#include "../IconsFontAwesome5.h"
 
 #define COMP_TRASNFORM 0
 #define COMP_SPRITE 1
@@ -104,7 +106,7 @@ namespace Plutus
 
     void ComponentPanel::drawUI()
     {
-        ImGui::Begin("Components", nullptr, ImGuiWindowFlags_HorizontalScrollbar);
+        ImGui::Begin("Components");
         {
             mEntity = mParentUI->getEntity();
             if (mEntity)
@@ -113,7 +115,7 @@ namespace Plutus
 
                 char buffer[128] = { 0 };
                 strncpy_s(buffer, tag.c_str(), tag.length());
-                if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
+                if (ImGui::InputText("Name##Tag", buffer, sizeof(buffer)))
                 {
                     tag = std::string(buffer);
                 }
@@ -144,16 +146,12 @@ namespace Plutus
     bool ComponentPanel::CollapseComponent(char* label, int id) {
         bool isOpen = ImGui::CollapsingHeader(label, ImGuiTreeNodeFlags_AllowItemOverlap);
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 20);
-        ImGui::PushStyleColor(ImGuiCol_Text, { 1,0,0,1 });
-        ImGui::PushStyleColor(ImGuiCol_Button, { 0,0,0,0 });
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0,0,0,0 });
         ImGui::PushID(id);
-        if (ImGui::Button(ICON_FA_TRASH_ALT)) {
+        if (ImGui::TransparentButton(ICON_FA_TRASH_ALT, { 1,0,0,1 })) {
             isOpen = false;
             mEntity.removeComponent<T>();
         }
         ImGui::PopID();
-        ImGui::PopStyleColor(3);
         return isOpen;
     }
 
@@ -204,13 +202,13 @@ namespace Plutus
             if (CollapseComponent<Sprite>("Sprite##sprite-comp", 3))
             {
                 auto sprite = mEntity.getComponent<Sprite>();
-                auto& tilesets = AssetManager::get()->mTextures.mTileSets;
+                auto& textures = AssetManager::get()->mTextures.mTileSets;
 
                 auto color = sprite->mColor.rgba;
                 static std::string selected = sprite->mTextureId;
                 static int sc = 100;
                 static float scale = 1.0f;
-                if (ImGui::ComboBox<Texture>("TileSheet", tilesets, selected)) {
+                if (ImGui::ComboBox<Texture>("TileSheet", textures, selected)) {
                     sprite->mTextureId = selected;
                 }
 
@@ -224,29 +222,31 @@ namespace Plutus
                     sc = LIMIT(sc, 25, 300);
                     scale = sc / 100.0f;
                 }
-                auto tileset = &tilesets[selected];
-
-                static char text[120];
-                snprintf(text, 120, "Texture Size W:%d H:%d", tileset->texWidth, tileset->texHeight);
-                ImGui::Text(text);
-                ImGui::Separator();
-                if (tileset != NULL)
-                {
-                    if (ImGui::BeginTabBar("##TabBar"))
-                    {
-                        if (ImGui::BeginTabItem("Tile Coords"))
-                        {
-                            drawCanvas(tileset, scale);
-                            ImGui::EndTabItem();
-                        }
-                        if (ImGui::BeginTabItem("Sprite Sheet"))
-                        {
-                            drawTexCoords(tileset, scale);
-                            ImGui::EndTabItem();
-                        }
-                        ImGui::EndTabBar();
-                    }
+                auto texture = &textures[selected];
+                if (texture) {
+                    ImGui::DrawTexture(texture, 0, 300);
                 }
+                // static char text[120];
+                // snprintf(text, 120, "Texture Size W:%d H:%d", texture->texWidth, texture->texHeight);
+                // ImGui::Text(text);
+                // ImGui::Separator();
+                // if (texture != NULL)
+                // {
+                //     if (ImGui::BeginTabBar("##TabBar"))
+                //     {
+                //         if (ImGui::BeginTabItem("Tile Coords"))
+                //         {
+                //             drawCanvas(texture, scale);
+                //             ImGui::EndTabItem();
+                //         }
+                //         if (ImGui::BeginTabItem("Sprite Sheet"))
+                //         {
+                //             drawTexCoords(texture, scale);
+                //             ImGui::EndTabItem();
+                //         }
+                //         ImGui::EndTabBar();
+                //     }
+                // }
             }
         }
     }

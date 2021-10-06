@@ -19,6 +19,7 @@
 #include <Time/Timer.h>
 
 #include <ECS/Scene.h>
+#include <ECS/Components.h>
 #include <Serialize/SceneLoader.h>
 #include <Platforms/Windows/FileUtils.h>
 
@@ -303,7 +304,7 @@ namespace Plutus
 		float xPos = mapIn(ImGui::GetIO().MousePos.x - canvas_pos.x, 0, newSize.x, 0, winSize.x);
 		float yPos = winSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
 
-		ImGui::Image(reinterpret_cast<void*>(mFb.getTextureId()), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
+		ImGui::Image((void*)mFb.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
 
 		if (mCanvasHover = ImGui::IsItemHovered())
 		{

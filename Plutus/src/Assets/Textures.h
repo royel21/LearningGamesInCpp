@@ -11,6 +11,7 @@ namespace Plutus
     struct GLTexture
     {
         GLTexture() : id(0), width(0), height(0) {}
+        GLTexture(uint32_t _id, int _width, int _height) : id(_id), width(_width), height(_height) {}
         uint32_t id;
         int width;
         int height;
@@ -45,7 +46,6 @@ namespace Plutus
             return uvs[texcoord];
         }
 
-    private:
         void calculateUV();
     };
 
@@ -57,6 +57,7 @@ namespace Plutus
     public:
         Textures() = default;
         ~Textures();
+
         Texture* getTexture(const std::string& id);
         glm::vec4 getTextureUV(const std::string& id, int uvIndex);
 
@@ -78,9 +79,8 @@ namespace Plutus
         void removeTexture(const std::string& id);
 
         void cleanUp();
-
+        GLTexture createGLTexure(std::string path, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
     private:
-        GLTexture loadTexture(std::string path, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
         std::unordered_map<std::string, bool> mTextureMap;
     };
 

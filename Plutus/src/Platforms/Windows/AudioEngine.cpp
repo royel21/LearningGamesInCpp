@@ -68,24 +68,14 @@ namespace Plutus
 		return true;
 	}
 
-	bool AudioEngine::add(std::string name, std::string path, SoundType type)
-	{
-		if (!mXAuido2 || !mMasterVoice || mSounds[name])
-			return false;
-
+	AudioEvent* AudioEngine::createEvent(const std::string& name, const std::string& path, SoundType type) {
 		auto event = new AudioEvent(name, path);
 
-		if (!event->mAudioData.size())
-		{
-			return false;
-		}
-		event->type = type;
-		mSounds[name] = event;
+		if (!event->mAudioData.size()) return nullptr;
+
 		HRESULT hr = S_OK;
-		// create source voice
 		if (type == MUSIC)
 		{
-
 			hr = mXAuido2->CreateSourceVoice(
 				&event->mSourceVoice,
 				&event->mWaveFormat.Format,
@@ -104,14 +94,25 @@ namespace Plutus
 				&mMusicSendList,
 				NULL);
 		}
-		if (FAILED(hr))
-		{
-			return 1;
+
+		if (FAILED(hr)) return nullptr;
+
+		return event;
+	}
+	bool AudioEngine::add(const std::string& name, std::string path, SoundType type)
+	{
+
+		if (!mXAuido2 || !mMasterVoice || mSounds.find(name) != mSounds.end())
+			return false;
+		auto event = createEvent(name, path, type);
+		if (event) {
+			mSounds[name] = event;
+			return true;
 		}
-		return 0;
+		return false;
 	}
 
-	void AudioEngine::remove(std::string name)
+	void AudioEngine::remove(const std::string& name)
 	{
 		auto& aEvent = mSounds[name];
 		if (aEvent)
@@ -122,41 +123,46 @@ namespace Plutus
 		}
 	}
 
-	bool AudioEngine::play(std::string name, bool loop)
-	{
-		auto aEvent = mSounds[name];
-		if (aEvent)
+	bool AudioEngine::play(AudioEvent* event, bool loop) {
+		if (event)
 		{
 			XAUDIO2_VOICE_STATE aState;
-			aEvent->mSourceVoice->GetState(&aState);
+			event->mSourceVoice->GetState(&aState);
 
 			if (aState.BuffersQueued)
 			{
-				aEvent->mSourceVoice->Stop();
-				aEvent->mSourceVoice->FlushSourceBuffers();
+				event->mSourceVoice->Stop();
+				event->mSourceVoice->FlushSourceBuffers();
 			}
 
-			aEvent->mAudioBuffer.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
+			event->mAudioBuffer.LoopCount = loop ? XAUDIO2_LOOP_INFINITE : 0;
 
-			if (aEvent)
-				return aEvent->start();
+			if (event)
+				return event->start();
 		}
 		return false;
 	}
 
-	bool AudioEngine::pause(std::string name)
+	bool AudioEngine::pause(AudioEvent* event) {
+		return event->pause();
+	}
+
+	bool AudioEngine::stop(AudioEvent* event) {
+		return event->stop();
+	}
+
+	bool AudioEngine::pause(const std::string& name)
 	{
-		if (mSounds[name])
+		if (mSounds.find(name) != mSounds.end())
 			return mSounds[name]->pause();
 
 		return false;
 	}
 
-	bool AudioEngine::stop(std::string name)
+	bool AudioEngine::stop(const std::string& name)
 	{
-		if (mSounds[name])
+		if (mSounds.find(name) != mSounds.end())
 			return mSounds[name]->stop();
-
 		return false;
 	}
 

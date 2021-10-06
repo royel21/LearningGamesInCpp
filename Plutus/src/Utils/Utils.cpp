@@ -15,15 +15,7 @@ namespace Plutus
         std::string getFileName(const std::string& filePath)
         {
             auto index = filePath.find_last_of(separator);
-            std::cout << index << std::endl;
-            if (index < -1)
-            {
-                return filePath.substr(index + 1, filePath.size());
-            }
-            else
-            {
-                return std::string("no found");
-            }
+            return index < -1 ? filePath.substr(index + 1, filePath.size()) : std::string("");
         }
 
         std::string getExtension(const std::string& fileName)

@@ -5,4 +5,5 @@
 #include <Platforms/Android/AudioEngine.h>
 #else
 #include <Platforms/Windows/AudioEngine.h>
+#include <Platforms/Windows/AudioEvent.h>
 #endif

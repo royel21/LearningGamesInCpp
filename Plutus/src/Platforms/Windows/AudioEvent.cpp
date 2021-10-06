@@ -3,6 +3,7 @@
 
 namespace Plutus
 {
+
 	AudioEvent::AudioEvent(std::string name, std::string filePath) : mSourceVoice(nullptr)
 	{
 		mName = name;
@@ -41,12 +42,14 @@ namespace Plutus
 		if (FAILED(hr)) return false;
 		// start the source voice
 		mSourceVoice->Start();
+		state = Playing;
 		return true;
 	}
 
 	bool AudioEvent::pause()
 	{
 		mSourceVoice->Stop();
+		state = Paused;
 		return false;
 	}
 
@@ -56,6 +59,14 @@ namespace Plutus
 		mSourceVoice->Stop();
 		mSourceVoice->FlushSourceBuffers();
 		mSourceVoice->SubmitSourceBuffer(&mAudioBuffer);
+		state = Stopped;
 		return true;
+	}
+
+	AudioState AudioEvent::getState() {
+		XAUDIO2_VOICE_STATE aState;
+		mSourceVoice->GetState(&aState);
+
+		return aState.BuffersQueued && state == Playing ? Playing : Stopped;
 	}
 } // namespace Plutus

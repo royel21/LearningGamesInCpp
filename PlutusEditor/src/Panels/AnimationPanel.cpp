@@ -1,8 +1,13 @@
 #include "AnimationPanel.h"
-#include <ECS/Scene.h>
+
+#include "../ImGuiEx.h"
+#include "../IconsFontAwesome5.h"
+
 #include <imgui.h>
-#include "ImGuiEx.h"
+#include <ECS/Scene.h>
+#include <ECS/Components.h>
 #include <Assets/AssetManager.h>
+
 
 #define ZeroMem(arr, val) std::memset(arr, val, sizeof(arr))
 

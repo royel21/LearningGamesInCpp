@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <cstdio>
 #include <algorithm>
+#include <Utils/Utils.h>
 
 namespace Plutus
 {
@@ -95,7 +96,7 @@ namespace Plutus
         auto mit = mTileSets.find(id);
         if (mit == mTileSets.end())
         {
-            mTileSets[id] = Texture(id, c, w, h, loadTexture(path, minFilter, magFilter), path);
+            mTileSets[id] = Texture(id, c, w, h, createGLTexure(path, minFilter, magFilter), path);
         }
 
         return &mTileSets[id];
@@ -117,16 +118,20 @@ namespace Plutus
         mTileSets.clear();
     }
 
-    GLTexture Textures::loadTexture(std::string filePath, GLint minFilter, GLint magFilter)
-    {
+    GLTexture Textures::createGLTexure(std::string path, GLint minFilter, GLint magFilter) {
+
         GLTexture texture = {};
 
+        int ch = Utils::getExtension(path).compare("png") == 0 ? 4 : 3;
+
         int BPP;
-        uint8_t* out = stbi_load(filePath.c_str(), &texture.width, &texture.height, &BPP, 4);
+        uint8_t* out = stbi_load(path.c_str(), &texture.width, &texture.height, &BPP, ch);
 
+        auto format = ch == 3 ? GL_RGB8 : GL_RGBA8;
+        auto type = ch == 3 ? GL_RGB : GL_RGBA;
 
-        texture.id = createTexture(texture.width, texture.height, out, GL_RGBA8, GL_RGBA);
-        //See https://en.wikipedia.org/wiki/Mipmap
+        texture.id = createTexture(texture.width, texture.height, out, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, minFilter, magFilter);
+
         glGenerateMipmap(GL_TEXTURE_2D);
         //unlink the texture
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -137,7 +142,7 @@ namespace Plutus
         }
         else
         {
-            std::printf("stbi fail: %s - %s\n", stbi_failure_reason(), filePath.c_str());
+            std::printf("stbi fail: %s - %s\n", stbi_failure_reason(), path.c_str());
         }
         return texture;
     }

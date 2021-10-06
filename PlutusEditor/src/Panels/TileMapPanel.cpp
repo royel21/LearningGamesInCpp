@@ -6,6 +6,7 @@
 #include <imgui.h>
 
 #include <ECS/Scene.h>
+#include <Input/Input.h>
 #include <Utils/Utils.h>
 #include <Assets/AssetManager.h>
 #include <ECS/Components/TileMap.h>
@@ -200,7 +201,7 @@ namespace Plutus
                     mRotation = LIMIT(mRotation, 0.0f, 360.0f);
                 }
                 if (mTileMap->mTextures.size()) {
-                    ImGui::Texture(mTileMap->mTextures[mCurrentTexture], 1, mTempTiles);
+                    ImGui::DrawTexture(mTileMap->mTextures[mCurrentTexture], 0, 0, &mTempTiles);
                 }
             }
 
@@ -209,7 +210,6 @@ namespace Plutus
                 tileProps();
             }
         }
-        ImGui::SameLine();
 
         //Render Temp Tiles
         bool isHover = mParentUI->isCanvaHover();

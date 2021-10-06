@@ -159,9 +159,6 @@ namespace Plutus
     void AssetsTab::processFile()
     {
         static char name[128];
-        static int tileWidth = 0;
-        static int tileHeight = 0;
-        static int columns = 0;
         static int fontSize = 20;
         ImVec2 vec = glm::vec2(1);
 
@@ -181,10 +178,7 @@ namespace Plutus
             ImGui::InputText("Id##modal", name, IM_ARRAYSIZE(name));
 
             if (substr.compare("textures") == 0 && imgTypes[ex]) {
-                ImGui::InputInt("Columns", &columns);
-                ImGui::InputInt("Tile Width", &tileWidth);
-                ImGui::InputInt("Tile Height", &tileHeight);
-
+                addTexure();
                 type = 1;
             }
 
@@ -194,25 +188,33 @@ namespace Plutus
             }
 
             if (substr.compare("sounds") == 0 && soundsTypes[ex]) {
-                ImGui::Text(selectedDir.c_str());
+                if (!aEvent) {
+                    aEvent = SoundEngine.createEvent("temp", selectedDir, EFFECT);
+                }
+                bool state = aEvent->getState() != 1;
+                if (ImGui::TransparentButton(state ? ICON_FA_PLAY : ICON_FA_STOP, { 0,0,1,1 })) {
+                    state ? SoundEngine.play(aEvent) : SoundEngine.stop(aEvent);
+                }
                 type = 3;
+                ImGui::SameLine();
+                ImGui::Text(Utils::getFileName(selectedDir).c_str());
             }
             ImGui::PopItemWidth();
+
             ImGui::Separator();
-            if (ImGui::Button("save##modal"))
+            if (ImGui::Button("save##modal") && strlen(name) > 0)
             {
                 switch (type) {
                 case 1:
                     AssetManager::get()->mFonts.addFont(name, selectedDir, fontSize);
                     break;
                 case 2:
-                    AssetManager::get()->mTextures.addTexture(name, selectedDir, columns, tileHeight, tileWidth);
+                    AssetManager::get()->mTextures.addTexture(name, selectedDir, texture.columns, texture.tileHeight, texture.tileWidth);
                     break;
                 case 3:
                     SoundEngine.add(name, selectedDir, EFFECT);
                     break;
                 }
-
                 show = false;
             }
             ImGui::EndDialog(show);
@@ -220,12 +222,32 @@ namespace Plutus
             if (!show) {
                 selectedDir = "";
                 memset(name, 0, 128);
-                tileWidth = 0;
-                tileHeight = 0;
-                columns = 0;
                 fontSize = 20;
+                texture = {};
+                if (aEvent) {
+                    delete aEvent;
+                    aEvent = nullptr;
+                }
             }
         }
 
+    }
+
+    void AssetsTab::addTexure() {
+        auto& textures = AssetManager::get()->mTextures;
+
+        uint32_t filter = GL_NEAREST;
+
+        if (texture.texWidth == 0) {
+            auto glTexture = textures.createGLTexure(selectedDir);
+            texture.texId = glTexture.id;
+            texture.texWidth = glTexture.width;
+            texture.texHeight = glTexture.height;
+        }
+        ImGui::InputInt("Columns", &texture.columns);
+        ImGui::InputInt("Tile Width", &texture.tileWidth);
+        ImGui::InputInt("Tile Height", &texture.tileHeight);
+
+        ImGui::DrawTexture(&texture, 350, 300);
     }
 }

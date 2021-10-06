@@ -7,7 +7,7 @@ namespace Plutus
 
     void TileMap::addTexture(const std::string& texture)
     {
-        mTextures[mTextures.size()] = AssetManager::get()->mTextures.getTexture(texture);
+        mTextures[(int)mTextures.size()] = AssetManager::get()->mTextures.getTexture(texture);
     }
 
     void TileMap::removeTexture(int index)
@@ -42,7 +42,7 @@ namespace Plutus
         auto it = std::find_if(mTiles.begin(), mTiles.end(), [=](const Tile& ntile) -> bool
             { return ntile.x >= pos.x && ntile.x <= pos.x + mTileWidth - 1 && ntile.y >= pos.y && ntile.y <= pos.y + mTileHeight - 1; });
 
-        return it != mTiles.end() ? it - mTiles.begin() : -1;
+        return it != mTiles.end() ? int(it - mTiles.begin()) : -1;
     }
 
     bool TileMap::removeTile(const glm::ivec2& mCoords)

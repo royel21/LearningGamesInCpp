@@ -35,8 +35,9 @@ inline void setBackgoundColor(float r, float g, float b, float a)
 
 */
 inline GLuint createTexture(int w, int h, unsigned char* buff, GLuint intFormat = GL_RGB,
-    GLuint format = GL_RGB, GLuint type = GL_UNSIGNED_BYTE, GLuint minFilter = GL_NEAREST,
-    GLuint magFilter = GL_NEAREST) {
+    GLuint format = GL_RGB, GLint type = GL_UNSIGNED_BYTE,
+    GLint minFilter = GL_NEAREST,
+    GLint magFilter = GL_NEAREST) {
 
     GLuint id;
     glGenTextures(1, &id);
