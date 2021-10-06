@@ -91,7 +91,7 @@ namespace Plutus
         return &mFonts[id];
     }
 
-    void FontManager::removeItem(std::string font)
+    void FontManager::remove(std::string font)
     {
         auto it = mFonts.find(font);
         if (it != mFonts.end()) {

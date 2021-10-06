@@ -38,10 +38,13 @@ namespace Plutus
         void drawUI();
 
     private:
+        template<typename T>
+        bool CollapseComponent(char* label, int id);
         void drawTransform();
-        void drawMapTile();
         void drawSprite();
+        void drawAnimation();
         void drawScript();
+        void drawMapTile();
 
         void drawCanvas(Texture* tileset, float scale);
         void drawTexCoords(Texture* tileset, float scale);

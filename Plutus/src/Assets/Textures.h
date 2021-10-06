@@ -62,7 +62,7 @@ namespace Plutus
 
         std::unordered_map<std::string, Texture>& getItems() { return mTileSets; }
 
-        void removeItem(std::string texture);
+        void remove(std::string texture);
         /***
             Create a texture atlas from the image from the tile width and height
             @param id the Id of the texture

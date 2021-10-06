@@ -95,7 +95,6 @@ void GameScreen::onEntry()
 
 void GameScreen::update(float dt)
 {
-
     if (mInput->onKeyPressed("PageUp"))
     {
         mCurrentState = Plutus::ScreenState::CHANGE_PREV;

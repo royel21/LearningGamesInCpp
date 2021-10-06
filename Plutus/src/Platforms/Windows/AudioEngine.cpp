@@ -1,5 +1,4 @@
 #include "AudioEngine.h"
-#include <iostream>
 
 #include "AudioEvent.h"
 
@@ -21,20 +20,16 @@ namespace Plutus
 
 	AudioEngine::~AudioEngine()
 	{
-		std::cout << "SM Destructor\n";
-
 		cleanUp();
 
 		if (mMasterVoice)
 		{
 			mMasterVoice->DestroyVoice();
-			std::cout << "XAudio engine release\n";
 		}
 		if (mXAuido2)
 		{
 			mXAuido2->StopEngine();
 			mXAuido2->Release();
-			std::cout << "XAudio engine release\n";
 		}
 		if (has_COINIT)
 			CoUninitialize();
@@ -52,14 +47,12 @@ namespace Plutus
 		hr = XAudio2Create(&mXAuido2);
 		if (FAILED(hr))
 		{
-			std::cout << "Critical error: Unable to create the XAudio2 engine!\n";
 			return false;
 		}
 
 		hr = mXAuido2->CreateMasteringVoice(&mMasterVoice);
 		if (FAILED(hr))
 		{
-			std::cout << "Critical error: Unable to create the XAudio2 mastering voice!\n";
 			return false;
 		}
 
@@ -71,8 +64,6 @@ namespace Plutus
 
 		mSoundsSendList = { 1, &sendSounds };
 		mMusicSendList = { 1, &sendMusic };
-
-		std::cout << "Xaudio2 Engine Initialize\n";
 
 		return true;
 	}
@@ -86,7 +77,6 @@ namespace Plutus
 
 		if (!event->mAudioData.size())
 		{
-			std::cout << "Critical error: can't load file!\n";
 			return false;
 		}
 		event->type = type;
@@ -116,10 +106,8 @@ namespace Plutus
 		}
 		if (FAILED(hr))
 		{
-			std::cout << "Critical error: Unable to create source voice!\n";
 			return 1;
 		}
-		// return success
 		return 0;
 	}
 

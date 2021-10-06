@@ -140,12 +140,30 @@ namespace Plutus
         ImGui::End();
     }
 
+    template<typename T>
+    bool ComponentPanel::CollapseComponent(char* label, int id) {
+        bool isOpen = ImGui::CollapsingHeader(label, ImGuiTreeNodeFlags_AllowItemOverlap);
+        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 20);
+        ImGui::PushStyleColor(ImGuiCol_Text, { 1,0,0,1 });
+        ImGui::PushStyleColor(ImGuiCol_Button, { 0,0,0,0 });
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0,0,0,0 });
+        ImGui::PushID(id);
+        if (ImGui::Button(ICON_FA_TRASH_ALT)) {
+            isOpen = false;
+            mEntity.removeComponent<T>();
+        }
+        ImGui::PopID();
+        ImGui::PopStyleColor(3);
+        return isOpen;
+    }
+
     void ComponentPanel::drawTransform()
     {
         if (mEntity.hasComponent<Transform>())
         {
-            if (ImGui::CollapsingHeader("Transform##comp"))
+            if (CollapseComponent<Transform>("Transform##comp-comp", 1))
             {
+
                 auto trans = mEntity.getComponent<Transform>();
                 float position[] = { trans->x, trans->y };
 
@@ -173,7 +191,9 @@ namespace Plutus
     {
         if (mEntity.hasComponent<TileMap>())
         {
-            mTileMapPanel.draw(mEntity.getComponent<TileMap>());
+            if (CollapseComponent<TileMap>("TileMap##tilemap-comp", 2)) {
+                mTileMapPanel.draw(mEntity.getComponent<TileMap>());
+            }
         }
     }
 
@@ -181,7 +201,7 @@ namespace Plutus
     {
         if (mEntity.hasComponent<Sprite>())
         {
-            if (ImGui::CollapsingHeader("Sprite##comp"))
+            if (CollapseComponent<Sprite>("Sprite##sprite-comp", 3))
             {
                 auto sprite = mEntity.getComponent<Sprite>();
                 auto& tilesets = AssetManager::get()->mTextures.mTileSets;
@@ -231,11 +251,20 @@ namespace Plutus
         }
     }
 
+    void ComponentPanel::drawAnimation()
+    {
+        if (mEntity.hasComponent<Animation>()) {
+            if (CollapseComponent<Animation>("Animation##animation-comp", 4)) {
+
+            }
+        }
+    }
+
     void ComponentPanel::drawScript()
     {
         if (mEntity.hasComponent<Script>())
         {
-            if (ImGui::CollapsingHeader("Script##comp"))
+            if (CollapseComponent<Script>("Script##script-comp", 5))
             {
                 auto script = mEntity.getComponent<Script>();
                 auto files = Utils::listFiles("assets/script", ".lua");

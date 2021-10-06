@@ -144,85 +144,82 @@ namespace Plutus
 
     void TileMapPanel::draw(TileMap* tileMap)
     {
-        if (ImGui::CollapsingHeader("TileMap##comp"))
+        mIsOpen = true;
+        mTileMap = tileMap;
+        int size[] = { mTileMap->mTileWidth, mTileMap->mTileHeight };
+
+        ImGui::PushItemWidth(110);
+        ImGui::InputInt("Layer", &mTileMap->mLayer, 1);
+        ImGui::PushItemWidth(60);
+        if (ImGui::DragInt2("Tile Size", size, 1))
         {
-            mIsOpen = true;
-            mTileMap = tileMap;
-            int size[] = { mTileMap->mTileWidth, mTileMap->mTileHeight };
+            mTileMap->mTileWidth = size[0];
+            mTileMap->mTileHeight = size[1];
+        }
+        ImGui::PopItemWidth();
 
-            ImGui::PushItemWidth(110);
-            ImGui::InputInt("Layer", &mTileMap->mLayer, 1);
-            ImGui::PushItemWidth(60);
-            if (ImGui::DragInt2("Tile Size", size, 1))
-            {
-                mTileMap->mTileWidth = size[0];
-                mTileMap->mTileHeight = size[1];
+        ImGui::Separator();
+        ImGui::ComboBox<Texture*>("TileSheet##mttexture", mTileMap->mTextures, mCurrentTexture);
+        ImGui::PopItemWidth();
+        ImGui::SameLine();
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
+        if (ImGui::Button(ICON_FA_PLUS_CIRCLE " ##add-tilesheet"))
+        {
+            mShowAddModal = true;
+        }
+        ImGui::PopStyleColor();
+        if (mShowAddModal)
+        {
+            addTexture("Add Texture To TileMap", mShowAddModal, mTileMap);
+        }
+        ImGui::SameLine();
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
+        if (ImGui::Button(ICON_FA_TRASH_ALT " ##remove-tilesheet"))
+        {
+            if (mTileMap->mTextures.size()) {
+                mTileMap->removeTexture(mCurrentTexture);
+                auto first = mTileMap->mTextures.begin();
+                if (first != mTileMap->mTextures.end()) {
+                    mCurrentTexture = first->first;
+                }
             }
-            ImGui::PopItemWidth();
-
+        }
+        ImGui::PopStyleColor();
+        if (mTileMap->mTextures.size() > 0)
+        {
+            ImGui::RadioButton("Place", &mMode, MODE_PLACE);
+            ImGui::SameLine();
+            ImGui::RadioButton("Edit", &mMode, MODE_EDIT);
+            ImGui::SameLine();
+            ImGui::RadioButton("Remove", &mMode, MODE_REMOVE);
             ImGui::Separator();
-            ImGui::ComboBox<Texture*>("TileSheet##mttexture", mTileMap->mTextures, mCurrentTexture);
-            ImGui::PopItemWidth();
-            ImGui::SameLine();
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
-            if (ImGui::Button(ICON_FA_PLUS_CIRCLE " ##add-tilesheet"))
+            if (mMode == MODE_PLACE)
             {
-                mShowAddModal = true;
-            }
-            ImGui::PopStyleColor();
-            if (mShowAddModal)
-            {
-                addTexture("Add Texture To TileMap", mShowAddModal, mTileMap);
-            }
-            ImGui::SameLine();
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
-            if (ImGui::Button(ICON_FA_TRASH_ALT " ##remove-tilesheet"))
-            {
+                if (ImGui::InputFloat("Rotation", &mRotation, 45.0f, 90.0f, "%0.0f"))
+                {
+                    mRotation = LIMIT(mRotation, 0.0f, 360.0f);
+                }
                 if (mTileMap->mTextures.size()) {
-                    mTileMap->removeTexture(mCurrentTexture);
-                    auto first = mTileMap->mTextures.begin();
-                    if (first != mTileMap->mTextures.end()) {
-                        mCurrentTexture = first->first;
-                    }
+                    ImGui::Texture(mTileMap->mTextures[mCurrentTexture], 1, mTempTiles);
                 }
             }
-            ImGui::PopStyleColor();
-            if (mTileMap->mTextures.size() > 0)
+
+            if (mCurrentTile != nullptr && mMode == MODE_EDIT)
             {
-                ImGui::RadioButton("Place", &mMode, MODE_PLACE);
-                ImGui::SameLine();
-                ImGui::RadioButton("Edit", &mMode, MODE_EDIT);
-                ImGui::SameLine();
-                ImGui::RadioButton("Remove", &mMode, MODE_REMOVE);
-                ImGui::Separator();
-                if (mMode == MODE_PLACE)
-                {
-                    if (ImGui::InputFloat("Rotation", &mRotation, 45.0f, 90.0f, "%0.0f"))
-                    {
-                        mRotation = LIMIT(mRotation, 0.0f, 360.0f);
-                    }
-                    if (mTileMap->mTextures.size()) {
-                        ImGui::Texture(mTileMap->mTextures[mCurrentTexture], 1, mTempTiles);
-                    }
-                }
-
-                if (mCurrentTile != nullptr && mMode == MODE_EDIT)
-                {
-                    tileProps();
-                }
+                tileProps();
             }
-            ImGui::SameLine();
+        }
+        ImGui::SameLine();
 
-            //Render Temp Tiles
-            bool isHover = mParentUI->isCanvaHover();
-            if (mTempTiles.size() && mMode == MODE_PLACE && isHover && mTileMap->mTextures.size())
-            {
-                renderTiles();
-            }
+        //Render Temp Tiles
+        bool isHover = mParentUI->isCanvaHover();
+        if (mTempTiles.size() && mMode == MODE_PLACE && isHover && mTileMap->mTextures.size())
+        {
+            renderTiles();
+        }
 
-            if (isHover && Input::getInstance()->onKeyDown("MouseLeft") && mTempTiles.size()) {
-                createTiles();
-            }
+        if (isHover && Input::getInstance()->onKeyDown("MouseLeft") && mTempTiles.size()) {
+            createTiles();
         }
     }
 

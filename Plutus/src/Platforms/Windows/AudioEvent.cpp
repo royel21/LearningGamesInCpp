@@ -1,7 +1,6 @@
 #include "AudioEvent.h"
 #include <Assets/SoundLoader.h>
 
-#include <iostream>
 namespace Plutus
 {
 	AudioEvent::AudioEvent(std::string name, std::string filePath) : mSourceVoice(nullptr)
@@ -10,7 +9,6 @@ namespace Plutus
 		mPath = filePath;
 		mAudioData.clear();
 
-		std::cout << "Adding new Audio Event\n";
 		bool result = SoundLoader::loadSoundFile(filePath, &mWaveFormat, &mAudioData);
 		if (result)
 		{
@@ -32,7 +30,6 @@ namespace Plutus
 			mSourceVoice->Stop();
 			mSourceVoice->DestroyVoice();
 		}
-		std::cout << "AudioEvent Destructor called\n";
 	}
 
 	bool AudioEvent::start()
@@ -41,15 +38,9 @@ namespace Plutus
 
 		// submit the audio buffer to the source voice
 		hr = mSourceVoice->SubmitSourceBuffer(&mAudioBuffer);
-		if (FAILED(hr))
-		{
-			std::cout << "Critical error: Unable to submit source buffer!\n";
-			return false;
-		}
-
+		if (FAILED(hr)) return false;
 		// start the source voice
 		mSourceVoice->Start();
-
 		return true;
 	}
 
@@ -61,12 +52,6 @@ namespace Plutus
 
 	bool AudioEvent::stop()
 	{
-		if (type == 1)
-		{
-		}
-		else
-		{
-		}
 		mAudioBuffer.LoopCount = 0;
 		mSourceVoice->Stop();
 		mSourceVoice->FlushSourceBuffers();

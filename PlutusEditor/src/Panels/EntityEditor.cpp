@@ -73,7 +73,9 @@ namespace Plutus
                     mParentUI->setEntity({});
                 mScene->removeEntity(ent);
             }
+            if (ImGui::MenuItem(("Copy " + tag).c_str())) {
 
+            }
             ImGui::EndPopup();
         }
     }

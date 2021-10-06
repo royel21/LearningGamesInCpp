@@ -9,6 +9,8 @@
 
 #include "../ImGuiEx.h"
 #include "../IconsFontAwesome5.h"
+#include <Assets/SoundEngine.h>
+
 
 #define TreeNodeLeaf_NoPushOpen 264
 #define FA_FILE ICON_FA_FILE_ALT " "
@@ -21,6 +23,9 @@
 
 boolmap imgTypes;
 boolmap fontTypes;
+boolmap soundsTypes;
+
+umap<std::string, std::string> icons;
 
 namespace Plutus
 {
@@ -31,6 +36,20 @@ namespace Plutus
         imgTypes["jpeg"] = true;
         fontTypes["ttf"] = true;
         fontTypes["otf"] = true;
+        soundsTypes["ogg"] = true;
+        soundsTypes["wav"] = true;
+
+        icons["Textures"] = ICON_FA_IMAGE " ";
+        icons["Fonts"] = ICON_FA_FONT " ";
+        icons["Sounds"] = ICON_FA_MUSIC " ";
+
+
+        icons["png"] = ICON_FA_IMAGE " ";
+        icons["jpg"] = ICON_FA_IMAGE " ";
+        icons["ttf"] = ICON_FA_FONT " ";
+        icons["otf"] = ICON_FA_FONT " ";
+        icons["ogg"] = ICON_FA_MUSIC " ";
+        icons["wav"] = ICON_FA_MUSIC " ";
     }
 
     std::string AssetsTab::getIcon(boolmap& nodes, std::string name)
@@ -46,10 +65,10 @@ namespace Plutus
         std::string assetId = "";
         if (nodes2[name]) {
             for (auto asset : assets.getItems()) {
-                ImGui::TreeNodeEx((void*)(intptr_t)id++, TreeNodeLeaf_NoPushOpen, (FA_FILE + asset.first).c_str());
+                ImGui::TreeNodeEx((void*)(intptr_t)id++, TreeNodeLeaf_NoPushOpen, (icons[name] + asset.first).c_str());
                 if (ImGui::BeginPopupContextItem())
                 {
-                    if (ImGui::MenuItem(("Remove " + asset.first).c_str()))
+                    if (ImGui::MenuItem((ICON_FA_TRASH_ALT" Remove " + asset.first).c_str()))
                     {
                         assetId = asset.first;
                     }
@@ -58,7 +77,7 @@ namespace Plutus
             }
             ImGui::TreePop();
             if (!assetId.empty()) {
-                assets.removeItem(assetId);
+                assets.remove(assetId);
             }
         }
     }
@@ -81,6 +100,7 @@ namespace Plutus
                     int id = 0;
                     drawTreeNode("Fonts", mAsset->mFonts, id);
                     drawTreeNode("Textures", mAsset->mTextures, id);
+                    drawTreeNode("Sounds", SoundEngine, id);
                     ImGui::EndTabItem();
                 }
                 ImGui::EndTabBar();
@@ -111,16 +131,19 @@ namespace Plutus
             }
             else
             {
-                ImGui::TreeNodeEx((void*)(intptr_t)id, TreeNodeLeaf_NoPushOpen, (FA_FILE + name).c_str());
+                auto icon = icons[Utils::getExtension(name)];
+                icon = icon.empty() ? FA_FILE : icon;
 
-                auto found = path.find("scene");
+                ImGui::TreeNodeEx((void*)(intptr_t)id, TreeNodeLeaf_NoPushOpen, (icon + name).c_str());
 
-                if (found > 0 && ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+                bool isScene = path.find("scene") != std::string::npos;
+
+                if (isScene && ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
                 {
 
                 }
 
-                if (found < 0 && ImGui::BeginPopupContextItem())
+                if (!isScene && ImGui::BeginPopupContextItem())
                 {
                     if (ImGui::MenuItem(("Add " + name + " to scene").c_str()))
                     {
@@ -142,7 +165,7 @@ namespace Plutus
         static int fontSize = 20;
         ImVec2 vec = glm::vec2(1);
 
-        bool isFont = false;
+        int type = 0;
 
         if (!selectedDir.empty()) {
             auto ex = Utils::getExtension(selectedDir);
@@ -162,23 +185,34 @@ namespace Plutus
                 ImGui::InputInt("Tile Width", &tileWidth);
                 ImGui::InputInt("Tile Height", &tileHeight);
 
-                isFont = false;
+                type = 1;
             }
 
             if (substr.compare("fonts") == 0 && fontTypes[ex]) {
                 ImGui::InputInt("Font Size", &fontSize);
-                isFont = true;
+                type = 2;
+            }
+
+            if (substr.compare("sounds") == 0 && soundsTypes[ex]) {
+                ImGui::Text(selectedDir.c_str());
+                type = 3;
             }
             ImGui::PopItemWidth();
             ImGui::Separator();
             if (ImGui::Button("save##modal"))
             {
-                if (isFont) {
+                switch (type) {
+                case 1:
                     AssetManager::get()->mFonts.addFont(name, selectedDir, fontSize);
-                }
-                else {
+                    break;
+                case 2:
                     AssetManager::get()->mTextures.addTexture(name, selectedDir, columns, tileHeight, tileWidth);
+                    break;
+                case 3:
+                    SoundEngine.add(name, selectedDir, EFFECT);
+                    break;
                 }
+
                 show = false;
             }
             ImGui::EndDialog(show);

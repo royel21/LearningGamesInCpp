@@ -79,12 +79,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   add_executable(box2dtest ${BOX2D_SRC})
   target_link_libraries(box2dtest PUBLIC Plutus)
 
-  set(OpenAL32 C:/vs-project/LearningGamesInCpp/Plutus/libs/openal-soft/build/Debug/OpenAL32.lib)
-
-  include_directories(${LIB_DIR}/openal-soft/include)
-
-  file(GLOB_RECURSE TEST_SRC Test/Web/*.h Test/Web/*.cpp)
   add_executable("Test" Test/test.cpp ${TEST_SRC})
-  target_link_libraries("Test" PUBLIC Plutus ${OpenAL32})
 
 endif()

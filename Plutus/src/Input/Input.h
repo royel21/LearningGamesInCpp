@@ -20,11 +20,11 @@ namespace Plutus
 	class Input
 	{
 	private:
-		bool mouseMove = false;
-		int m_mouseWheel = 0;
-		glm::vec2 m_mouseCoords;
-		std::unordered_map<std::string, bool> m_keyMap;
-		std::unordered_map<std::string, bool> m_prevKeyMap;
+		bool mMouseMove = false;
+		int mMouseWheel = 0;
+		glm::vec2 mMouseCoords;
+		std::unordered_map<std::string, bool> mKeyMap;
+		std::unordered_map<std::string, bool> mPrevKeyMap;
 
 	public:
 		bool isCtrl = false;
@@ -44,13 +44,13 @@ namespace Plutus
 
 		bool onKeyPressed(std::string keyId);
 
-		void setMouseWheel(int dir) { m_mouseWheel = dir; }
-		void setMouseMove(bool move) { mouseMove = move; }
-		bool getMouseIsMoving() { return mouseMove; }
+		void setMouseWheel(int dir) { mMouseWheel = dir; }
+		void setMouseMove(bool move) { mMouseMove = move; }
+		bool getMouseIsMoving() { return mMouseMove; }
 
-		int getMouseWheel() { return m_mouseWheel; }
+		int getMouseWheel() { return mMouseWheel; }
 
-		glm::vec2 getMouseCoords() const { return m_mouseCoords; }
+		glm::vec2 getMouseCoords() const { return mMouseCoords; }
 
 		void addEventListener(InputListener* listener);
 		void addRemoveListener(InputListener* listener);

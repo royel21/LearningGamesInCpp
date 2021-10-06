@@ -76,7 +76,7 @@ namespace Plutus
         return mTileSets[id].getUV(uvIndex);
     }
 
-    void Textures::removeItem(std::string texture)
+    void Textures::remove(std::string texture)
     {
         auto it = mTileSets.find(texture);
         if (it != mTileSets.end()) {
