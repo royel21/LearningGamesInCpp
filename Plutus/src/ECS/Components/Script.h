@@ -7,16 +7,19 @@
 
 namespace Plutus
 {
-    class Entity;
-
     class Script
     {
     public:
+        Scene* scene;
+        Entity ent;
         std::string path;
 
     public:
         Script() = default;
-        Script(std::string _path, Entity& ent, Scene* scene);
+        Script(const Script& script);
+        Script(const std::string&, Entity ent, Scene* scene);
+
+        void init(const std::string& _path, Entity _ent, Scene* _scene);
 
         void update(float dt) {
             if (mEnv["update"] != sol::nil) {

@@ -24,20 +24,9 @@ namespace Plutus
             @param h Height
             @param r Rotation
         */
-        Transform(float _x = 0, float _y = 0, int _w = 0, int _h = 0, float _r = 0, int _layer = 0, bool sY = false)
+        Transform(float _x, float _y, int _w, int _h, float _r = 0, int _layer = 0, bool sY = false)
             : x(_x), y(_y), w(_w), h(_h), r(-_r), layer(_layer), sortY(sY)
         {
-        }
-
-        // copy constructor 
-        Transform(const Transform& tran) {
-            x = tran.x;
-            y = tran.y;
-            w = tran.w;
-            h = tran.h;
-            r = tran.r;
-            layer = tran.layer;
-            sortY = tran.sortY;
         }
 
         bool operator < (Transform& tran) const {

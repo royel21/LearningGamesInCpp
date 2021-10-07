@@ -24,6 +24,7 @@
 #include <Platforms/Windows/FileUtils.h>
 
 #include <cstdio>
+#include "TestWin.h"
 
 
 #define mapIn(x, min_in, max_in, min_out, max_out) (x - min_in) * (max_out - min_out) / (max_in - min_in) + min_out
@@ -166,6 +167,7 @@ namespace Plutus
 		{
 			drawDemo();
 		}
+		ImGui::drawTest();
 		endUI();
 
 		bindFB();

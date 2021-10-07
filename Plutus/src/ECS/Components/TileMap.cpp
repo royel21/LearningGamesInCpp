@@ -5,6 +5,14 @@
 namespace Plutus
 {
 
+    // TileMap::TileMap(const TileMap& tilemap){
+    //     mTileWidth = tilemap.mTileWidth;
+    //     mTileHeight = tilemap.mTileHeight;
+    //     mLayer = tilemap.mLayer;
+    //     mTiles = tilemap.mTiles;
+    //     mTextures = tilemap.mTextures;
+    // }
+
     void TileMap::addTexture(const std::string& texture)
     {
         mTextures[(int)mTextures.size()] = AssetManager::get()->mTextures.getTexture(texture);

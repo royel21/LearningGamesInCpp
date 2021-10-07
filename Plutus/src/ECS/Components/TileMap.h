@@ -52,6 +52,7 @@ namespace Plutus
         std::unordered_map<int, Texture*> mTextures;
 
         TileMap() = default;
+        // TileMap(const TileMap& tilemap);
         TileMap(int tileWidth, int tileHeight, int _layer = 0) : mTileWidth(tileWidth), mTileHeight(tileHeight) {}
 
         void addTexture(const std::string& texture);

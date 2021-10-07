@@ -80,5 +80,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   target_link_libraries(box2dtest PUBLIC Plutus)
 
   add_executable("Test" Test/test.cpp ${TEST_SRC})
+  target_link_libraries(Test PUBLIC Plutus)
 
 endif()
