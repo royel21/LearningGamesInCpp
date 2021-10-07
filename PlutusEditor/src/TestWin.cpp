@@ -61,19 +61,58 @@ namespace ImGui
         return ret;
     }
 
+    void BeginPro(char* label, float width = -1) {
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted(label);
+        ImGui::TableNextColumn();
+        ImGui::SetNextItemWidth(width);
+    }
+
     void drawTest()
     {
         Begin("Testing");
         set_layout("Testing");
-        SetNextItemWidth(CalcItemWidth() - 50.0f);
+        SetNextItemWidth(CalcItemWidth() - 40.0f);
+
         static float v = 0.35f;
-        InputFloat("##val: ", &v, 0.1f);
-        PushStyleVar(ImGuiStyleVar_ItemSpacing, { 5.0f,0 });
-        SameLine();
-        if (Button("Reset", { 50.0f, 0 })) {
+        PushStyleVar(ImGuiStyleVar_ItemSpacing, { 4.0f,0 });
+        if (Button("Reset", { 40.0f, 0 })) {
             v = 0.35f;
         }
+        SameLine();
+        InputFloat("##val: ", &v, 0.1f);
         PopStyleVar();
+        Separator();
+
+        if (BeginTable("##test-table", 2, ImGuiTableFlags_SizingStretchProp))  //Table 1
+        {
+            BeginPro("Test Box1");
+            static bool check = false;
+            Checkbox("##Test Box1", &check);
+
+            BeginPro("Test Col2");
+            static bool check2 = false;
+            Checkbox("##Test Box2", &check2);
+
+            BeginPro("Test Col3");
+            static char data[128] = { 0 };
+            InputText("##Test Col3", data, IM_ARRAYSIZE(data));
+            BeginPro("d float2");
+            static float pos[2] = { 3,5 };
+            DragFloat2("##d float2", pos, 1, 0);
+
+            BeginPro("Width");
+            static float v2 = 0.35f;
+            InputFloat("##Width Reset: ", &v2, 0.1f);
+            PushStyleVar(ImGuiStyleVar_ItemSpacing, { 4.0f,0 });
+            SameLine();
+            if (Button("R")) {
+                v = 0.35f;
+            }
+            PopStyleVar();
+
+            EndTable(); //End table
+        }
         End();
     }
 } // namespace Plutus

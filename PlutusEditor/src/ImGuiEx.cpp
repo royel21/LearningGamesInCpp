@@ -220,10 +220,8 @@ namespace ImGui {
         }
     }
 
-    bool DrawTexture(Plutus::Texture* texture, int winWidth, int winHeight, std::vector<glm::ivec3>* selected)
+    bool DrawTexture(Plutus::Texture* texture, int winWidth, int winHeight, float scale, std::vector<glm::ivec3>* selected)
     {
-        static float scale = 1.0f;
-        ImGui::DragFloat("Scale##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
         ImGui::BeginChild("##texture-map", { (float)winWidth, (float)winHeight }, true, ImGuiWindowFlags_HorizontalScrollbar);
         bool isSelected = false;
@@ -381,6 +379,26 @@ namespace ImGui {
             show = false;
         ImGui::PopStyleColor();
         ImGui::EndPopup();
+    }
+
+    bool BeginUIGroup(ImGuiTableFlags flags) {
+        static int id = 0;
+        return ImGui::BeginTable(("##ground" + std::to_string(id)).c_str(), 2, flags);
+    }
+
+    void EndUIGroup() {
+        ImGui::EndTable();
+    }
+
+    void BeginCol(const char* label, float width) {
+
+        ImGui::SetNextItemWidth(width);
+        ImGui::TableNextColumn();
+        const ImVec2 cursorPos = ImGui::GetCursorPos();
+        ImGui::SetCursorPos({ cursorPos.x + 4, cursorPos.y + 4 });
+        ImGui::TextUnformatted(label);
+        ImGui::TableNextColumn();
+        ImGui::SetNextItemWidth(-1);
     }
 
 }

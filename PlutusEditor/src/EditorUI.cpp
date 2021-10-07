@@ -213,64 +213,72 @@ namespace Plutus
 
 	void EditorUI::viewPortControl()
 	{
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("ViewPort Controls");
-		ImGui::Columns(3, NULL, true);
-		ImGui::Text("ViewPort Props");
-		ImGui::PushItemWidth(150);
-
-		ImGui::ColorEdit4("VP BG", glm::value_ptr(mVPColor), ImGuiColorEditFlags_AlphaBar);
-		ImGui::PopItemWidth();
-		ImGui::NextColumn();
-		ImGui::Text("Camera Control");
-		{
-			ImGui::PushItemWidth(113);
-			mVPScale = mCamera->getScale();
-			if (ImGui::InputFloat("Zoom##vp", &mVPScale, 0.05f))
+		ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_BordersInnerV;
+		if (ImGui::BeginTable("ViewportControls", 2, flags)) {
+			ImGui::TableNextColumn();
+			ImGui::Text("Camera Control");
+			ImGui::Separator();
 			{
-				mCamera->setScale(CHECKLIMIT(mVPScale, 0.20f, 6.0f));
-			}
-			ImGui::PopItemWidth();
-			ImGui::SameLine();
-			if (ImGui::Button("Reset##cam")) mCamera->setScale(1.0f);
+				if (ImGui::BeginUIGroup()) {
+					mVPScale = mCamera->getScale();
 
-			ImGui::PushItemWidth(120);
-			auto pos = mCamera->getPosition();
-			if (ImGui::DragFloat2("Position##cam", glm::value_ptr(pos), 1, 0, 0, "%.0f")) {
-				mCamera->setPosition(pos);
+					ImGui::BeginCol("Zoom");
+					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 2.0f,0 });
+					if (ImGui::Button("Reset##cam")) mCamera->setScale(1.0f);
+					ImGui::SameLine();
+					if (ImGui::InputFloat("##vp-Zoom", &mVPScale, 0.05f))
+					{
+						mCamera->setScale(CHECKLIMIT(mVPScale, 0.20f, 6.0f));
+					}
+					ImGui::PopStyleVar();
+
+					ImGui::BeginCol("Position");
+					auto pos = mCamera->getPosition();
+					ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 2.0f,0 });
+					if (ImGui::Button("Reset##campos")) mCamera->setPosition({ 0,0 });
+					ImGui::SameLine();
+					if (ImGui::DragFloat2("##Position-cam", glm::value_ptr(pos), 1, 0, 0, "%.0f")) {
+						mCamera->setPosition(pos);
+					}
+					ImGui::PopStyleVar();
+					ImGui::EndUIGroup();
+				}
 			}
-			ImGui::PopItemWidth();
-			ImGui::SameLine();
-			if (ImGui::Button("Reset##campos")) mCamera->setPosition({ 0,0 });
-			static int scale = 100;
+
+			ImGui::TableNextColumn();
+			ImGui::Text("Grid Controls");
+			ImGui::Separator();
+			{
+				if (ImGui::BeginUIGroup()) {
+					static bool showGrid = true;
+					ImGui::BeginCol("Enable");
+					if (ImGui::Checkbox("##Enable-grid", &showGrid))
+					{
+						mDebugRender->setShouldDraw(showGrid);
+					}
+					ImGui::BeginCol("Cell Size");
+					auto cellSize = mDebugRender->getCellSize();
+					if (ImGui::DragInt2("##Cell-Size", glm::value_ptr(cellSize)))
+					{
+						cellSize.x = cellSize.x < 0 ? 0 : cellSize.x;
+						cellSize.y = cellSize.y < 0 ? 0 : cellSize.y;
+					}
+					mDebugRender->setCellSize(cellSize);
+					ImGui::BeginCol("Line Color");
+					if (ImGui::ColorEdit3("###Grid-Color", glm::value_ptr(mGridColor)))
+					{
+						mGridColor.w = 1;
+						mDebugRender->setColor({ mGridColor });
+					}
+
+					ImGui::EndUIGroup();
+				}
+			}
+			ImGui::EndTable();
 		}
-		ImGui::NextColumn();
 
-		ImGui::Text("Grid Controls");
-		ImGui::Separator();
-		{
-			static bool showGrid = true;
-			if (ImGui::Checkbox("Enable", &showGrid))
-			{
-				mDebugRender->setShouldDraw(showGrid);
-			}
-
-			auto cellSize = mDebugRender->getCellSize();
-			if (ImGui::DragInt2("Cell Size", glm::value_ptr(cellSize)))
-			{
-				cellSize.x = cellSize.x < 0 ? 0 : cellSize.x;
-				cellSize.y = cellSize.y < 0 ? 0 : cellSize.y;
-			}
-			mDebugRender->setCellSize(cellSize);
-
-			if (ImGui::ColorEdit3("Grid Color", glm::value_ptr(mGridColor)))
-			{
-				mGridColor.w = 1;
-				mDebugRender->setColor({ mGridColor });
-			}
-		}
 		ImGui::End();
-		ImGui::PopStyleVar();
 	}
 
 	void EditorUI::viewPort()
@@ -324,7 +332,7 @@ namespace Plutus
 				lastCamPos = mCamera->getPosition();
 				ent = mScene->getEntity(mPicker.getEntId({ xPos, yPos }));
 
-				if (ent && mEnt != ent) {
+				if (ent) {
 					mEnt = ent;
 					if (mEnt.hasComponent<Plutus::Transform>()) {
 						auto trans = mEnt.getComponent<Plutus::Transform>();

@@ -164,23 +164,31 @@ namespace Plutus
 
                 auto trans = mEntity.getComponent<Transform>();
                 float position[] = { trans->x, trans->y };
+                float itemWidth = 100;
+                if (ImGui::BeginUIGroup()) {
+                    ImGui::BeginCol("Position", itemWidth);
+                    if (ImGui::DragFloat2("#Position-com", position, 1.0f, 0, 0, "%.2f"))
+                    {
+                        trans->x = position[0];
+                        trans->y = position[1];
+                    }
+                    ImGui::BeginCol("Size", itemWidth);
+                    int size[] = { trans->h, trans->w };
+                    if (ImGui::DragInt2("##trans-size", size))
+                    {
+                        trans->h = size[0];
+                        trans->w = size[1];
+                    }
+                    ImGui::BeginCol("Rotation", itemWidth);
+                    ImGui::DragFloat("#tran-r", &trans->r, 5, 0, 360, "%.0f");
 
-                ImGui::PushItemWidth(100);
-                if (ImGui::DragFloat2("Position X Y", position, 1.0f, 0, 0, "%.2f"))
-                {
-                    trans->x = position[0];
-                    trans->y = position[1];
+                    ImGui::BeginCol("Layer", itemWidth);
+                    ImGui::InputInt("#trans-Layer", &trans->layer, 1);
+
+                    ImGui::BeginCol("Sort Y", itemWidth);
+                    ImGui::Checkbox("##trans-sortY", &trans->sortY);
+                    ImGui::EndUIGroup();
                 }
-                int size[] = { trans->h, trans->w };
-                if (ImGui::DragInt2("Size W H", size))
-                {
-                    trans->h = size[0];
-                    trans->w = size[1];
-                }
-                ImGui::DragFloat("Rotation", &trans->r, 5, 0, 360, "%.0f");
-                ImGui::Checkbox("SortY", &trans->sortY);
-                ImGui::InputInt("Layer", &trans->layer, 1);
-                ImGui::PopItemWidth();
             }
         }
     }
@@ -226,27 +234,6 @@ namespace Plutus
                 if (texture) {
                     ImGui::DrawTexture(texture, 0, 300);
                 }
-                // static char text[120];
-                // snprintf(text, 120, "Texture Size W:%d H:%d", texture->texWidth, texture->texHeight);
-                // ImGui::Text(text);
-                // ImGui::Separator();
-                // if (texture != NULL)
-                // {
-                //     if (ImGui::BeginTabBar("##TabBar"))
-                //     {
-                //         if (ImGui::BeginTabItem("Tile Coords"))
-                //         {
-                //             drawCanvas(texture, scale);
-                //             ImGui::EndTabItem();
-                //         }
-                //         if (ImGui::BeginTabItem("Sprite Sheet"))
-                //         {
-                //             drawTexCoords(texture, scale);
-                //             ImGui::EndTabItem();
-                //         }
-                //         ImGui::EndTabBar();
-                //     }
-                // }
             }
         }
     }

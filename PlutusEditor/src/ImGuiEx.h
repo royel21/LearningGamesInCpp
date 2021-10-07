@@ -138,11 +138,16 @@ namespace ImGui
 
     bool Texture(Plutus::Texture* tileset, float scale, std::vector<glm::ivec3>& selected);
 
-    bool DrawTexture(Plutus::Texture* tileset, int winWidth = 0, int winHeight = 0, std::vector<glm::ivec3>* selected = nullptr);
+    bool DrawTexture(Plutus::Texture* tileset, int winWidth = 0, int winHeight = 0, float scale = 1.0f, std::vector<glm::ivec3>* selected = nullptr);
 
     bool ColorInt(const char* label, unsigned int& color);
 
     void BeginDialog(const char* name, float width, float height, bool fixedPos = false);
 
     void EndDialog(bool& show);
+
+    bool BeginUIGroup(ImGuiTableFlags flags = 0);
+    void EndUIGroup();
+
+    void BeginCol(const char* label, float width = -1);
 } // namespace ImGui

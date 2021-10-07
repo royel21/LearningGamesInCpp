@@ -201,14 +201,16 @@ namespace Plutus
                     mRotation = LIMIT(mRotation, 0.0f, 360.0f);
                 }
                 if (mTileMap->mTextures.size()) {
-                    ImGui::DrawTexture(mTileMap->mTextures[mCurrentTexture], 0, 0, &mTempTiles);
+                    static float scale = 1.0f;
+                    ImGui::DragFloat("Scale##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
+                    ImGui::DrawTexture(mTileMap->mTextures[mCurrentTexture], 0, 0, scale, &mTempTiles);
                 }
             }
+        }
 
-            if (mCurrentTile != nullptr && mMode == MODE_EDIT)
-            {
-                tileProps();
-            }
+        if (mCurrentTile != nullptr && mMode == MODE_EDIT)
+        {
+            tileProps();
         }
 
         //Render Temp Tiles
@@ -218,7 +220,7 @@ namespace Plutus
             renderTiles();
         }
 
-        if (isHover && Input::getInstance()->onKeyDown("MouseLeft") && mTempTiles.size()) {
+        if (isHover && Input::getInstance()->onKeyDown("MouseLeft")) {
             createTiles();
         }
     }
@@ -249,28 +251,37 @@ namespace Plutus
 
     void TileMapPanel::tileProps()
     {
-        ImGui::PushItemWidth(105);
         ImGui::Text("Tile Props");
         ImGui::Separator();
-        ImGui::InputInt("X##ctile", &mCurrentTile->x, mTileMap->mTileWidth);
-        ImGui::InputInt("Y##ctile", &mCurrentTile->y, mTileMap->mTileHeight);
-        float rotation = mCurrentTile->rotate;
-        if (ImGui::InputFloat("Rotation##ctile", &rotation, 45.0f, 90.0f, "%0.0f"))
-        {
-            mCurrentTile->rotate = LIMIT(rotation, 0.0f, 360.0f);
-        }
+        if (ImGui::BeginUIGroup()) {
+            ImGui::BeginCol("X");
+            ImGui::InputInt("##ctile-x", &mCurrentTile->x, mTileMap->mTileWidth);
 
-        int texcoord = mCurrentTile->texcoord;
-        if (ImGui::InputInt("Texture##ctile", &texcoord, 1))
-        {
-            auto size = mTileMap->mTextures[mCurrentTexture]->uvs.size();
-            mCurrentTile->texcoord = LIMIT(texcoord, 0, (int)size - 1);
-        }
-        ImGui::PopItemWidth();
+            ImGui::BeginCol("Y");
+            ImGui::InputInt("##ctile-x", &mCurrentTile->y, mTileMap->mTileHeight);
 
-        ImGui::Checkbox("FlipX##cTile", &mCurrentTile->flipX);
-        ImGui::SameLine();
-        ImGui::Checkbox("FlipY##cTile", &mCurrentTile->flipY);
+            ImGui::BeginCol("Rotation");
+            float rotation = mCurrentTile->rotate;
+            if (ImGui::InputFloat("##ctile-r", &rotation, 45.0f, 90.0f, "%0.0f"))
+            {
+                mCurrentTile->rotate = LIMIT(rotation, 0.0f, 360.0f);
+            }
+
+            ImGui::BeginCol("Flip X");
+            ImGui::Checkbox("##cTile-flix", &mCurrentTile->flipX);
+
+            ImGui::BeginCol("Flip Y");
+            ImGui::Checkbox("##cTile-lipy", &mCurrentTile->flipY);
+
+            ImGui::BeginCol("Texture");
+            int texcoord = mCurrentTile->texcoord;
+            if (ImGui::InputInt("##ctile-texture", &texcoord, 1))
+            {
+                auto size = mTileMap->mTextures[mCurrentTexture]->uvs.size();
+                mCurrentTile->texcoord = LIMIT(texcoord, 0, (int)size - 1);
+            }
+            ImGui::EndUIGroup();
+        }
     }
 
     void TileMapPanel::createTiles()

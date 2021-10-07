@@ -11,6 +11,16 @@ namespace Plutus
     class Scene;
     class AudioEvent;
 
+    struct EnumFilter {
+        GLuint filter;
+        char* Name;
+    };
+
+    struct AssetType {
+        std::string id;
+        std::string type;
+    };
+
     class AssetsTab
     {
     public:
@@ -25,15 +35,19 @@ namespace Plutus
         template<typename T>
         void drawTreeNode(std::string name, T& assets, int& id);
         void addSound2Scene();
-        void addTexure();
+        void showTexure(Texture& texture);
+        void viewAssets(bool& show);
 
     private:
         Scene* mScene;
         AudioEvent* aEvent = nullptr;
         std::string selectedDir;
+        std::string assetId;
         boolmap nodes;
         boolmap nodes2;
         Texture texture;
+        EnumFilter filter = { GL_NEAREST, "Nearest" };
+        AssetType assetType;
     };
 
 } // namespace Plutus

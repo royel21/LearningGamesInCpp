@@ -29,6 +29,11 @@ umap<std::string, std::string> icons;
 
 namespace Plutus
 {
+    EnumFilter filters[] = {
+        {GL_NEAREST, "Nearest"},
+        {GL_LINEAR, "Linear"}
+    };
+
     AssetsTab::AssetsTab()
     {
         imgTypes["png"] = true;
@@ -58,14 +63,30 @@ namespace Plutus
         return icon + " " + name;
     }
 
+    void audioPlay(AudioEvent* event, const char* name) {
+        bool state = event->getState() != 1;
+        if (ImGui::TransparentButton(state ? ICON_FA_PLAY : ICON_FA_STOP, { 0,0,1,1 })) {
+            state ? SoundEngine.play(event) : SoundEngine.stop(event);
+        }
+        ImGui::SameLine();
+        ImGui::Text(name);
+    }
+
     template<typename T>
     void AssetsTab::drawTreeNode(std::string name, T& assets, int& id)
     {
         nodes2[name] = ImGui::TreeNode((void*)(intptr_t)id++, getIcon(nodes2, name).c_str());
         std::string assetId = "";
         if (nodes2[name]) {
+            static bool show;
             for (auto asset : assets.getItems()) {
                 ImGui::TreeNodeEx((void*)(intptr_t)id++, TreeNodeLeaf_NoPushOpen, (icons[name] + asset.first).c_str());
+
+                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+                {
+                    assetType = { asset.first, name };
+                    show = true;
+                }
                 if (ImGui::BeginPopupContextItem())
                 {
                     if (ImGui::MenuItem((ICON_FA_TRASH_ALT" Remove " + asset.first).c_str()))
@@ -79,7 +100,33 @@ namespace Plutus
             if (!assetId.empty()) {
                 assets.remove(assetId);
             }
+
+            if (show) viewAssets(show);
         }
+    }
+
+    void AssetsTab::viewAssets(bool& show) {
+        ImGui::BeginDialog("Asset Modal", 300, 300);
+        ImGui::Text(assetType.id.c_str());
+        ImGui::Separator();
+        if (assetType.type.compare("Textures") == 0) {
+            auto& textures = AssetManager::get()->mTextures;
+
+            auto texture = AssetManager::get()->mTextures.getTexture(assetType.id);
+            showTexure(*texture);
+        }
+
+        if (assetType.type.compare("Fonts") == 0) {
+        }
+
+        if (assetType.type.compare("Sounds") == 0) {
+            auto audioItems = SoundEngine.getItems();
+
+            audioPlay(audioItems[assetType.id], assetType.id.c_str());
+        }
+
+        ImGui::Separator();
+        ImGui::EndDialog(show);
     }
 
     void AssetsTab::drawAssets()
@@ -174,12 +221,22 @@ namespace Plutus
             bool show = true;
             ImGui::BeginDialog("Asset Modal", 300, 300);
             //Texure Or Font Id
-            ImGui::PushItemWidth(100);
-            ImGui::InputText("Id##modal", name, IM_ARRAYSIZE(name));
+            ImGui::Text("Asset Id");
+            ImGui::SameLine();
+            ImGui::InputText("##asset-modal", name, IM_ARRAYSIZE(name));
+            ImGui::Separator();
 
             if (substr.compare("textures") == 0 && imgTypes[ex]) {
-                addTexure();
+                auto& textures = AssetManager::get()->mTextures;
+
+                if (texture.texWidth == 0) {
+                    auto glTexture = textures.createGLTexure(selectedDir, filter.filter, filter.filter);
+                    texture.texId = glTexture.id;
+                    texture.texWidth = glTexture.width;
+                    texture.texHeight = glTexture.height;
+                }
                 type = 1;
+                showTexure(texture);
             }
 
             if (substr.compare("fonts") == 0 && fontTypes[ex]) {
@@ -188,18 +245,12 @@ namespace Plutus
             }
 
             if (substr.compare("sounds") == 0 && soundsTypes[ex]) {
+                type = 3;
                 if (!aEvent) {
                     aEvent = SoundEngine.createEvent("temp", selectedDir, EFFECT);
                 }
-                bool state = aEvent->getState() != 1;
-                if (ImGui::TransparentButton(state ? ICON_FA_PLAY : ICON_FA_STOP, { 0,0,1,1 })) {
-                    state ? SoundEngine.play(aEvent) : SoundEngine.stop(aEvent);
-                }
-                type = 3;
-                ImGui::SameLine();
-                ImGui::Text(Utils::getFileName(selectedDir).c_str());
+                audioPlay(aEvent, Utils::getFileName(selectedDir).c_str());
             }
-            ImGui::PopItemWidth();
 
             ImGui::Separator();
             if (ImGui::Button("save##modal") && strlen(name) > 0)
@@ -209,7 +260,7 @@ namespace Plutus
                     AssetManager::get()->mFonts.addFont(name, selectedDir, fontSize);
                     break;
                 case 2:
-                    AssetManager::get()->mTextures.addTexture(name, selectedDir, texture.columns, texture.tileHeight, texture.tileWidth);
+                    AssetManager::get()->mTextures.addTexture(name, selectedDir, texture.columns, texture.tileHeight, texture.tileWidth, filter.filter, filter.filter);
                     break;
                 case 3:
                     SoundEngine.add(name, selectedDir, EFFECT);
@@ -223,6 +274,9 @@ namespace Plutus
                 selectedDir = "";
                 memset(name, 0, 128);
                 fontSize = 20;
+                if (texture.texWidth) {
+                    glDeleteTextures(1, &texture.texId);
+                }
                 texture = {};
                 if (aEvent) {
                     delete aEvent;
@@ -233,21 +287,49 @@ namespace Plutus
 
     }
 
-    void AssetsTab::addTexure() {
-        auto& textures = AssetManager::get()->mTextures;
+    void BeginPro(char* label, float width = -1) {
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted(label);
+        ImGui::TableNextColumn();
+        ImGui::SetNextItemWidth(width);
+    }
 
-        uint32_t filter = GL_NEAREST;
+    void AssetsTab::showTexure(Texture& texture) {
 
-        if (texture.texWidth == 0) {
-            auto glTexture = textures.createGLTexure(selectedDir);
-            texture.texId = glTexture.id;
-            texture.texWidth = glTexture.width;
-            texture.texHeight = glTexture.height;
+        static float scale = 1.0f;
+        if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingStretchProp)) {
+            ImGui::BeginCol("Columns");
+            ImGui::InputInt("##Columns", &texture.columns);
+
+            ImGui::BeginCol("Tile Width");
+            ImGui::InputInt("##Tile Width", &texture.tileWidth);
+
+            ImGui::BeginCol("Tile Height");
+            ImGui::InputInt("##Tile Height", &texture.tileHeight);
+
+            ImGui::BeginCol("Filters");
+            if (ImGui::BeginCombo("##Filters", filter.Name))
+            {
+                for (int i = 0; i < IM_ARRAYSIZE(filters); i++) {
+                    bool is_selected = filters[i].filter == filter.filter;
+                    if (ImGui::Selectable(filters[i].Name, is_selected)) {
+                        filter = filters[i];
+
+                        if (texture.texWidth) {
+                            texture.texWidth = 0;
+                            glDeleteTextures(1, &texture.texId);
+                        }
+
+                        if (is_selected)
+                            ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::BeginCol("Scale");
+            ImGui::DragFloat("##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
+            ImGui::EndUIGroup();
         }
-        ImGui::InputInt("Columns", &texture.columns);
-        ImGui::InputInt("Tile Width", &texture.tileWidth);
-        ImGui::InputInt("Tile Height", &texture.tileHeight);
-
-        ImGui::DrawTexture(&texture, 350, 300);
+        ImGui::DrawTexture(&texture, 350, 300, scale);
     }
 }
