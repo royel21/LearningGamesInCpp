@@ -215,9 +215,12 @@ namespace Plutus
 
         //Render Temp Tiles
         bool isHover = mParentUI->isCanvaHover();
-        if (mTempTiles.size() && mMode == MODE_PLACE && isHover && mTileMap->mTextures.size())
+        if (isHover && mTempTiles.size() && mMode == MODE_PLACE && isHover && mTileMap->mTextures.size())
         {
             renderTiles();
+        }
+        else {
+            mParentUI->setTotalTemp(0);
         }
 
         if (isHover && Input::getInstance()->onKeyDown("MouseLeft")) {
@@ -242,8 +245,8 @@ namespace Plutus
         int i = 0;
         for (auto tile : mTempTiles)
         {
-            int x = gridCoords.x + (tile.x * w);
-            int y = gridCoords.y - (tile.y * h);
+            int x = (gridCoords.x * w) + (tile.x * w);
+            int y = (gridCoords.y * h) - (tile.y * h);
 
             renderables[i++] = { tex->texId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation, false, false, -1, 99, false };
         }
@@ -290,20 +293,21 @@ namespace Plutus
             return;
 
         auto mCoords = mParentUI->getGridCoords();
-        auto tiles = &mTileMap->mTiles;
+        auto& tiles = mTileMap->mTiles;
         switch (mMode)
         {
         case MODE_PLACE:
         {
             for (auto tile : mTempTiles)
             {
-                uint32_t x = mCoords.x + (tile.x * mTileMap->mTileWidth);
-                uint32_t y = mCoords.y - (tile.y * mTileMap->mTileHeight);
+                uint32_t x = mCoords.x + tile.x;
+                uint32_t y = mCoords.y - tile.y;
 
                 int index = mTileMap->getIndex({ x, y });
                 if (index == -1)
                 {
-                    tiles->push_back(Tile(x, y, tile.z, mCurrentTexture, mRotation));
+                    tiles.push_back(Tile(x, y, tile.z, mCurrentTexture, mRotation));
+                    tiles.back().setParent(mTileMap);
                 }
                 else
                 {

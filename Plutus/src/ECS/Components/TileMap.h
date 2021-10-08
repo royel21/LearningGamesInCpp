@@ -8,6 +8,7 @@
 namespace Plutus
 {
     struct Texture;
+    struct TileMap;
 
     struct Tile
     {
@@ -19,6 +20,7 @@ namespace Plutus
         unsigned int color;
         int texcoord = 0;
         int texture = 0;
+        TileMap* parent;
         Tile() = default;
         Tile(int _x, int _y, int _texcoord, unsigned int _texture, bool fx = false, bool fy = false, float _rotate = 0, unsigned int _color = 0xffffffff)
         {
@@ -31,6 +33,12 @@ namespace Plutus
             rotate = _rotate;
             color = _color;
         }
+
+        void setParent(TileMap* _parent) {
+            parent = _parent;
+        }
+
+        glm::vec4 getRect();
 
         inline bool operator==(Tile tile)
         {
@@ -58,7 +66,7 @@ namespace Plutus
         void addTexture(const std::string& texture);
         void removeTexture(int index);
 
-        void addTile(const Tile& tile);
+        void addTile(Tile& tile);
         Tile* getTile(const glm::ivec2& mCoords);
         int getIndex(const glm::ivec2& mCoords);
         bool removeTile(const glm::ivec2& mCoords);

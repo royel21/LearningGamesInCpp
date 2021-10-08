@@ -38,14 +38,15 @@ namespace Plutus
             auto tile = tiles[i].GetJsonObject();
             int x = tile["x"].GetInt();
             int y = tile["y"].GetInt();
-            int fx = tile["flipX"].GetBool();
-            int fy = tile["flipY"].GetBool();
-            int t = tile["texcoord"].GetInt();
-            int tx = tile["texture"].GetInt();
+            int fx = tile["fx"].GetInt();
+            int fy = tile["fy"].GetInt();
+            int t = tile["tc"].GetInt();
+            int tx = tile["txi"].GetInt();
             float rotate = tile["r"].GetFloat();
-            int color = tile["color"].GetInt();
+            int color = tile["c"].GetInt();
 
             tmap->mTiles.emplace_back(x, y, t, tx, fx, fy, rotate, color);
+            tmap->mTiles.back().setParent(tmap);
         }
     }
 

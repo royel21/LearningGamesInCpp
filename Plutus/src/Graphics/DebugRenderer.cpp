@@ -271,8 +271,8 @@ namespace Plutus
 	{
 		glm::vec2 cmpos = mCamera->convertScreenToWold(mousePos);
 
-		int x = (int)floor(cmpos.x / mCellSize.x) * mCellSize.x;
-		int y = (int)floor(cmpos.y / mCellSize.y) * mCellSize.y;
+		int x = (int)floor(cmpos.x / mCellSize.x);
+		int y = (int)floor(cmpos.y / mCellSize.y);
 
 		return glm::vec2(x, y);
 	}

@@ -55,7 +55,7 @@ void GameScreen::build()
 
 void GameScreen::onEntry()
 {
-    Plutus::SceneLoader::loadFromJson("assets/scenes/scene1.json", mScene);
+    Plutus::SceneLoader::loadFromJson("assets/scenes/scene4.json", mScene);
     mSystemManager.start();
 }
 

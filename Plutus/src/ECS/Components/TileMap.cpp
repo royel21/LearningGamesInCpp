@@ -5,13 +5,9 @@
 namespace Plutus
 {
 
-    // TileMap::TileMap(const TileMap& tilemap){
-    //     mTileWidth = tilemap.mTileWidth;
-    //     mTileHeight = tilemap.mTileHeight;
-    //     mLayer = tilemap.mLayer;
-    //     mTiles = tilemap.mTiles;
-    //     mTextures = tilemap.mTextures;
-    // }
+    glm::vec4 Tile::getRect() {
+        return { x * parent->mTileWidth, y * parent->mTileHeight, parent->mTileWidth, parent->mTileHeight };
+    }
 
     void TileMap::addTexture(const std::string& texture)
     {
@@ -34,9 +30,10 @@ namespace Plutus
         }
     }
 
-    void TileMap::addTile(const Tile& tile)
+    void TileMap::addTile(Tile& tile)
     {
         mTiles.push_back(tile);
+        mTiles.back().setParent(this);
     }
 
     Tile* TileMap::getTile(const glm::ivec2& mCoords)
@@ -48,7 +45,7 @@ namespace Plutus
     int TileMap::getIndex(const glm::ivec2& pos)
     {
         auto it = std::find_if(mTiles.begin(), mTiles.end(), [=](const Tile& ntile) -> bool
-            { return ntile.x >= pos.x && ntile.x <= pos.x + mTileWidth - 1 && ntile.y >= pos.y && ntile.y <= pos.y + mTileHeight - 1; });
+            { return ntile.x == pos.x && ntile.y == pos.y; });
 
         return it != mTiles.end() ? int(it - mTiles.begin()) : -1;
     }

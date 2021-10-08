@@ -49,13 +49,12 @@ namespace Plutus
             auto [tilemap] = viewMap.get(ent);
             if (tilemap.mTiles.size())
             {
-                auto tileset = tilemap.mTextures[0];
                 const int w = tilemap.mTileWidth;
                 const int h = tilemap.mTileHeight;
 
                 for (auto& tile : tilemap.mTiles)
                 {
-                    glm::vec4 rect{ tile.x, tile.y, w, h };
+                    glm::vec4 rect = tile.getRect();
                     if (mCamera->isBoxInView(rect, 200))
                     {
                         auto tileset = tilemap.mTextures[tile.texture];

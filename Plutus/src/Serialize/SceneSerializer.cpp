@@ -174,21 +174,21 @@ namespace Plutus
                     //Tile OBJ
                     writer->StartObject();
                     {
-                        writer->String("texcoord");
+                        writer->String("tc");
                         writer->Int(tile.texcoord);
-                        writer->String("texture");
+                        writer->String("txi");
                         writer->Int(tile.texture);
                         writer->String("x");
                         writer->Int(tile.x);
                         writer->String("y");
                         writer->Int(tile.y);
-                        writer->String("flipX");
-                        writer->Bool(tile.flipX);
-                        writer->String("flipY");
-                        writer->Bool(tile.flipY);
+                        writer->String("fx");
+                        writer->Int(tile.flipX);
+                        writer->String("fy");
+                        writer->Int(tile.flipY);
                         writer->String("r");
                         writer->Double(tile.rotate);
-                        writer->String("color");
+                        writer->String("c");
                         writer->Int(tile.color);
                     }
                     writer->EndObject();
