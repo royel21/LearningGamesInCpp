@@ -72,6 +72,7 @@ namespace Plutus
                 }
             }
 
+
             if (doc["entities"].IsArray())
             {
                 //Get the layers
