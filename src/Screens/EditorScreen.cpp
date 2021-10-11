@@ -118,8 +118,8 @@ void EditorScreen::draw()
     // mRender.draw();
     // mRender.end();
 
-    mDebug->drawBox({ 10, h - 160, 150, 150 }, { 255, 255, 255, 255 }, 0.0f);
-    mDebug->drawCircle({ 85.0f, h - 85.0f }, { 255, 255, 255, 255 }, 70.0f);
+    mDebug->drawBox({ 10, h - 160, 150, 150 });
+    mDebug->drawCircle({ 85.0f, h - 85.0f }, 70.0f);
     mDebug->end();
     mDebug->render(2);
     mDebug->setColor({ 255,255,255,25 });

@@ -40,7 +40,7 @@ namespace Plutus
 
 		uint32_t getUniform(std::string uName);
 		// Return the shader program ID
-		uint32_t getProg() { return mProgId; }
+		uint32_t getProgId() { return mProgId; }
 		// Acivate attributes by name
 		void setAtribute(const std::string& attributeName);
 		//Upload Uniform 1 boolean 

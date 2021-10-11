@@ -10,6 +10,4 @@ namespace Plutus
     bool compareF(float x, float y, float epsilon = std::numeric_limits<float>::min());
 
     bool compare(const glm::vec2& v1, const glm::vec2& v2, float epsilon = std::numeric_limits<float>::min());
-
-    float dotProduct(const glm::vec2& vec1, const glm::vec2& vec2);
 } // namespace Plutus

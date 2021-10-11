@@ -1,8 +1,10 @@
 #include "DebugRenderer.h"
-#include "Camera2D.h"
-#include "GLSL.h"
 
+#include "GLSL.h"
+#include "Camera2D.h"
 #include "GraphicsUtil.h"
+
+constexpr uint32_t NUmVERTS = 64;
 
 namespace Plutus
 {
@@ -81,8 +83,24 @@ namespace Plutus
 		mIndices.clear();
 		mVertexs.clear();
 	}
+	/***************************** Shapes **********************************************/
+	void DebugRender::drawBox(const Box2d& b)
+	{
+		drawBox(glm::vec4(b.pos.x, b.pos.y, b.size.x, b.size.y));
+	}
 
-	void DebugRender::drawLine(const glm::vec2& a, const glm::vec2& b, const ColorRGBA8& color = ColorRGBA8())
+	void DebugRender::drawLine(const Line& l)
+	{
+		drawLine({ l.start.x, l.start.y }, { l.end.x, l.end.y });
+	}
+
+	void DebugRender::drawCircle(const Circle& c)
+	{
+		drawCircle({ c.pos.x, c.pos.y }, c.radius);
+	}
+	/*******************************************************************************************************/
+
+	void DebugRender::drawLine(const glm::vec2& a, const glm::vec2& b, const ColorRGBA8& color)
 	{
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 2);
@@ -95,7 +113,7 @@ namespace Plutus
 		mIndices.push_back(i);
 		mIndices.push_back(i + 1);
 	}
-	void DebugRender::drawBox(const glm::vec4& destRect, const ColorRGBA8& color, float angle)
+	void DebugRender::drawBox(const glm::vec4& destRect, float angle, const ColorRGBA8& color)
 	{
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 4);
@@ -140,10 +158,8 @@ namespace Plutus
 		mIndices.push_back(i);
 	}
 
-	void DebugRender::drawCircle(const glm::vec2& center, const ColorRGBA8& color, float radius)
+	void DebugRender::drawCircle(const glm::vec2& center, float radius, const ColorRGBA8& color)
 	{
-		static const uint32_t NUmVERTS = 100;
-
 		uint32_t start = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + NUmVERTS);
 		for (size_t i = 0; i < NUmVERTS; i++)

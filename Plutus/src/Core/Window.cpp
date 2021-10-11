@@ -22,6 +22,11 @@
 
 namespace Plutus
 {
+    Window::Window(const char* name, int width, int height, GLFWwindow* parent)
+    {
+        init(name, width, height, parent);
+    }
+
     std::unordered_map<int, const char*> unkeys;
 
     void initKeys();
@@ -122,7 +127,7 @@ namespace Plutus
 
     bool Window::isFinish()
     {
-        return glfwWindowShouldClose(mWindow);
+        return !glfwWindowShouldClose(mWindow);
     }
 
     void Window::update()

@@ -75,7 +75,7 @@ namespace Plutus
                 mRenderables[i++] = { sprite.getTexId(), rect, sprite.getUV(), sprite.mColor,
                     trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
 
-                mDebug.drawBox(rect, {}, trans.r);
+                mDebug.drawBox(rect, trans.r);
                 mDebug.end();
                 mDebug.render(2);
             }

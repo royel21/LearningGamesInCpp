@@ -28,8 +28,6 @@ namespace Plutus
 		mWindow.init(name, w, h);
 		mInput = Input::getInstance();
 		mScreenList = std::make_unique<ScreenList>(this);
-		mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
-		mRenderer.init();
 	}
 
 	Engine::~Engine()
@@ -49,45 +47,21 @@ namespace Plutus
 	{
 		if (!init())
 			return;
-		// std::printf("Running \n");
 
-		Clock::time_point startTime, endTime;
 #ifdef __EMSCRIPTEN__
-		uint64_t end = 0;
 		loop = [&]
 		{
-			auto start = Timer::millis();
-			mLastElapsed = static_cast<double>(start - end) / 1000.0f;
-			end = start;
 #else
-		while (!mWindow.isFinish())
+		while (mWindow.isFinish())
 		{
-			auto startTime = Clock::now();
 #endif
+			float dt = mLimiter.start();
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			update(static_cast<float>(mLastElapsed));
+			update(dt);
 			draw();
 			mInput->update();
 			mWindow.update();
-#ifndef __EMSCRIPTEN__
-			Duration drawTime = Clock::now() - startTime;
-			if (limitFPS && drawTime.count() < mSpecFPS)
-			{
-				Sleep(static_cast<DWORD>((mSpecFPS - drawTime.count()) * 1000.0f));
-			}
-			Duration currentFrame = Clock::now() - startTime;
-			mLastElapsed = currentFrame.count();
-#endif
-
-			mFrameTime += mLastElapsed;
-			mnFrameTime++;
-
-			if (mFrameTime > 1.000)
-			{
-				mFps = 1.0f / static_cast<float>(mFrameTime / mnFrameTime);
-				mFrameTime = 0.0f;
-				mnFrameTime = 0;
-			}
+			mLimiter.end();
 		};
 #ifdef __EMSCRIPTEN__
 		emscripten_set_main_loop(main_loop, 0, true);

@@ -8,6 +8,7 @@ namespace Plutus
     {
     public:
         Window() = default;
+        Window(const char* name, int width, int height, GLFWwindow* parent = nullptr);
         ~Window();
         // initialize a window and gl 3.3 context
         bool init(const char* name, int width, int height, GLFWwindow* parent = nullptr);

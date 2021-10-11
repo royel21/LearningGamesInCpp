@@ -1,15 +1,21 @@
 #ifndef _DEBUGRENDERER_H
 #define _DEBUGRENDERER_H
 
+#include <vector>
+#include <glm/glm.hpp>
+
 #include "vertex.h"
 #include "Shader.h"
 #include "GLheaders.h"
-#include "glm/glm.hpp"
-#include <vector>
+
+#include <Physics/Shapes.h>
 
 namespace Plutus
 {
 	class Camera2D;
+	struct Box;
+	struct Line;
+	struct Circle;
 
 	struct DebugVertex
 	{
@@ -24,15 +30,20 @@ namespace Plutus
 		static DebugRender* geInstances();
 		~DebugRender();
 		void init(Camera2D* _camera);
-		void drawLine(const glm::vec2& a, const glm::vec2& b, const ColorRGBA8& color);
-		void drawBox(const glm::vec4& destRect, const ColorRGBA8& color, float angle);
-		void drawCircle(const glm::vec2& center, const ColorRGBA8& color, float radius);
+		void drawLine(const glm::vec2& a, const glm::vec2& b, const ColorRGBA8& color = {});
+		void drawBox(const glm::vec4& destRect, float angle = 0, const ColorRGBA8& color = {});
+		void drawCircle(const glm::vec2& center, float radius, const ColorRGBA8& color = {});
 		void render(float lineWidth);
 		void drawGrid();
 		void end();
 		void dispose();
 		//Grid Cell Size w = Width, h = Height
 		void setCellSize(const glm::ivec2& cellSize);
+
+		//Draw Shapes
+		void drawBox(const Box2d& c);
+		void drawLine(const Line& c);
+		void drawCircle(const Circle& c);
 
 		glm::ivec2 getCellSize() { return mCellSize; };
 

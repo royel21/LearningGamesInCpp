@@ -13,6 +13,7 @@
     "plutus": "cd Plutus/pbuild&&emmake make",
     "game": "cd webbuild&&emmake make",
     "clean-libs": "rm -rf Plutus/build/*.o",
-    "plutus-libs": "rm -rf Plutus/pbuild/*.o"
+    "plutus-libs": "rm -rf Plutus/pbuild/*.o",
+    "physics": "http-server ./JS"
   }
 }
