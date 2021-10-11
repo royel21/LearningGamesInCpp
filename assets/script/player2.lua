@@ -16,6 +16,20 @@ local stand = {
 local direction = "right";
 local state = ""
 
+function move(dir, trans)
+    if dir == "up" then
+        trans.y = trans.y + SPEED
+    elseif dir == "down" then
+        trans.y = trans.y - SPEED
+    end
+    -- Move Right - Left
+    if dir == "right" then
+        trans.x = trans.x + SPEED
+    elseif dir == "left" then
+        trans.x = trans.x - SPEED
+    end
+end
+
 function init()
     local anim = Player2:getAnimate();
 
@@ -58,34 +72,25 @@ function update(dt)
         anim:play(curAnime)
     end
 
-    if state ~= "attacking" then
+    if state ~= "attacking" and state ~= "jumping" then
         -- Move Up - Down
         if input:onKeyDown("Up") then
             direction = "up"
             state = "running"
-            if trans.y < ScreenHeight - 96 then
-                trans.y = trans.y + SPEED
-            end
         elseif input:onKeyDown("Down") then
             direction = "down"
             state = "running"
-            if trans.y > -32 then trans.y = trans.y - SPEED end
         end
         -- Move Right - Left
         if input:onKeyDown("Right") then
             direction = "right"
             state = "running"
-            if trans.x < ScreenWidth - 85 then
-                trans.x = trans.x + SPEED
-            end
         elseif input:onKeyDown("Left") then
             direction = "left"
             state = "running"
-            if trans.x > -32 then trans.x = trans.x - SPEED end
         end
-
+        -- Jump animation
         if input:onKeyPressed("X") and state == "running" then
-            -- Jump animation
             state = "jumping"
             anim:play("jump-" .. direction);
             anim:setLoop(true);
@@ -93,9 +98,9 @@ function update(dt)
             -- Running animation
             anim:play("run-" .. direction)
         end
-
-        if state == "jumping" then end
     end
+    -- Jumping
+    if state == "jumping" or state == "running" then move(direction, trans) end
     -- Attack Animation
     if input:onKeyPressed("Z") and state ~= "jumping" then
         anim:play("attack-" .. direction);

@@ -10,10 +10,9 @@
 #include <GLFW/glfw3.h>
 
 #include "Window.h"
-#include "./Input/Input.h"
 
-#include <cstdlib>
-#include <cstdio>
+#include <Input/Input.h>
+
 #include <unordered_map>
 
 #ifdef _WIN32
@@ -33,7 +32,7 @@ namespace Plutus
 
     static void error_callback(int error, const char* description)
     {
-        std::printf("Error: %s\n", description);
+
     }
 
     void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -67,7 +66,6 @@ namespace Plutus
 #ifdef _WIN32
         timeEndPeriod(1);
 #endif
-        std::printf("Reset TimeEndPeriod\n");
         if (mWindow != nullptr)
         {
             glfwDestroyWindow(mWindow);
@@ -105,9 +103,6 @@ namespace Plutus
         //Load the OpenGL Context
         gladLoadGL();
 #endif
-
-        //Print the OpenGL Version
-        std::printf("*** OpenGL Version %s ***\n", glGetString(GL_VERSION));
         // set up the inputs callback
         glfwSetKeyCallback(mWindow, keyCallback);
         glfwSetMouseButtonCallback(mWindow, mouseButtonCallback);
@@ -121,7 +116,7 @@ namespace Plutus
         // if we are on window set the time precision to 1ms for sleep function
         timeBeginPeriod(1);
 #endif
-        std::printf("*** Ready***\n");
+        glViewport(0, 0, width, height);
         return true;
     }
 

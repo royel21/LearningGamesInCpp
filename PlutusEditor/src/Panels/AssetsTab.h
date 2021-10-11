@@ -10,6 +10,7 @@ namespace Plutus
 {
     class Scene;
     class AudioEvent;
+    class EditorUI;
 
     struct EnumFilter {
         GLuint filter;
@@ -27,6 +28,7 @@ namespace Plutus
         AssetsTab();
         void drawAssets();
         void drawTreeNode(std::string dirpath);
+        void setParent(EditorUI* parent);
 
     private:
         void processFile();
@@ -48,6 +50,7 @@ namespace Plutus
         Texture texture;
         EnumFilter filter = { GL_NEAREST, "Nearest" };
         AssetType assetType;
+        EditorUI* parent;
     };
 
 } // namespace Plutus

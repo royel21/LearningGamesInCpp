@@ -74,12 +74,15 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
 
 
   # Add source files
-  file(GLOB_RECURSE BOX2D_SRC box2dtest/*.cpp box2dtest/*.hpp)
+  file(GLOB_RECURSE BOX2D_SRC box2dtest/*.cpp box2dtest/*.h)
 
   add_executable(box2dtest ${BOX2D_SRC})
   target_link_libraries(box2dtest PUBLIC Plutus)
 
-  add_executable("Test" Test/test.cpp ${TEST_SRC})
+  # Test Project
+  file(GLOB TEST_SRC Test/*.cpp Test/*.h)
+
+  add_executable("Test" ${TEST_SRC})
   target_link_libraries(Test PUBLIC Plutus)
 
 endif()

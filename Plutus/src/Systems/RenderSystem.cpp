@@ -8,7 +8,7 @@
 #include <ECS/Components/TileMap.h>
 #include <ECS/Components/Transform.h>
 
-#include <Time/Timer.h>
+// #include <Time/Timer.h>
 
 
 namespace Plutus
@@ -28,7 +28,7 @@ namespace Plutus
 
     void RenderSystem::update(float dt)
     {
-        auto start = Timer::millis();
+        // auto start = Timer::millis();
 
         auto viewMap = mScene->getRegistry()->view<TileMap>();
         auto view = mScene->getRegistry()->view<Transform, Sprite>();
@@ -90,7 +90,7 @@ namespace Plutus
         mRenderer.begin(&mShader, mCamera);
         mRenderer.draw();
         mRenderer.end();
-        std::printf("time: %llu\n", Timer::millis() - start);
+        // std::printf("time: %llu\n", Timer::millis() - start);
     }
 
     void RenderSystem::destroy()

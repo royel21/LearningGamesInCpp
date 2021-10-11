@@ -25,6 +25,7 @@
 
 #include <cstdio>
 #include "TestWin.h"
+#include <Utils/FileIO.h>
 
 
 #define mapIn(x, min_in, max_in, min_out, max_out) (x - min_in) * (max_out - min_out) / (max_in - min_in) + min_out
@@ -125,6 +126,9 @@ namespace Plutus
 		mFb.init(static_cast<int>(size.x), static_cast<int>(size.y));
 		mPicker.init(static_cast<int>(size.x), static_cast<int>(size.y), true);
 		loadRecents();
+
+		mAssetsTab.setParent(this);
+		mScriptEditor.init();
 	}
 
 	void EditorUI::update(float dt)
@@ -160,6 +164,7 @@ namespace Plutus
 		drawMainDockingWin();
 		mEntityEditor.draw();
 		mAssetsTab.drawAssets();
+		mScriptEditor.drawUI();
 		viewPort();
 		viewPortControl();
 
@@ -672,6 +677,10 @@ namespace Plutus
 	{
 		mScene->clear();
 		mEnt = { entt::null, nullptr };
+	}
+
+	void EditorUI::setEditorScript(std::string script) {
+		mScriptEditor.setScript(script);
 	}
 
 } // namespace Plutus

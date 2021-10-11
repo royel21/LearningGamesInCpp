@@ -19,6 +19,9 @@
 
 #include <Panels/AssetsTab.h>
 #include <Panels/EntityEditor.h>
+#include "Panels/ScriptEditor.h"
+
+#include "./ImGuiColorTextEdit/TextEditor.h"
 
 
 namespace Plutus
@@ -69,7 +72,7 @@ namespace Plutus
 		std::vector<std::string> mRecents;
 
 		std::vector<Renderable> mRenderables;
-
+		ScriptEditor mScriptEditor;
 	public:
 		std::vector<ImVec2> Selectedtiles;
 
@@ -88,6 +91,7 @@ namespace Plutus
 		//Bind Framebuffer
 		void bindFB();
 		void unBindFB();
+		void setEditorScript(std::string script);
 
 		void setTotalTemp(int total) { totalTemp = total; }
 		std::vector<Renderable>& getRenderables() { return mRenderables; }

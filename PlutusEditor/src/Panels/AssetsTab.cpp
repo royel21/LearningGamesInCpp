@@ -10,6 +10,8 @@
 #include "../ImGuiEx.h"
 #include "../IconsFontAwesome5.h"
 #include <Assets/SoundEngine.h>
+#include <Utils/FileIO.h>
+#include "../EditorUI.h"
 
 
 #define TreeNodeLeaf_NoPushOpen 264
@@ -33,6 +35,9 @@ namespace Plutus
         {GL_NEAREST, "Nearest"},
         {GL_LINEAR, "Linear"}
     };
+    void AssetsTab::setParent(EditorUI* _parent) {
+        parent = _parent;
+    }
 
     AssetsTab::AssetsTab()
     {
@@ -185,10 +190,17 @@ namespace Plutus
 
                 bool isScene = path.find("scene") != std::string::npos;
 
-                if (isScene && ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
                 {
+                    if (isScene) {
 
+                    }
+                    if (path.find(".lua") != std::string::npos) {
+                        auto script = readFileAsString(path.c_str());
+                        parent->setEditorScript(script);
+                    }
                 }
+
 
                 if (!isScene && ImGui::BeginPopupContextItem())
                 {
