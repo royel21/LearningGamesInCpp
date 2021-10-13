@@ -19,13 +19,6 @@ namespace Plutus
 
 	class Input
 	{
-	private:
-		bool mMouseMove = false;
-		int mMouseWheel = 0;
-		glm::vec2 mMouseCoords;
-		std::unordered_map<std::string, bool> mKeyMap;
-		std::unordered_map<std::string, bool> mPrevKeyMap;
-
 	public:
 		bool isCtrl = false;
 		std::function<void(const char*)> onFileDrop = nullptr;
@@ -54,10 +47,16 @@ namespace Plutus
 
 		void addEventListener(InputListener* listener);
 		void addRemoveListener(InputListener* listener);
-
 	private:
 		bool wasKeyDown(const std::string& keyId);
+
+	private:
+		bool mMouseMove = false;
+		int mMouseWheel = 0;
+		glm::vec2 mMouseCoords;
 		std::vector<InputListener*> mEventListeners;
+		std::unordered_map<std::string, bool> mKeyMap;
+		std::unordered_map<std::string, bool> mPrevKeyMap;
 	};
 } // namespace Plutus
 
