@@ -27,7 +27,7 @@ int EditorScreen::getPrevScreentIndex() const
 
 void EditorScreen::build()
 {
-    mInput = Plutus::Input::getInstance();
+    mInput = Plutus::Input::get();
 
     auto size = static_cast<glm::ivec2>(mEngine->getWindowSize());
     mCamera.init(size.x, size.y);

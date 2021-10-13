@@ -27,16 +27,8 @@ namespace Plutus
 	Engine::Engine(const char* name, int w, int h) : mWinName(name), mScreenWidth(w), mScreenHeight(h)
 	{
 		mWindow.init(name, w, h);
-		mInput = Input::getInstance();
+		mInput = Input::get();
 		mScreenList = std::make_unique<ScreenList>(this);
-
-#if defined(__EMSCRIPTEN__) || defined(_WIN32)
-		glfwSetWindowUserPointer(mWindow.getGLFWwindow(), this);
-		glfwSetFramebufferSizeCallback(mWindow.getGLFWwindow(), [](GLFWwindow* window, int width, int height) {
-			auto engine = (Engine*)glfwGetWindowUserPointer(window);
-			engine->onReisze(width, height);
-			});
-#endif
 	}
 
 	Engine::~Engine()

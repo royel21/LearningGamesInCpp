@@ -61,7 +61,7 @@ namespace Plutus
 		void setEngine(Engine* engine)
 		{
 			mEngine = engine;
-			mInput = Input::getInstance();
+			mInput = Input::get();
 		}
 	};
 

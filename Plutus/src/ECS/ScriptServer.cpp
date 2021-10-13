@@ -122,6 +122,6 @@ namespace Plutus
         lua["ScreenWidth"] = size[2];
         lua["ScreenHeight"] = size[3];
 
-        lua.set("input", Input::getInstance());
+        lua.set("input", Input::get());
     }
 }

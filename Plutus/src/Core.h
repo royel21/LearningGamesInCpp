@@ -1,10 +1,17 @@
 #pragma once
-#include "./Core/Window.h"
-#include "./Time/Limiter.h"
-#include "./Input/Input.h"
-#include "./Graphics/Camera2d.h"
+#include "IScreen.h"
+
+#include <Core/Window.h>
+#include <Time/Limiter.h>
+#include <Graphics/Camera2d.h>
+#include <Systems/SystemManager.h>
+
+#include <ECS/Scene.h>
+
+#include <unordered_map>
 
 #include <string>
+#include <memory>
 
 namespace Plutus
 {
@@ -13,20 +20,23 @@ namespace Plutus
     private:
         Window mWindow;
         Limiter mLimiter;
-    protected:
         //Width of the Window
         int mWidth = 1280;
         //Height of the Window
         int mHeight = 768;
         //Title of the Window
         std::string mName = "Plutus App";
+
+    protected:
         //Game Main Camera
         Camera2D mCamera;
-        //InputManager Reference
-        Input* mInput;
+
+        std::string mNextScreen;
+        IScreen* mCurrentScreen;
+        std::unordered_map<std::string, std::unique_ptr<IScreen>> mScreenList;
 
     public:
-        Core();
+        Core() = default;
         Core(const char* name, int width, int height);
         ~Core();
         //Run the game loop, only return when the app exit.
@@ -47,8 +57,11 @@ namespace Plutus
         //set if fps should be limited.
         void limitFPS(bool state) { mLimiter.setFPSLimiter(state); }
 
-        void SetViewPortSize(float width, float height);
+        void setNextScreen(const std::string& screenId);
+
+        void setAutoResizeViewPort(bool state) { mWindow.setResizeVP(state); }
     private:
         void init();
+        void swapScreen();
     };
 } // namespace Plutus

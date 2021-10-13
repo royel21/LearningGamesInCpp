@@ -33,7 +33,7 @@ namespace Plutus
 		void drawLine(const glm::vec2& a, const glm::vec2& b, const ColorRGBA8& color = {});
 		void drawBox(const glm::vec4& destRect, float angle = 0, const ColorRGBA8& color = {});
 		void drawCircle(const glm::vec2& center, float radius, const ColorRGBA8& color = {});
-		void render(float lineWidth);
+		void render(float lineWidth = 1.0f);
 		void drawGrid();
 		void end();
 		void dispose();

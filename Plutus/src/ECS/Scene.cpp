@@ -1,8 +1,6 @@
 #include "Scene.h"
 #include "./Components.h"
 
-#include <Graphics/SpriteBatch2D.h>
-
 namespace Plutus
 {
     /*******************************     Scene    ************************/

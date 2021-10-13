@@ -41,7 +41,7 @@ namespace Plutus
 
 	EditorUI::EditorUI() : mVPColor(1, 1, 1, 1), mGridColor(0)
 	{
-		mInput = Input::getInstance();
+		mInput = Input::get();
 		mInput->addEventListener(this);
 		if (!std::filesystem::exists("assets"))
 		{
@@ -50,7 +50,7 @@ namespace Plutus
 			std::filesystem::create_directories("assets/fonts");
 		}
 
-		Input::getInstance()->onFileDrop = [](const char* file)
+		Input::get()->onFileDrop = [](const char* file)
 		{
 			std::printf("file: %s", file);
 		};

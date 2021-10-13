@@ -103,7 +103,7 @@ namespace ImGui {
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
         ImGui::BeginChild("##texture-map", { 0,0 }, true, ImGuiWindowFlags_HorizontalScrollbar);
         bool isSelected = false;
-        auto mInput = Plutus::Input::getInstance();
+        auto mInput = Plutus::Input::get();
         ImDrawList* drawList = ImGui::GetWindowDrawList();
         auto size = ImGui::GetContentRegionAvail();
 
@@ -225,7 +225,7 @@ namespace ImGui {
         // ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
         ImGui::BeginChild("##texture-map", { (float)winWidth, (float)winHeight }, false, ImGuiWindowFlags_HorizontalScrollbar);
         bool isSelected = false;
-        auto mInput = Plutus::Input::getInstance();
+        auto mInput = Plutus::Input::get();
         ImDrawList* drawList = ImGui::GetWindowDrawList();
         auto size = ImGui::GetContentRegionAvail();
 

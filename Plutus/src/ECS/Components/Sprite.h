@@ -2,22 +2,19 @@
 
 #include <string>
 #include <glm/glm.hpp>
-#include <Graphics/vertex.h>
 #include <Assets/AssetManager.h>
 
 namespace Plutus
 {
-    class Sprite
+    struct Sprite
     {
-    public:
         std::string mTextureId;
         bool mFlipX = false;
         bool mFlipY = false;
         int mUvIndex = 0;
         glm::vec4 mUVCoord;
-        ColorRGBA8 mColor;
+        uint32_t mColor;
 
-    public:
         Sprite() = default;
         Sprite(std::string texId) : mTextureId(texId), mUVCoord(0, 0, 1, 1) {};
 

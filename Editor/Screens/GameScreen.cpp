@@ -50,7 +50,7 @@ void GameScreen::build()
     mSystemManager.AddSystem<Plutus::ScriptSystem>(&mWorldCamera);
     mSystemManager.AddSystem<Plutus::AnimationSystem>();
 
-    mInput = Plutus::Input::getInstance();
+    mInput = Plutus::Input::get();
 }
 
 void GameScreen::onEntry()

@@ -16,7 +16,7 @@ namespace Plutus
         mScene = context;
         mParentUI = parent;
         mComponentPanel.setContext(mScene, parent);
-        mInput = Plutus::Input::getInstance();
+        mInput = Plutus::Input::get();
     }
 
     void EntityEditor::draw()

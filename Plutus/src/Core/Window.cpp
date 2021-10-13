@@ -1,88 +1,46 @@
 
+#include "Window.h"
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #define GL_GLEXT_PROTOTYPES
 #define EGL_EGLEXT_PROTOTYPES
-#else
+#include <GLFW/glfw3.h>
+#elif _WIN32
 extern "C"
 {
 #include <windows.h>
 }
 #include "Graphics/GLHeaders.h"
 #define GLFW_INCLUDE_NONE
-#endif
 #include <GLFW/glfw3.h>
 
-#include "Window.h"
+#pragma comment(lib, "winmm.lib")
+#endif
+
 
 #include <Input/Input.h>
 
 #include <unordered_map>
 
-#ifdef _WIN32
-#pragma comment(lib, "winmm.lib")
-#endif
 
 namespace Plutus
 {
+    std::unordered_map<int, const char*> unkeys;
+    void initKeys();
+
     Window::Window(const char* name, int width, int height, GLFWwindow* parent)
     {
         init(name, width, height, parent);
-    }
-
-    std::unordered_map<int, const char*> unkeys;
-
-    void initKeys();
-
-    static void error_callback(int error, const char* description)
-    {
-
-    }
-
-    void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-    {
-        auto name = unkeys[key];
-        Input::getInstance()->keyStateChange(name == nullptr ? "Unkown" : name, action);
-    }
-
-    void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
-    {
-        Input::getInstance()->keyStateChange(unkeys[button], action > 0);
-    }
-
-    void mousePosCallback(GLFWwindow* window, double xpos, double ypos)
-    {
-        Input::getInstance()->setMouseCoords(static_cast<float>(xpos), static_cast<float>(ypos));
-    }
-
-    void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-    {
-        Input::getInstance()->setMouseWheel(static_cast<int>(yoffset));
-    }
-    void drop_callback(GLFWwindow* window, int count, const char** paths)
-    {
-        for (int i = 0; i < count; i++)
-            if (Input::getInstance()->onFileDrop != nullptr)
-                Input::getInstance()->onFileDrop(paths[i]);
-    }
-    Window::~Window()
-    {
-#ifdef _WIN32
-        timeEndPeriod(1);
-#endif
-        if (mWindow != nullptr)
-        {
-            glfwDestroyWindow(mWindow);
-            glfwTerminate();
-            exit(EXIT_SUCCESS);
-        }
     }
 
     bool Window::init(const char* name, int width, int height, GLFWwindow* parent)
     {
         initKeys();
         // set a error call back for glfw internal error
-        glfwSetErrorCallback(error_callback);
+        glfwSetErrorCallback([](int error, const char* description) {
+
+            });
         //Initialise glfw stuff
         if (!glfwInit())
         {
@@ -107,12 +65,31 @@ namespace Plutus
         //Load the OpenGL Context
         gladLoadGL();
 #endif
-        // set up the inputs callback
-        glfwSetKeyCallback(mWindow, keyCallback);
-        glfwSetMouseButtonCallback(mWindow, mouseButtonCallback);
-        glfwSetScrollCallback(mWindow, scrollCallback);
-        glfwSetCursorPosCallback(mWindow, mousePosCallback);
-        glfwSetDropCallback(mWindow, drop_callback);
+
+        glfwSetWindowUserPointer(mWindow, this);
+        // Setup all callback
+        glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+            auto name = unkeys[key];
+            Input::get()->keyStateChange(name == nullptr ? "Unkown" : name, action);
+            });
+        glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods) {
+            Input::get()->keyStateChange(unkeys[button], action > 0);
+            });
+        glfwSetCursorPosCallback(mWindow, [](GLFWwindow* window, double xpos, double ypos) {
+            Input::get()->setMouseCoords(static_cast<float>(xpos), static_cast<float>(ypos));
+            });
+        glfwSetScrollCallback(mWindow, [](GLFWwindow* window, double xoffset, double yoffset) {
+            Input::get()->setMouseWheel(static_cast<int>(yoffset));
+            });
+        glfwSetDropCallback(mWindow, [](GLFWwindow* window, int count, const char** paths) {
+            for (int i = 0; i < count; i++)
+                if (Input::get()->onFileDrop != nullptr)
+                    Input::get()->onFileDrop(paths[i]);
+            });
+        glfwSetFramebufferSizeCallback(mWindow, [](GLFWwindow* window, int width, int height) {
+            auto win = (Window*)glfwGetWindowUserPointer(window);
+            win->resizeVP(width, height);
+            });
         //Enable alpha blend
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -120,8 +97,19 @@ namespace Plutus
         // if we are on window set the time precision to 1ms for sleep function
         timeBeginPeriod(1);
 #endif
-        glViewport(0, 0, width, height);
         return true;
+    }
+    Window::~Window()
+    {
+#ifdef _WIN32
+        timeEndPeriod(1);
+#endif
+        if (mWindow != nullptr)
+        {
+            glfwDestroyWindow(mWindow);
+            glfwTerminate();
+            exit(EXIT_SUCCESS);
+        }
     }
 
     bool Window::isFinish()
@@ -133,6 +121,12 @@ namespace Plutus
     {
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
+    }
+
+    void Window::resizeVP(int width, int height) {
+        if (mAutoResizeVP) {
+            glViewport(0, 0, width, height);
+        }
     }
 
     void Window::close()

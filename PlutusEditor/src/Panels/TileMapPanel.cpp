@@ -223,7 +223,7 @@ namespace Plutus
             mParentUI->setTotalTemp(0);
         }
 
-        if (isHover && Input::getInstance()->onKeyDown("MouseLeft")) {
+        if (isHover && Input::get()->onKeyDown("MouseLeft")) {
             createTiles();
         }
     }

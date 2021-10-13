@@ -33,7 +33,7 @@ namespace Plutus
         mParentUI = parent;
 
         mScene = scene;
-        mInput = Input::getInstance();
+        mInput = Input::get();
         mTileMapPanel.setContext(scene, parent);
 
         createComps["Animation"] = [&](bool& open)
@@ -212,7 +212,7 @@ namespace Plutus
                 auto sprite = mEntity.getComponent<Sprite>();
                 auto& textures = AssetManager::get()->mTextures.mTileSets;
 
-                auto color = sprite->mColor.rgba;
+                auto color = sprite->mColor;
                 static std::string selected = sprite->mTextureId;
                 static int sc = 100;
                 static float scale = 1.0f;
@@ -222,7 +222,7 @@ namespace Plutus
 
                 if (ImGui::ColorInt("Color", color))
                 {
-                    sprite->mColor.setColor(color);
+                    sprite->mColor = color;
                 }
                 ImGui::PushItemWidth(100);
                 if (ImGui::InputInt("Scale", &sc, 5))

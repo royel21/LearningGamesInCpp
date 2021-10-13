@@ -8,7 +8,7 @@ namespace Plutus
 	{
 	}
 
-	Input* Input::getInstance()
+	Input* Input::get()
 	{
 		static Input instance;
 		return &instance;

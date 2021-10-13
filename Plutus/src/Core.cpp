@@ -1,7 +1,7 @@
 #include "Core.h"
-#include "./Graphics/GLheaders.h"
-#include "./Assets/AssetManager.h"
-#include <GLFW/glfw3.h>
+
+#include <Input/Input.h>
+#include <Assets/AssetManager.h>
 
 namespace Plutus
 {
@@ -10,22 +10,7 @@ namespace Plutus
     void main_loop() { loop(); }
 #endif
 
-    Core::Core()
-    {
-        mInput = Input::getInstance();
-        mWindow.init(mName.c_str(), mWidth, mHeight);
-        mCamera.init(mWidth, mHeight);
-#if defined(__EMSCRIPTEN__) || defined(_WIN32)
-        glfwSetWindowUserPointer(mWindow.getGLFWwindow(), this);
-        glfwSetFramebufferSizeCallback(mWindow.getGLFWwindow(), [](GLFWwindow* window, int width, int height) {
-            auto core = (Core*)glfwGetWindowUserPointer(window);
-            core->Resize(width, height);
-            });
-#endif
-    };
-
     Core::Core(const char* name, int width, int height) : mName(name), mWidth(width), mHeight(height) {
-        mWindow.init(name, width, height);
     }
 
     Core::~Core()
@@ -34,12 +19,13 @@ namespace Plutus
     };
 
     void Core::init() {
+        mWindow.init(mName.c_str(), mWidth, mHeight);
+        mCamera.init(mWidth, mHeight);
+        Setup();
     }
 
     void Core::Run() {
         init();
-        Setup();
-
 #ifdef __EMSCRIPTEN__
         loop = [&]
         {
@@ -50,11 +36,13 @@ namespace Plutus
             float dt = mLimiter.start();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             mCamera.update();
-            mInput->update();
             Update(dt);
             Draw();
+            Input::get()->update();
             mWindow.update();
             mLimiter.end();
+
+            if (mScreenList.size()) swapScreen();
         }
 #ifdef __EMSCRIPTEN__
         emscripten_set_main_loop(main_loop, 0, true);
@@ -64,7 +52,18 @@ namespace Plutus
         AssetManager::get()->clearData();
     }
 
-    void Core::SetViewPortSize(float width, float height) {
-        glViewport(0, 0, width, height);
+    void Core::swapScreen() {
+        if (!mNextScreen.empty()) {
+            if (mScreenList.find(mNextScreen) != mScreenList.end()) {
+                mCurrentScreen->Exit();
+                mCurrentScreen = mScreenList[mNextScreen].get();
+                mCurrentScreen->Enter();
+                mNextScreen = "";
+            }
+        }
+    }
+
+    void Core::setNextScreen(const std::string & screenId) {
+        mNextScreen = screenId;
     }
 } // namespace Plutus

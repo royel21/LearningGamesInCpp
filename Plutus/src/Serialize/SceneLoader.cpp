@@ -120,7 +120,7 @@ namespace Plutus
                             auto spr = entity.addComponent<Sprite>(component["texture"].GetString());
                             spr->mFlipX = component["mFlipX"].GetBool();
                             spr->mFlipY = component["mFlipY"].GetBool();
-                            spr->mColor.setColor(component["color"].GetInt());
+                            spr->mColor = component["color"].GetInt();
                             continue;
                         }
                         if (compType == "Animation")

@@ -25,7 +25,8 @@ namespace Plutus
 
 	public:
 		Input();
-		static Input* getInstance();
+		// Return a instance of Input Manager
+		static Input* get();
 
 		void update();
 

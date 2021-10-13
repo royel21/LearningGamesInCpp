@@ -5,10 +5,6 @@
 #include <GLES3/gl3.h>
 #define glClearDepth glClearDepthf
 #else
-// extern "C"
-// {
-// #include <windows.h>
-// }
 #include <glad/glad.h>
 #endif
 

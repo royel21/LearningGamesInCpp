@@ -77,7 +77,7 @@ namespace Plutus
             writer->String("texture");
             writer->String(sprite->mTextureId.c_str());
             writer->String("color");
-            writer->Int(sprite->mColor.rgba);
+            writer->Int(sprite->mColor);
             writer->String("mFlipX");
             writer->Bool(sprite->mFlipX);
             writer->String("mFlipY");
