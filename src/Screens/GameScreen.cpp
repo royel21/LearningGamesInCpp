@@ -47,50 +47,50 @@ void GameScreen::build()
 
     mWorldCamera.init(w, h);
 
-    // Plutus::SceneLoader::loadFromJson("assets/scene1.json", mScene);
-    auto& textures = Plutus::AssetManager::get()->mTextures;
-    textures.addTexture("bats", "assets/textures/monster/bat.png", 3, 32, 32);
-    textures.addTexture("player1", "assets/textures/player1.png");
-    textures.addTexture("player2", "assets/textures/player.png", 60, 64, 64);
-    textures.addTexture("cave", "assets/textures/goblin_cave.png", 8, 32, 32);
+    // auto& textures = Plutus::AssetManager::get()->mTextures;
+    // textures.addTexture("bats", "assets/textures/monster/bat.png", 3, 32, 32);
+    // textures.addTexture("player1", "assets/textures/player1.png");
+    // textures.addTexture("player2", "assets/textures/player.png", 60, 64, 64);
+    // textures.addTexture("cave", "assets/textures/goblin_cave.png", 8, 32, 32);
 
     mSystemManager.init(mScene.get());
     mSystemManager.AddSystem<Plutus::RenderSystem>(&mWorldCamera);
     mSystemManager.AddSystem<Plutus::ScriptSystem>(&mWorldCamera);
     mSystemManager.AddSystem<Plutus::AnimationSystem>();
 
-    Plutus::SoundEngine.add("bg-sound", "assets/sounds/XYZ2.ogg", Plutus::MUSIC);
+    // Plutus::SoundEngine.add("bg-sound", "assets/sounds/XYZ2.ogg", Plutus::MUSIC);
 }
 
 void GameScreen::onEntry()
 {
+    Plutus::SceneLoader::loadFromJson("assets/scenes/Physics.json", mScene);
     mSystemManager.start();
-    const int h = mEngine->getHeight();
-    // Player 1
-    auto player = mScene->createEntity("Player");
-    auto trasn1 = player.addComponent<Plutus::Transform>(192.0f, 0.0f, 64, 64, 0.0f, 0, true);
-    player.addComponent<Plutus::Sprite>("player1");
-    player.addComponent<Plutus::Script>("assets/script/player1.lua", player, mScene.get());
+    // const int h = mEngine->getHeight();
+    // // Player 1
+    // auto player = mScene->createEntity("Player");
+    // auto trasn1 = player.addComponent<Plutus::Transform>(192.0f, 0.0f, 64, 64, 0.0f, 0, true);
+    // player.addComponent<Plutus::Sprite>("player1");
+    // player.addComponent<Plutus::Script>("assets/script/player1.lua", player, mScene.get());
 
-    // Player 2
-    auto player2 = mScene->createEntity("Player2");
-    player2.addComponent<Plutus::Transform>(400.0f, 0.0f, 128, 128, 0.0f, 0, true);
-    player2.addComponent<Plutus::Sprite>("player2");
+    // // Player 2
+    // auto player2 = mScene->createEntity("Player2");
+    // player2.addComponent<Plutus::Transform>(400.0f, 0.0f, 128, 128, 0.0f, 0, true);
+    // player2.addComponent<Plutus::Sprite>("player2");
 
-    auto anim2 = player2.addComponent<Plutus::Animation>(player2);
-    anim2->addTexture("player2");
+    // auto anim2 = player2.addComponent<Plutus::Animation>(player2);
+    // anim2->addTexture("player2");
 
-    player2.addComponent<Plutus::Script>("assets/script/player2.lua", player2, mScene.get());
+    // player2.addComponent<Plutus::Script>("assets/script/player2.lua", player2, mScene.get());
 
-    // Bat1
-    auto bat = mScene->createEntity("Bat");
-    bat.addComponent<Plutus::Transform>(288.0f, 0.0f, 64, 64, 0.0f, 0, true);
-    bat.addComponent<Plutus::Sprite>("bats");
+    // // Bat1
+    // auto bat = mScene->createEntity("Bat");
+    // bat.addComponent<Plutus::Transform>(288.0f, 0.0f, 64, 64, 0.0f, 0, true);
+    // bat.addComponent<Plutus::Sprite>("bats");
 
-    auto anim = bat.addComponent<Plutus::Animation>(bat);
-    anim->addTexture("bats");
-    bat.addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
-    Plutus::SoundEngine.play("bg-sound");
+    // auto anim = bat.addComponent<Plutus::Animation>(bat);
+    // anim->addTexture("bats");
+    // bat.addComponent<Plutus::Script>("assets/script/bat.lua", bat, mScene.get());
+    // Plutus::SoundEngine.play("bg-sound");
 }
 
 void GameScreen::update(float dt)

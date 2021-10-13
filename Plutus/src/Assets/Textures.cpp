@@ -130,7 +130,7 @@ namespace Plutus
         auto format = ch == 3 ? GL_RGB8 : GL_RGBA8;
         auto type = ch == 3 ? GL_RGB : GL_RGBA;
 
-        texture.id = createTexture(texture.width, texture.height, out, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, minFilter, magFilter);
+        texture.id = createTexture(texture.width, texture.height, out, format, type, GL_UNSIGNED_BYTE, minFilter, magFilter);
 
         glGenerateMipmap(GL_TEXTURE_2D);
         //unlink the texture

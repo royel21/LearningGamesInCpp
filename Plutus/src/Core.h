@@ -39,12 +39,15 @@ namespace Plutus
         virtual void Draw() {};
         //Called before the window exit, should be overrided.
         virtual void Exit() { };
+        virtual void Resize(int width, int height) {}
         // FPS on micro seconds 0.016 millis by default. 
         float getFPS() { return mLimiter.getFPS(); }
         //Set the fps of the game loop.
         void setFPS(float fps) { mLimiter.setFPS(fps); }
         //set if fps should be limited.
         void limitFPS(bool state) { mLimiter.setFPSLimiter(state); }
+
+        void SetViewPortSize(float width, float height);
     private:
         void init();
     };

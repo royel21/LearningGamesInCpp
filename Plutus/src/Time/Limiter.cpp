@@ -1,4 +1,5 @@
 #include "Limiter.h"
+#include <windows.h>
 #include <Graphics/GLheaders.h>
 
 
@@ -26,7 +27,7 @@ namespace Plutus
             {
                 Sleep(uint32_t((mSpecFps - drawTime.count()) * 1000.0f));
             }
-        }
+    }
         Duration currentFrame = Clock::now() - mStartPoint;
         mLastElapsed = currentFrame.count();
 #endif
@@ -39,7 +40,7 @@ namespace Plutus
             mFrameTime = 0.0f;
             mnFrameTime = 0;
         }
-    }
+}
 
 
 } // namespace Plutus

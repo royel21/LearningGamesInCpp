@@ -150,4 +150,6 @@ namespace ImGui
     void EndUIGroup();
 
     void BeginCol(const char* label, float width = -1);
+
+    void Draw2Float(char* label, glm::vec2 value);
 } // namespace ImGui

@@ -4,6 +4,10 @@
 #define GL_GLEXT_PROTOTYPES
 #define EGL_EGLEXT_PROTOTYPES
 #else
+extern "C"
+{
+#include <windows.h>
+}
 #include "Graphics/GLHeaders.h"
 #define GLFW_INCLUDE_NONE
 #endif

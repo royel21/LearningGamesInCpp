@@ -17,6 +17,11 @@ App::~App()
 void App::onInit()
 {
 }
+
+void App::onResize(int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
 void App::onExit()
 {
 }

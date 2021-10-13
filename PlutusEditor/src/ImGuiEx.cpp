@@ -222,8 +222,8 @@ namespace ImGui {
 
     bool DrawTexture(Plutus::Texture* texture, int winWidth, int winHeight, float scale, std::vector<glm::ivec3>* selected)
     {
-        ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-        ImGui::BeginChild("##texture-map", { (float)winWidth, (float)winHeight }, true, ImGuiWindowFlags_HorizontalScrollbar);
+        // ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+        ImGui::BeginChild("##texture-map", { (float)winWidth, (float)winHeight }, false, ImGuiWindowFlags_HorizontalScrollbar);
         bool isSelected = false;
         auto mInput = Plutus::Input::getInstance();
         ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -336,7 +336,7 @@ namespace ImGui {
                 }
             }
             ImGui::EndChild();
-            ImGui::PopStyleVar();
+            // ImGui::PopStyleVar();
             return true;
         }
     }
@@ -392,7 +392,6 @@ namespace ImGui {
 
     void BeginCol(const char* label, float width) {
 
-        ImGui::SetNextItemWidth(width);
         ImGui::TableNextColumn();
         const ImVec2 cursorPos = ImGui::GetCursorPos();
         ImGui::SetCursorPos({ cursorPos.x + 4, cursorPos.y + 4 });
@@ -401,4 +400,63 @@ namespace ImGui {
         ImGui::SetNextItemWidth(-1);
     }
 
+    void Draw2Float(char* label, glm::vec2 values) {
+
+
+        ImGui::BeginUIGroup();
+        ImGui::BeginCol(label);
+
+        // ImGui::PushID(label);
+
+        // ImGui::Columns(2);
+        // ImGui::SetColumnWidth(0, 220.0f);
+        // ImGui::Text(label);
+        // ImGui::NextColumn();
+
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+
+        float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.0f;
+        glm::vec2 buttonSize(lineHeight + 3.0f, lineHeight);
+        float widthEach = (ImGui::CalcItemWidth() - buttonSize.x * 2.0f) / 2.0f;
+
+        ImGui::PushItemWidth(widthEach);
+        ImGui::PushStyleColor(ImGuiCol_Button, { 0.8f, 0.1f, 0.15f, 1.0f });
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.9f, 0.2f, 0.2f, 1.0f });
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.8f, 0.1f, 0.15f, 1.0f });
+        if (ImGui::Button("X", { buttonSize.x, buttonSize.y })) {
+            values.x = 0;
+        }
+        ImGui::PopStyleColor(3);
+
+        ImGui::SameLine();
+        float vecValuesX = values.x;
+        ImGui::DragFloat("##x", &vecValuesX, 0.1f);
+        ImGui::PopItemWidth();
+        ImGui::SameLine();
+
+        ImGui::PushItemWidth(widthEach);
+        ImGui::PushStyleColor(ImGuiCol_Button, { 0.2f, 0.7f, 0.2f, 1.0f });
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.3f, 0.8f, 0.3f, 1.0f });
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.2f, 0.7f, 0.2f, 1.0f });
+        if (ImGui::Button("Y", { buttonSize.x, buttonSize.y })) {
+            values.y = 0;
+        }
+        ImGui::PopStyleColor(3);
+
+        ImGui::SameLine();
+        float vecValuesY = values.y;
+        ImGui::DragFloat("##y", &vecValuesY, 0.1f);
+        ImGui::PopItemWidth();
+        ImGui::SameLine();
+
+        // ImGui::NextColumn();
+
+        values.x = vecValuesX;
+        values.y = vecValuesY;
+
+        ImGui::PopStyleVar();
+        // ImGui::Columns(1);
+        // ImGui::PopID();
+        ImGui::EndUIGroup();
+    }
 }

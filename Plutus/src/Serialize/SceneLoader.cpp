@@ -1,5 +1,4 @@
 #include "SceneLoader.h"
-#include <string>
 
 #include "ECS/Scene.h"
 #include "ECS/Components.h"
@@ -8,6 +7,9 @@
 
 #include <Serialize/Serialize.h>
 #include <rapidjson/document.h>
+
+#include <Utils/Utils.h>
+#include <Utils/FileIO.h>
 
 namespace Plutus
 {
@@ -52,10 +54,22 @@ namespace Plutus
 
     bool SceneLoader::loadFromJson(const char* path, Ref<Scene>& scene)
     {
+        std::string ex = Utils::getExtension(path);
+        if (ex == "json")
+        {
+            auto data = readFileAsString(path);
+            if (!data.empty()) {
+                return loadFromString(data, scene);
+            }
+        }
+        return false;
+    }
+
+    bool SceneLoader::loadFromString(const std::string& jsonData, Ref<Scene>& scene)
+    {
         bool success = false;
         rapidjson::Document doc;
-        if (loadJson(path, &doc))
-        {
+        if (doc.Parse(jsonData.c_str()).HasParseError() == false) {
             //Load All Textures
             if (doc["textures"].IsArray())
             {
@@ -125,10 +139,9 @@ namespace Plutus
                         }
                     }
                 }
-
                 success = true;
             }
         }
-        return success;
+        return false;
     }
 } // namespace Plutus

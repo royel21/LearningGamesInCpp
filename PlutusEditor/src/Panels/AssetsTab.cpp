@@ -80,12 +80,14 @@ namespace Plutus
     template<typename T>
     void AssetsTab::drawTreeNode(std::string name, T& assets, int& id)
     {
-        nodes2[name] = ImGui::TreeNode((void*)(intptr_t)id++, getIcon(nodes2, name).c_str());
+        ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_SpanAvailWidth;
+        nodes2[name] = ImGui::TreeNodeEx((void*)(intptr_t)id++, flags, getIcon(nodes2, name).c_str());
         std::string assetId = "";
         if (nodes2[name]) {
             static bool show;
+            flags |= TreeNodeLeaf_NoPushOpen;
             for (auto asset : assets.getItems()) {
-                ImGui::TreeNodeEx((void*)(intptr_t)id++, TreeNodeLeaf_NoPushOpen, (icons[name] + asset.first).c_str());
+                ImGui::TreeNodeEx((void*)(intptr_t)id++, flags, (icons[name] + asset.first).c_str());
 
                 if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
                 {
@@ -143,16 +145,23 @@ namespace Plutus
             {
                 if (ImGui::BeginTabItem("Assets"))
                 {
-                    drawTreeNode("./assets/");
+
+                    if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
+                        drawTreeNode("./assets/");
+                        ImGui::EndChild();
+                    }
                     ImGui::EndTabItem();
                 }
 
                 if (ImGui::BeginTabItem("Scene Assets"))
                 {
-                    int id = 0;
-                    drawTreeNode("Fonts", mAsset->mFonts, id);
-                    drawTreeNode("Textures", mAsset->mTextures, id);
-                    drawTreeNode("Sounds", SoundEngine, id);
+                    if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
+                        int id = 0;
+                        drawTreeNode("Fonts", mAsset->mFonts, id);
+                        drawTreeNode("Textures", mAsset->mTextures, id);
+                        drawTreeNode("Sounds", SoundEngine, id);
+                        ImGui::EndChild();
+                    }
                     ImGui::EndTabItem();
                 }
                 ImGui::EndTabBar();
@@ -169,12 +178,13 @@ namespace Plutus
         uint32_t id = 1;
         for (auto& entry : std::filesystem::directory_iterator(path))
         {
+            ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_SpanAvailWidth;
             auto path = entry.path().string();
             auto name = entry.path().filename().string();
 
             if (entry.is_directory())
             {
-                nodes[name] = ImGui::TreeNode((void*)(intptr_t)id, getIcon(nodes, name).c_str());
+                nodes[name] = ImGui::TreeNodeEx((void*)(intptr_t)id, flags, getIcon(nodes, name).c_str());
 
                 if (nodes[name]) {
                     drawTreeNode(path);
@@ -185,8 +195,8 @@ namespace Plutus
             {
                 auto icon = icons[Utils::getExtension(name)];
                 icon = icon.empty() ? FA_FILE : icon;
-
-                ImGui::TreeNodeEx((void*)(intptr_t)id, TreeNodeLeaf_NoPushOpen, (icon + name).c_str());
+                flags |= TreeNodeLeaf_NoPushOpen;
+                ImGui::TreeNodeEx((void*)(intptr_t)id, flags, (icon + name).c_str());
 
                 bool isScene = path.find("scene") != std::string::npos;
 

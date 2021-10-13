@@ -4,7 +4,7 @@
 #include <imgui.h>
 #include <Utils/FileIO.h>
 #include <Utils/Utils.h>
-
+#include "../IconsFontAwesome5.h"
 
 namespace Plutus
 {
@@ -18,9 +18,10 @@ namespace Plutus
     };
 
     void ScriptEditor::init() {
-        editor.SetPalette(TextEditor::GetDarkPalette());
         auto lang = TextEditor::LanguageDefinition::Lua();
+        editor.SetPalette(TextEditor::GetDarkPalette());
         editor.SetLanguageDefinition(lang);
+        editor.SetShowWhitespaces(false);
 
 
         scripts = Utils::listFiles("assets/script", ".lua");
@@ -35,8 +36,8 @@ namespace Plutus
     }
 
     void ScriptEditor::drawUI() {
-
-        if (ImGui::Begin("Script Editor")) {
+        ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
+        if (ImGui::Begin(ICON_FA_CODE" Script Editor", nullptr, flags)) {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
@@ -45,11 +46,11 @@ namespace Plutus
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHovered.x, buttonHovered.y, buttonHovered.z, 0.5f));
             const auto& buttonActive = colors[ImGuiCol_ButtonActive];
             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
-            ImGui::Button("New");
+            ImGui::Button(ICON_FA_FILE_ALT " New");
             ImGui::SameLine();
-            ImGui::Button("Save");
+            ImGui::Button(ICON_FA_SAVE " Save");
             ImGui::SameLine();
-            ImGui::Button("Load");
+            ImGui::Button(ICON_FA_FOLDER_OPEN "Load");
             ImGui::SameLine();
 
             if (scripts.size())

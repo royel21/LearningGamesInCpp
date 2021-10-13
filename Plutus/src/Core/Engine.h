@@ -39,6 +39,7 @@ namespace Plutus
         //Called on a the start of the window creation use for initialization
         virtual void onInit() = 0;
         virtual void onExit() = 0;
+        virtual void onReisze(int width, int height) {};
 
         const float getFPS() { return mLimiter.getFPS(); }
         void setFPS(uint8_t fps) { mLimiter.setFPS((float)fps); }

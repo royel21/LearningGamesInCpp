@@ -3,8 +3,7 @@
 
 int main(int argc, char const* argv[])
 {
-    App* app = new App("Level Editor", 700, 600);
-    // App* app = new App("Level Editor", 1280, 768);
+    App* app = new App("Physics Test", 1280, 768);
     app->run();
 
     delete app;

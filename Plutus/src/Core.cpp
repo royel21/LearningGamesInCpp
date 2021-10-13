@@ -1,6 +1,7 @@
 #include "Core.h"
 #include "./Graphics/GLheaders.h"
 #include "./Assets/AssetManager.h"
+#include <GLFW/glfw3.h>
 
 namespace Plutus
 {
@@ -14,6 +15,13 @@ namespace Plutus
         mInput = Input::getInstance();
         mWindow.init(mName.c_str(), mWidth, mHeight);
         mCamera.init(mWidth, mHeight);
+#if defined(__EMSCRIPTEN__) || defined(_WIN32)
+        glfwSetWindowUserPointer(mWindow.getGLFWwindow(), this);
+        glfwSetFramebufferSizeCallback(mWindow.getGLFWwindow(), [](GLFWwindow* window, int width, int height) {
+            auto core = (Core*)glfwGetWindowUserPointer(window);
+            core->Resize(width, height);
+            });
+#endif
     };
 
     Core::Core(const char* name, int width, int height) : mName(name), mWidth(width), mHeight(height) {
@@ -54,5 +62,9 @@ namespace Plutus
         Exit();
 
         AssetManager::get()->clearData();
+    }
+
+    void Core::SetViewPortSize(float width, float height) {
+        glViewport(0, 0, width, height);
     }
 } // namespace Plutus

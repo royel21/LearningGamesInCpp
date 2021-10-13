@@ -26,7 +26,7 @@
 #include <cstdio>
 #include "TestWin.h"
 #include <Utils/FileIO.h>
-
+#include "ImGuiStyle.h"
 
 #define mapIn(x, min_in, max_in, min_out, max_out) (x - min_in) * (max_out - min_out) / (max_in - min_in) + min_out
 
@@ -113,8 +113,8 @@ namespace Plutus
 		ImFontConfig icons_config;
 		icons_config.MergeMode = true;
 		icons_config.PixelSnapH = true;
-		mImGui_IO->Fonts->AddFontFromFileTTF("assets/fonts/OpenSans/OpenSans-Regular.ttf", 18.0f);
-		mImGui_IO->Fonts->AddFontFromFileTTF("assets/fonts/fa-solid-900.ttf", 16.0f, &icons_config, icons_ranges);
+		mImGui_IO->Fonts->AddFontFromFileTTF("assets/fonts/OpenSans/OpenSans-Regular.ttf", 20.0f);
+		mImGui_IO->Fonts->AddFontFromFileTTF("assets/fonts/fa-solid-900.ttf", 18.0f, &icons_config, icons_ranges);
 		// use FONT_ICON_FILE_NAME_FAR if you want regular instead of solid
 		mImGui_IO->Fonts->AddFontDefault();
 
@@ -141,6 +141,7 @@ namespace Plutus
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		DoStyle();
 	}
 
 	void EditorUI::endUI()
@@ -278,6 +279,8 @@ namespace Plutus
 					}
 
 					ImGui::EndUIGroup();
+					static glm::vec2 pos = { 3,4 };
+					ImGui::Draw2Float("Test", pos);
 				}
 			}
 			ImGui::EndTable();
@@ -289,91 +292,93 @@ namespace Plutus
 	void EditorUI::viewPort()
 	{
 		ImVec4 WHITE = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-		ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar;
+		ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		static bool open = true;
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, WHITE);
-		ImGui::Begin("Viewport", &open, flags);
+		ImGui::Begin("Viewport", nullptr, flags);
+		if (ImGui::BeginChild("v-port")) {
+			auto winSize = mFb.getSize();
+			float aspectRation = mFb.getAspectRatio();
 
-		auto winSize = mFb.getSize();
-		float aspectRation = mFb.getAspectRatio();
+			auto winPos = ImGui::GetContentRegionAvail();
 
-		auto winPos = ImGui::GetWindowContentRegionMax();
-
-		glm::vec2 newSize(winPos.x, winPos.x / aspectRation);
-		if (newSize.y > winPos.y)
-		{
-			newSize.y = winPos.y;
-			newSize.x = winPos.y * aspectRation;
-		}
-		// add padding to the canvas
-		newSize -= 15;
-		//calculate the position centered oncanvas
-		float x = max((winPos.x - newSize.x), 0) * 0.5f;
-		float y = max((winPos.y - newSize.y), 0) * 0.5f;
-		//set the new posotion
-		ImGui::SetCursorPos({ x, y });
-
-		ImVec2 canvas_pos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
-
-		float xPos = mapIn(ImGui::GetIO().MousePos.x - canvas_pos.x, 0, newSize.x, 0, winSize.x);
-		float yPos = winSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
-
-		ImGui::Image((void*)mFb.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
-
-		if (mCanvasHover = ImGui::IsItemHovered())
-		{
-			mouseGridCoords = mDebugRender->getSquareCoords({ xPos, yPos });
-
-			if (mInput->onKeyPressed("R"))
-				mCamera->setPosition(0, 0);
-
-			if (mInput->onKeyPressed("Z"))
-				mCamera->setScale(1);
-			static Entity ent;
-			if (mInput->onKeyPressed("MouseLeft"))
+			glm::vec2 newSize(winPos.x, winPos.x / aspectRation);
+			if (newSize.y > winPos.y)
 			{
-				lastCoords = { xPos, yPos };
-				lastCamPos = mCamera->getPosition();
-				ent = mScene->getEntity(mPicker.getEntId({ xPos, yPos }));
+				newSize.y = winPos.y;
+				newSize.x = winPos.y * aspectRation;
+			}
+			// add padding to the canvas
+			newSize -= 10;
+			//calculate the position centered oncanvas
+			float x = std::max((winPos.x - newSize.x), 0.0f) * 0.5f;
+			float y = std::max((winPos.y - newSize.y), 0.0f) * 0.5f;
+			//set the new posotion
+			ImGui::SetCursorPos({ x, y });
 
-				if (ent) {
-					mEnt = ent;
-					if (mEnt.hasComponent<Plutus::Transform>()) {
-						auto trans = mEnt.getComponent<Plutus::Transform>();
-						entLastPos = trans->getPosition();
+			ImVec2 canvas_pos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
+
+			float xPos = mapIn(ImGui::GetIO().MousePos.x - canvas_pos.x, 0, newSize.x, 0, winSize.x);
+			float yPos = winSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
+
+			ImGui::Image((void*)mFb.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
+
+			if (mCanvasHover = ImGui::IsItemHovered())
+			{
+				mouseGridCoords = mDebugRender->getSquareCoords({ xPos, yPos });
+
+				if (mInput->onKeyPressed("R"))
+					mCamera->setPosition(0, 0);
+
+				if (mInput->onKeyPressed("Z"))
+					mCamera->setScale(1);
+				static Entity ent;
+				if (mInput->onKeyPressed("MouseLeft"))
+				{
+					lastCoords = { xPos, yPos };
+					lastCamPos = mCamera->getPosition();
+					ent = mScene->getEntity(mPicker.getEntId({ xPos, yPos }));
+
+					if (ent) {
+						mEnt = ent;
+						if (mEnt.hasComponent<Plutus::Transform>()) {
+							auto trans = mEnt.getComponent<Plutus::Transform>();
+							entLastPos = trans->getPosition();
+						}
+					}
+				}
+				// move the camera
+				if (mInput->onKeyDown("Ctrl"))
+				{
+					if (mInput->onKeyDown("MouseLeft"))
+					{
+						glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
+						result /= mCamera->getScale();
+
+						mCamera->setPosition(lastCamPos - result);
+					}
+
+					auto scroll = mInput->getMouseWheel();
+					if (scroll != 0)
+					{
+						auto newVal = mCamera->getScale() + (scroll > 0 ? 0.05f : -0.05f);
+						mCamera->setScale(CHECKLIMIT(newVal, 0.20f, 6));
+					}
+				}
+				else  if (mInput->onKeyDown("MouseLeft") && ent)
+				{
+					if (ent.hasComponent<Plutus::Transform>()) {
+						auto trans = ent.getComponent<Plutus::Transform>();
+						glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
+						result /= mCamera->getScale();
+
+						trans->x = entLastPos.x + result.x;
+						trans->y = entLastPos.y + result.y;
 					}
 				}
 			}
-			// move the camera
-			if (mInput->onKeyDown("Ctrl"))
-			{
-				if (mInput->onKeyDown("MouseLeft"))
-				{
-					glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
-					result /= mCamera->getScale();
-
-					mCamera->setPosition(lastCamPos - result);
-				}
-
-				auto scroll = mInput->getMouseWheel();
-				if (scroll != 0)
-				{
-					auto newVal = mCamera->getScale() + (scroll > 0 ? 0.05f : -0.05f);
-					mCamera->setScale(CHECKLIMIT(newVal, 0.20f, 6));
-				}
-			}
-			else  if (mInput->onKeyDown("MouseLeft") && ent)
-			{
-				if (ent.hasComponent<Plutus::Transform>()) {
-					auto trans = ent.getComponent<Plutus::Transform>();
-					glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
-					result /= mCamera->getScale();
-
-					trans->x = entLastPos.x + result.x;
-					trans->y = entLastPos.y + result.y;
-				}
-			}
+			ImGui::EndChild();
 		}
 		ImGui::End();
 		ImGui::PopStyleVar(1);

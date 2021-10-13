@@ -35,8 +35,6 @@ namespace Plutus
 
     std::string readFileAsString(const char* path)
     {
-        FILE* fp = fopen(path, "rb");
-
         auto data = readFile(path, "rb");
         return data.size() ? std::string(reinterpret_cast<char*>(data.data()), data.size()) : "";
     }

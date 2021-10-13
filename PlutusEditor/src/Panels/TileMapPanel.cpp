@@ -103,7 +103,7 @@ namespace Plutus
                         columns = tilesheet->columns;
                         tileWidth = tilesheet->tileWidth;
                         tileHeight = tilesheet->tileHeight;
-                        ZeroMemory(name, 128);
+                        memset(name, 0, 128);
                         strncpy_s(name, tilesheet->name.c_str(), tilesheet->name.size());
                     }
                 }

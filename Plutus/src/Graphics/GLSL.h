@@ -105,38 +105,31 @@ void main() {
 
     const std::string debug_vertshader = std::string(VERTEX_HEADER) + R"END(
 layout(location = 0) in vec2 vertexPosition;
-layout(location = 1) in vec4 vertexColor;
+layout(location = 1) in vec4 in_color;
 
 out vec2 fragmentPosition;
-out vec4 fragmentColor;
+out vec4 color;
 
 uniform mat4 camera;
 
 void main() {
     //Set the x,y position on the screen
-    gl_Position.xy = (camera * vec4(vertexPosition, 0, 1.0)).xy;
-    //the z position is zero since we are in 2D
-    gl_Position.z = 0.0;
+    gl_Position = camera * vec4(vertexPosition, 0, 1.0);
 
-    //Indicate that the coordinates are normalized
-    gl_Position.w = 1.0;
-
-    fragmentColor = vertexColor;
-    fragmentPosition = vertexPosition;
+    color = in_color;
 })END";
 
     const std::string debug_fragshader = std::string(VERTEX_HEADER) + R"END(
 //The fragment shader operates on each pixel in a given polygon
 
-in vec2 fragmentPosition;
-in vec4 fragmentColor;
+in vec4 color;
 
 //This is the 3 component float vector that gets outputted to the screen
 //for each pixel.
-out vec4 color;
+out vec4 g_color;
 
 void main() {
 
-    color = fragmentColor;
+    g_color = color;
 })END";
 }

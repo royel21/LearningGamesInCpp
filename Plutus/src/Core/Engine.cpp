@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cstdio>
 #include <Graphics/GLSL.h>
+#include <GLFW/glfw3.h>
 
 #ifdef __EMSCRIPTEN__
 #include <functional>
@@ -28,6 +29,14 @@ namespace Plutus
 		mWindow.init(name, w, h);
 		mInput = Input::getInstance();
 		mScreenList = std::make_unique<ScreenList>(this);
+
+#if defined(__EMSCRIPTEN__) || defined(_WIN32)
+		glfwSetWindowUserPointer(mWindow.getGLFWwindow(), this);
+		glfwSetFramebufferSizeCallback(mWindow.getGLFWwindow(), [](GLFWwindow* window, int width, int height) {
+			auto engine = (Engine*)glfwGetWindowUserPointer(window);
+			engine->onReisze(width, height);
+			});
+#endif
 	}
 
 	Engine::~Engine()

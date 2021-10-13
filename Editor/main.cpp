@@ -9,7 +9,7 @@ int main(int argc, char const* argv[])
 {
 
     // App* app = new App("Level Editor", 544, 384);
-    App* app = new App("Level Editor", 1024, 768);
+    App* app = new App("Level Editor", 1280, 768);
     app->run();
 
     delete app;

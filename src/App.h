@@ -14,5 +14,6 @@ public:
     ~App();
     void addScreen() override;
     void onInit() override;
+    void onReisze(int width, int height);
     void onExit() override;
 };
