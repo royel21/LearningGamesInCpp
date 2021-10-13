@@ -75,9 +75,9 @@ namespace Plutus
 
 	void Input::addRemoveListener(InputListener* listener)
 	{
-		auto end = std::remove_if(mEventListeners.begin(), mEventListeners.end(), [&](auto t1) { return t1 == listener; });
-		if (end != mEventListeners.end()) {
-			mEventListeners.erase(end, mEventListeners.end());
+		auto found = std::remove_if(mEventListeners.begin(), mEventListeners.end(), [&](auto t1) { return t1 == listener; });
+		if (found != mEventListeners.end()) {
+			mEventListeners.erase(found, mEventListeners.end());
 		}
 	}
 } // namespace Plutus
