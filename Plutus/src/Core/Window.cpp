@@ -29,6 +29,10 @@ namespace Plutus
     std::unordered_map<int, const char*> unkeys;
     void initKeys();
 
+    const char* getKey(int key) {
+        return unkeys.find(key) != unkeys.end() ? unkeys[key] : "Unkown";
+    }
+
     Window::Window(const char* name, int width, int height, GLFWwindow* parent)
     {
         init(name, width, height, parent);
@@ -69,14 +73,15 @@ namespace Plutus
         glfwSetWindowUserPointer(mWindow, this);
         // Setup all callback
         glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            auto name = unkeys[key];
-            Input::get()->keyStateChange(name == nullptr ? "Unkown" : name, action);
+            Input::get()->keyStateChange(getKey(key), action);
             });
         glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods) {
-            Input::get()->keyStateChange(unkeys[button], action > 0);
+            Input::get()->keyStateChange(getKey(button), action > 0);
             });
         glfwSetCursorPosCallback(mWindow, [](GLFWwindow* window, double xpos, double ypos) {
-            Input::get()->setMouseCoords(static_cast<float>(xpos), static_cast<float>(ypos));
+            int width, height;
+            glfwGetWindowSize(window, &width, &height);
+            Input::get()->setMouseCoords(static_cast<float>(xpos), static_cast<float>(height - ypos));
             });
         glfwSetScrollCallback(mWindow, [](GLFWwindow* window, double xoffset, double yoffset) {
             Input::get()->setMouseWheel(static_cast<int>(yoffset));
@@ -158,6 +163,7 @@ namespace Plutus
             {55, "7"},
             {56, "8"},
             {57, "9"},
+            {61, "+"},
             {65, "A"},
             {66, "B"},
             {67, "C"},

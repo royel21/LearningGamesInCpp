@@ -297,84 +297,87 @@ namespace Plutus
 		static bool open = true;
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, WHITE);
 		ImGui::Begin("Viewport", nullptr, flags);
-		if (ImGui::BeginChild("v-port")) {
-			auto winSize = mFb.getSize();
-			float aspectRation = mFb.getAspectRatio();
-
-			auto winPos = ImGui::GetContentRegionAvail();
-
-			glm::vec2 newSize(winPos.x, winPos.x / aspectRation);
-			if (newSize.y > winPos.y)
+		{
+			ImGui::BeginChild("v-port");
 			{
-				newSize.y = winPos.y;
-				newSize.x = winPos.y * aspectRation;
-			}
-			// add padding to the canvas
-			newSize -= 10;
-			//calculate the position centered oncanvas
-			float x = std::max((winPos.x - newSize.x), 0.0f) * 0.5f;
-			float y = std::max((winPos.y - newSize.y), 0.0f) * 0.5f;
-			//set the new posotion
-			ImGui::SetCursorPos({ x, y });
+				auto winSize = mFb.getSize();
+				float aspectRation = mFb.getAspectRatio();
 
-			ImVec2 canvas_pos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
+				auto winPos = ImGui::GetContentRegionAvail();
 
-			float xPos = mapIn(ImGui::GetIO().MousePos.x - canvas_pos.x, 0, newSize.x, 0, winSize.x);
-			float yPos = winSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
-
-			ImGui::Image((void*)mFb.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
-
-			if (mCanvasHover = ImGui::IsItemHovered())
-			{
-				mouseGridCoords = mDebugRender->getSquareCoords({ xPos, yPos });
-
-				if (mInput->onKeyPressed("R"))
-					mCamera->setPosition(0, 0);
-
-				if (mInput->onKeyPressed("Z"))
-					mCamera->setScale(1);
-				static Entity ent;
-				if (mInput->onKeyPressed("MouseLeft"))
+				glm::vec2 newSize(winPos.x, winPos.x / aspectRation);
+				if (newSize.y > winPos.y)
 				{
-					lastCoords = { xPos, yPos };
-					lastCamPos = mCamera->getPosition();
-					ent = mScene->getEntity(mPicker.getEntId({ xPos, yPos }));
+					newSize.y = winPos.y;
+					newSize.x = winPos.y * aspectRation;
+				}
+				// add padding to the canvas
+				newSize -= 10;
+				//calculate the position centered oncanvas
+				float x = std::max((winPos.x - newSize.x), 0.0f) * 0.5f;
+				float y = std::max((winPos.y - newSize.y), 0.0f) * 0.5f;
+				//set the new posotion
+				ImGui::SetCursorPos({ x, y });
 
-					if (ent) {
-						mEnt = ent;
-						if (mEnt.hasComponent<Plutus::Transform>()) {
-							auto trans = mEnt.getComponent<Plutus::Transform>();
-							entLastPos = trans->getPosition();
+				ImVec2 canvas_pos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
+
+				float xPos = mapIn(ImGui::GetIO().MousePos.x - canvas_pos.x, 0, newSize.x, 0, winSize.x);
+				float yPos = winSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
+
+				ImGui::Image((void*)mFb.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
+
+				if (mCanvasHover = ImGui::IsItemHovered())
+				{
+					mouseGridCoords = mDebugRender->getSquareCoords({ xPos, yPos });
+
+					if (mInput->onKeyPressed("R"))
+						mCamera->setPosition(0, 0);
+
+					if (mInput->onKeyPressed("Z"))
+						mCamera->setScale(1);
+					static Entity ent;
+					if (mInput->onKeyPressed("MouseLeft"))
+					{
+						lastCoords = { xPos, yPos };
+						lastCamPos = mCamera->getPosition();
+						ent = mScene->getEntity(mPicker.getEntId({ xPos, yPos }));
+
+						if (ent) {
+							mEnt = ent;
+							if (mEnt.hasComponent<Plutus::Transform>()) {
+								auto trans = mEnt.getComponent<Plutus::Transform>();
+								entLastPos = trans->getPosition();
+							}
 						}
 					}
-				}
-				// move the camera
-				if (mInput->onKeyDown("Ctrl"))
-				{
-					if (mInput->onKeyDown("MouseLeft"))
+					// move the camera
+					if (mInput->onKeyDown("Ctrl"))
 					{
-						glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
-						result /= mCamera->getScale();
+						if (mInput->onKeyDown("MouseLeft"))
+						{
+							glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
+							result /= mCamera->getScale();
 
-						mCamera->setPosition(lastCamPos - result);
+							mCamera->setPosition(lastCamPos - result);
+						}
+
+						auto scroll = mInput->getMouseWheel();
+						if (scroll != 0)
+						{
+							auto newVal = mCamera->getScale() + (scroll > 0 ? 0.05f : -0.05f);
+							mCamera->setScale(CHECKLIMIT(newVal, 0.20f, 6));
+						}
 					}
-
-					auto scroll = mInput->getMouseWheel();
-					if (scroll != 0)
+					else  if (mInput->onKeyDown("MouseLeft") && ent)
 					{
-						auto newVal = mCamera->getScale() + (scroll > 0 ? 0.05f : -0.05f);
-						mCamera->setScale(CHECKLIMIT(newVal, 0.20f, 6));
-					}
-				}
-				else  if (mInput->onKeyDown("MouseLeft") && ent)
-				{
-					if (ent.hasComponent<Plutus::Transform>()) {
-						auto trans = ent.getComponent<Plutus::Transform>();
-						glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
-						result /= mCamera->getScale();
+						if (ent.hasComponent<Plutus::Transform>()) {
+							auto trans = ent.getComponent<Plutus::Transform>();
+							glm::vec2 result = { xPos - lastCoords.x, yPos - lastCoords.y };
+							result /= mCamera->getScale();
 
-						trans->x = entLastPos.x + result.x;
-						trans->y = entLastPos.y + result.y;
+							trans->x = entLastPos.x + result.x;
+							trans->y = entLastPos.y + result.y;
+						}
 					}
 				}
 			}

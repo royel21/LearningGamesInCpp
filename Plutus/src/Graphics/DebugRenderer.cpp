@@ -84,19 +84,19 @@ namespace Plutus
 		mVertexs.clear();
 	}
 	/***************************** Shapes **********************************************/
-	void DebugRender::drawBox(const Box2d& b)
+	void DebugRender::drawBox(const Box2d& b, const ColorRGBA8& color)
 	{
-		drawBox(glm::vec4(b.pos.x, b.pos.y, b.size.x, b.size.y));
+		drawBox(glm::vec4(b.pos.x, b.pos.y, b.size.x, b.size.y), 0, color);
 	}
 
-	void DebugRender::drawLine(const Line& l)
+	void DebugRender::drawLine(const Line2d& l, const ColorRGBA8& color)
 	{
-		drawLine({ l.start.x, l.start.y }, { l.end.x, l.end.y });
+		drawLine({ l.start.x, l.start.y }, { l.end.x, l.end.y }, color);
 	}
 
-	void DebugRender::drawCircle(const Circle& c)
+	void DebugRender::drawCircle(const Circle2d& c, const ColorRGBA8& color)
 	{
-		drawCircle({ c.pos.x, c.pos.y }, c.radius);
+		drawCircle({ c.pos.x, c.pos.y }, c.radius, color);
 	}
 	/*******************************************************************************************************/
 

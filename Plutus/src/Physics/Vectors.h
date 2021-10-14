@@ -46,4 +46,5 @@ namespace Plutus
         float dot(const vec4f& vec);
     };
 
+
 } // namespace Plutus

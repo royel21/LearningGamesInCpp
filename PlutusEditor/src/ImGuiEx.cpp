@@ -214,10 +214,10 @@ namespace ImGui {
                     drawList->AddRectFilled(start, end, IM_COL32(0, 255, 255, 50));
                 }
             }
-            ImGui::EndChild();
-            ImGui::PopStyleVar();
-            return isSelected;
         }
+        ImGui::EndChild();
+        ImGui::PopStyleVar();
+        return isSelected;
     }
 
     bool DrawTexture(Plutus::Texture* texture, int winWidth, int winHeight, float scale, std::vector<glm::ivec3>* selected)
@@ -335,10 +335,10 @@ namespace ImGui {
                     }
                 }
             }
-            ImGui::EndChild();
-            // ImGui::PopStyleVar();
-            return true;
         }
+        ImGui::EndChild();
+        // ImGui::PopStyleVar();
+        return true;
     }
 
 

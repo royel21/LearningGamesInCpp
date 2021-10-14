@@ -2,6 +2,8 @@
 #include <Core.h>
 #include <Physics/Shapes.h>
 #include <box2d/box2d.h>
+#include <vector>
+
 #include <memory>
 
 namespace Plutus
@@ -18,13 +20,14 @@ namespace Plutus
         void Draw() override;
         void Exit() override;
 
+        Box2d* createBox(float x, float y, float w, float h, int type = 0, float friction = 1, ShapeType shape = Box);
+
     private:
-        Line line1;
-        Line line2;
+        float timeStep = 1 / 60.0f;
+        int32_t velIter = 6;
+        int32_t posIter = 2;
         DebugRender* mDebug;
         std::unique_ptr<b2World> mWorld;
-        float timeStep = 1 / 60.0f;
-        int32_t velIter = 8;
-        int32_t posIter = 3;
+        std::vector<Box2d> mBoxes;
     };
 } // namespace Plutus

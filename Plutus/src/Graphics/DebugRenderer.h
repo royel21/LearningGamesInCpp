@@ -41,9 +41,9 @@ namespace Plutus
 		void setCellSize(const glm::ivec2& cellSize);
 
 		//Draw Shapes
-		void drawBox(const Box2d& c);
-		void drawLine(const Line& c);
-		void drawCircle(const Circle& c);
+		void drawBox(const Box2d& c, const ColorRGBA8& color = {});
+		void drawLine(const Line2d& c, const ColorRGBA8& color = {});
+		void drawCircle(const Circle2d& c, const ColorRGBA8& color = {});
 
 		glm::ivec2 getCellSize() { return mCellSize; };
 

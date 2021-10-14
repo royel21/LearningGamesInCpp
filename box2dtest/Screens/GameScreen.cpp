@@ -1,6 +1,7 @@
 
 #include "GameScreen.h"
 #include <Graphics/GLheaders.h>
+#include <Physics/Shapes.h>
 
 GameScreen::GameScreen()
 {
@@ -41,7 +42,7 @@ void GameScreen::draw()
 {
     setBackgoundColor(1, 0, 0, 1);
 
-    mDebug->drawBox({ 1, 1, 2, 2 });
+    mDebug->drawBox(Plutus::Box2d(1, 1, 2, 2));
     mDebug->drawCircle({ 25.0f, 10.0f }, 4.0f);
     mDebug->end();
     mDebug->render(1);

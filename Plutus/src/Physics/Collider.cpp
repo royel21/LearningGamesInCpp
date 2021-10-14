@@ -3,7 +3,7 @@
 
 namespace Plutus
 {
-    bool Collider::pointOnLine(const vec2f& point, Line& line)
+    bool Collider::pointOnLine(const vec2f& point, Line2d& line)
     {
         float dy = line.end.y - line.start.y;
         float dx = line.end.x - line.start.x;
@@ -18,7 +18,7 @@ namespace Plutus
         return point.y == m * point.x + b;
     }
 
-    bool Collider::pointInCircle(const vec2f& point, Circle& circle)
+    bool Collider::pointInCircle(const vec2f& point, Circle2d& circle)
     {
         // auto center = circle.getCenter();
         // Vector2d centerToPoint = point - center;
@@ -45,7 +45,7 @@ namespace Plutus
         return false;
     }
 
-    bool Collider::lineInCircle(Line line, Circle circle)
+    bool Collider::lineInCircle(Line2d line, Circle2d circle)
     {
         // if (pointInCircle(line.start, circle) || pointInCircle(line.end, circle)) {
         //     return true;

@@ -138,37 +138,38 @@ namespace Plutus
 
     void AssetsTab::drawAssets()
     {
-        ImGui::Begin("Assets");
-        auto mAsset = AssetManager::get();
-        if (std::filesystem::exists("./assets/")) {
-            if (ImGui::BeginTabBar("##TabBar"))
-            {
-                if (ImGui::BeginTabItem("Assets"))
+        if (ImGui::Begin("Assets")) {
+            auto mAsset = AssetManager::get();
+            if (std::filesystem::exists("./assets/")) {
+                if (ImGui::BeginTabBar("##TabBar"))
                 {
+                    if (ImGui::BeginTabItem("Assets"))
+                    {
 
-                    if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
-                        drawTreeNode("./assets/");
-                        ImGui::EndChild();
+                        if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
+                            drawTreeNode("./assets/");
+                            ImGui::EndChild();
+                        }
+                        ImGui::EndTabItem();
                     }
-                    ImGui::EndTabItem();
+
+                    if (ImGui::BeginTabItem("Scene Assets"))
+                    {
+                        if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
+                            int id = 0;
+                            drawTreeNode("Fonts", mAsset->mFonts, id);
+                            drawTreeNode("Textures", mAsset->mTextures, id);
+                            drawTreeNode("Sounds", SoundEngine, id);
+                            ImGui::EndChild();
+                        }
+                        ImGui::EndTabItem();
+                    }
+                    ImGui::EndTabBar();
                 }
 
-                if (ImGui::BeginTabItem("Scene Assets"))
-                {
-                    if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
-                        int id = 0;
-                        drawTreeNode("Fonts", mAsset->mFonts, id);
-                        drawTreeNode("Textures", mAsset->mTextures, id);
-                        drawTreeNode("Sounds", SoundEngine, id);
-                        ImGui::EndChild();
-                    }
-                    ImGui::EndTabItem();
-                }
-                ImGui::EndTabBar();
             }
-
+            ImGui::End();
         }
-        ImGui::End();
 
         processFile();
     }
