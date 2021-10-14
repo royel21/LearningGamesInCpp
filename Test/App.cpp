@@ -6,7 +6,7 @@
 
 #include <Time/Timer.h>
 
-constexpr float PIXEL_SIZE = 64.0f;
+constexpr float PIXEL_SIZE = 100.0f;
 //Pixel Per Meter
 constexpr float PPM = 1 / PIXEL_SIZE;
 //Meter Per Pixel
@@ -14,8 +14,19 @@ constexpr float MPP = PIXEL_SIZE;
 //Half Meter Per Pixel
 constexpr float HMPP = PPM / 2.0f;
 
+
 namespace Plutus
 {
+    b2Vec2 toWorld(const vec2f& value) {
+        return { value.x * PPM, value.y * PPM };
+    }
+
+    vec2f fromWorld(b2Vec2 value) {
+        return { value.x * MPP, value.y * MPP };
+    }
+
+    b2Vec2 tobVec2(const vec2f& vec) { return { vec.x, vec.y }; }
+
     App::App(const char* name, int width, int height) : Core(name, width, height)
     {
     }
@@ -33,28 +44,18 @@ namespace Plutus
     b2Body* floor;
     b2Vec2 position{ 10.0f - 1.0f, 12.0f - 0.5f };
 
-    void App::Setup()
-    {
-        mDebug = DebugRender::geInstances();
-        mDebug->init(&mCamera);
-        mWorld = std::make_unique<b2World>(b2Vec2{ 0, 0 });
-
-
-        box.pos = { 1280 / 2 - 32, 768 / 2 - 32 };
-        box.size = { 64,64 };
-
-        box2.pos = { (1280 / 2 - 32) + 64, (768 / 2 - 32) + 64 };
-        box2.size = { 64,64 };
-
+    b2Body* createBody(b2World* world, b2Vec2 pos, const b2Vec2& size, int type) {
         b2BodyDef myBodyDef;
-        myBodyDef.type = b2_dynamicBody;
+        myBodyDef.type = (b2BodyType)type;
         myBodyDef.fixedRotation = true;
-        myBodyDef.position.Set(box.pos.x * PPM, box.pos.y * PPM);
+        myBodyDef.position = pos;
         myBodyDef.gravityScale = 0;
 
-        //shape definition
-        b2PolygonShape polygonShape;
+        myBodyDef.linearDamping = 10;
+        myBodyDef.angularDamping = 10;
 
+        b2PolygonShape polygonShape;
+        polygonShape.SetAsBox(size.x, size.y, size, 0); //a 2x2 rectangle
         //fixture definition
         b2FixtureDef myFixtureDef;
         myFixtureDef.shape = &polygonShape;
@@ -62,33 +63,38 @@ namespace Plutus
         myFixtureDef.friction = 10;
         myFixtureDef.restitution = 0;
 
-        body = mWorld->CreateBody(&myBodyDef);
-        body->SetFixedRotation(true);
+        auto b = world->CreateBody(&myBodyDef);
+        b->CreateFixture(&myFixtureDef);
 
-        polygonShape.SetAsBox(box.size.x * HMPP, box.size.y * HMPP); //a 2x2 rectangle
-        body->CreateFixture(&myFixtureDef);
+        return b;
+    }
+
+    void App::Setup()
+    {
+        mDebug = DebugRender::geInstances();
+        mDebug->init(&mCamera);
+        mWorld = std::make_unique<b2World>(b2Vec2{ 0, 0 });
 
 
-        myBodyDef.position.Set(box2.pos.x * PPM, box2.pos.y * PPM);
-        polygonShape.SetAsBox(box.size.x * HMPP, box.size.y * HMPP); //a 2x2 rectangle
-        //create dynamic body
-        body2 = mWorld->CreateBody(&myBodyDef);
-        body2->CreateFixture(&myFixtureDef);
-        //a static body
 
         bFloor.pos = { 10, 10 };
-        bFloor.size = { 768, 64 };
+        bFloor.size = { 1260, 64 };
+        floor = createBody(mWorld.get(), toWorld(bFloor.pos), { bFloor.size.x * HMPP, bFloor.size.y * HMPP }, 0);
 
-        myBodyDef.type = b2_staticBody;
-        myBodyDef.position.Set(bFloor.pos.x * PPM, bFloor.pos.y * PPM);
-        floor = mWorld->CreateBody(&myBodyDef);
-        //ground
-        polygonShape.SetAsBox(bFloor.size.x * HMPP, bFloor.size.y * HMPP);
-        floor->CreateFixture(&myFixtureDef);
+
+        box.pos = { 640, 384 };
+        box.size = { 64, 64 };
+
+        body = createBody(mWorld.get(), toWorld(box.pos), { box.size.y * HMPP, box.size.y * HMPP }, 2);
+
+
+        box2.pos = { 704, 384 };
+        box2.size = { 64,64 };
+        body2 = createBody(mWorld.get(), toWorld(box2.pos), { box2.size.y * HMPP, box2.size.y * HMPP }, 2);
     }
 
     uint64_t time = 0;
-    float force = 6.0f;
+    float force = PIXEL_SIZE * 0.05f;
 
     void App::Update(float dt)
     {
@@ -110,24 +116,34 @@ namespace Plutus
             body->ApplyLinearImpulseToCenter({ 0, -force }, true);
         }
 
+        auto cPos = mCamera.getPosition();
+        if (Input::get()->onKeyDown("Right")) {
+            cPos.x += 5;
+        }
+        if (Input::get()->onKeyDown("Left")) {
+            cPos.x -= 5;
+        }
+        if (Input::get()->onKeyDown("Up")) {
+            cPos.y += 5;
+        }
+        if (Input::get()->onKeyDown("Down")) {
+            cPos.y -= 5;
+        }
+        mCamera.setPosition(cPos);
+
         mWorld->Step(timeStep, velIter, posIter);
+
+        bFloor.pos = fromWorld(floor->GetPosition());
+        box.pos = fromWorld(body->GetPosition());
+        box2.pos = fromWorld(body2->GetPosition());
     }
 
     void App::Draw()
     {
-        setBackgoundColor(1, 0, 0, 1);
-        auto floorPos = floor->GetPosition();
-        bFloor.pos = { floorPos.x * MPP, floorPos.y * MPP };
+        setBackgoundColor(0, 0, 0, 1);
+
         mDebug->drawBox(bFloor);
-
-        // auto pos = body->GetPosition();
-        // mDebug->drawBox(glm::vec4{ pos.x * MPP - 64.0f, pos.y * MPP - 64.0f, 64.0f, 64.0f });
-        auto pos2 = body->GetPosition();
-        box.pos = { pos2.x * MPP, pos2.y * MPP };
         mDebug->drawBox(box);
-
-        pos2 = body2->GetPosition();
-        box2.pos = { pos2.x * MPP, pos2.y * MPP };
         mDebug->drawBox(box2);
 
         mDebug->drawLine({ 0,0 }, { 1280, 768 });
