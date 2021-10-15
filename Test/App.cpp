@@ -64,7 +64,7 @@ namespace Plutus
         b2FixtureDef myFixtureDef;
         myFixtureDef.shape = &polygonShape;
         myFixtureDef.density = 1.0f;
-        myFixtureDef.friction = 0.2f;
+        myFixtureDef.friction = 0.3f;
         myFixtureDef.restitution = 0;
 
         capsule.body->CreateFixture(&myFixtureDef);
@@ -123,11 +123,11 @@ namespace Plutus
         mWorld = std::make_unique<b2World>(b2Vec2{ 0, -10.0f });
 
 
-        // createBox(15, 30, 64, 64, 2, 0.3f);
-        // createBox(704, 384, 64, 64, 2);
+        createBox(15, 30, 64, 64, 2, 0.3f);
+        createBox(704, 384, 64, 64, 2);
         // createBox(5, 5, 1260, 20);
         // createBox(1420, 100, 350, 20);
-        // createBox(910, 195, 350, 20);
+        createBox(910, 240, 350, 20);
         // createBox(910 - 510, 20, 350, 20);
 
         // createBox(-300, 50, 260, 20);
@@ -194,40 +194,42 @@ namespace Plutus
             body->ApplyLinearImpulseToCenter({ 0, 4.0f }, true);
         }
 
-        if (Input::get()->onKeyDown("+")) {
-            cscale += 0.05f;
-            mCamera.setScale(cscale);
-        }
-        if (Input::get()->onKeyDown("-")) {
-            cscale -= 0.05f;
-            mCamera.setScale(cscale);
-        }
-
-        auto cPos = mCamera.getPosition();
-        if (Input::get()->onKeyDown("Right")) {
-            cPos.x += 5;
-        }
-        if (Input::get()->onKeyDown("Left")) {
-            cPos.x -= 5;
-        }
-        if (Input::get()->onKeyDown("Up")) {
-            cPos.y += 5;
-        }
-        if (Input::get()->onKeyDown("Down")) {
-            cPos.y -= 5;
-        }
-        mCamera.setPosition(cPos);
-
-
         mWorld->Step(timeStep, velIter, posIter);
 
         for (auto& box : mBoxes) {
             box.update();
         }
         capsule.update();
+        if (Input::get()->isCtrl) {
+            if (Input::get()->onKeyDown("+")) {
+                cscale += 0.05f;
+                mCamera.setScale(cscale);
+            }
+            if (Input::get()->onKeyDown("-")) {
+                cscale -= 0.05f;
+                mCamera.setScale(cscale);
+            }
 
-        auto size = mCamera.getScaleScreen();
-        mCamera.setPosition({ capsule.x - size.x / 2, capsule.y - size.y * 0.15f });
+            auto cPos = mCamera.getPosition();
+            if (Input::get()->onKeyDown("Right")) {
+                cPos.x += 5;
+            }
+            if (Input::get()->onKeyDown("Left")) {
+                cPos.x -= 5;
+            }
+            if (Input::get()->onKeyDown("Up")) {
+                cPos.y += 5;
+            }
+            if (Input::get()->onKeyDown("Down")) {
+                cPos.y -= 5;
+            }
+            mCamera.setPosition(cPos);
+        }
+        else {
+            auto size = mCamera.getScaleScreen();
+            mCamera.setPosition({ capsule.position.x - size.x * 0.5f, capsule.position.y - size.y * 0.15f });
+        }
+
     }
 
     void App::Draw()
