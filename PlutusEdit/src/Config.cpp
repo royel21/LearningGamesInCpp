@@ -25,7 +25,11 @@ namespace Plutus
     void AppConfig::load() {
         rapidjson::Document doc;
         if (loadJsonFromFile("Config.json", doc)) {
-
+            winWidth = getInt(doc, "WinWidth");
+            winHeight = getInt(doc, "WinHeight");
+            for (auto& v : doc["Recentprojects"].GetArray()) {
+                recentProjects.push_back(v.GetString());
+            }
         }
     }
 

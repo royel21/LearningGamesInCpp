@@ -32,15 +32,13 @@ namespace Plutus
     }
 
     bool loadJsonFromFile(const char* filePath, rapidjson::Document& document) {
-        bool result;
         std::string ex = Utils::getExtension(filePath);
         if (ex == "json")
         {
             auto buffer = readFileAsString(filePath);
             if (!buffer.empty())
             {
-                bool result = document.Parse(buffer.c_str()).HasParseError() == false;
-                return result;
+                return document.Parse(buffer.c_str()).HasParseError() == false;
             }
         }
         return false;

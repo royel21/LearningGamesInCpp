@@ -12,7 +12,7 @@ namespace Plutus
 
     }
 
-    App::App(const char* name, int width, int height) : Core(name, width, height) {
+    App::App(const char* name, int width, int height) : Core(name, Config.winWidth, Config.winHeight) {
 
     };
 
