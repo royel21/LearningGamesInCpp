@@ -45,41 +45,52 @@ namespace Plutus
         return b;
     }
 
-    void createCapsule(b2World* world, vec2f position, vec2f dimension, float friction) {
+    void createCapsule(b2World* world) {
 
-        // // Make the body
-        // b2BodyDef bodyDef;
-        // bodyDef.type = b2_dynamicBody;
-        // bodyDef.position.Set(position.x, position.y);
-        // bodyDef.fixedRotation = true;
-        // m_body = world->CreateBody(&bodyDef);
+        capsule.create(40, 200, 64, 128);
 
-        // // Create the box
-        // b2PolygonShape boxShape;
-        // boxShape.SetAsBox(dimensions.x / 2.0f, (dimensions.y - dimensions.x) / 2.0f);
+        b2BodyDef myBodyDef;
+        myBodyDef.type = b2_dynamicBody;
+        myBodyDef.fixedRotation = true;
+        myBodyDef.position = toWorld({ capsule.x, capsule.y });
 
-        // b2FixtureDef fixtureDef;
-        // fixtureDef.shape = &boxShape;
-        // fixtureDef.density = 1;
-        // fixtureDef.friction = friction;
-        // m_fixtures[0] = m_body->CreateFixture(&fixtureDef);
+        capsule.body = world->CreateBody(&myBodyDef);
 
-        // // Create the circles
-        // b2CircleShape circleShape;
-        // circleShape.m_radius = dimensions.x / 2.0f;
+        b2PolygonShape polygonShape;
+        b2Vec2 halfSize = { capsule.w * HMPP, capsule.h * HMPP * 0.5f };
 
-        // b2FixtureDef circleDef;
-        // circleDef.shape = &circleShape;
-        // circleDef.density = 1;
-        // circleDef.friction = friction;
+        polygonShape.SetAsBox(halfSize.x, halfSize.y, halfSize, 0); //a 2x2 rectangle
 
-        // // Bottom circle
-        // circleShape.m_p.Set(0.0f, (-dimensions.y + dimensions.x) / 2.0f);
-        // m_fixtures[1] = m_body->CreateFixture(&circleDef);
+        b2FixtureDef myFixtureDef;
+        myFixtureDef.shape = &polygonShape;
+        myFixtureDef.density = 1.0f;
+        myFixtureDef.friction = 0.2f;
+        myFixtureDef.restitution = 0;
 
-        // // Top Circle
-        // circleShape.m_p.Set(0.0f, (dimensions.y - dimensions.x) / 2.0f);
-        // m_fixtures[1] = m_body->CreateFixture(&circleDef);
+        capsule.body->CreateFixture(&myFixtureDef);
+        //Radius of the circle
+        float r = capsule.w * HMPP;
+
+        b2FixtureDef circleDef;
+        circleDef.density = 1.0f;
+        circleDef.friction = 0.2f;
+        //Buttom Circle Shape Def
+        b2CircleShape circleShapeB;
+        circleShapeB.m_p.Set(r, 0);
+        circleShapeB.m_radius = r + 0.008f;
+
+        //Buttom Circle
+        circleDef.shape = &circleShapeB;
+        capsule.body->CreateFixture(&circleDef);
+
+        //Buttom Circle Shape Def
+        b2CircleShape circleShapeA;
+        circleShapeA.m_p.Set(r, capsule.h * HMPP);
+        circleShapeA.m_radius = r;
+
+        circleDef.shape = &circleShapeA;
+        capsule.body->CreateFixture(&circleDef);
+
     }
 
     Box2d* App::createBox(float x, float y, float w, float h, int type, float friction, ShapeType shape) {
@@ -89,6 +100,22 @@ namespace Plutus
         return &mBoxes[mBoxes.size() - 1];
     }
 
+    void App::createLine(float x1, float y1, float x2, float y2)
+    {
+        lines.emplace_back(x1, y1, x2, y2);
+        Line2d& line = lines.back();
+
+        b2BodyDef bd;
+        bd.position.Set(0.0f, 0.0f);
+        b2Body* body = mWorld->CreateBody(&bd);
+
+        b2EdgeShape shape;
+        shape.SetTwoSided(toWorld(line.start), toWorld(line.end));
+
+        body->CreateFixture(&shape, 0.0f);
+
+    }
+
     void App::Setup()
     {
         mDebug = DebugRender::geInstances();
@@ -96,16 +123,26 @@ namespace Plutus
         mWorld = std::make_unique<b2World>(b2Vec2{ 0, -10.0f });
 
 
-        createBox(15, 30, 64, 64, 2, 0.3f);
-        createBox(704, 384, 64, 64, 2);
-        createBox(5, 5, 1260, 20);
-        createBox(1420, 100, 350, 20);
-        createBox(910, 195, 350, 20);
-        createBox(910 - 520, 195, 350, 20);
+        // createBox(15, 30, 64, 64, 2, 0.3f);
+        // createBox(704, 384, 64, 64, 2);
+        // createBox(5, 5, 1260, 20);
+        // createBox(1420, 100, 350, 20);
+        // createBox(910, 195, 350, 20);
+        // createBox(910 - 510, 20, 350, 20);
 
-        createBox(-300, 50, 260, 20);
+        // createBox(-300, 50, 260, 20);
 
-        capsule.create(40, 200, 64, 128);
+        createCapsule(mWorld.get());
+
+        createLine(0, 40, 280, 28);
+
+        createLine(280, 28, 600, 150);
+
+        createLine(600, 150, 750, 150);
+
+        createLine(750, 150, 1050, 28);
+
+        createLine(1050, 28, 1350, 100);
 
         // auto& box = mBoxes[0];
         // auto pos = box.body->GetPosition();
@@ -132,8 +169,7 @@ namespace Plutus
         if (Input::get()->onKeyPressed("R")) {
             cscale = 1;
         }
-        auto* box = &mBoxes[0];
-        auto body = box->body;
+        auto body = capsule.body;
         auto currentSpeed = body->GetLinearVelocity();
 
         if (Input::get()->onKeyDown("J")) {
@@ -142,9 +178,9 @@ namespace Plutus
         else if (Input::get()->onKeyDown("L")) {
             body->ApplyForceToCenter(b2Vec2(force2, 0.0), true);
         }
-        // else {
-        //     body->SetLinearVelocity(b2Vec2(currentSpeed.x * 0.95f, currentSpeed.y));
-        // }
+        else {
+            body->SetLinearVelocity(b2Vec2(currentSpeed.x * 0.95f, currentSpeed.y));
+        }
 
         float MAX_SPEED = 5.0f;
         if (currentSpeed.x < -MAX_SPEED) {
@@ -155,16 +191,17 @@ namespace Plutus
         }
 
         if (Input::get()->onKeyPressed("A") || Input::get()->onKeyPressed("S")) {
-            body->ApplyLinearImpulseToCenter({ 0, 3.0f }, true);
+            body->ApplyLinearImpulseToCenter({ 0, 4.0f }, true);
         }
 
         if (Input::get()->onKeyDown("+")) {
             cscale += 0.05f;
+            mCamera.setScale(cscale);
         }
         if (Input::get()->onKeyDown("-")) {
             cscale -= 0.05f;
+            mCamera.setScale(cscale);
         }
-        mCamera.setScale(cscale);
 
         auto cPos = mCamera.getPosition();
         if (Input::get()->onKeyDown("Right")) {
@@ -181,14 +218,16 @@ namespace Plutus
         }
         mCamera.setPosition(cPos);
 
+
         mWorld->Step(timeStep, velIter, posIter);
 
         for (auto& box : mBoxes) {
             box.update();
         }
+        capsule.update();
 
         auto size = mCamera.getScaleScreen();
-        mCamera.setPosition({ box->pos.x - size.x / 2, box->pos.y - size.y * 0.15f });
+        mCamera.setPosition({ capsule.x - size.x / 2, capsule.y - size.y * 0.15f });
     }
 
     void App::Draw()
@@ -204,8 +243,8 @@ namespace Plutus
         mDebug->drawCircle(capsule.getBCircle());
         mDebug->drawCircle(capsule.getTCircle());
 
-        mDebug->drawLine({ 0,0 }, { 1280, 768 });
-        mDebug->drawLine({ 0, 768 }, { 1280, 0 });
+        for (auto& line : lines)
+            mDebug->drawLine(line);
 
         mDebug->render();
         mDebug->end();

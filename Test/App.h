@@ -21,7 +21,7 @@ namespace Plutus
         void Exit() override;
 
         Box2d* createBox(float x, float y, float w, float h, int type = 0, float friction = 1, ShapeType shape = Box);
-
+        void createLine(float x1, float y1, float x2, float y2);
     private:
         float timeStep = 1 / 60.0f;
         int32_t velIter = 6;
@@ -29,5 +29,6 @@ namespace Plutus
         DebugRender* mDebug;
         std::unique_ptr<b2World> mWorld;
         std::vector<Box2d> mBoxes;
+        std::vector<Line2d> lines;
     };
 } // namespace Plutus

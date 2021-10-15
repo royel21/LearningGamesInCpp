@@ -69,28 +69,33 @@ namespace Plutus
         //Load the OpenGL Context
         gladLoadGL();
 #endif
-
+        // Set a pointer to my window class
         glfwSetWindowUserPointer(mWindow, this);
         // Setup all callback
         glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
             Input::get()->keyStateChange(getKey(key), action);
             });
+        // Mouse Button 
         glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods) {
             Input::get()->keyStateChange(getKey(button), action > 0);
             });
+        // Mouse Move
         glfwSetCursorPosCallback(mWindow, [](GLFWwindow* window, double xpos, double ypos) {
             int width, height;
             glfwGetWindowSize(window, &width, &height);
             Input::get()->setMouseCoords(static_cast<float>(xpos), static_cast<float>(height - ypos));
             });
+        // Mouse Wheel 
         glfwSetScrollCallback(mWindow, [](GLFWwindow* window, double xoffset, double yoffset) {
             Input::get()->setMouseWheel(static_cast<int>(yoffset));
             });
+        //Item Dropped to the window
         glfwSetDropCallback(mWindow, [](GLFWwindow* window, int count, const char** paths) {
             for (int i = 0; i < count; i++)
                 if (Input::get()->onFileDrop != nullptr)
                     Input::get()->onFileDrop(paths[i]);
             });
+        // Window Reisze Event
         glfwSetFramebufferSizeCallback(mWindow, [](GLFWwindow* window, int width, int height) {
             auto win = (Window*)glfwGetWindowUserPointer(window);
             win->resizeVP(width, height);

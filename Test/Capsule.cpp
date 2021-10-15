@@ -1,4 +1,6 @@
 #include "Capsule.h"
+#include <box2d/b2_body.h>
+#include <Physics/Shapes.h>
 
 namespace Plutus
 {
@@ -22,5 +24,12 @@ namespace Plutus
     Circle2d Capsule::getTCircle() {
         float x2 = w * 0.5f;
         return  { x + w - x2, y + h - x2, x2 };
+    }
+
+    void Capsule::update()
+    {
+        auto pos = fromWorld(body->GetPosition());
+        x = pos.x;
+        y = pos.y - w * 0.5f;
     }
 } // namespace Plutus

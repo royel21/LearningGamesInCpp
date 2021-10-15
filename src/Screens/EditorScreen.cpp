@@ -64,12 +64,14 @@ void EditorScreen::update(float dt)
         mCurrentState = Plutus::ScreenState::CHANGE_NEXT;
     }
 
-    if (mInput->onKeyPressed("MouseLeft"))
+    if (mInput->onKeyDown("MouseLeft"))
     {
-        int h = mEngine->getHeight();
-        auto pos = mInput->getMouseCoords();
-        pos.y = h - pos.y;
-        auto mpos = mCamera.convertScreenToWold(pos);
+        // int h = mEngine->getHeight();
+        // auto pos = mInput->getMouseCoords();
+        // pos.y = h - pos.y;
+        // auto mpos = mCamera.convertScreenToWold(pos);
+        auto mPos = mInput->getMouseCoords();
+        mCamera.setPosition(mPos);
     }
 
     if (mInput->onKeyDown("Ctrl"))
