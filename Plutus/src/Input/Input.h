@@ -22,6 +22,7 @@ namespace Plutus
 	public:
 		bool isCtrl = false;
 		std::function<void(const char*)> onFileDrop = nullptr;
+		std::function<void(int, int)> onResize = nullptr;
 
 	public:
 		Input();

@@ -99,6 +99,9 @@ namespace Plutus
         glfwSetFramebufferSizeCallback(mWindow, [](GLFWwindow* window, int width, int height) {
             auto win = (Window*)glfwGetWindowUserPointer(window);
             win->resizeVP(width, height);
+            if (Input::get()->onResize) {
+                Input::get()->onResize(width, height);
+            }
             });
         //Enable alpha blend
         glEnable(GL_BLEND);

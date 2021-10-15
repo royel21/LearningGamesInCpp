@@ -7,15 +7,11 @@ namespace Plutus
 {
     struct Capsule
     {
+        b2Body* body;
+
         vec2f position;
         vec2f size;
         float radius;
-
-        float x;
-        float y;
-        float w;
-        float h;
-        b2Body* body;
 
         Capsule() = default;
         void create(float _x, float _y, float _w, float _h);

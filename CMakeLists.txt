@@ -61,16 +61,16 @@ endif()
   # target_link_libraries("TEST")
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   # Editor
-  add_subdirectory(PlutusEditor)
+  # add_subdirectory(PlutusEditor)
 
-  # Add source files
-  file(GLOB_RECURSE EDITOR_SRC Editor/*.c Editor/*.cpp)
+  # # Add source files
+  # file(GLOB_RECURSE EDITOR_SRC Editor/*.c Editor/*.cpp)
     
-  # Add header files
-  file(GLOB_RECURSE EDITOR_HEADER Editor/*.h Editor/*.hpp)
+  # # Add header files
+  # file(GLOB_RECURSE EDITOR_HEADER Editor/*.h Editor/*.hpp)
 
-  add_executable("Editor" ${EDITOR_SRC} ${EDITOR_HEADER})
-  target_link_libraries("Editor" PUBLIC Plutus PlutusEditor)
+  # add_executable("Editor" ${EDITOR_SRC} ${EDITOR_HEADER})
+  # target_link_libraries("Editor" PUBLIC Plutus PlutusEditor)
 
 
   # Add source files
@@ -84,5 +84,15 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
 
   add_executable("Test" ${TEST_SRC})
   target_link_libraries(Test PUBLIC Plutus)
+
+  
+  include_directories(Plutus/libs/glfw/include)
+  # Add source files
+  file(GLOB_RECURSE P_EDITOR PlutusEdit/src/*.h PlutusEdit/src/*.cpp)
+
+  add_subdirectory(PlutusEdit/libs/imgui)
+
+  add_executable("PlutusEdit" ${P_EDITOR})
+  target_link_libraries("PlutusEdit" PUBLIC Plutus imgui)
 
 endif()

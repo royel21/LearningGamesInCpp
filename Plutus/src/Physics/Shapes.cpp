@@ -4,6 +4,7 @@
 namespace Plutus
 {
     void Shape::update() {
-        pos = fromWorld(body->GetPosition());
+        if (type != PLine)
+            pos = fromWorld(body->GetPosition());
     }
 } // namespace Plutus

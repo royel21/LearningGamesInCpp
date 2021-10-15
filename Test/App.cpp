@@ -16,7 +16,8 @@ namespace Plutus
 
     App::~App()
     {
-
+        for (auto shape : mShapes)
+            delete shape;
     }
 
     Capsule capsule;
@@ -52,12 +53,15 @@ namespace Plutus
         b2BodyDef myBodyDef;
         myBodyDef.type = b2_dynamicBody;
         myBodyDef.fixedRotation = true;
-        myBodyDef.position = toWorld({ capsule.x, capsule.y });
+        myBodyDef.position = toWorld(capsule.position);
 
         capsule.body = world->CreateBody(&myBodyDef);
 
+        //Radius of the circle
+        float r = capsule.size.x * HMPP;
+
         b2PolygonShape polygonShape;
-        b2Vec2 halfSize = { capsule.w * HMPP, capsule.h * HMPP * 0.5f };
+        b2Vec2 halfSize = { r, capsule.size.y * HMPP * 0.5f };
 
         polygonShape.SetAsBox(halfSize.x, halfSize.y, halfSize, 0); //a 2x2 rectangle
 
@@ -68,8 +72,6 @@ namespace Plutus
         myFixtureDef.restitution = 0;
 
         capsule.body->CreateFixture(&myFixtureDef);
-        //Radius of the circle
-        float r = capsule.w * HMPP;
 
         b2FixtureDef circleDef;
         circleDef.density = 1.0f;
@@ -85,7 +87,7 @@ namespace Plutus
 
         //Buttom Circle Shape Def
         b2CircleShape circleShapeA;
-        circleShapeA.m_p.Set(r, capsule.h * HMPP);
+        circleShapeA.m_p.Set(r, capsule.size.y * HMPP);
         circleShapeA.m_radius = r;
 
         circleDef.shape = &circleShapeA;
@@ -93,27 +95,26 @@ namespace Plutus
 
     }
 
-    Box2d* App::createBox(float x, float y, float w, float h, int type, float friction, ShapeType shape) {
-        mBoxes.emplace_back(x, y, w, h);
-        mBoxes.back().body = createBody(mWorld.get(), toWorld(mBoxes.back().pos), tobVec2(mBoxes.back().size), friction, type);
-        mBoxes.back().type = shape;
-        return &mBoxes[mBoxes.size() - 1];
+    void App::createBox(float x, float y, float w, float h, int type, float friction) {
+        auto box = new Box2d(x, y, w, h);
+        box->body = createBody(mWorld.get(), toWorld(box->pos), tobVec2(box->size), friction, type);
+        mShapes.push_back(box);
     }
 
     void App::createLine(float x1, float y1, float x2, float y2)
     {
-        lines.emplace_back(x1, y1, x2, y2);
-        Line2d& line = lines.back();
+        auto line = new Line2d(x1, y1, x2, y2);
 
         b2BodyDef bd;
         bd.position.Set(0.0f, 0.0f);
-        b2Body* body = mWorld->CreateBody(&bd);
+        line->body = mWorld->CreateBody(&bd);
 
         b2EdgeShape shape;
-        shape.SetTwoSided(toWorld(line.start), toWorld(line.end));
+        shape.SetTwoSided(toWorld(line->pos), toWorld(line->end));
 
-        body->CreateFixture(&shape, 0.0f);
+        line->body->CreateFixture(&shape, 0.0f);
 
+        mShapes.push_back(line);
     }
 
     void App::Setup()
@@ -121,7 +122,6 @@ namespace Plutus
         mDebug = DebugRender::geInstances();
         mDebug->init(&mCamera);
         mWorld = std::make_unique<b2World>(b2Vec2{ 0, -10.0f });
-
 
         createBox(15, 30, 64, 64, 2, 0.3f);
         createBox(704, 384, 64, 64, 2);
@@ -196,9 +196,10 @@ namespace Plutus
 
         mWorld->Step(timeStep, velIter, posIter);
 
-        for (auto& box : mBoxes) {
-            box.update();
+        for (auto shape : mShapes) {
+            shape->update();
         }
+
         capsule.update();
         if (Input::get()->isCtrl) {
             if (Input::get()->onKeyDown("+")) {
@@ -236,17 +237,31 @@ namespace Plutus
     {
         setBackgoundColor(0, 0, 0, 1);
 
-        for (auto& box : mBoxes) {
-            mDebug->drawBox(box);
+        for (auto& shape : mShapes) {
+            if (shape->type == PBox) {
+
+            }
+            switch (shape->type) {
+            case PBox: {
+                mDebug->drawBox(*reinterpret_cast<Box2d*>(shape));
+                break;
+            }
+            case PLine: {
+                mDebug->drawLine(*reinterpret_cast<Line2d*>(shape));
+                break;
+            }
+            case PCircle: {
+                mDebug->drawCircle(*reinterpret_cast<Circle2d*>(shape));
+                break;
+            }
+            }
+
         }
 
         // mDebug->drawBox(Box2d(capsule.x, capsule.y, capsule.w, capsule.h));
         mDebug->drawBox(capsule.getBox(), { 0xff0000ff });
         mDebug->drawCircle(capsule.getBCircle());
         mDebug->drawCircle(capsule.getTCircle());
-
-        for (auto& line : lines)
-            mDebug->drawLine(line);
 
         mDebug->render();
         mDebug->end();

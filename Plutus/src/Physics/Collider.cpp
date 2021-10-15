@@ -5,10 +5,10 @@ namespace Plutus
 {
     bool Collider::pointOnLine(const vec2f& point, Line2d& line)
     {
-        float dy = line.end.y - line.start.y;
-        float dx = line.end.x - line.start.x;
+        float dy = line.end.y - line.pos.y;
+        float dx = line.end.x - line.pos.x;
         if (dx == 0) {
-            return compareF(point.x, line.start.x);
+            return compareF(point.x, line.pos.x);
         }
 
         float m = dy / dx;

@@ -4,18 +4,14 @@
 
 namespace Plutus
 {
-    void Capsule::create(float _x, float _y, float _w, float _h) {
-        position = { x,y };
+    void Capsule::create(float x, float y, float w, float h) {
+        position = { x, y };
         size = { w, h };
-        x = _x;
-        y = _y;
-        w = _w;
-        h = _h;
         radius = w * 0.5f;
     }
 
     Box2d Capsule::getBox() {
-        return { position.x, position.y + radius, w, h - w };
+        return { position.x, position.y + radius, size.x, size.y - size.x };
     }
 
     Circle2d Capsule::getBCircle() {
@@ -23,13 +19,13 @@ namespace Plutus
     }
 
     Circle2d Capsule::getTCircle() {
-        return  { position.x + w - radius, position.y + h - radius, radius };
+        return  { position.x + size.x - radius, position.y + size.y - radius, radius };
     }
 
     void Capsule::update()
     {
         auto pos = fromWorld(body->GetPosition());
         position.x = pos.x;
-        position.y = pos.y - w * 0.5f;
+        position.y = pos.y - radius;
     }
 } // namespace Plutus

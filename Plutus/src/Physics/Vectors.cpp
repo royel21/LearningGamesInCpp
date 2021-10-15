@@ -40,7 +40,7 @@ namespace Plutus
         return x * vec.y - y * vec.x;
     }
 
-    vec2f vec2f::operator+(const vec2f& v)
+    vec2f vec2f::operator+(const vec2f& v) const
     {
         return { x + v.y, y + v.y };
     }
@@ -70,7 +70,7 @@ namespace Plutus
         return { x * v, y * v };
     }
 
-    vec2f vec2f::operator/(float v)
+    vec2f vec2f::operator/(float v) const
     {
         return { x / v, y / v };
     }

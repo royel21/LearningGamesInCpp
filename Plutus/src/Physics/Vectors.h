@@ -18,7 +18,7 @@ namespace Plutus
         float dot(const vec2f& vec);
         float cross(const vec2f& vec);
 
-        vec2f operator+(const vec2f& v);
+        vec2f operator+(const vec2f& v) const;
         vec2f operator-(const vec2f& v) const;
         vec2f operator*(const vec2f& v) const;
 
@@ -26,7 +26,7 @@ namespace Plutus
         vec2f operator+(float) const;
         vec2f operator-(float) const;
         vec2f operator*(float v) const;
-        vec2f operator/(float v);
+        vec2f operator/(float v) const;
         vec2f operator-();
 
 

@@ -91,7 +91,7 @@ namespace Plutus
 
 	void DebugRender::drawLine(const Line2d& l, const ColorRGBA8& color)
 	{
-		drawLine({ l.start.x, l.start.y }, { l.end.x, l.end.y }, color);
+		drawLine({ l.pos.x, l.pos.y }, { l.end.x, l.end.y }, color);
 	}
 
 	void DebugRender::drawCircle(const Circle2d& c, const ColorRGBA8& color)
