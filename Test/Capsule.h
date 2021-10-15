@@ -7,6 +7,10 @@ namespace Plutus
 {
     struct Capsule
     {
+        vec2f position;
+        vec2f size;
+        float radius;
+
         float x;
         float y;
         float w;

@@ -7,6 +7,7 @@ namespace Plutus
         float x = 0;
         float y = 0;
         vec2f() = default;
+        vec2f(float val) : x(val), y(val) {}
         vec2f(float _x, float _y) : x(_x), y(_y) {}
 
         float length();
@@ -19,9 +20,15 @@ namespace Plutus
 
         vec2f operator+(const vec2f& v);
         vec2f operator-(const vec2f& v) const;
+        vec2f operator*(const vec2f& v) const;
+
+
+        vec2f operator+(float) const;
+        vec2f operator-(float) const;
         vec2f operator*(float v) const;
         vec2f operator/(float v);
         vec2f operator-();
+
 
         vec2f& operator*=(float n);
         vec2f& operator/=(float n);

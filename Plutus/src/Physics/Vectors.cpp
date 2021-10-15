@@ -49,10 +49,20 @@ namespace Plutus
     {
         return { x - v.y, y - v.y };
     }
+    vec2f vec2f::operator* (const vec2f& v) const {
+        return { x * v.x, y * v.y };
+    }
 
     vec2f vec2f::operator-()
     {
         return { x * -1, y * -1 };
+    }
+
+    vec2f vec2f::operator+(float val) const {
+        return { x + val, y + val };
+    }
+    vec2f vec2f::operator-(float val) const {
+        return { x - val, y - val };
     }
 
     vec2f vec2f::operator*(float v) const

@@ -70,7 +70,7 @@ namespace Plutus
         float radius = 1.0f;
         Circle2d() = default;
         Circle2d(float x, float y, float r) : Shape(x, y), radius(r) {}
-        Circle2d(const vec2f& _pos) : Shape(_pos) {}
+        Circle2d(const vec2f& _pos, float r) : Shape(_pos), radius(r) {}
     };
 
     struct Box2d : public Shape
