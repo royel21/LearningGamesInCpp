@@ -1,249 +1,192 @@
 #include "SceneSerializer.h"
 
 #include "Serialize.h"
-#include <ECS/Components.h>
+
 #include <ECS/Scene.h>
-#include <Assets/AssetManager.h>
 #include <Core/type.h>
+#include <ECS/Components.h>
+#include <Assets/AssetManager.h>
 
 namespace Plutus
 {
 
-    void Textures_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer)
+    void Textures_JSON(Serializer& ser)
     {
-        writer->String("textures");
-        writer->StartArray();
+        ser.StartArr("textures");
         for (auto tile : AssetManager::get()->mTextures.mTileSets)
         {
-            writer->StartObject();
-
-            writer->String("id");
-            writer->String(tile.first.c_str());
-            writer->String("path");
-            writer->String(tile.second.path.c_str());
-            writer->String("columns");
-            writer->Int(tile.second.columns);
-            writer->String("width");
-            writer->Int(tile.second.tileWidth);
-            writer->String("height");
-            writer->Int(tile.second.tileHeight);
-
-            writer->EndObject();
-        }
-        writer->EndArray();
-    }
-
-    void Tag_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Tag* tag)
-    {
-        writer->StartObject();
-        {
-            writer->String("name");
-            writer->String("Tag");
-            writer->String("Name");
-            writer->String(tag->Name.c_str());
-        }
-    }
-
-    void Transform_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Transform* trans)
-    {
-        writer->StartObject();
-        {
-            writer->String("name");
-            writer->String("Transform");
-            writer->String("x");
-            writer->Double(trans->x);
-            writer->String("y");
-            writer->Double(trans->y);
-            writer->String("h");
-            writer->Int(trans->h);
-            writer->String("w");
-            writer->Int(trans->w);
-            writer->String("layer");
-            writer->Int(trans->layer);
-            writer->String("sortY");
-            writer->Bool(trans->sortY);
-            writer->String("r");
-            writer->Double(trans->r);
-        }
-        writer->EndObject();
-    }
-
-    void Sprite_json(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Sprite* sprite)
-    {
-        writer->StartObject();
-        {
-            writer->String("name");
-            writer->String("Sprite");
-            writer->String("texture");
-            writer->String(sprite->mTextureId.c_str());
-            writer->String("color");
-            writer->Int(sprite->mColor);
-            writer->String("mFlipX");
-            writer->Bool(sprite->mFlipX);
-            writer->String("mFlipY");
-            writer->Bool(sprite->mFlipX);
-        }
-        writer->EndObject();
-    }
-
-    void Script_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Script* script)
-    {
-        writer->StartObject();
-        {
-            writer->String("name");
-            writer->String("Script");
-            writer->String("path");
-            writer->String(script->path.c_str());
-        }
-        writer->EndObject();
-    }
-
-    void Animate_JSON(rapidjson::Writer<rapidjson::StringBuffer>* writer, const Animation* anim)
-    {
-        writer->StartObject();
-        {
-            writer->String("name");
-            writer->String("Animation");
-
-            writer->String("texture");
-            writer->StartArray();
-            for (auto tx : anim->mTextures)
+            ser.StartObj();
             {
-                writer->String(tx.c_str());
+                ser.addString("id", tile.first.c_str());
+                ser.addString("path", tile.second.path.c_str());
+                ser.addInt("columns", tile.second.columns);
+                ser.addInt("width", tile.second.tileWidth);
+                ser.addInt("height", tile.second.tileHeight);
             }
-            writer->EndArray();
+            ser.EndObj();
+        }
+        ser.EndArr();
+    }
 
-            writer->String("sequences");
-            writer->StartArray();
-            for (auto& a : anim->mSequences)
+
+    void Animate_JSON(Serializer& ser, const Animation* anim)
+    {
+        ser.StartObj();
+        {
+            ser.addString("name", "Animation");
+            ser.StartArr("texture");
             {
-                writer->StartObject();
+                for (auto tx : anim->mTextures)
                 {
-                    writer->String("texIndex");
-                    writer->Int(a.second.mTexIndex);
-                    writer->String("seqTime");
-                    writer->Double(a.second.mSeqTime);
-                    writer->String("name");
-                    writer->String(a.first.c_str());
-                    writer->String("frames");
-                    writer->StartArray();
-                    for (auto f : a.second.mFrames)
-                    {
-                        writer->Int(f);
-                    }
-                    writer->EndArray();
+                    ser.addString(tx.c_str());
                 }
-                writer->EndObject();
             }
-            writer->EndArray();
+            ser.EndArr();
+            ser.StartArr("sequences");
+            {
+                for (auto seq : anim->mSequences)
+                {
+                    ser.StartObj();
+                    {
+                        ser.addString("name", seq.first.c_str());
+                        ser.addInt("texIndex", seq.second.mTexIndex);
+                        ser.addFloat("seqTime", seq.second.mSeqTime);
+                        ser.StartArr("frames");
+                        {
+                            for (auto f : seq.second.mFrames)
+                            {
+                                ser.addInt(f);
+                            }
+                        }
+                        ser.EndArr();
+                    }
+                    ser.EndObj();
+                }
+            }
+            ser.EndArr();
         }
-        writer->EndObject();
+        ser.EndObj();
     }
 
-    void TileMap_json(rapidjson::Writer<rapidjson::StringBuffer>* writer, const TileMap* tilemap)
+    void TileMap_json(Serializer& ser, const TileMap* tilemap)
     {
-        writer->StartObject();
+        ser.StartObj();
         {
-            writer->String("name");
-            writer->String("TileMap");
-            writer->String("tilewidth");
-            writer->Int(tilemap->mTileWidth);
-            writer->String("tileheight");
-            writer->Int(tilemap->mTileHeight);
-            writer->String("layer");
-            writer->Int(tilemap->mLayer);
-            //Array of tileset name
-            writer->String("tileset");
-            writer->String("");
-
+            ser.addString("name", "TileMap");
+            ser.addInt("tilewidth", tilemap->mTileWidth);
+            ser.addInt("tileheight", tilemap->mTileHeight);
+            ser.addInt("layer", tilemap->mLayer);
 
             //Array of textures
-            writer->String("textures");
-            writer->StartArray();
+            ser.StartArr("textures");
             for (auto tex : tilemap->mTextures)
             {
-                writer->String(tex.second->name.c_str());
+                ser.addString(tex.second->name.c_str());
             }
-            writer->EndArray();
+            ser.EndArr();
             //Tiles Array
-            writer->String("tiles");
-            writer->StartArray();
+            ser.StartArr("tiles");
             {
                 for (auto tile : tilemap->mTiles)
                 {
                     //Tile OBJ
-                    writer->StartObject();
+                    ser.StartObj();
                     {
-                        writer->String("tc");
-                        writer->Int(tile.texcoord);
-                        writer->String("txi");
-                        writer->Int(tile.texture);
-                        writer->String("x");
-                        writer->Int(tile.x);
-                        writer->String("y");
-                        writer->Int(tile.y);
-                        writer->String("fx");
-                        writer->Int(tile.flipX);
-                        writer->String("fy");
-                        writer->Int(tile.flipY);
-                        writer->String("r");
-                        writer->Double(tile.rotate);
-                        writer->String("c");
-                        writer->Int(tile.color);
+                        ser.addInt("tc", tile.texcoord);
+                        ser.addInt("txi", tile.texture);
+                        ser.addInt("x", tile.x);
+                        ser.addInt("y", tile.y);
+                        ser.addInt("fx", tile.flipX);
+                        ser.addInt("fy", tile.flipY);
+                        ser.addFloat("r", tile.rotate);
+                        ser.addInt("color", tile.color);
                     }
-                    writer->EndObject();
+                    ser.EndObj();
                 }
             }
-            writer->EndArray();
+            ser.EndArr();
         }
-        writer->EndObject();
+        ser.EndObj();
     }
 
-    std::string sceneSerializer(Ref<Scene>& scene)
+    std::string SceneSerializer(Ref<Scene>& scene)
     {
         Serializer ser;
         auto writer = ser.getWriter();
-        writer->StartObject();
+        ser.StartObj();
 
-        Textures_JSON(writer);
+        Textures_JSON(ser);
 
-        writer->String("entities");
-        writer->StartArray();
+        ser.StartArr("entities");
         scene->getRegistry()->each([&](entt::entity e) {
             Plutus::Entity ent = { e, scene.get() };
-            writer->StartObject();
-            writer->String("name");
-            writer->String(ent.getName().c_str());
-            writer->String("components");
-            writer->StartArray();
+            ser.StartObj();
+            ser.addString("name", ent.getName().c_str());
+
+            ser.StartArr("components");
             {
                 if (ent.hasComponent<Transform>())
                 {
-                    Transform_JSON(writer, ent.getComponent<Transform>());
+                    auto trans = ent.getComponent<Transform>();
+                    ser.StartObj();
+                    {
+                        ser.addString("name", "Transform");
+                        ser.addFloat("x", trans->x);
+                        ser.addFloat("y", trans->y);
+                        ser.addInt("w", trans->w);
+                        ser.addInt("h", trans->h);
+                        ser.addFloat("r", trans->r);
+                        ser.addInt("layer", trans->layer);
+                        ser.addBool("sortY", trans->sortY);
+                    }
+                    ser.EndObj();
                 }
                 if (ent.hasComponent<Sprite>())
                 {
-                    Sprite_json(writer, ent.getComponent<Sprite>());
+                    auto sprite = ent.getComponent<Sprite>();
+                    ser.StartObj();
+                    {
+                        ser.addString("name", "Sprite");
+                        ser.addString("texture", sprite->mTextureId.c_str());
+                        ser.addInt("uvi", sprite->mUvIndex);
+                        ser.addInt("color", sprite->mColor);
+                        ser.addInt("flipX", sprite->mFlipX);
+                        ser.addInt("flipY", sprite->mFlipY);
+                        ser.StartArr("uvc");
+                        {
+                            ser.addFloat(sprite->mUVCoord.x);
+                            ser.addFloat(sprite->mUVCoord.y);
+                            ser.addFloat(sprite->mUVCoord.z);
+                            ser.addFloat(sprite->mUVCoord.w);
+                        }
+                        ser.EndArr();
+                    }
+                    ser.EndObj();
                 }
                 if (ent.hasComponent<Animation>())
                 {
-                    Animate_JSON(writer, ent.getComponent<Animation>());
+                    Animate_JSON(ser, ent.getComponent<Animation>());
                 }
                 if (ent.hasComponent<Script>())
                 {
-                    Script_JSON(writer, ent.getComponent<Script>());
+                    auto script = ent.getComponent<Script>();
+                    ser.StartObj();
+                    {
+                        ser.addString("name", "Script");
+                        ser.addString("path", script->path.c_str());
+                    }
+                    ser.EndObj();
                 }
                 if (ent.hasComponent<TileMap>())
                 {
-                    TileMap_json(writer, ent.getComponent<TileMap>());
+                    TileMap_json(ser, ent.getComponent<TileMap>());
                 }
             }
-            writer->EndArray();
-            writer->EndObject();
+            ser.EndArr();
+            ser.EndObj();
             });
-        writer->EndArray();
-
-        writer->EndObject();
+        ser.EndArr();
+        ser.EndObj();
 
         return ser.getString();
     }

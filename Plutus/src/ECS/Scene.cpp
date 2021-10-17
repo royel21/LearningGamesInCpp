@@ -1,5 +1,5 @@
 #include "Scene.h"
-#include "./Components.h"
+#include "Components.h"
 
 namespace Plutus
 {

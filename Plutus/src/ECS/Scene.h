@@ -24,18 +24,6 @@ namespace Plutus
         Entity(const Entity* ent) : mId(ent->mId), mScene(ent->mScene) { }
         Entity(entt::entity ent, Scene* scene) : mId(ent), mScene(scene) {}
 
-        template <typename T>
-        bool hasComponent();
-
-        template <typename T, typename... Args>
-        T* addComponent(Args &&...args);
-
-        template <typename T>
-        T* getComponent();
-
-        template <typename T>
-        bool removeComponent();
-
         entt::entity getEntityId() const { return mId; }
 
         const std::string getName();
@@ -64,6 +52,18 @@ namespace Plutus
         {
             return id != (uint32_t)mId;
         }
+
+        template <typename T>
+        bool hasComponent();
+
+        template <typename T, typename... Args>
+        T* addComponent(Args &&...args);
+
+        template <typename T>
+        T* getComponent();
+
+        template <typename T>
+        bool removeComponent();
 
     };
 

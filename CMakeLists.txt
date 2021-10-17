@@ -60,7 +60,7 @@ endif()
   # add_executable("TEST" Test/test.cpp Test/Timer.cpp Test/Timer.h)
   # target_link_libraries("TEST")
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
-  # Editor
+  # # Editor
   # add_subdirectory(PlutusEditor)
 
   # # Add source files

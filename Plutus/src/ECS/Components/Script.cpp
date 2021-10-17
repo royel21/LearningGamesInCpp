@@ -1,15 +1,12 @@
 #include "Script.h"
-#include "ECS/ScriptServer.h"
+#include "../ScriptServer.h"
+
 #include <lua.h>
 
 namespace Plutus
 {
     Script::Script(const Script& script) {
         init(script.path, script.ent, script.scene);
-    }
-
-    Script::Script(const std::string& _path, Entity ent, Scene* scene) {
-        init(_path, ent, scene);
     }
 
     void Script::init(const std::string& _path, Entity _ent, Scene* _scene)

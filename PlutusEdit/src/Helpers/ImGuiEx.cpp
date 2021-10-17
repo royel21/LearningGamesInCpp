@@ -220,16 +220,23 @@ namespace ImGui {
         return isSelected;
     }
 
-    bool DrawTexture(Plutus::Texture* texture, int winWidth, int winHeight, float scale, std::vector<glm::ivec3>* selected)
+    bool DrawTextureOne(Plutus::Texture* texture, int& selected) {
+        std::vector<glm::ivec3> selecteds;
+        if (DrawTexture(texture, 0, 0, 1.0f, &selecteds, true)) {
+            selected = selecteds[0].z;
+            return true;
+        }
+        return false;
+    }
+
+    bool DrawTexture(Plutus::Texture* texture, int winWidth, int winHeight, float scale, std::vector<glm::ivec3>* selected, bool onlyOne)
     {
-        // ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-        ImGui::BeginChild("##texture-map", { (float)winWidth, (float)winHeight }, false, ImGuiWindowFlags_HorizontalScrollbar);
-        bool isSelected = false;
+        ImGui::BeginChild("##texture-map", { 0, (float)winHeight }, false, ImGuiWindowFlags_HorizontalScrollbar);
         auto mInput = Plutus::Input::get();
         ImDrawList* drawList = ImGui::GetWindowDrawList();
         auto size = ImGui::GetContentRegionAvail();
 
-        ImVec2 cvPos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
+        ImVec2 cvPos = ImGui::GetCursorScreenPos();
         ImVec2 cv_destStart(cvPos.x, cvPos.y);
         const int w = texture->texWidth;
         const int h = texture->texHeight;
@@ -297,7 +304,6 @@ namespace ImGui {
                             {
                                 sels.emplace_back(x, y);
 
-                                isSelected = true;
                                 if (sels.size())
                                 {
                                     std::sort(sels.begin(), sels.end(), Plutus::compare);
@@ -329,6 +335,9 @@ namespace ImGui {
 
                     for (uint32_t i = 0; i < drawSelect.size(); i++)
                     {
+                        if (onlyOne && i > 0) {
+                            break;
+                        }
                         ImVec2 start(drawSelect[i].x * tilWidth + cv_destStart.x, drawSelect[i].y * tilHeight + cv_destStart.y);
                         ImVec2 end(start.x + tilWidth, start.y + tilHeight);
                         drawList->AddRectFilled(start, end, IM_COL32(0, 255, 255, 50));
@@ -338,7 +347,7 @@ namespace ImGui {
         }
         ImGui::EndChild();
         // ImGui::PopStyleVar();
-        return true;
+        return selected->size();
     }
 
 
@@ -393,19 +402,40 @@ namespace ImGui {
     void BeginCol(const char* label, float width) {
 
         ImGui::TableNextColumn();
+        PushItemWidth(ImGui::GetContentRegionAvailWidth() * 0.3f);
         const ImVec2 cursorPos = ImGui::GetCursorPos();
-        ImGui::SetCursorPos({ cursorPos.x + 4, cursorPos.y + 4 });
+        // ImGui::SetCursorPos({ cursorPos.x + 4, cursorPos.y + 4 });
         ImGui::TextUnformatted(label);
+        ImGui::PopItemWidth();
         ImGui::TableNextColumn();
         ImGui::SetNextItemWidth(-1);
     }
 
-    void Draw2Float(char* label, glm::vec2 values) {
 
+    bool LabelButton(const char* tag, ImVec2 size, int color = 0) {
+        bool clicked = false;
+        if (color == 1) {
+            ImGui::PushStyleColor(ImGuiCol_Button, { 0.8f, 0.1f, 0.15f, 1.0f });
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.9f, 0.2f, 0.2f, 1.0f });
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.8f, 0.1f, 0.15f, 1.0f });
+        }
+        else {
+            ImGui::PushStyleColor(ImGuiCol_Button, { 0.2f, 0.7f, 0.2f, 1.0f });
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.3f, 0.8f, 0.3f, 1.0f });
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.2f, 0.7f, 0.2f, 1.0f });
+        }
+        if (ImGui::Button(tag, size)) {
+            clicked = true;
+        }
+        ImGui::PopStyleColor(3);
+        return clicked;
+    }
 
-        ImGui::BeginUIGroup();
-        ImGui::BeginCol(label);
+    bool Draw2Float(char* label, glm::vec2& value, float step, const char* btntag1, const char* btntag2) {
+        bool changed = false;
 
+        ImGui::BeginGroup();
+        ImGui::PushID(label);
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
 
         float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.0f;
@@ -413,43 +443,152 @@ namespace ImGui {
         float widthEach = (ImGui::CalcItemWidth() - buttonSize.x * 2.0f) / 2.0f;
 
         ImGui::PushItemWidth(widthEach);
-        ImGui::PushStyleColor(ImGuiCol_Button, { 0.8f, 0.1f, 0.15f, 1.0f });
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.9f, 0.2f, 0.2f, 1.0f });
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.8f, 0.1f, 0.15f, 1.0f });
-        if (ImGui::Button("X", { buttonSize.x, buttonSize.y })) {
-            values.x = 0;
+        if (LabelButton(btntag1, buttonSize)) {
+            value.x = 0;
+            changed = true;
         }
-        ImGui::PopStyleColor(3);
-
         ImGui::SameLine();
-        float vecValuesX = values.x;
-        ImGui::DragFloat("##x", &vecValuesX, 0.1f);
+
+        float vecValuesX = value.x;
+        if (ImGui::DragFloat("##x", &vecValuesX, step, 0, 0, "%0.1f")) changed = true;
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
         ImGui::PushItemWidth(widthEach);
-        ImGui::PushStyleColor(ImGuiCol_Button, { 0.2f, 0.7f, 0.2f, 1.0f });
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.3f, 0.8f, 0.3f, 1.0f });
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.2f, 0.7f, 0.2f, 1.0f });
-        if (ImGui::Button("Y", { buttonSize.x, buttonSize.y })) {
-            values.y = 0;
+        if (LabelButton(btntag2, buttonSize, 1)) {
+            value.y = 0;
+            changed = true;
         }
-        ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
-        float vecValuesY = values.y;
-        ImGui::DragFloat("##y", &vecValuesY, 0.1f);
+        float vecValuesY = value.y;
+        if (ImGui::DragFloat("##y", &vecValuesY, step, 0, 0, "%0.1f")) changed = true;
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
-        // ImGui::NextColumn();
-
-        values.x = vecValuesX;
-        values.y = vecValuesY;
+        value.x = vecValuesX;
+        value.y = vecValuesY;
 
         ImGui::PopStyleVar();
-        // ImGui::Columns(1);
-        // ImGui::PopID();
-        ImGui::EndUIGroup();
+        ImGui::EndGroup();
+        ImGui::PopID();
+        return changed;
+    }
+
+    bool InputString(std::string& text) {
+        char buffer[128] = { 0 };
+        strncpy_s(buffer, text.c_str(), text.length());
+        if (ImGui::InputText("Name##Tag", buffer, sizeof(buffer)))
+        {
+            text = std::string(buffer);
+            return true;
+        }
+        return false;
+    }
+    const uint32_t color1 = IM_COL32(50, 50, 50, 255);
+    const uint32_t color2 = IM_COL32(50, 50, 60, 255);
+    const uint32_t color3 = IM_COL32(60, 60, 70, 255);
+
+    void DrawTexCoords(Plutus::Texture* tileset, glm::vec4& coords) {
+        auto mInput = Plutus::Input::get();
+        const int w = tileset->texWidth;
+        const int h = tileset->texHeight;
+        uint32_t id = tileset->texId;
+
+        static float scale = 1;
+        static ImVector<ImVec2> points;
+        if (ImGui::Button(ICON_FA_ADJUST " Use") && points.Size > 1)
+        {
+            coords.x = (points[0].x / scale) / w;
+            coords.y = (points[0].y / scale) / h;
+            coords.z = (points[1].x / scale) / w;
+            coords.w = (points[1].y / scale) / h;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button(ICON_FA_BRUSH " Clear"))
+        {
+            points.clear();
+        }
+        ImGui::SameLine();
+        ImGui::PushItemWidth(200);
+        if (ImGui::DragFloat("Scale##cv", &scale, 0.01f, 0.4f, 5)) {
+            points.clear();
+        }
+        ImGui::PopItemWidth();
+        ImGui::Separator();
+        auto size = ImGui::GetContentRegionAvail();
+        ImGui::BeginChild("##draw-cv", size, false, ImGuiWindowFlags_HorizontalScrollbar); {
+            ImDrawList* drawList = ImGui::GetWindowDrawList();
+            ImVec2 cvPos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
+            ImVec2 cv_destStart(cvPos.x, cvPos.y);
+            ImVec2 cvDestEnd(cvPos.x + w * scale, cvPos.y + h * scale);
+            ImGui::Image((void*)id, ImVec2(w * scale, h * scale));
+            {
+                static ImVec2 StartCoords(0, 0);
+                static ImVec2 EndCoords(0, 0);
+                static bool firstClick = false;
+                static bool SecondClick = false;
+
+                static bool mDown;
+                drawList->AddRectFilledMultiColor(cvPos, cvDestEnd, color1, color2, color3, color2);
+
+                auto color = IM_COL32(255, 255, 255, 100);
+                if (id)
+                {
+                    drawList->AddImage((void*)id, cvPos, cvDestEnd);
+                    drawList->AddRect(cvPos, cvDestEnd, color);
+                }
+                if (ImGui::IsItemHovered())
+                {
+                    ImVec2 mpos_in_canvas = ImVec2(ImGui::GetIO().MousePos.x - cvPos.x, ImGui::GetIO().MousePos.y - cvPos.y);
+
+                    if (mInput->onKeyDown("MouseLeft"))
+                    {
+                        if (!mDown)
+                        {
+                            StartCoords = ImVec2(mpos_in_canvas.x, mpos_in_canvas.y);
+                            mDown = true;
+                        }
+                        drawList->AddRect(ImVec2(cvPos.x + StartCoords.x, cvPos.y + StartCoords.y),
+                            ImVec2(cvPos.x + mpos_in_canvas.x, cvPos.y + mpos_in_canvas.y), IM_COL32(255, 255, 255, 255));
+                        if (points.Size > 1) {
+                            points.clear();
+                        }
+                    }
+
+                    if (!mInput->onKeyDown("MouseLeft"))
+                    {
+                        if (mDown)
+                        {
+                            EndCoords = ImVec2(mpos_in_canvas.x, mpos_in_canvas.y);
+                            points.push_back(StartCoords);
+                            points.push_back(EndCoords);
+                            mDown = false;
+                        }
+                    }
+
+                    if (mInput->onKeyPressed("MouseRight"))
+                    {
+                        if (points.size())
+                        {
+                            points.pop_back();
+                            points.pop_back();
+                        }
+                    }
+                }
+                else
+                {
+                    mDown = false;
+                }
+                if (points.Size > 1) {
+                    drawList->AddRect(
+                        ImVec2(cvPos.x + points[0].x, cvPos.y + points[0].y),
+                        ImVec2(cvPos.x + points[1].x, cvPos.y + points[1].y),
+                        IM_COL32(255, 255, 255, 255));
+                }
+
+            }
+        }
+        ImGui::EndChild();
     }
 }

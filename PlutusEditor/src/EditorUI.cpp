@@ -27,6 +27,9 @@
 #include <Utils/FileIO.h>
 #include "ImGuiStyle.h"
 
+#include "Render.h"
+#include "Context.h"
+
 #define mapIn(x, min_in, max_in, min_out, max_out) (x - min_in) * (max_out - min_out) / (max_in - min_in) + min_out
 
 #define CHECKLIMIT(val, min, max) val<min ? min : val> max ? max : val
@@ -128,6 +131,8 @@ namespace Plutus
 
 		mAssetsTab.setParent(this);
 		mScriptEditor.init();
+
+		Render::get().Initialize(mCamera->getViewPortSize().x, mCamera->getViewPortSize().y);
 	}
 
 	void EditorUI::update(float dt)
@@ -323,7 +328,7 @@ namespace Plutus
 				float xPos = mapIn(ImGui::GetIO().MousePos.x - canvas_pos.x, 0, newSize.x, 0, winSize.x);
 				float yPos = winSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
 
-				ImGui::Image((void*)mFb.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
+				ImGui::Image((void*)Render::get().mFrameBuffer.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
 
 				if (mCanvasHover = ImGui::IsItemHovered())
 				{
@@ -508,25 +513,26 @@ namespace Plutus
 
 	void EditorUI::bindFB()
 	{
-		drawScene();
-		mRender.begin(&mShader, mCamera);
+		Render::get().draw();
+		// drawScene();
+		// mRender.begin(&mShader, mCamera);
 
-		mPicker.bind();
-		mRender.draw(true);
-		mPicker.unBind();
+		// mPicker.bind();
+		// mRender.draw(true);
+		// mPicker.unBind();
 
 	}
 
 	void EditorUI::unBindFB()
 	{
 
-		mFb.bind();
-		mFb.setColor(mVPColor);
-		mRender.draw();
-		mRender.end();
+		// mFb.bind();
+		// mFb.setColor(mVPColor);
+		// mRender.draw();
+		// mRender.end();
 
-		mDebugRender->drawGrid();
-		mFb.unBind();
+		// mDebugRender->drawGrid();
+		// mFb.unBind();
 	}
 
 	void EditorUI::saveScene()
@@ -534,7 +540,7 @@ namespace Plutus
 		std::string filePath;
 		if (Plutus::windowDialog(SAVE_FILE, filePath))
 		{
-			std::string json = Plutus::sceneSerializer(mScene);
+			std::string json = Plutus::SceneSerializer(mScene);
 			Plutus::toJsonFile(filePath, json.c_str());
 			addRecent(filePath);
 		}
@@ -673,7 +679,7 @@ namespace Plutus
 					auto path = mRecents[0];
 					if (!path.empty())
 					{
-						Plutus::SceneLoader::loadFromJson(path.c_str(), mScene);
+						Plutus::SceneLoader::loadFromJson(path.c_str(), Context.mScene);
 					}
 				}
 			}

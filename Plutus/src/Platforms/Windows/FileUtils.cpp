@@ -6,11 +6,10 @@
 
 namespace Plutus
 {
-    bool windowDialog(int mode, std::string &path)
+    bool windowDialog(int mode, std::string& path, const std::string& title)
     {
         OPENFILENAME ofn;
-        char *FilterSpec = "All Files(*.*)\0*.*\0";
-        char *Title = "Open....";
+        char* FilterSpec = "All Files(*.*)\0*.*\0";
         char szFileName[MAX_PATH];
         char szFileTitle[MAX_PATH];
 
@@ -29,7 +28,7 @@ namespace Plutus
         ofn.lpstrInitialDir = "."; // Initial directory.
         ofn.lpstrFileTitle = szFileTitle;
         ofn.nMaxFileTitle = MAX_PATH;
-        ofn.lpstrTitle = Title;
+        ofn.lpstrTitle = title.c_str();
         ofn.lpstrDefExt = "json";
 
         ofn.Flags = OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
@@ -53,7 +52,7 @@ namespace Plutus
         return success;
     }
 
-    bool copyFile(const std::string &from, const std::string &to)
+    bool copyFile(const std::string& from, const std::string& to)
     {
         if (std::filesystem::exists(from))
         {

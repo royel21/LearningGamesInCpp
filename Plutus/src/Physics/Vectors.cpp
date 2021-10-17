@@ -42,12 +42,12 @@ namespace Plutus
 
     vec2f vec2f::operator+(const vec2f& v) const
     {
-        return { x + v.y, y + v.y };
+        return { x + v.x, y + v.y };
     }
 
     vec2f vec2f::operator-(const vec2f& v) const
     {
-        return { x - v.y, y - v.y };
+        return { x - v.x, y - v.y };
     }
     vec2f vec2f::operator* (const vec2f& v) const {
         return { x * v.x, y * v.y };

@@ -1,8 +1,8 @@
 #pragma once
-#include "Core/IGameScreen.h"
-#include "ECS/Scene.h"
 
-#include "Graphics/Camera2D.h"
+#include <ECS/Scene.h>
+#include <Core/IGameScreen.h>
+#include <Graphics/Camera2D.h>
 #include <Systems/SystemManager.h>
 
 class GameScreen : public Plutus::IGameScreen

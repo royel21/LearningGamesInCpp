@@ -1,7 +1,7 @@
 #include "SceneLoader.h"
 
-#include "ECS/Scene.h"
-#include "ECS/Components.h"
+#include <ECS/Scene.h>
+#include <ECS/Components.h>
 
 #include <Assets/AssetManager.h>
 
@@ -96,7 +96,7 @@ namespace Plutus
                     auto entObj = entities[i].GetJsonObject();
 
                     auto name = entObj["name"].GetString();
-                    auto entity = scene->createEntity(name);
+                    Entity entity = scene->createEntity(name);
 
                     auto components = entObj["components"].GetArray();
                     for (uint32_t i = 0; i < components.Size(); i++)
@@ -135,7 +135,8 @@ namespace Plutus
                         }
                         if (compType == "Script")
                         {
-                            entity.addComponent<Script>(component["path"].GetString(), entity, scene.get());
+                            auto script = entity.addComponent<Script>();
+                            script->init(component["path"].GetString(), entity, scene.get());
                         }
                     }
                 }

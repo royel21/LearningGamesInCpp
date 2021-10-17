@@ -15,9 +15,39 @@ namespace Plutus
         Writer<StringBuffer>* getWriter() { return &writer; }
         const char* getString() { return sb.GetString(); };
 
+        void addString(const char* data);
+        void addInt(int data);
+        void addFloat(float data);
+        void addBool(bool data);
+
+        void addString(const char* id, const char* data);
+        void addInt(const char* id, int data);
+        void addFloat(const char* id, float data);
+        void addBool(const char* id, bool data);
+
+        void StartObj();
+        void EndObj();
+
+        void StartArr(const char* id);
+        void EndArr();
+
     private:
         StringBuffer sb;
         Writer<StringBuffer> writer;
+    };
+
+    struct PJson {
+        bool isLoaded = false;
+        rapidjson::Document doc;
+
+        PJson() = default;
+        PJson(const char* path);
+        bool load(const char* path);
+
+        int getInt(const char* key);
+        float getFloat(const char* key);
+        bool getBool(const char* key);
+        std::string getString(const char* key);
     };
 
     bool loadJson(const char* filePath, rapidjson::Document* doc);
@@ -26,10 +56,5 @@ namespace Plutus
 
     bool loadJsonFromFile(const char* filePath, rapidjson::Document& doc);
     void saveJsonToFile(const char* filePath, const char* buffer);
-
-    int getInt(rapidjson::Document& doc, char* key);
-    float getFloat(rapidjson::Document& doc, char* key);
-    bool getBool(rapidjson::Document& doc, char* key);
-    std::string getString(rapidjson::Document& doc, char* key);
 
 } // namespace Plutus

@@ -1,9 +1,5 @@
 #include "Animation.h"
 
-#include "ECS/Scene.h"
-#include "Sprite.h"
-#include <Assets/AssetManager.h>
-
 namespace Plutus
 {
     Sequence::Sequence(std::vector<int> frames, int texIndex, int _seqTime)

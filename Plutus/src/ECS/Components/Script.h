@@ -1,17 +1,19 @@
 #pragma once
-#include <lua.hpp>
-#include <sol/sol.hpp>
+
 #include <string>
+#include <lua.hpp>
 #include <iostream>
-#include "ECS/Scene.h"
+#include <sol/sol.hpp>
+
+#include "../Scene.h"
 
 namespace Plutus
 {
     class Script
     {
     public:
-        Scene* scene;
         Entity ent;
+        Scene* scene;
         std::string path;
 
     public:

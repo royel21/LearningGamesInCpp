@@ -5,7 +5,6 @@
 namespace Plutus
 {
     class Scene;
-    class Serializer;
 
-    std::string sceneSerializer(Ref<Scene>& scene);
+    std::string SceneSerializer(Ref<Scene>& scene);
 }
