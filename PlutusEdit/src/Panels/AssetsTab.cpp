@@ -12,6 +12,8 @@
 #include <Assets/SoundEngine.h>
 #include <Utils/FileIO.h>
 
+#include "../Config.h"
+
 
 #define TreeNodeLeaf_NoPushOpen 264
 #define FA_FILE ICON_FA_FILE_ALT " "
@@ -73,6 +75,15 @@ namespace Plutus
         ImGui::Text(name);
     }
 
+    void AssetsTab::drawFilter()
+    {
+        ImGui::BeginUIGroup(ImGuiTableFlags_SizingStretchProp);
+        ImGui::BeginCol("Filter");
+        ImGui::InputString("##a-filter", filter);
+        ImGui::EndUIGroup();
+        ImGui::Separator();
+    }
+
     void AssetsTab::drawAssets()
     {
         if (ImGui::Begin("Assets")) {
@@ -80,11 +91,12 @@ namespace Plutus
             if (std::filesystem::exists("./assets/")) {
                 if (ImGui::BeginTabBar("##TabBar"))
                 {
-                    if (ImGui::BeginTabItem("Assets"))
-                    {
 
+                    if (ImGui::BeginTabItem("Disk Assets"))
+                    {
+                        drawFilter();
                         if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
-                            drawTreeNode("./assets/");
+                            drawDiskAssets("./assets/");
                             ImGui::EndChild();
                         }
                         ImGui::EndTabItem();
@@ -92,11 +104,13 @@ namespace Plutus
 
                     if (ImGui::BeginTabItem("Scene Assets"))
                     {
+                        drawFilter();
                         if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
                             int id = 0;
                             drawTreeNode("Fonts", mAsset->mFonts, id);
                             drawTreeNode("Textures", mAsset->mTextures, id);
                             drawTreeNode("Sounds", SoundEngine, id);
+                            drawTreeNode("Scenes", Config::get().mProjects[Config::get().OpenProject], id);
                             ImGui::EndChild();
                         }
                         ImGui::EndTabItem();
@@ -121,6 +135,9 @@ namespace Plutus
             static bool show;
             flags |= TreeNodeLeaf_NoPushOpen;
             for (auto asset : assets.getItems()) {
+
+                if (!filter.empty() && name.find(filter) == std::string::npos) continue;
+
                 ImGui::TreeNodeEx((void*)(intptr_t)id++, flags, (icons[name] + asset.first).c_str());
 
                 if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
@@ -170,7 +187,7 @@ namespace Plutus
         ImGui::EndDialog(show);
     }
 
-    void AssetsTab::drawTreeNode(std::string path)
+    void AssetsTab::drawDiskAssets(std::string path)
     {
         uint32_t id = 1;
         for (auto& entry : std::filesystem::directory_iterator(path))
@@ -184,38 +201,30 @@ namespace Plutus
                 nodes[name] = ImGui::TreeNodeEx((void*)(intptr_t)id, flags, getIcon(nodes, name).c_str());
 
                 if (nodes[name]) {
-                    drawTreeNode(path);
+                    drawDiskAssets(path);
                     ImGui::TreePop();
                 }
             }
             else
             {
+                if (!filter.empty() && name.find(filter) == std::string::npos) continue;
+
                 auto icon = icons[Utils::getExtension(name)];
                 icon = icon.empty() ? FA_FILE : icon;
                 flags |= TreeNodeLeaf_NoPushOpen;
-                ImGui::TreeNodeEx((void*)(intptr_t)id, flags, (icon + name).c_str());
-
-                bool isScene = path.find("scene") != std::string::npos;
-
-                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
-                {
-                    if (isScene) {
-
-                    }
-                    if (path.find(".lua") != std::string::npos) {
-                        auto script = readFileAsString(path.c_str());
-
-                    }
-                }
-
-
-                if (!isScene && ImGui::BeginPopupContextItem())
-                {
-                    if (ImGui::MenuItem(("Add " + name + " to scene").c_str()))
+                if (ImGui::TreeNodeEx((void*)(intptr_t)id, flags, (icon + name).c_str())) {
+                    bool isScene = path.find("scene") != std::string::npos;
+                    if (ImGui::BeginPopupContextItem())
                     {
-                        selectedDir = path;
+                        if (isScene && ImGui::MenuItem(("Add Scene '" + name + "' to project").c_str())) {
+                            Config::get().mProject->add(path.c_str());
+                        }
+
+                        if (!isScene && ImGui::MenuItem(("Add " + name + " to scene").c_str())) {
+                            selectedDir = path;
+                        }
+                        ImGui::EndPopup();
                     }
-                    ImGui::EndPopup();
                 }
             }
             id++;
@@ -238,6 +247,9 @@ namespace Plutus
             auto substr = selectedDir.substr(start, end - start);
 
             bool show = true;
+
+            ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+            ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
             ImGui::BeginDialog("Asset Modal", 300, 300);
             //Texure Or Font Id
             ImGui::Text("Asset Id");
@@ -249,7 +261,7 @@ namespace Plutus
                 auto& textures = AssetManager::get()->mTextures;
 
                 if (texture.texWidth == 0) {
-                    auto glTexture = textures.createGLTexure(selectedDir, filter.filter, filter.filter);
+                    auto glTexture = textures.createGLTexure(selectedDir, texfilter.filter, texfilter.filter);
                     texture.texId = glTexture.id;
                     texture.texWidth = glTexture.width;
                     texture.texHeight = glTexture.height;
@@ -276,10 +288,10 @@ namespace Plutus
             {
                 switch (type) {
                 case 1:
-                    AssetManager::get()->mFonts.addFont(name, selectedDir, fontSize);
+                    AssetManager::get()->mTextures.addTexture(name, selectedDir, texture.columns, texture.tileHeight, texture.tileWidth, texfilter.filter, texfilter.filter);
                     break;
                 case 2:
-                    AssetManager::get()->mTextures.addTexture(name, selectedDir, texture.columns, texture.tileHeight, texture.tileWidth, filter.filter, filter.filter);
+                    AssetManager::get()->mFonts.addFont(name, selectedDir, fontSize);
                     break;
                 case 3:
                     SoundEngine.add(name, selectedDir, EFFECT);
@@ -306,13 +318,6 @@ namespace Plutus
 
     }
 
-    void BeginPro(char* label, float width = -1) {
-        ImGui::TableNextColumn();
-        ImGui::TextUnformatted(label);
-        ImGui::TableNextColumn();
-        ImGui::SetNextItemWidth(width);
-    }
-
     void AssetsTab::showTexure(Texture& texture) {
 
         static float scale = 1.0f;
@@ -327,12 +332,12 @@ namespace Plutus
             ImGui::InputInt("##Tile Height", &texture.tileHeight);
 
             ImGui::BeginCol("Filters");
-            if (ImGui::BeginCombo("##Filters", filter.Name))
+            if (ImGui::BeginCombo("##Filters", texfilter.Name))
             {
                 for (int i = 0; i < IM_ARRAYSIZE(filters); i++) {
-                    bool is_selected = filters[i].filter == filter.filter;
+                    bool is_selected = filters[i].filter == texfilter.filter;
                     if (ImGui::Selectable(filters[i].Name, is_selected)) {
-                        filter = filters[i];
+                        texfilter = filters[i];
 
                         if (texture.texWidth) {
                             texture.texWidth = 0;

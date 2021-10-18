@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 
-
 #define SAVE_FILE 0
 #define OPEN_FILE 1
 

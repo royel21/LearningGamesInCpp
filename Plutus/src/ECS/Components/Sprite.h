@@ -16,10 +16,10 @@ namespace Plutus
         glm::vec4 mUVCoord;
         uint32_t mColor;
 
-        Sprite() = default;
+        Sprite() : mUseUV(true) {};
         Sprite(std::string texId) : mTextureId(texId), mUVCoord(0, 0, 1, 1) {};
 
-        GLuint getTexId() { return AssetManager::get()->getTexId(mTextureId); }
+        GLuint getTexId() { return mTextureId.empty() ? 0 : AssetManager::get()->getTexId(mTextureId); }
         glm::vec4 getUV() {
             return mUseUV ? mUVCoord : AssetManager::get()->getTexCoords(mTextureId, mUvIndex);
         }

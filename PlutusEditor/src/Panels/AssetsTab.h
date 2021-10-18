@@ -27,7 +27,7 @@ namespace Plutus
     public:
         AssetsTab();
         void drawAssets();
-        void drawTreeNode(std::string dirpath);
+        void drawDiskAssets(std::string dirpath);
         void setParent(EditorUI* parent);
 
     private:

@@ -20,20 +20,21 @@ namespace Plutus
     private:
         Window mWindow;
         Limiter mLimiter;
+
+    protected:
         //Width of the Window
         int mWidth = 1280;
         //Height of the Window
         int mHeight = 768;
         //Title of the Window
         std::string mName = "Plutus App";
-
-    protected:
         //Game Main Camera
         Camera2D mCamera;
 
         std::string mNextScreen;
         IScreen* mCurrentScreen;
         std::unordered_map<std::string, std::unique_ptr<IScreen>> mScreenList;
+        bool mExit = false;
 
     public:
         Core() = default;

@@ -14,8 +14,7 @@ namespace Plutus
     {
         std::string getFileName(const std::string& filePath)
         {
-            auto index = filePath.find_last_of(separator);
-            return index < -1 ? filePath.substr(index + 1, filePath.size()) : std::string("");
+            return std::filesystem::path(filePath).filename().string();
         }
 
         std::string getExtension(const std::string& fileName)
@@ -50,6 +49,20 @@ namespace Plutus
             auto it = std::find_if(vec.begin(), vec.end(), [s](auto& s1) -> bool
                 { return s1.compare(s) == 0; });
             return it != vec.end() ? it - vec.begin() : -1;
+        }
+
+        bool createFile(const char* file, const char* content, bool asString)
+        {
+            if (std::filesystem::exists(file))  return true;
+
+            std::ofstream outfile;
+            outfile.open(file, asString ? std::ios_base::out : std::ios_base::binary); //std::ios_base::app
+            if (outfile.is_open()) {
+                outfile << content;
+                outfile.close();
+                return true;
+            }
+            return false;
         }
     } // namespace Utils
 } // namespace Plutus

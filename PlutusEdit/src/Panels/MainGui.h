@@ -8,6 +8,8 @@ namespace Plutus
         bool isInitialized = false;
 
     public:
+        bool mExit = false;
+
         MainGui() = default;
         ~MainGui();
         void Init();

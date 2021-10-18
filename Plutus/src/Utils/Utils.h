@@ -19,6 +19,8 @@ namespace Plutus
         std::vector<std::string> listFiles(const std::string& path, const std::string& fileType);
 
         int getIndex(const std::vector<std::string>& vec, const std::string& s);
+
+        bool createFile(const char* file, const char* content, bool asString = true);
     } // namespace Utils
 
 } // namespace Plutus

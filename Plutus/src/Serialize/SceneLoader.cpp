@@ -23,10 +23,7 @@ namespace Plutus
         int w = value["tilewidth"].GetInt();
         int h = value["tileheight"].GetInt();
         int layer = value["layer"].GetInt();
-        auto tileset = value["tileset"].GetString();
         auto tmap = ent.addComponent<TileMap>(w, h, layer);
-
-        auto textures = value["textures"].GetArray();
 
         for (auto& t : value["textures"].GetArray())
         {
@@ -35,9 +32,8 @@ namespace Plutus
 
         auto tiles = value["tiles"].GetArray();
 
-        for (uint32_t i = 0; i < tiles.Size(); i++)
+        for (auto& tile : value["tiles"].GetArray())
         {
-            auto tile = tiles[i].GetJsonObject();
             int x = tile["x"].GetInt();
             int y = tile["y"].GetInt();
             int fx = tile["fx"].GetInt();
@@ -71,7 +67,7 @@ namespace Plutus
         rapidjson::Document doc;
         if (doc.Parse(jsonData.c_str()).HasParseError() == false) {
             //Load All Textures
-            if (doc["textures"].IsArray())
+            if (doc.HasMember("textures") && doc["textures"].IsArray())
             {
                 auto textures = doc["textures"].GetArray();
                 for (uint32_t i = 0; i < textures.Size(); i++)
@@ -86,8 +82,7 @@ namespace Plutus
                 }
             }
 
-
-            if (doc["entities"].IsArray())
+            if (doc.HasMember("entities") && doc["entities"].IsArray())
             {
                 //Get the layers
                 auto entities = doc["entities"].GetArray();
@@ -140,9 +135,9 @@ namespace Plutus
                         }
                     }
                 }
-                success = true;
             }
+            success = true;
         }
-        return false;
+        return success;
     }
 } // namespace Plutus

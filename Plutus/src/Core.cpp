@@ -30,7 +30,7 @@ namespace Plutus
         loop = [&]
         {
 #else
-        while (mWindow.isFinish())
+        while (mWindow.isFinish() && !mExit)
         {
 #endif
             float dt = mLimiter.start();

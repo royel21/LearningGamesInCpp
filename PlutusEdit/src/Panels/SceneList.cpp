@@ -1,20 +1,17 @@
 
 #include "ScenesList.h"
 
-#include "../Context.h"
+#include "../Config.h"
 #include "../Helpers/ImGuiEx.h"
+#include "../Helpers/ImGuiDialog.h"
 #include "../Helpers/IconsFontAwesome5.h"
-
-#include "../Helpers/Config.h"
-
-#include <Serialize/SceneLoader.h>
-#include <Assets/AssetManager.h>
 
 namespace Plutus
 {
     void drawEntity(Entity ent)
     {
-        bool isCurrent = Context.mEnt == ent;
+        auto project = Config::get().mProject;
+        bool isCurrent = project->mEnt == ent;
         auto& tag = ent.getName();
 
         ImGuiTreeNodeFlags flags = (isCurrent ? ImGuiTreeNodeFlags_Selected : 0);
@@ -23,7 +20,7 @@ namespace Plutus
         bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)ent, flags, (ICON_FA_MOBILE " " + tag).c_str());
         if (ImGui::IsItemClicked())
         {
-            Context.mEnt = ent;
+            project->mEnt = ent;
         }
 
         if (ImGui::BeginPopupContextItem())
@@ -31,8 +28,8 @@ namespace Plutus
             if (ImGui::MenuItem(("Delete " + tag).c_str()))
             {
                 if (isCurrent)
-                    Context.mEnt = ent;
-                Context.mScene->removeEntity(ent);
+                    project->mEnt = ent;
+                project->mScene->removeEntity(ent);
             }
             if (ImGui::MenuItem(("Copy " + tag).c_str())) {
 
@@ -42,42 +39,52 @@ namespace Plutus
     }
 
     void DrawScenes() {
+        auto project = Config::get().mProject;
+        static bool openNew = false;
         ImGui::Begin("Scene Editor");
+        if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE "##new-scene"))  openNew = true;
+        ImGui::SameLine();
+        if (ImGui::TransparentButton(ICON_FA_SAVE "##save-scene"))  project->Save();
+        ImGui::SameLine();
+        if (ImGui::TransparentButton(ICON_FA_COG "##config-scene")) {}
+        ImGui::SameLine();
+        ImGui::Text("Scenes");
+        ImGui::Separator();
+        for (auto& sc : project->mScenes) {
+            bool isOpen = project->mOpenScene.compare(sc.first) == 0;
 
-        static uint32_t selected = 0;
-        int id = 0xF480;
-        for (auto& sc : Config.project) {
-            bool isOpen = Context.currentScene.compare(sc.first) == 0;
             ImGui::SetNextItemOpen(isOpen);
-            if (ImGui::TreeNode((ICON_FA_PHOTO_VIDEO " " + sc.first).c_str())) {
 
-                if (!isOpen) {
-                    Context.mEnt = {};
-                    Context.mScene->clear();
-                    AssetManager::get()->clearData();
-                    SceneLoader::loadFromJson(sc.second.c_str(), Context.mScene);
+            if (ImGui::TreeNode((ICON_FA_PHOTO_VIDEO " " + sc.first).c_str()))
+            {
+                //Load Scene only once
+                if (!isOpen) project->Load(sc.second.c_str());
+
+                // Right-click on scene
+                if (ImGui::BeginPopupContextItem())
+                {
+                    if (ImGui::MenuItem("Create Entity")) {
+                        project->mEnt = project->mScene->createEntity("New Entity");
+                    }
+                    ImGui::EndPopup();
                 }
-                Context.mScene->getRegistry()->each([&](auto entId)
-                    {
-                        Entity entity{ entId , Context.mScene.get() };
-                        drawEntity(entity);
-                    });
-                Context.currentScene = sc.first;
+
+                if (isOpen) {
+                    project->mScene->getRegistry()->each([&](auto entId)
+                        {
+                            Entity entity{ entId , project->mScene.get() };
+                            drawEntity(entity);
+                        });
+                }
+                project->mOpenScene = sc.first;
                 ImGui::TreePop();
             }
         }
-
-        if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-            Context.mEnt = {};
-
-        // Right-click on blank space
-        if (ImGui::BeginPopupContextWindow(0, 1, false))
-        {
-            if (ImGui::MenuItem("Create Entity")) {
-                Context.mEnt = Context.mScene->createEntity("New Entity");
-            }
-            ImGui::EndPopup();
-        }
         ImGui::End();
+
+        if (openNew) ImGui::NewFileDialig("New Project", [&](const std::string& name) {
+            if (!name.empty())  project->Create(name);
+            openNew = false;
+            });
     }
 } // namespace Plutus

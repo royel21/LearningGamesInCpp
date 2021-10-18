@@ -119,7 +119,7 @@ namespace Plutus
 
     void App::Setup()
     {
-        mDebug = DebugRender::geInstances();
+        mDebug = DebugRender::get();
         mDebug->init(&mCamera);
         mWorld = std::make_unique<b2World>(b2Vec2{ 0, -10.0f });
 

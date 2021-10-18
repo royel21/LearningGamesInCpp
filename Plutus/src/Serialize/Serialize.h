@@ -15,20 +15,20 @@ namespace Plutus
         Writer<StringBuffer>* getWriter() { return &writer; }
         const char* getString() { return sb.GetString(); };
 
-        void addString(const char* data);
+        void addString(const std::string& data);
         void addInt(int data);
         void addFloat(float data);
         void addBool(bool data);
 
-        void addString(const char* id, const char* data);
-        void addInt(const char* id, int data);
-        void addFloat(const char* id, float data);
-        void addBool(const char* id, bool data);
+        void addString(const std::string& id, const std::string& data);
+        void addInt(const std::string& id, int data);
+        void addFloat(const std::string& id, float data);
+        void addBool(const std::string& id, bool data);
 
         void StartObj();
         void EndObj();
 
-        void StartArr(const char* id);
+        void StartArr(const std::string& id);
         void EndArr();
 
     private:

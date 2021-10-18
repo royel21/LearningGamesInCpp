@@ -23,7 +23,7 @@ int GameScreen::getPrevScreentIndex() const
 
 void GameScreen::build()
 {
-    mDebug = Plutus::DebugRender::geInstances();
+    mDebug = Plutus::DebugRender::get();
     mCamera.init(70, 60);
     mDebug->init(&mCamera);
 }

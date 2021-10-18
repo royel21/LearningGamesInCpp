@@ -41,6 +41,7 @@ namespace Plutus
             { return m.x == x && m.y == y; });
         return found != items.end();
     }
+
 } // namespace Plutus
 
 namespace ImGui
@@ -153,7 +154,7 @@ namespace ImGui
 
     bool Draw2Float(char* id, glm::vec2& value, float step = 1.0f, const char* btntag1 = "X", const char* btntag2 = "Y");
 
-    bool InputString(std::string& text);
+    bool InputString(const char* label, std::string& text);
 
     bool Texture(Plutus::Texture* tileset, float scale, std::vector<glm::ivec3>& selected);
 

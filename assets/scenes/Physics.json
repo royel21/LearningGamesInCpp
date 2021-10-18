@@ -1,1 +1,85 @@
-{"textures":[{"id":"cave","path":"./assets/textures/goblin_cave.png","columns":8,"width":32,"height":32},{"id":"player","path":"./assets/textures/Player.png","columns":60,"width":64,"height":64},{"id":"bg1","path":"./assets/textures/forest-zelda.png","columns":0,"width":0,"height":0},{"id":"rbrick","path":"./assets/textures\\red_bricks.png","columns":0,"width":0,"height":0},{"id":"block","path":"./assets/textures/block.png","columns":0,"width":0,"height":0}],"entities":[{"name":"block","components":[{"name":"Transform","x":640.0,"y":20.0,"h":64,"w":64,"layer":0,"sortY":false,"r":-0.0},{"name":"Sprite","texture":"rbrick","color":-1,"mFlipX":false,"mFlipY":false}]},{"name":"Floor","components":[{"name":"Transform","x":0.0,"y":0.0,"h":20,"w":1280,"layer":0,"sortY":false,"r":-0.0},{"name":"Sprite","texture":"block","color":-16777216,"mFlipX":false,"mFlipY":false}]}]}
+{
+    "textures": [
+        {
+            "id": "cave",
+            "path": "./assets/textures/goblin_cave.png",
+            "columns": 8,
+            "width": 32,
+            "height": 32
+        },
+        {
+            "id": "player",
+            "path": "./assets/textures/Player.png",
+            "columns": 60,
+            "width": 64,
+            "height": 64
+        },
+        {
+            "id": "bg1",
+            "path": "./assets/textures/forest-zelda.png",
+            "columns": 0,
+            "width": 0,
+            "height": 0
+        },
+        {
+            "id": "rbrick",
+            "path": "./assets/textures/red_bricks.png",
+            "columns": 0,
+            "width": 0,
+            "height": 0
+        },
+        {
+            "id": "block",
+            "path": "./assets/textures/block.png",
+            "columns": 0,
+            "width": 0,
+            "height": 0
+        }
+    ],
+    "entities": [
+        {
+            "name": "block",
+            "components": [
+                {
+                    "name": "Transform",
+                    "x": 640.0,
+                    "y": 20.0,
+                    "h": 64,
+                    "w": 64,
+                    "layer": 0,
+                    "sortY": false,
+                    "r": -0.0
+                },
+                {
+                    "name": "Sprite",
+                    "texture": "rbrick",
+                    "color": -1,
+                    "mFlipX": false,
+                    "mFlipY": false
+                }
+            ]
+        },
+        {
+            "name": "Floor",
+            "components": [
+                {
+                    "name": "Transform",
+                    "x": 0.0,
+                    "y": 0.0,
+                    "h": 20,
+                    "w": 1280,
+                    "layer": 0,
+                    "sortY": false,
+                    "r": -0.0
+                },
+                {
+                    "name": "Sprite",
+                    "texture": "block",
+                    "color": -16777216,
+                    "mFlipX": false,
+                    "mFlipY": false
+                }
+            ]
+        }
+    ]
+}

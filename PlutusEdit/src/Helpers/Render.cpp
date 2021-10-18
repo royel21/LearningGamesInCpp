@@ -1,5 +1,5 @@
 #include "Render.h"
-#include "../Context.h"
+#include "../Config.h"
 
 #include <Graphics/GLSL.h>
 #include <ECS/Components.h>
@@ -15,8 +15,8 @@ namespace Plutus
 
     void Render::Init()
     {
-        int w = Context.mVpState.wdith;
-        int h = Context.mVpState.height;
+        int w = Config::get().mProject->mVpState.width;
+        int h = Config::get().mProject->mVpState.height;
         mCamera.init(w, h);
 
         mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
@@ -25,9 +25,9 @@ namespace Plutus
         mFramePicker.init(w, h, true);
         mFrameBuffer.init(w, h);
 
-        mDebugRender = Plutus::DebugRender::geInstances();
+        mDebugRender = Plutus::DebugRender::get();
         mDebugRender->init(&mCamera);
-
+        mDebugRender->setCellSize({ 64,64 });
     }
 
     void Render::draw()
@@ -35,12 +35,12 @@ namespace Plutus
         prepare();
         mSpriteBatch.begin(&mShader, &mCamera);
 
-        // mFramePicker.bind();
-        // mSpriteBatch.draw(true);
-        // mFramePicker.unBind();
+        mFramePicker.bind();
+        mSpriteBatch.draw(true);
+        mFramePicker.unBind();
 
         mFrameBuffer.bind();
-        // mFrameBuffer.setColor({ 0,0,0,1 });
+        mFrameBuffer.setColor({ 1, 1, 1, 1 });
         mSpriteBatch.draw();
         mSpriteBatch.end();
 
@@ -50,8 +50,8 @@ namespace Plutus
 
     void Render::prepare()
     {
-        auto viewMap = Context.mScene->getRegistry()->view<TileMap>();
-        auto view = Context.mScene->getRegistry()->view<Transform, Sprite>();
+        auto viewMap = Config::get().mProject->mScene->getRegistry()->view<TileMap>();
+        auto view = Config::get().mProject->mScene->getRegistry()->view<Transform, Sprite>();
 
         /******************Resize temp buffer************************/
         auto size = view.size_hint();

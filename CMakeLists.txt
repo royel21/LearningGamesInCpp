@@ -42,8 +42,6 @@ include_directories(${LIB_DIR}/box2d/include)
 include_directories(${LIB_DIR}/freetype/include)
 include_directories(${LIB_DIR}/stb)
 
-include_directories(PlutusEditor/src)
-include_directories(PlutusEditor/libs/imgui/src)
 
 add_subdirectory(Plutus)
 
@@ -62,6 +60,8 @@ endif()
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   # # Editor
   # add_subdirectory(PlutusEditor)
+# include_directories(PlutusEditor/src)
+# include_directories(PlutusEditor/libs/imgui/src)
 
   # # Add source files
   # file(GLOB_RECURSE EDITOR_SRC Editor/*.c Editor/*.cpp)
@@ -85,7 +85,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   add_executable("Test" ${TEST_SRC})
   target_link_libraries(Test PUBLIC Plutus)
 
-  
+  include_directories(PlutusEdit/libs/imgui/src)
   include_directories(Plutus/libs/glfw/include)
   # Add source files
   file(GLOB_RECURSE P_EDITOR PlutusEdit/src/*.h PlutusEdit/src/*.cpp)

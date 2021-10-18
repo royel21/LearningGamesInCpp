@@ -3,19 +3,20 @@
 #include <glm/glm.hpp>
 
 #include <string>
-#include <GLFW/glfw3.h>
-
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-#include <IconsFontAwesome5.h>
 
 #include <Utils/Utils.h>
 
-#include "../Helpers/Config.h"
+#include "../Config.h"
 #include "../Helpers/ImGuiStyle.h"
+#include "../Helpers/ImGuiDialog.h"
+#include "../Helpers/IconsFontAwesome5.h"
 
 #include <Platforms/Windows/FileUtils.h>
+
+#include <GLFW/glfw3.h>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 namespace Plutus
 {
@@ -111,11 +112,12 @@ namespace Plutus
         MenuGui(dockspace_flags);
 
         ImGui::End();
-
     }
 
     void MainGui::MenuGui(int flags) {
         bool noSplit = (flags & ImGuiDockNodeFlags_NoSplit) != 0;
+        static bool open = false;
+        auto& projects = Config::get().mProjects;
         /**************************************** Draw Editor Menu *******************************************************/
         if (ImGui::BeginMenuBar())
         {
@@ -123,50 +125,40 @@ namespace Plutus
             {
                 if (ImGui::MenuItem(ICON_FA_FILE " New", "Ctrl+N", noSplit))
                 {
-                    std::string path;
-                    if (windowDialog(SAVE_FILE, path))
-                    {
-                        Config.CreateProj(path.c_str());
-                    }
+                    open = true;
                 }
-                if (ImGui::MenuItem("Open", "Ctrl+O", noSplit))
-                {
-                    std::string path;
-                    if (Plutus::windowDialog(OPEN_FILE, path))
-                    {
-                        Config.LoadProject(path.c_str());
-                    }
-                }
+
                 if (ImGui::BeginMenu(ICON_FA_LIST " Recent"))
                 {
                     std::string toRemove = "";
-                    auto& recents = Config.Projects;
-                    for (auto recent : recents)
+                    for (auto& recent : projects)
                     {
                         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
-                        std::string btn = ICON_FA_TRASH_ALT + std::string("##") + recent;
+                        std::string btn = ICON_FA_TRASH_ALT + std::string("##") + recent.first;
                         if (ImGui::Button(btn.c_str()))
                         {
-                            toRemove = recent;
+                            toRemove = recent.first;
                         }
                         ImGui::PopStyleColor();
                         ImGui::SameLine();
-                        std::string item = ICON_FA_FILE_IMAGE + std::string(" ") + recent;
+                        std::string item = ICON_FA_FILE_IMAGE + std::string(" ") + recent.first;
                         if (ImGui::MenuItem(item.c_str()))
                         {
-                            Config.LoadProject(recent.c_str());
+                            // Config.LoadProject(recent.first.c_str());
                         }
                     }
                     ImGui::EndMenu();
                     if (!toRemove.empty())
                     {
-                        int index = Utils::getIndex(recents, toRemove);
-                        recents.erase(recents.begin() + index);
+                        if (projects.size() > 1) {
+                            projects.erase(toRemove);
+                            Config::get().mProject = &projects.begin()->second;
+                        }
                     }
                 }
-                if (ImGui::MenuItem(ICON_FA_SAVE " Save As", "Ctrl+S", noSplit))
+                if (ImGui::MenuItem(ICON_FA_SIGN_OUT_ALT " Exit", "Ctrl+X", noSplit))
                 {
-                    // saveScene();
+                    mExit = true;
                 }
                 ImGui::EndMenu();
             }
@@ -181,5 +173,9 @@ namespace Plutus
                 ImGui::ShowDemoWindow();
             }
         }
+        if (open) ImGui::NewFileDialig("New Project", [&](const std::string& name) {
+            if (!name.empty()) Config::get().CreateProj(name.c_str());
+            open = false;
+            });
     }
 }

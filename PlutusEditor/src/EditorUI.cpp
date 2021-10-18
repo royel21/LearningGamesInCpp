@@ -106,7 +106,7 @@ namespace Plutus
 		ImGui_ImplOpenGL3_Init("#version 150");
 
 		ImGui::CaptureMouseFromApp();
-		mDebugRender = Plutus::DebugRender::geInstances();
+		mDebugRender = Plutus::DebugRender::get();
 		mDebugRender->init(mCamera);
 		//Settup font
 

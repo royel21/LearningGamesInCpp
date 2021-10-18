@@ -1,6 +1,6 @@
 #include "App.h"
 
-#include "Helpers/Config.h"
+#include "Config.h"
 #include "Helpers/Render.h"
 #include "Panels/ScenesList.h"
 #include "Panels/ComponentsPanel.h"
@@ -17,7 +17,17 @@ namespace Plutus
 
     }
 
-    App::App(const char* name, int width, int height) : Core(name, Config.winWidth, Config.winHeight) {
+    App::App(const char* name, int width, int height) : Core(name, width, height) {
+        auto& config = Config::get();
+        if (config.loadConfig()) {
+            mWidth = config.winWidth;
+            mHeight = config.winHeight;
+        }
+        else {
+            mWidth = width;
+            mHeight = height;
+        }
+        mName = name;
 
     };
 
@@ -26,12 +36,14 @@ namespace Plutus
     }
 
     void App::Setup() {
+        Config::get().Init();
         Render::get().Init();
         mMainGui.Init();
     }
 
     void App::Update(float dt) {
         Render::get().mCamera.update();
+        mExit = mMainGui.mExit;
     }
 
     void App::Draw() {
@@ -39,7 +51,7 @@ namespace Plutus
         mCentralPanel.DrawCenterPanel();
         DrawScenes();
         AssetsTab.drawAssets();
-        DrawComponentsPanel();
+        mCompPanel.DrawComponentsPanel();
         mMainGui.End();
 
         Render::get().draw();

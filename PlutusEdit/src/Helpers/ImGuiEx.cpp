@@ -347,7 +347,7 @@ namespace ImGui {
         }
         ImGui::EndChild();
         // ImGui::PopStyleVar();
-        return selected->size();
+        return selected ? selected->size() : true;
     }
 
 
@@ -408,7 +408,7 @@ namespace ImGui {
         ImGui::TextUnformatted(label);
         ImGui::PopItemWidth();
         ImGui::TableNextColumn();
-        ImGui::SetNextItemWidth(-1);
+        ImGui::SetNextItemWidth(width);
     }
 
 
@@ -475,16 +475,17 @@ namespace ImGui {
         return changed;
     }
 
-    bool InputString(std::string& text) {
+    bool InputString(const char* label, std::string& text) {
         char buffer[128] = { 0 };
         strncpy_s(buffer, text.c_str(), text.length());
-        if (ImGui::InputText("Name##Tag", buffer, sizeof(buffer)))
+        if (ImGui::InputText(label, buffer, sizeof(buffer)))
         {
             text = std::string(buffer);
             return true;
         }
         return false;
     }
+
     const uint32_t color1 = IM_COL32(50, 50, 50, 255);
     const uint32_t color2 = IM_COL32(50, 50, 60, 255);
     const uint32_t color3 = IM_COL32(60, 60, 70, 255);

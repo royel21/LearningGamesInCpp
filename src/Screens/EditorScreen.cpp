@@ -44,7 +44,7 @@ void EditorScreen::build()
 
     mFB.init(w, h, true);
 
-    mDebug = Plutus::DebugRender::geInstances();
+    mDebug = Plutus::DebugRender::get();
     mDebug->init(&mCamera);
 }
 

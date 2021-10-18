@@ -28,7 +28,7 @@ namespace Plutus
         void drawAssets();
 
     private:
-        void drawTreeNode(std::string dirpath);
+        void drawDiskAssets(std::string dirpath);
         void processFile();
         std::string getIcon(boolmap& nodes, const std::string name);
 
@@ -37,6 +37,7 @@ namespace Plutus
         void addSound2Scene();
         void showTexure(Texture& texture);
         void viewAssets(bool& show);
+        void drawFilter();
 
     private:
         Scene* mScene;
@@ -46,8 +47,9 @@ namespace Plutus
         boolmap nodes;
         boolmap nodes2;
         Texture texture;
-        EnumFilter filter = { GL_NEAREST, "Nearest" };
+        EnumFilter texfilter = { GL_NEAREST, "Nearest" };
         AssetType assetType;
+        std::string filter;
     };
 
 } // namespace Plutus

@@ -8,7 +8,7 @@ constexpr uint32_t NUmVERTS = 64;
 
 namespace Plutus
 {
-	DebugRender* DebugRender::geInstances()
+	DebugRender* DebugRender::get()
 	{
 		static DebugRender* instance = new DebugRender();
 		return instance;

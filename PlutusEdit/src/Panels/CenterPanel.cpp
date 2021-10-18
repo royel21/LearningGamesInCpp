@@ -6,10 +6,12 @@
 #include <Utils/FileIO.h>
 #include <Utils/Utils.h>
 
-#include "../Context.h"
+#include "../Config.h"
 #include "../Helpers/Render.h"
 #include "../Helpers/ImGuiEx.h"
 #include "../Helpers/IconsFontAwesome5.h"
+
+#include "ECS/Components/Transform.h"
 
 #define mapIn(x, min_in, max_in, min_out, max_out) (x - min_in) * (max_out - min_out) / (max_in - min_in) + min_out
 
@@ -32,8 +34,9 @@ namespace Plutus
 
     void CenterPanel::DrawViewPortControls()
     {
-        if (Context.mVpState.isHover) {
-            auto pos = Context.mVpState.mouseCoords;
+        auto project = Config::get().mProject;
+        if (project->mVpState.isHover) {
+            auto pos = project->mVpState.mouseCoords;
             auto& camera = Render::get().mCamera;
 
             if (Input::get()->onKeyPressed("R"))
@@ -65,6 +68,40 @@ namespace Plutus
                     auto newVal = camera.getScale() + (scroll > 0 ? 0.05f : -0.05f);
                     camera.setScale(CHECKLIMIT(newVal, 0.20f, 6));
                 }
+            }
+        }
+    }
+
+    void CenterPanel::SelectEntity()
+    {
+        auto project = Config::get().mProject;
+        static Entity ent;
+        auto& render = Render::get();
+        if (Input::get()->onKeyPressed("MouseLeft"))
+        {
+            mMouseLastCoords = project->mVpState.mouseCoords;
+            auto camPos = render.mCamera.getPosition();
+            mCamCoords = { camPos.x, camPos.y };
+            ent = project->mScene->getEntity(render.mFramePicker.getEntId({ mMouseLastCoords.x, mMouseLastCoords.y }));
+
+            if (ent) {
+                project->mEnt = ent;
+                if (ent.hasComponent<Plutus::Transform>()) {
+                    auto pos = ent.getComponent<Transform>()->getPosition();
+                    mEntLastPos = { pos.x, pos.y };
+                }
+            }
+        }
+
+        if (Input::get()->onKeyDown("MouseLeft") && ent)
+        {
+            if (ent.hasComponent<Transform>()) {
+                auto trans = ent.getComponent<Transform>();
+                vec2f result = project->mVpState.mouseCoords - mMouseLastCoords;
+                result /= render.mCamera.getScale();
+
+                trans->x = mEntLastPos.x + result.x;
+                trans->y = mEntLastPos.y + result.y;
             }
         }
     }
@@ -101,9 +138,9 @@ namespace Plutus
             float yPos = winSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
 
             ImGui::Image((void*)framebuffer.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
-            if (Context.mVpState.isHover = ImGui::IsItemHovered())
+            if (Config::get().mProject->mVpState.isHover = ImGui::IsItemHovered())
             {
-                Context.mVpState.mouseCoords = { xPos, yPos };
+                Config::get().mProject->mVpState.mouseCoords = { xPos, yPos };
 
                 DrawViewPortControls();
             }
@@ -111,6 +148,7 @@ namespace Plutus
         }
         ImGui::PopStyleVar(1);
         ImGui::PopStyleColor(1);
+        SelectEntity();
     }
 
     void CenterPanel::DrawCenterPanel()

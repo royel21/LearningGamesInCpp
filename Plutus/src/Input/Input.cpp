@@ -44,6 +44,9 @@ namespace Plutus
 	{
 		mMouseCoords.x = x;
 		mMouseCoords.y = y;
+		for (auto listener : mEventListeners) {
+			listener->onMouseMove(x, y);
+		}
 	}
 
 	//return the state of the key on last frame

@@ -1,10 +1,10 @@
 #pragma once
 #include <Core.h>
 
-#include "Context.h"
 #include "Panels/MainGui.h"
 #include "Panels/AssetsTab.h"
 #include "Panels/CenterPanel.h"
+#include "Panels/ComponentsPanel.h"
 
 namespace Plutus
 {
@@ -15,6 +15,7 @@ namespace Plutus
         MainGui mMainGui;
         AssetsTab AssetsTab;
         CenterPanel mCentralPanel;
+        ComponentPanel mCompPanel;
 
     public:
         App();

@@ -8,21 +8,21 @@
 
 namespace Plutus
 {
-    void Serializer::addString(const char* data)
+    void Serializer::addString(const std::string& data)
     {
-        writer.String(data);
+        writer.String(data.c_str());
     }
 
-    void Serializer::addString(const char* id, const char* data)
+    void Serializer::addString(const std::string& id, const std::string& data)
     {
-        writer.String(id);
-        writer.String(data);
+        writer.String(id.c_str());
+        writer.String(data.c_str());
     }
 
-    void Serializer::addInt(const char* id, int data)
+    void Serializer::addInt(const std::string& id, int data)
     {
 
-        writer.String(id);
+        writer.String(id.c_str());
         writer.Int(data);
     }
     void Serializer::addInt(int data)
@@ -35,10 +35,10 @@ namespace Plutus
         writer.Double(data);
     }
 
-    void Serializer::addFloat(const char* id, float data)
+    void Serializer::addFloat(const std::string& id, float data)
     {
 
-        writer.String(id);
+        writer.String(id.c_str());
         writer.Double(data);
     }
 
@@ -47,9 +47,9 @@ namespace Plutus
         writer.Bool(data);
     }
 
-    void Serializer::addBool(const char* id, bool data)
+    void Serializer::addBool(const std::string& id, bool data)
     {
-        writer.String(id);
+        writer.String(id.c_str());
         writer.Bool(data);
     }
 
@@ -62,9 +62,9 @@ namespace Plutus
         writer.EndObject();
     }
 
-    void Serializer::StartArr(const char* id)
+    void Serializer::StartArr(const std::string& id)
     {
-        writer.String(id);
+        writer.String(id.c_str());
         writer.StartArray();
     }
 

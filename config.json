@@ -1,1 +1,1 @@
-{"WinWidth":1653,"WinHeight":888,"CurrentProject":"projects/zombies-game.json","Projects":["projects/zombies-game.json"]}
+{"win-width":1700,"win-height":953,"open-project":"Project1","projects":[{"name":"Project1","open-scene":"scene4.json","vp-state":{"width":1280,"height":768},"scenes":[{"name":"scene4.json","path":"assets/scenes/scene4.json"},{"name":"Physics.json","path":"assets/scenes/Physics.json"}]}]}

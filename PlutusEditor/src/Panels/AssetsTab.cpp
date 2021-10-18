@@ -147,7 +147,7 @@ namespace Plutus
                     {
 
                         if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
-                            drawTreeNode("./assets/");
+                            drawDiskAssets("./assets/");
                             ImGui::EndChild();
                         }
                         ImGui::EndTabItem();
@@ -174,7 +174,7 @@ namespace Plutus
         processFile();
     }
 
-    void AssetsTab::drawTreeNode(std::string path)
+    void AssetsTab::drawDiskAssets(std::string path)
     {
         uint32_t id = 1;
         for (auto& entry : std::filesystem::directory_iterator(path))
@@ -188,7 +188,7 @@ namespace Plutus
                 nodes[name] = ImGui::TreeNodeEx((void*)(intptr_t)id, flags, getIcon(nodes, name).c_str());
 
                 if (nodes[name]) {
-                    drawTreeNode(path);
+                    drawDiskAssets(path);
                     ImGui::TreePop();
                 }
             }

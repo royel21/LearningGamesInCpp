@@ -17,8 +17,8 @@ namespace Plutus
         {
             ser.StartObj();
             {
-                ser.addString("id", tile.first.c_str());
-                ser.addString("path", tile.second.path.c_str());
+                ser.addString("id", tile.first);
+                ser.addString("path", tile.second.path);
                 ser.addInt("columns", tile.second.columns);
                 ser.addInt("width", tile.second.tileWidth);
                 ser.addInt("height", tile.second.tileHeight);
@@ -38,7 +38,7 @@ namespace Plutus
             {
                 for (auto tx : anim->mTextures)
                 {
-                    ser.addString(tx.c_str());
+                    ser.addString(tx);
                 }
             }
             ser.EndArr();
@@ -48,7 +48,7 @@ namespace Plutus
                 {
                     ser.StartObj();
                     {
-                        ser.addString("name", seq.first.c_str());
+                        ser.addString("name", seq.first);
                         ser.addInt("texIndex", seq.second.mTexIndex);
                         ser.addFloat("seqTime", seq.second.mSeqTime);
                         ser.StartArr("frames");
@@ -81,7 +81,7 @@ namespace Plutus
             ser.StartArr("textures");
             for (auto tex : tilemap->mTextures)
             {
-                ser.addString(tex.second->name.c_str());
+                ser.addString(tex.second->name);
             }
             ser.EndArr();
             //Tiles Array
@@ -99,7 +99,7 @@ namespace Plutus
                         ser.addInt("fx", tile.flipX);
                         ser.addInt("fy", tile.flipY);
                         ser.addFloat("r", tile.rotate);
-                        ser.addInt("color", tile.color);
+                        ser.addInt("c", tile.color);
                     }
                     ser.EndObj();
                 }
@@ -121,7 +121,7 @@ namespace Plutus
         scene->getRegistry()->each([&](entt::entity e) {
             Plutus::Entity ent = { e, scene.get() };
             ser.StartObj();
-            ser.addString("name", ent.getName().c_str());
+            ser.addString("name", ent.getName());
 
             ser.StartArr("components");
             {
@@ -147,7 +147,7 @@ namespace Plutus
                     ser.StartObj();
                     {
                         ser.addString("name", "Sprite");
-                        ser.addString("texture", sprite->mTextureId.c_str());
+                        ser.addString("texture", sprite->mTextureId);
                         ser.addInt("uvi", sprite->mUvIndex);
                         ser.addInt("color", sprite->mColor);
                         ser.addInt("flipX", sprite->mFlipX);
@@ -173,7 +173,7 @@ namespace Plutus
                     ser.StartObj();
                     {
                         ser.addString("name", "Script");
-                        ser.addString("path", script->path.c_str());
+                        ser.addString("path", script->path);
                     }
                     ser.EndObj();
                 }

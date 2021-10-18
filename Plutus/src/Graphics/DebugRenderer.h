@@ -27,7 +27,7 @@ namespace Plutus
 	{
 	public:
 		DebugRender();
-		static DebugRender* geInstances();
+		static DebugRender* get();
 		~DebugRender();
 		void init(Camera2D* _camera);
 		void drawLine(const glm::vec2& a, const glm::vec2& b, const ColorRGBA8& color = {});
