@@ -11,8 +11,8 @@
 #include "../Config.h"
 
 #include <glm/glm.hpp>
-#include <Graphics/DebugRenderer.h>
 #include <Input/Input.h>
+#include <Graphics/DebugRenderer.h>
 
 #include <stdio.h>
 
@@ -22,6 +22,11 @@
 
 namespace Plutus
 {
+    glm::vec2 getCoords() {
+        auto pos = Config::get().mProject->mVpState.mouseCoords;
+        return DebugRender::get()->getSquareCoords({ pos.x, pos.y });
+    }
+
     TileMapPanel::TileMapPanel()
     {
         Input::get()->addEventListener(this);
@@ -105,11 +110,8 @@ namespace Plutus
                     ImGui::EndUIGroup();
                 }
             }
-
-            bool isHover = Config::get().mProject->mVpState.isHover;
-            if (isHover && mTempTiles.size() && mMode == MODE_PLACE && mTileMap->mTextures.size())
-            {
-
+            if (mMode == MODE_PLACE && Config::get().mProject->mVpState.isHover) {
+                renderTemp();
             }
         }
         else {
@@ -132,16 +134,50 @@ namespace Plutus
     {
         if (mIsOpen) {
             bool isHover = Config::get().mProject->mVpState.isHover;
-            if (isHover && Input::get()->onKeyDown("MouseLeft") && mMode == MODE_EDIT) {
-                selectTile();
+            if (isHover) {
+
+                if (Input::get()->onKeyDown("MouseLeft")) {
+                    switch (mMode)
+                    {
+                    case MODE_PLACE:
+                        break;
+                    case MODE_EDIT:
+                        selectTile();
+                        break;
+                    default:
+                        break;
+                    }
+                }
             }
         }
     }
 
     void TileMapPanel::selectTile()
     {
-        auto pos = Config::get().mProject->mVpState.mouseCoords;
-        auto mCoords = DebugRender::get()->getSquareCoords({ pos.x, pos.y });
-        mCurrentTile = mTileMap->getTile(mCoords);
+        mCurrentTile = mTileMap->getTile(getCoords());
+    }
+
+    void TileMapPanel::renderTemp()
+    {
+        auto gridCoords = getCoords();
+        int w = mTileMap->mTileWidth;
+        int h = mTileMap->mTileHeight;
+
+        auto& tex = mTileMap->mTextures[mCurrentTexture];
+
+        std::vector<Renderable>& renderables = Render::get().mRenderables;
+        if (renderables.size() < mTempTiles.size()) {
+            renderables.resize(mTempTiles.size());
+        }
+        Render::get().mTotalTemp = (int)mTempTiles.size();
+
+        int i = 0;
+        for (auto tile : mTempTiles)
+        {
+            int x = ((int)gridCoords.x * w) + (tile.x * w);
+            int y = ((int)gridCoords.y * h) - (tile.y * h);
+
+            renderables[i++] = { tex->texId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation, false, false, -1, 99, false };
+        }
     }
 }

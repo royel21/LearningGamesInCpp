@@ -12,8 +12,6 @@ namespace Plutus
     struct ViewPortState {
         int width = 1280;
         int height = 768;
-        vec2f mouseCoords;
-        bool isHover;
     };
 
     struct Project {
@@ -21,6 +19,10 @@ namespace Plutus
         Ref<Scene> mScene;
         std::string mOpenScene;
         ViewPortState mVpState;
+        //Mouse Coords in view port
+        vec2f mMouseCoords;
+        // Is Viewport hovered
+        bool isHover;
 
         std::unordered_map<std::string, std::string> mScenes = {};
 

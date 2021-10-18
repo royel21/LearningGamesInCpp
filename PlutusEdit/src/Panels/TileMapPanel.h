@@ -19,6 +19,7 @@ namespace Plutus
 
     private:
         void selectTile();
+        void renderTemp();
 
     private:
         int mMode = 0;
