@@ -29,7 +29,7 @@ namespace Plutus
         auto buffer = readFile(fontPath.c_str());
         // Load font as face
         FT_Face face;
-        if (FT_New_Memory_Face(ft, buffer.data(), buffer.size(), 0, &face)) {
+        if (FT_New_Memory_Face(ft, buffer.data(), (long)buffer.size(), 0, &face)) {
             std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
             return false;
         }

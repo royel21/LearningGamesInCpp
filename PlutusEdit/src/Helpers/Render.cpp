@@ -15,8 +15,8 @@ namespace Plutus
 
     void Render::Init()
     {
-        int w = Config::get().mProject->mVpState.width;
-        int h = Config::get().mProject->mVpState.height;
+        int w = Config::get().mProject->vpWidth;
+        int h = Config::get().mProject->vpHeight;
         mCamera.init(w, h);
 
         mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
@@ -80,9 +80,9 @@ namespace Plutus
                     glm::vec4 rect = tile.getRect();
                     if (mCamera.isBoxInView(rect, 200))
                     {
-                        auto tileset = tilemap.mTextures[tile.texture];
+                        auto tex = tilemap.getTexture(tile.texture);
 
-                        mRenderables[i++] = { tileset->texId, rect, tileset->getUV(tile.texcoord),
+                        mRenderables[i++] = { tex->texId, rect, tex->getUV(tile.texcoord),
                             { tile.color }, tile.rotate, tile.flipX, tile.flipY, (int)entt::to_integral(ent), tilemap.mLayer, false };
                     }
                 }

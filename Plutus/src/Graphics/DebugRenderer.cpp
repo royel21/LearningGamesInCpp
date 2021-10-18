@@ -3,6 +3,7 @@
 #include "GLSL.h"
 #include "Camera2D.h"
 #include "GraphicsUtil.h"
+#include <algorithm>
 
 constexpr uint32_t NUmVERTS = 64;
 
@@ -304,7 +305,7 @@ namespace Plutus
 
 	void DebugRender::setCellSize(const glm::ivec2& cellSize)
 	{
-		mCellSize = cellSize;
+		mCellSize = { std::max(0, cellSize.x), std::max(0, cellSize.y) };
 	}
 } // namespace Plutus
 

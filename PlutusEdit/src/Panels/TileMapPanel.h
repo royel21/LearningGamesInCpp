@@ -18,8 +18,10 @@ namespace Plutus
         void onMouseMove(float x, float y);
 
     private:
-        void selectTile();
         void renderTemp();
+        void createTiles();
+        void processMode();
+        void AddTexureDialog(bool& show);
 
     private:
         int mMode = 0;

@@ -39,6 +39,7 @@ namespace Plutus
 		void dispose();
 		//Grid Cell Size w = Width, h = Height
 		void setCellSize(const glm::ivec2& cellSize);
+		glm::vec4 getGridLineColor() { return mGridColor; }
 
 		//Draw Shapes
 		void drawBox(const Box2d& c, const ColorRGBA8& color = {});

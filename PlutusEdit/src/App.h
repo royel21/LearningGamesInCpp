@@ -3,6 +3,7 @@
 
 #include "Panels/MainGui.h"
 #include "Panels/AssetsTab.h"
+#include "Panels/ConfigPanel.h"
 #include "Panels/CenterPanel.h"
 #include "Panels/ComponentsPanel.h"
 
@@ -16,6 +17,7 @@ namespace Plutus
         AssetsTab AssetsTab;
         CenterPanel mCentralPanel;
         ComponentPanel mCompPanel;
+        ConfigPanel mConfigPanel;
 
     public:
         App();

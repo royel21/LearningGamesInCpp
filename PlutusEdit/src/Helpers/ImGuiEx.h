@@ -105,37 +105,11 @@ namespace ImGui
         return isSelected;
     }
 
-    template <typename T>
-    inline bool ComboBox(const char* label, const std::unordered_map<int, T>& data, int& selected) {
-        std::string name;
-        if (data.size()) {
-            name = data.at(selected)->name;
-        }
-
-        bool isSelected = false;
-
-        if (ImGui::BeginCombo(label, name.c_str()))
-        {
-            for (auto m : data)
-            {
-                bool is_selected = m.first == selected;
-                if (ImGui::Selectable(data.at(m.first)->name.c_str(), is_selected))
-                {
-                    isSelected = true;
-                    selected = m.first;
-                }
-                if (isSelected)
-                    ImGui::SetItemDefaultFocus();
-            }
-            ImGui::EndCombo();
-        }
-
-        return isSelected;
-    }
-
-    bool TransparentButton(char* label, ImVec4 color = { 1,1,1,1 });
+    bool ComboBox(const char* label, const std::unordered_map<int, std::string>& data, int& selected);
 
     bool ComboBox(const char* label, const std::vector<std::string>& data, int& selected);
+
+    bool TransparentButton(const char* label, ImVec4 color = { 1,1,1,1 });
 
     bool ListBox(const char* label, std::vector<Plutus::Entity*> data, Plutus::Entity* selected);
 
@@ -143,7 +117,7 @@ namespace ImGui
 
     bool ColorInt(const char* label, unsigned int& color);
 
-    void BeginDialog(const char* name, float width, float height, bool fixedPos = false);
+    void BeginDialog(const char* name, bool fixedPos = false);
 
     void EndDialog(bool& show);
 

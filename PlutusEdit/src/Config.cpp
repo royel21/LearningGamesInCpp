@@ -97,7 +97,6 @@ namespace Plutus
 
     void Config::Init()
     {
-        static bool isLoaded = false;
         if (!isLoaded) {
             load();
             Input::get()->onResize = [&](int w, int h) {
@@ -111,6 +110,27 @@ namespace Plutus
                 std::filesystem::create_directories("assets/audios");
                 std::filesystem::create_directories("assets/fonts");
             }
+            isLoaded = true;
+        }
+
+    }
+
+    void Config::RenameProj(const std::string& oldname, const std::string newName) {
+        mProjects[newName] = mProjects[oldname];
+        mProjects.erase(oldname);
+        if (OpenProject.compare(oldname) == 0) {
+            mProject = &mProjects[newName];
+            OpenProject = newName;
+        }
+    }
+
+    void Config::LoadProject(const std::string& name) {
+        if (name.empty()) {
+            if (mProject && mProject->mScenes.size())
+                mProject->Load(mProject->mScenes[mProject->mOpenScene]);
+        }
+        else {
+            mProject = &mProjects[name];
         }
 
     }
@@ -124,37 +144,22 @@ namespace Plutus
             for (auto& obj : json.doc["projects"].GetArray()) {
                 auto& p = mProjects[obj["name"].GetString()];
                 p.mOpenScene = obj["open-scene"].GetString();
-                //ViewPoprt State
-                {
-                    auto vpstate = obj["vp-state"].GetJsonObject();
-                    p.mVpState.width = vpstate["width"].GetInt();
-                    p.mVpState.height = vpstate["height"].GetInt();
-                }
+                p.vpWidth = obj["width"].GetInt();
+                p.vpHeight = obj["height"].GetInt();
                 //List of scene
                 for (auto& scene : obj["scenes"].GetArray()) {
                     p.mScenes[scene["name"].GetString()] = scene["path"].GetString();
                 }
             }
-
-            if (OpenProject.empty()) {
-                mProject = &mProjects["Project1"];
-                OpenProject = "Project1";
-            }
-            else {
-                mProject = &mProjects[OpenProject];
-            }
-        }
-    }
-
-    bool Config::loadConfig()
-    {
-        PJson json("Config.json");
-        if (json.isLoaded) {
-            winWidth = json.getInt("win-width");
-            winHeight = json.getInt("win-height");
         }
 
-        return json.isLoaded;
+        if (OpenProject.empty()) {
+            mProject = &mProjects["Project1"];
+            OpenProject = "Project1";
+        }
+        else {
+            mProject = &mProjects[OpenProject];
+        }
     }
 
     void Config::save() {
@@ -171,13 +176,8 @@ namespace Plutus
                     {
                         ser.addString("name", p.first);
                         ser.addString("open-scene", p.second.mOpenScene);
-                        ser.addString("vp-state");
-                        ser.StartObj();
-                        {
-                            ser.addInt("width", p.second.mVpState.width);
-                            ser.addInt("height", p.second.mVpState.height);
-                        }
-                        ser.EndObj();
+                        ser.addInt("width", p.second.vpWidth);
+                        ser.addInt("height", p.second.vpHeight);
                         ser.StartArr("scenes");
                         { for (auto& p : p.second.mScenes) {
                             ser.StartObj();

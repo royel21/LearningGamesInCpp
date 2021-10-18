@@ -23,7 +23,7 @@
 namespace Plutus
 {
     glm::vec2 getCoords() {
-        auto pos = Config::get().mProject->mVpState.mouseCoords;
+        auto pos = Config::get().mMouseCoords;
         return DebugRender::get()->getSquareCoords({ pos.x, pos.y });
     }
 
@@ -36,6 +36,7 @@ namespace Plutus
     {
         if (CollapseComponent<TileMap>("TileMap##tilemap-comp", 5))
         {
+            static bool addTexture = false;
             mIsOpen = true;
             mTileMap = Config::get().mProject->mEnt.getComponent<TileMap>();
             ImGui::BeginUIGroup();
@@ -49,6 +50,21 @@ namespace Plutus
             }
             ImGui::EndUIGroup();
             ImGui::Separator();
+            ImGui::Text("Textures");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(120);
+            ImGui::ComboBox("##mttexture", mTileMap->mTextures, mCurrentTexture);
+            ImGui::PopItemWidth();
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+            if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE " ##tm-add-tex")) addTexture = true;
+            ImGui::SameLine();
+            if (ImGui::TransparentButton(ICON_FA_TRASH " ##tm-rm-tex")) {
+                mTileMap->removeTexture(mCurrentTexture);
+            }
+            ImGui::PopStyleVar();
+            ImGui::Separator();
+
+            AddTexureDialog(addTexture);
 
             if (mTileMap->mTextures.size())
             {
@@ -71,10 +87,9 @@ namespace Plutus
                         ImGui::DragFloat("##sc-tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
                     }
                     ImGui::EndUIGroup();
-                    ImGui::DrawTexture(mTileMap->mTextures[mCurrentTexture], 0, 0, scale, &mTempTiles);
+                    ImGui::DrawTexture(mTileMap->getTexture(mCurrentTexture), 0, 0, scale, &mTempTiles);
                 }
             }
-
 
             if (mCurrentTile != nullptr && mMode == MODE_EDIT)
             {
@@ -82,10 +97,10 @@ namespace Plutus
                 ImGui::Separator();
                 if (ImGui::BeginUIGroup()) {
                     ImGui::BeginCol("X");
-                    ImGui::InputInt("##ctile-x", &mCurrentTile->x, mTileMap->mTileWidth);
+                    ImGui::InputInt("##ctile-x", &mCurrentTile->x, 1);
 
                     ImGui::BeginCol("Y");
-                    ImGui::InputInt("##ctile-x", &mCurrentTile->y, mTileMap->mTileHeight);
+                    ImGui::InputInt("##ctile-y", &mCurrentTile->y, 1);
 
                     ImGui::BeginCol("Rotation");
                     float rotation = mCurrentTile->rotate;
@@ -104,14 +119,21 @@ namespace Plutus
                     int texcoord = mCurrentTile->texcoord;
                     if (ImGui::InputInt("##ctile-texture", &texcoord, 1))
                     {
-                        auto size = mTileMap->mTextures[mCurrentTexture]->uvs.size();
+                        auto size = mTileMap->getTexture(mCurrentTile->texture)->uvs.size();
                         mCurrentTile->texcoord = LIMIT(texcoord, 0, (int)size - 1);
+                    }
+                    ImGui::BeginCol("Textures");
+                    if (ImGui::ComboBox("##mttexture", mTileMap->mTextures, mCurrentTile->texture)) {
+                        mCurrentTile->texcoord = 0;
                     }
                     ImGui::EndUIGroup();
                 }
             }
-            if (mMode == MODE_PLACE && Config::get().mProject->mVpState.isHover) {
+            if (mMode == MODE_PLACE && Config::get().isHover) {
                 renderTemp();
+            }
+            else {
+                Render::get().mTotalTemp = 0;
             }
         }
         else {
@@ -119,42 +141,55 @@ namespace Plutus
         }
 
     }
-
-    void TileMapPanel::onKeyDown(const std::string& key)
-    {
-        if (mIsOpen) {
-            bool isHover = Config::get().mProject->mVpState.isHover;
-            if (isHover && key.compare("MouseLeft") == 0 && mMode == MODE_EDIT) {
-                selectTile();
+    void TileMapPanel::processMode() {
+        if (mIsOpen && Config::get().isHover && Input::get()->onKeyDown("MouseLeft")) {
+            switch (mMode)
+            {
+            case MODE_PLACE:
+                createTiles();
+                break;
+            case MODE_EDIT:
+                mCurrentTile = mTileMap->getTile(getCoords());
+                break;
+            default:
+                if (mTileMap->removeTile(getCoords())) {
+                    mCurrentTile = nullptr;
+                }
+                break;
             }
         }
+    }
+    void TileMapPanel::onKeyDown(const std::string& key)
+    {
+        processMode();
     }
 
     void TileMapPanel::onMouseMove(float x, float y)
     {
-        if (mIsOpen) {
-            bool isHover = Config::get().mProject->mVpState.isHover;
-            if (isHover) {
-
-                if (Input::get()->onKeyDown("MouseLeft")) {
-                    switch (mMode)
-                    {
-                    case MODE_PLACE:
-                        break;
-                    case MODE_EDIT:
-                        selectTile();
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            }
-        }
+        processMode();
     }
 
-    void TileMapPanel::selectTile()
-    {
-        mCurrentTile = mTileMap->getTile(getCoords());
+
+    void TileMapPanel::createTiles() {
+        auto coords = getCoords();
+        auto& tiles = mTileMap->mTiles;
+        for (auto tile : mTempTiles)
+        {
+            uint32_t x = (int)coords.x + tile.x;
+            uint32_t y = (int)coords.y - tile.y;
+
+            int index = mTileMap->getIndex({ x, y });
+            if (index == -1)
+            {
+                tiles.push_back(Tile(x, y, tile.z, mCurrentTexture, mRotation));
+                tiles.back().setParent(mTileMap);
+            }
+            else
+            {
+                mTileMap->mTiles[index].texcoord = tile.z;
+                mTileMap->mTiles[index].texture = mCurrentTexture;
+            }
+        }
     }
 
     void TileMapPanel::renderTemp()
@@ -163,7 +198,7 @@ namespace Plutus
         int w = mTileMap->mTileWidth;
         int h = mTileMap->mTileHeight;
 
-        auto& tex = mTileMap->mTextures[mCurrentTexture];
+        auto tex = mTileMap->getTexture(mCurrentTexture);
 
         std::vector<Renderable>& renderables = Render::get().mRenderables;
         if (renderables.size() < mTempTiles.size()) {
@@ -178,6 +213,41 @@ namespace Plutus
             int y = ((int)gridCoords.y * h) - (tile.y * h);
 
             renderables[i++] = { tex->texId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation, false, false, -1, 99, false };
+        }
+    }
+
+    void TileMapPanel::AddTexureDialog(bool& show) {
+        if (show) {
+            static float scale = 1;
+            auto textures = AssetManager::get()->mTextures.getItems();
+            static std::string current = textures.begin()->second.name;
+            int index = (int)mTileMap->mTextures.size();
+
+            ImGui::BeginDialog("Texture Modal");
+            if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingStretchProp))
+            {
+                ImGui::BeginCol("Textures");
+                ImGui::ComboBox("##mt-add-tex", textures, current);
+                ImGui::BeginCol("Scale");
+                ImGui::DragFloat("##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
+                ImGui::EndUIGroup();
+            }
+
+            ImGui::DrawTexture(&textures[current], 400, 350, scale);
+            ImGui::Separator();
+            if (ImGui::Button("Add Texture##mt-modal"))
+            {
+                auto it = std::find_if(mTileMap->mTextures.begin(), mTileMap->mTextures.end(), [&](auto&& val)->bool {
+                    return val.second.compare(current) == 0;
+                    });
+
+                if (it == mTileMap->mTextures.end()) {
+                    mTileMap->mTextures[index] = current;
+                    mCurrentTexture = index;
+                }
+                show = false;
+            }
+            ImGui::EndDialog(show);
         }
     }
 }

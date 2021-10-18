@@ -9,20 +9,14 @@
 
 namespace Plutus
 {
-    struct ViewPortState {
-        int width = 1280;
-        int height = 768;
-    };
 
     struct Project {
+        int vpWidth = 1280;
+        int vpHeight = 768;
+
         Entity mEnt;
         Ref<Scene> mScene;
         std::string mOpenScene;
-        ViewPortState mVpState;
-        //Mouse Coords in view port
-        vec2f mMouseCoords;
-        // Is Viewport hovered
-        bool isHover;
 
         std::unordered_map<std::string, std::string> mScenes = {};
 
@@ -38,19 +32,33 @@ namespace Plutus
 
     struct Config
     {
+        //Mouse Coords in view port
+        vec2f mMouseCoords;
+        // Is Viewport hovered
+        bool isHover;
+        // Window Width
         int winWidth = 1280;
+        // Window height
         int winHeight = 768;
         Project* mProject;
+        //Current Open Project
         std::string OpenProject = "";
+        //List Of Project
         std::unordered_map<std::string, Project> mProjects = {};
-        Config() {}
+        bool isLoaded = false;
+
         ~Config();
-        void Init();
-        bool loadConfig();
+
+        // Create a Blank Project
         void CreateProj(const char* filePath);
+        void LoadProject(const std::string& name);
+        void RenameProj(const std::string& oldname, const std::string newName);
+
         static Config& get();
 
     private:
+        Config() { Init(); };
+        void Init();
         void save();
         void load();
     };

@@ -8,6 +8,7 @@
 
 #include "../Config.h"
 #include "../Helpers/ImGuiStyle.h"
+#include "../Helpers/ImGuiEx.h"
 #include "../Helpers/ImGuiDialog.h"
 #include "../Helpers/IconsFontAwesome5.h"
 
@@ -117,6 +118,8 @@ namespace Plutus
     void MainGui::MenuGui(int flags) {
         bool noSplit = (flags & ImGuiDockNodeFlags_NoSplit) != 0;
         static bool open = false;
+        static bool edit = false;
+        static std::string projName;
         auto& projects = Config::get().mProjects;
         /**************************************** Draw Editor Menu *******************************************************/
         if (ImGui::BeginMenuBar())
@@ -128,23 +131,26 @@ namespace Plutus
                     open = true;
                 }
 
-                if (ImGui::BeginMenu(ICON_FA_LIST " Recent"))
+                if (ImGui::BeginMenu(ICON_FA_LIST " Projects"))
                 {
                     std::string toRemove = "";
                     for (auto& recent : projects)
                     {
-                        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
                         std::string btn = ICON_FA_TRASH_ALT + std::string("##") + recent.first;
-                        if (ImGui::Button(btn.c_str()))
-                        {
+                        if (ImGui::TransparentButton(btn.c_str())) {
                             toRemove = recent.first;
                         }
-                        ImGui::PopStyleColor();
+                        ImGui::SameLine();
+                        std::string btnEdit = ICON_FA_EDIT + std::string("##") + recent.first;
+                        if (ImGui::TransparentButton(btnEdit.c_str())) {
+                            projName = toEdit = recent.first;
+                            edit = true;
+                        }
                         ImGui::SameLine();
                         std::string item = ICON_FA_FILE_IMAGE + std::string(" ") + recent.first;
                         if (ImGui::MenuItem(item.c_str()))
                         {
-                            // Config.LoadProject(recent.first.c_str());
+                            Config::get().LoadProject(recent.first.c_str());
                         }
                     }
                     ImGui::EndMenu();
@@ -173,9 +179,25 @@ namespace Plutus
                 ImGui::ShowDemoWindow();
             }
         }
+
         if (open) ImGui::NewFileDialig("New Project", [&](const std::string& name) {
             if (!name.empty()) Config::get().CreateProj(name.c_str());
             open = false;
             });
+
+        if (edit && ImGui::BeginDialogText("Edit Project")) {
+            ImGui::BeginUIGroup();
+            ImGui::BeginCol("Name", 200);
+            ImGui::InputString("##n-p", toEdit);
+            ImGui::EndUIGroup();
+            ImGui::EndDialogText([&](bool save) {
+                if (save) {
+                    Config::get().RenameProj(projName, toEdit);
+                    toEdit = "";
+                    projName = "";
+                }
+                edit = false;
+                });
+        }
     }
 }

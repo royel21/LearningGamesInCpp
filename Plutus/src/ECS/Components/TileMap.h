@@ -57,7 +57,7 @@ namespace Plutus
         int mTileHeight;
         int mLayer = 0;
         std::vector<Tile> mTiles;
-        std::unordered_map<int, Texture*> mTextures;
+        std::unordered_map<int, std::string> mTextures;
 
         TileMap() = default;
         // TileMap(const TileMap& tilemap);
@@ -65,6 +65,8 @@ namespace Plutus
 
         void addTexture(const std::string& texture);
         void removeTexture(int index);
+
+        Texture* getTexture(int id);
 
         void addTile(Tile& tile);
         Tile* getTile(const glm::ivec2& mCoords);

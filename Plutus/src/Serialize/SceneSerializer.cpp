@@ -81,7 +81,7 @@ namespace Plutus
             ser.StartArr("textures");
             for (auto tex : tilemap->mTextures)
             {
-                ser.addString(tex.second->name);
+                ser.addString(tex.second.c_str());
             }
             ser.EndArr();
             //Tiles Array

@@ -126,7 +126,7 @@ namespace Plutus
                 bool found = textures.find(selected) != textures.end();
                 if (found) {
                     if (!sprite->mUseUV) {
-                        int max = textures[selected].uvs.size();
+                        int max = (int)textures[selected].uvs.size();
                         if (max) {
                             ImGui::BeginCol("UV");
                             int uvIndex = sprite->mUvIndex;

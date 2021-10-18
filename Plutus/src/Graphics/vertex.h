@@ -38,7 +38,7 @@ namespace Plutus
 		ColorRGBA8(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) { rgba = RGBA2Int(r, g, b, a); }
 
 		ColorRGBA8(const glm::vec4& c) {
-			rgba = RGBA2Int(float2ubyte(c.x), float2ubyte(c.y), float2ubyte(c.x), float2ubyte(c.w));
+			rgba = RGBA2Int(float2ubyte(c.x), float2ubyte(c.y), float2ubyte(c.z), float2ubyte(c.w));
 		}
 
 		uint32_t get() { return rgba; };
@@ -47,6 +47,8 @@ namespace Plutus
 
 
 		operator uint32_t() const { return rgba; }
+		//a << 24 | b << 16 | g << 8 | r
+		operator glm::vec4() const { return { (rgba & 0xff) / 255.0f, ((rgba >> 8) & 0xff) / 255.0f, ((rgba >> 16) & 0xff) / 255.0f, ((rgba >> 24) & 0xff) / 255.0f }; }
 	};
 	/*
 		Represent a single Vertex information:

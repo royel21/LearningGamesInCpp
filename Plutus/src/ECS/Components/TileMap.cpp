@@ -11,7 +11,7 @@ namespace Plutus
 
     void TileMap::addTexture(const std::string& texture)
     {
-        mTextures[(int)mTextures.size()] = AssetManager::get()->mTextures.getTexture(texture);
+        mTextures[(int)mTextures.size()] = texture;
     }
 
     void TileMap::removeTexture(int index)
@@ -28,6 +28,11 @@ namespace Plutus
         if (it != mTextures.end()) {
             mTextures.erase(it);
         }
+    }
+
+    Texture* TileMap::getTexture(int id) {
+        auto it = mTextures.find(id);
+        return  AssetManager::get()->mTextures.getTexture(it != mTextures.end() ? it->second : "");
     }
 
     void TileMap::addTile(Tile& tile)

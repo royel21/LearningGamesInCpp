@@ -164,7 +164,7 @@ namespace Plutus
     }
 
     void AssetsTab::viewAssets(bool& show) {
-        ImGui::BeginDialog("Asset Modal", 300, 300);
+        ImGui::BeginDialog("Asset Modal");
         ImGui::Text(assetType.id.c_str());
         ImGui::Separator();
         if (assetType.type.compare("Textures") == 0) {
@@ -250,7 +250,7 @@ namespace Plutus
 
             ImVec2 center = ImGui::GetMainViewport()->GetCenter();
             ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-            ImGui::BeginDialog("Asset Modal", 300, 300);
+            ImGui::BeginDialog("Asset Modal");
             //Texure Or Font Id
             ImGui::Text("Asset Id");
             ImGui::SameLine();
@@ -354,6 +354,6 @@ namespace Plutus
             ImGui::DragFloat("##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
             ImGui::EndUIGroup();
         }
-        ImGui::DrawTexture(&texture, 350, 300, scale);
+        ImGui::DrawTexture(&texture, 400, 300, scale);
     }
 }

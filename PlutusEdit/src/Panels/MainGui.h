@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 namespace Plutus
 {
@@ -6,6 +7,7 @@ namespace Plutus
     {
     private:
         bool isInitialized = false;
+        std::string toEdit;
 
     public:
         bool mExit = false;

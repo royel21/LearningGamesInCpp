@@ -1,3 +1,5 @@
+#pragma warning(disable: 4312)
+
 #include "CenterPanel.h"
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -34,9 +36,8 @@ namespace Plutus
 
     void CenterPanel::DrawViewPortControls()
     {
-        auto project = Config::get().mProject;
-        if (project->mVpState.isHover) {
-            auto pos = project->mVpState.mouseCoords;
+        if (Config::get().isHover) {
+            auto pos = Config::get().mMouseCoords;
             auto& camera = Render::get().mCamera;
 
             if (Input::get()->onKeyPressed("R"))
@@ -79,7 +80,7 @@ namespace Plutus
         auto& render = Render::get();
         if (Input::get()->onKeyPressed("MouseLeft"))
         {
-            mMouseLastCoords = project->mVpState.mouseCoords;
+            mMouseLastCoords = Config::get().mMouseCoords;
             auto camPos = render.mCamera.getPosition();
             mCamCoords = { camPos.x, camPos.y };
             ent = project->mScene->getEntity(render.mFramePicker.getEntId({ mMouseLastCoords.x, mMouseLastCoords.y }));
@@ -97,7 +98,7 @@ namespace Plutus
         {
             if (ent.hasComponent<Transform>()) {
                 auto trans = ent.getComponent<Transform>();
-                vec2f result = project->mVpState.mouseCoords - mMouseLastCoords;
+                vec2f result = Config::get().mMouseCoords - mMouseLastCoords;
                 result /= render.mCamera.getScale();
 
                 trans->x = mEntLastPos.x + result.x;
@@ -138,9 +139,9 @@ namespace Plutus
             float yPos = winSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
 
             ImGui::Image((void*)framebuffer.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
-            if (Config::get().mProject->mVpState.isHover = ImGui::IsItemHovered())
+            if (Config::get().isHover = ImGui::IsItemHovered())
             {
-                Config::get().mProject->mVpState.mouseCoords = { xPos, yPos };
+                Config::get().mMouseCoords = { xPos, yPos };
 
                 DrawViewPortControls();
             }

@@ -19,7 +19,7 @@ namespace Plutus
 
     App::App(const char* name, int width, int height) : Core(name, width, height) {
         auto& config = Config::get();
-        if (config.loadConfig()) {
+        if (config.isLoaded) {
             mWidth = config.winWidth;
             mHeight = config.winHeight;
         }
@@ -36,7 +36,7 @@ namespace Plutus
     }
 
     void App::Setup() {
-        Config::get().Init();
+        Config::get().LoadProject("");
         Render::get().Init();
         mMainGui.Init();
     }
@@ -52,6 +52,7 @@ namespace Plutus
         DrawScenes();
         AssetsTab.drawAssets();
         mCompPanel.DrawComponentsPanel();
+        mConfigPanel.DrawConfigPanel();
         mMainGui.End();
 
         Render::get().draw();

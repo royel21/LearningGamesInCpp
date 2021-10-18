@@ -57,9 +57,9 @@ namespace Plutus
                     glm::vec4 rect = tile.getRect();
                     if (mCamera->isBoxInView(rect, 200))
                     {
-                        auto tileset = tilemap.mTextures[tile.texture];
+                        auto tex = tilemap.getTexture(tile.texture);
 
-                        mRenderables[i++] = { tileset->texId, rect, tileset->getUV(tile.texcoord),
+                        mRenderables[i++] = { tex->texId, rect, tex->getUV(tile.texcoord),
                             { tile.color }, tile.rotate, tile.flipX, tile.flipY, 0, tilemap.mLayer, false };
                     }
                 }
