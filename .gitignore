@@ -13,3 +13,4 @@ OpenAL32.dll
 *.lock
 imgui.ini
 pe-config.json
+config.json

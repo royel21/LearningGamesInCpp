@@ -53,5 +53,8 @@ namespace Plutus
         mRegistry.destroy(ent);
     }
 
+    bool Scene::isValid(Entity ent) {
+        return mRegistry.valid(ent.mId);
+    }
 
 } // namespace Plutus

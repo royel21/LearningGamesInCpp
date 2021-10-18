@@ -63,7 +63,7 @@ namespace Plutus
         // TileMap(const TileMap& tilemap);
         TileMap(int tileWidth, int tileHeight, int _layer = 0) : mTileWidth(tileWidth), mTileHeight(tileHeight) {}
 
-        void addTexture(const std::string& texture);
+        void addTexture(int id, const std::string& texture);
         void removeTexture(int index);
 
         Texture* getTexture(int id);

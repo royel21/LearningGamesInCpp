@@ -25,9 +25,9 @@ namespace Plutus
         int layer = value["layer"].GetInt();
         auto tmap = ent.addComponent<TileMap>(w, h, layer);
 
-        for (auto& t : value["textures"].GetArray())
+        for (auto& obj : value["textures"].GetArray())
         {
-            tmap->addTexture(t.GetString());
+            tmap->addTexture(obj["id"].GetInt(), obj["tex"].GetString());
         }
 
         auto tiles = value["tiles"].GetArray();
@@ -76,9 +76,9 @@ namespace Plutus
                     auto id = tex["id"].GetString();
                     auto path = tex["path"].GetString();
                     int columns = tex["columns"].GetInt();
-                    int width = tex["width"].GetInt();
-                    int height = tex["height"].GetInt();
-                    AssetManager::get()->mTextures.addTexture(id, path, columns, width, height);
+                    int tilewidth = tex["width"].GetInt();
+                    int tileheight = tex["height"].GetInt();
+                    AssetManager::get()->mTextures.addTexture(id, path, columns, tilewidth, tileheight);
                 }
             }
 
@@ -105,17 +105,21 @@ namespace Plutus
                             int w = component["w"].GetInt();
                             int h = component["h"].GetInt();
                             float r = component["r"].GetFloat();
-                            int layer = component["layer"].GetInt();
-                            bool sortY = component["sortY"].GetBool();
+                            int layer = component["l"].GetInt();
+                            bool sortY = component["sy"].GetBool();
                             entity.addComponent<Transform>(x, y, w, h, r, layer, sortY);
                             continue;
                         }
                         if (compType == "Sprite")
                         {
-                            auto spr = entity.addComponent<Sprite>(component["texture"].GetString());
-                            spr->mFlipX = component["mFlipX"].GetBool();
-                            spr->mFlipY = component["mFlipY"].GetBool();
-                            spr->mColor = component["color"].GetInt();
+                            auto spr = entity.addComponent<Sprite>(component["tex"].GetString());
+                            spr->mFlipX = component["fx"].GetInt();
+                            spr->mFlipY = component["fy"].GetInt();
+                            spr->mColor = component["c"].GetInt();
+                            spr->mUseUV = component["usuv"].GetInt();
+                            spr->mUvIndex = component["uvi"].GetInt();
+                            auto uvs = component["uvc"].GetArray();
+                            spr->mUVCoord = { uvs[0].GetFloat(),uvs[1].GetFloat(),uvs[2].GetFloat(),uvs[3].GetFloat() };
                             continue;
                         }
                         if (compType == "Animation")

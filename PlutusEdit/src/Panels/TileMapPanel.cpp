@@ -50,17 +50,18 @@ namespace Plutus
             }
             ImGui::EndUIGroup();
             ImGui::Separator();
+            //Texture Combobox
             ImGui::Text("Textures");
             ImGui::SameLine();
             ImGui::PushItemWidth(120);
             ImGui::ComboBox("##mttexture", mTileMap->mTextures, mCurrentTexture);
             ImGui::PopItemWidth();
+            ImGui::SameLine();
+            //Add, Remove Buttons
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
             if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE " ##tm-add-tex")) addTexture = true;
             ImGui::SameLine();
-            if (ImGui::TransparentButton(ICON_FA_TRASH " ##tm-rm-tex")) {
-                mTileMap->removeTexture(mCurrentTexture);
-            }
+            if (ImGui::TransparentButton(ICON_FA_TRASH " ##tm-rm-tex")) mTileMap->removeTexture(mCurrentTexture);
             ImGui::PopStyleVar();
             ImGui::Separator();
 
@@ -168,7 +169,6 @@ namespace Plutus
     {
         processMode();
     }
-
 
     void TileMapPanel::createTiles() {
         auto coords = getCoords();

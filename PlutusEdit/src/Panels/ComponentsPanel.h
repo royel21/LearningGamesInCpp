@@ -14,5 +14,6 @@ namespace Plutus
         void DrawScript();
     private:
         TileMapPanel mTileMapPanel;
+        float mSpriteScale = 1.0f;
     };
 } // namespace Plutus

@@ -94,7 +94,7 @@ namespace Plutus
             }
         }
 
-        if (Input::get()->onKeyDown("MouseLeft") && ent)
+        if (Input::get()->onKeyDown("MouseLeft") && Config::get().mProject->mScene->isValid(ent))
         {
             if (ent.hasComponent<Transform>()) {
                 auto trans = ent.getComponent<Transform>();

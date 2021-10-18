@@ -81,7 +81,10 @@ namespace Plutus
             ser.StartArr("textures");
             for (auto tex : tilemap->mTextures)
             {
-                ser.addString(tex.second.c_str());
+                ser.StartObj();
+                ser.addInt("id", tex.first);
+                ser.addString("tex", tex.second.c_str());
+                ser.EndObj();
             }
             ser.EndArr();
             //Tiles Array
@@ -136,8 +139,8 @@ namespace Plutus
                         ser.addInt("w", trans->w);
                         ser.addInt("h", trans->h);
                         ser.addFloat("r", trans->r);
-                        ser.addInt("layer", trans->layer);
-                        ser.addBool("sortY", trans->sortY);
+                        ser.addInt("l", trans->layer);
+                        ser.addBool("sy", trans->sortY);
                     }
                     ser.EndObj();
                 }
@@ -147,11 +150,12 @@ namespace Plutus
                     ser.StartObj();
                     {
                         ser.addString("name", "Sprite");
-                        ser.addString("texture", sprite->mTextureId);
+                        ser.addString("tex", sprite->mTextureId);
                         ser.addInt("uvi", sprite->mUvIndex);
-                        ser.addInt("color", sprite->mColor);
-                        ser.addInt("flipX", sprite->mFlipX);
-                        ser.addInt("flipY", sprite->mFlipY);
+                        ser.addInt("c", sprite->mColor);
+                        ser.addInt("fx", sprite->mFlipX);
+                        ser.addInt("fy", sprite->mFlipY);
+                        ser.addInt("usuv", sprite->mUseUV);
                         ser.StartArr("uvc");
                         {
                             ser.addFloat(sprite->mUVCoord.x);

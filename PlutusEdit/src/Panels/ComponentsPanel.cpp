@@ -102,9 +102,7 @@ namespace Plutus
                 auto& textures = AssetManager::get()->mTextures.mTileSets;
 
                 auto color = sprite->mColor;
-                static std::string selected = sprite->mTextureId;
-                static int sc = 100;
-                static float scale = 1.0f;
+                std::string selected = sprite->mTextureId;
                 ImGui::BeginCol("TileSheet");
                 if (ImGui::ComboBox<Texture>("#TileSheet", textures, selected)) {
                     sprite->mTextureId = selected;
@@ -115,11 +113,7 @@ namespace Plutus
                     sprite->mColor = color;
                 }
                 ImGui::BeginCol("Scale");
-                if (ImGui::InputInt("##-sprScale", &sc, 5))
-                {
-                    sc = LIMIT(sc, 25, 300);
-                    scale = sc / 100.0f;
-                }
+                ImGui::DragFloat("##sc-spr", &mSpriteScale, 0.01f, 0.2f, 5, "%0.2");
                 ImGui::BeginCol("Use Coords");
                 ImGui::Checkbox("##spr-usecoords", &sprite->mUseUV);
 

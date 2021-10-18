@@ -78,6 +78,7 @@ namespace Plutus
         Entity getEntity(int Id);
         Entity getEntityByName(const std::string name);
         void removeEntity(entt::entity ent);
+        bool isValid(Entity ent);
 
         entt::registry* getRegistry() { return &mRegistry; }
 

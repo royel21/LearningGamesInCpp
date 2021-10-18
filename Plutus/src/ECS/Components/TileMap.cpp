@@ -9,9 +9,9 @@ namespace Plutus
         return { x * parent->mTileWidth, y * parent->mTileHeight, parent->mTileWidth, parent->mTileHeight };
     }
 
-    void TileMap::addTexture(const std::string& texture)
+    void TileMap::addTexture(int id, const std::string& texture)
     {
-        mTextures[(int)mTextures.size()] = texture;
+        mTextures[id] = texture;
     }
 
     void TileMap::removeTexture(int index)
