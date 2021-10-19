@@ -109,7 +109,7 @@ namespace ImGui
 
     bool ComboBox(const char* label, const std::vector<std::string>& data, int& selected);
 
-    bool TransparentButton(const char* label, ImVec4 color = { 1,1,1,1 });
+    bool TransparentButton(const char* label, bool isIcon = false, ImVec4 color = { 1,1,1,1 });
 
     bool ListBox(const char* label, std::vector<Plutus::Entity*> data, Plutus::Entity* selected);
 
@@ -126,7 +126,6 @@ namespace ImGui
 
     void BeginCol(const char* label, float width = -1);
 
-    bool Draw2Float(char* id, glm::vec2& value, float step = 1.0f, const char* btntag1 = "X", const char* btntag2 = "Y");
     bool Draw2Float(char* id, Plutus::vec2f& value, float step = 1.0f, const char* btntag1 = "X", const char* btntag2 = "Y");
 
     bool InputString(const char* label, std::string& text);

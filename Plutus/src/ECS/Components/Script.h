@@ -28,6 +28,8 @@ namespace Plutus
             }
         }
 
+        void destroy();
+
     private:
         sol::environment mEnv;
     };

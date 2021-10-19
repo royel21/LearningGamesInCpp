@@ -27,4 +27,11 @@ namespace Plutus
         }
     }
 
+    void Script::destroy() {
+        path = "";
+        ent = {};
+        scene = nullptr;
+        mEnv = sol::environment();
+    }
+
 } // namespace Plutus

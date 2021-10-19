@@ -125,8 +125,9 @@ namespace Plutus
     }
 
     bool AudioEngine::pause(std::string id) {
-        if (mSounds.find(id) != mSounds.end()) {
-            auto& event = mSounds[id];
+        auto it = mSounds.find(id);
+        if (it != mSounds.end()) {
+            auto& event = it->second;
             alGetSourcei(event.source, AL_SOURCE_STATE, &event.state);
             if (event.state == AL_PLAYING) {
                 alSourcePause(event.source);
@@ -138,8 +139,9 @@ namespace Plutus
     }
 
     bool AudioEngine::stop(std::string id) {
-        if (mSounds.find(id) != mSounds.end()) {
-            auto& event = mSounds[id];
+        auto it = mSounds.find(id);
+        if (it != mSounds.end()) {
+            auto& event = it->second;
             alGetSourcei(event.source, AL_SOURCE_STATE, &event.state);
             if (event.state == AL_PLAYING || event.state == AL_PAUSED) {
                 alSourceStop(event.source);

@@ -9,6 +9,7 @@ namespace Plutus
         vec2f() = default;
         vec2f(float val) : x(val), y(val) {}
         vec2f(float _x, float _y) : x(_x), y(_y) {}
+        vec2f(int _x, int _y) : x((float)_x), y((float)_y) {}
 
         float length();
         float lengthSqrt();

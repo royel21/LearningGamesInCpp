@@ -11,7 +11,7 @@ namespace Plutus
         bool isOpen = ImGui::CollapsingHeader(label, ImGuiTreeNodeFlags_AllowItemOverlap);
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 20);
         ImGui::PushID(id);
-        if (ImGui::TransparentButton(ICON_FA_TRASH_ALT, { 1,0,0,1 })) {
+        if (ImGui::TransparentButton(ICON_FA_TRASH_ALT, false, { 1,0,0,1 })) {
             isOpen = false;
             Config::get().mProject->mEnt.removeComponent<T>();
         }

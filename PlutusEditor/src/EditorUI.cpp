@@ -284,7 +284,6 @@ namespace Plutus
 
 					ImGui::EndUIGroup();
 					static glm::vec2 pos = { 3,4 };
-					ImGui::Draw2Float("Test", pos);
 				}
 			}
 			ImGui::EndTable();

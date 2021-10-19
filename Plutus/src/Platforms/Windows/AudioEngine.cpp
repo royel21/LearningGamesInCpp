@@ -114,11 +114,11 @@ namespace Plutus
 
 	void AudioEngine::remove(const std::string& name)
 	{
-		auto& aEvent = mSounds[name];
-		if (aEvent)
+		auto it = mSounds.find(name);
+		if (it != mSounds.end())
 		{
-			aEvent->mSourceVoice->Stop();
-			delete aEvent;
+			it->second->stop();
+			delete it->second;
 			mSounds.erase(name);
 		}
 	}
@@ -153,16 +153,18 @@ namespace Plutus
 
 	bool AudioEngine::pause(const std::string& name)
 	{
-		if (mSounds.find(name) != mSounds.end())
-			return mSounds[name]->pause();
+		auto it = mSounds.find(name);
+		if (it != mSounds.end())
+			return it->second->pause();
 
 		return false;
 	}
 
 	bool AudioEngine::stop(const std::string& name)
 	{
-		if (mSounds.find(name) != mSounds.end())
-			return mSounds[name]->stop();
+		auto it = mSounds.find(name);
+		if (it != mSounds.end())
+			return it->second->stop();
 		return false;
 	}
 

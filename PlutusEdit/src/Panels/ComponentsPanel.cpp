@@ -72,13 +72,13 @@ namespace Plutus
             if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
 
                 ImGui::BeginCol("Position");
-                glm::vec2 pos = { trans->x, trans->y };
+                vec2f pos = { trans->x, trans->y };
                 if (ImGui::Draw2Float("Position##ent-pos", pos)) {
                     trans->x = pos.x;
                     trans->y = pos.y;
                 }
                 ImGui::BeginCol("Size");
-                glm::vec2 size = { trans->h, trans->w };
+                vec2f size = { trans->h, trans->w };
                 if (ImGui::Draw2Float("Size##ent-size", size, 1, "W", "H")) {
                     trans->h = (int)size.x;
                     trans->w = (int)size.y;
@@ -140,10 +140,10 @@ namespace Plutus
                     }
                 }
                 ImGui::EndUIGroup();
+                ImGui::Separator();
                 if (found) {
                     auto& texture = textures[selected];
                     if (sprite->mUseUV) {
-                        ImGui::Separator();
                         ImGui::DrawTexCoords(&texture, sprite->mUVCoord);
                     }
                     else {
@@ -167,11 +167,20 @@ namespace Plutus
             auto files = Utils::listFiles("assets/script", ".lua");
             if (files.size())
             {
+
+                ImGui::Text("Scripts");
+                ImGui::SameLine();
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
                 int selected = Utils::getIndex(files, script->path);
-                if (ImGui::ComboBox("Script", files, selected))
+                if (ImGui::ComboBox("##slist", files, selected))
                 {
                     script->init(files[selected], mEnt, Config::get().mProject->mScene.get());
                 }
+                ImGui::SameLine();
+                if (ImGui::TransparentButton(ICON_FA_TRASH "", true, { 1,0,0,1 }) && selected > -1) {
+                    script->destroy();
+                }
+                ImGui::PopStyleVar();
             }
         }
     }
