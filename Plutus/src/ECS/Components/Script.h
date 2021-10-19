@@ -19,7 +19,6 @@ namespace Plutus
     public:
         Script() = default;
         Script(const Script& script);
-        Script(const std::string&, Entity ent, Scene* scene);
 
         void init(const std::string& _path, Entity _ent, Scene* _scene);
 

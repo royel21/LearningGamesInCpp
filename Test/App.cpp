@@ -3,6 +3,7 @@
 
 #include <Input/Input.h>
 #include <Graphics/DebugRenderer.h>
+#include <Physics/Vectors.h>
 
 #include "Capsule.h"
 
@@ -228,7 +229,7 @@ namespace Plutus
         }
         else {
             auto size = mCamera.getScaleScreen();
-            mCamera.setPosition({ capsule.position.x - size.x * 0.5f, capsule.position.y - size.y * 0.15f });
+            mCamera.setPosition(vec2f{ capsule.position.x - size.x * 0.5f, capsule.position.y - size.y * 0.15f });
         }
 
     }

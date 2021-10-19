@@ -27,18 +27,24 @@ namespace Plutus
                 if (ImGui::BeginTable("ViewportControls", 2, flags)) {
                     ImGui::TableNextColumn();
                     if (ImGui::BeginUIGroup()) {
+
                         auto& camera = Render::get().mCamera;
-                        auto csacle = camera.getScale();
+                        auto& zoom = Config::get().vpZoom;
                         ImGui::BeginCol("Zoom");
-                        if (ImGui::InputFloat("##vp-Zoom", &csacle, 0.05f))
+                        if (ImGui::InputFloat("##vp-Zoom", &zoom, 0.05f))
                         {
-                            camera.setScale(CHECKLIMIT(csacle, 0.20f, 6.0f));
+                            zoom = CHECKLIMIT(zoom, 0.20f, 6.0f);
+                            camera.setScale(zoom);
                         }
                         ImGui::BeginCol("Position");
-                        auto pos = camera.getPosition();
-                        if (ImGui::Draw2Float("#cpos", pos)) camera.setPosition(pos);
+                        if (ImGui::Draw2Float("#cpos", Config::get().vpPos))
+                            camera.setPosition(Config::get().vpPos);
+
+                        ImGui::BeginCol("BG Color");
+                        ImGui::ColorEdit4("#vp-color", &Config::get().vpColor.x);
                         ImGui::EndUIGroup();
                     }
+
                     ImGui::TableNextColumn();
                     if (ImGui::BeginUIGroup()) {
                         static bool showGrid = true;

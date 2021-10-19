@@ -15,9 +15,13 @@ namespace Plutus
 
     void Render::Init()
     {
-        int w = Config::get().mProject->vpWidth;
-        int h = Config::get().mProject->vpHeight;
+        auto& config = Config::get();
+        int w = config.mProject->vpWidth;
+        int h = config.mProject->vpHeight;
+
         mCamera.init(w, h);
+        mCamera.setPosition(config.vpPos);
+        mCamera.setScale(config.vpZoom);
 
         mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
 
@@ -40,7 +44,7 @@ namespace Plutus
         mFramePicker.unBind();
 
         mFrameBuffer.bind();
-        mFrameBuffer.setColor({ 1, 1, 1, 1 });
+        mFrameBuffer.setColor(Config::get().vpColor);
         mSpriteBatch.draw();
         mSpriteBatch.end();
 

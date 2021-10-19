@@ -3,6 +3,7 @@
 #include <rapidjson/writer.h> // for stringify JSON
 #include <rapidjson/document.h>
 #include <unordered_map>
+#include <Physics/Vectors.h>
 
 namespace Plutus
 {
@@ -24,6 +25,8 @@ namespace Plutus
         void addInt(const std::string& id, int data);
         void addFloat(const std::string& id, float data);
         void addBool(const std::string& id, bool data);
+
+        void StartObj(const std::string& id);
 
         void StartObj();
         void EndObj();
@@ -48,6 +51,9 @@ namespace Plutus
         float getFloat(const char* key);
         bool getBool(const char* key);
         std::string getString(const char* key);
+
+        vec2f getFloat2(const char* key);
+        vec4f getFloat4(const char* key);
     };
 
     bool loadJson(const char* filePath, rapidjson::Document* doc);

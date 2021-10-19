@@ -2,6 +2,7 @@
 #define _CAMERA2D_H
 
 #include "glm/glm.hpp"
+#include "Physics/Vectors.h"
 
 namespace Plutus
 {
@@ -42,6 +43,11 @@ namespace Plutus
 			mCamPos = newPosition;
 			mNeedsMatrixUpdate = true;
 		}
+		void setPosition(const vec2f& newPosition)
+		{
+			mCamPos = { newPosition.x, newPosition.y };
+			mNeedsMatrixUpdate = true;
+		}
 		/*
 			change the camera to a new with and height
 			@param w Width of the camera in pixel
@@ -68,6 +74,7 @@ namespace Plutus
 		glm::vec2 getViewPortSize() { return glm::vec2(mScreenWidth, mScreenHeight); }
 		//Getters
 		glm::vec2 getPosition() { return mCamPos; }
+		vec2f getPosition2() { return { mCamPos.x, mCamPos.y }; }
 		// return the 4x4 camera matrix
 		glm::mat4 getCameraMatrix() { return mCameraMatrix; }
 		//Convert screen coordination to camera coordination and return it

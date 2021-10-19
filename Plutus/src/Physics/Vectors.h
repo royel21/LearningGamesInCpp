@@ -43,13 +43,10 @@ namespace Plutus
     {
         float x = 0;
         float y = 0;
-
-        vec4f(float _x, float _y) : x(_x), y(_y) {}
-
-        float lengthSqrt();
-        float length();
-
-        float unit() const;
-        float dot(const vec4f& vec);
+        float z = 0;
+        float w = 0;
+        vec4f() = default;
+        vec4f(float v) : x(v), y(v), z(v), w(v) {}
+        vec4f(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {}
     };
 } // namespace Plutus

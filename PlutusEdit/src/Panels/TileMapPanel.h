@@ -25,12 +25,12 @@ namespace Plutus
 
     private:
         int mMode = 0;
+        float mRotation = 0;
+        bool mIsOpen = false;
+        int mCurrentTexture = 0;
+        bool mShowAddModal = false;
         TileMap* mTileMap = nullptr;
         Tile* mCurrentTile = nullptr;
-        int mCurrentTexture = 0;
-        float mRotation = 0;
-        bool mShowAddModal = false;
-        bool mIsOpen = false;
         std::vector<glm::ivec3> mTempTiles;
     };
 } // namespace Plutus

@@ -1,5 +1,6 @@
 #pragma once
 #include "TileMapPanel.h"
+#include <ECS/Scene.h>
 
 namespace Plutus
 {
@@ -15,5 +16,6 @@ namespace Plutus
     private:
         TileMapPanel mTileMapPanel;
         float mSpriteScale = 1.0f;
+        Entity mEnt;
     };
 } // namespace Plutus

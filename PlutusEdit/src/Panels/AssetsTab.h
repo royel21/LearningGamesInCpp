@@ -35,7 +35,7 @@ namespace Plutus
         template<typename T>
         void drawTreeNode(std::string name, T& assets, int& id);
         void addSound2Scene();
-        void showTexure(Texture& texture);
+        void showTexure(Texture& texture, bool newTex = false);
         void viewAssets(bool& show);
         void drawFilter();
 

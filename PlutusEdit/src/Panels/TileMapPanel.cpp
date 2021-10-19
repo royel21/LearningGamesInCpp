@@ -237,13 +237,15 @@ namespace Plutus
             ImGui::Separator();
             if (ImGui::Button("Add Texture##mt-modal"))
             {
+                int i = 0;
                 auto it = std::find_if(mTileMap->mTextures.begin(), mTileMap->mTextures.end(), [&](auto&& val)->bool {
+                    i = std::max(i, val.first);
                     return val.second.compare(current) == 0;
                     });
 
                 if (it == mTileMap->mTextures.end()) {
-                    mTileMap->mTextures[index] = current;
-                    mCurrentTexture = index;
+                    mTileMap->mTextures[i + 1] = current;
+                    mCurrentTexture = i + 1;
                 }
                 show = false;
             }

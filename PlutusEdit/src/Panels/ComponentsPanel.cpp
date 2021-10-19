@@ -29,8 +29,9 @@ namespace Plutus
     void ComponentPanel::DrawComponentsPanel()
     {
         ImGui::Begin("##ComPanel");
-        if (Config::get().mProject->mEnt) {
-            ImGui::InputString("Name##c-tag", Config::get().mProject->mEnt.getComponent<Tag>()->Name);
+        mEnt = Config::get().mProject->mEnt;
+        if (Config::get().mProject->mScene->isValid(mEnt)) {
+            ImGui::InputString("Name##c-tag", mEnt.getComponent<Tag>()->Name);
             if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE " Add Component##cp")) {
                 ImGui::OpenPopup("AddComponent");
             }
@@ -50,7 +51,7 @@ namespace Plutus
             }
 
             ImGui::Separator();
-            auto& ent = Config::get().mProject->mEnt;
+            auto& ent = mEnt;
             if (ent.hasComponent<Transform>()) DrawTransform();
             if (ent.hasComponent<Sprite>()) DrawSprite();
             if (ent.hasComponent<Animation>()) DrawAnimation();
@@ -60,10 +61,11 @@ namespace Plutus
         ImGui::End();
     }
 
+    /***********************************Transform Comopnent********************************************************/
     void ComponentPanel::DrawTransform() {
         if (CollapseComponent<Transform>("Transform##comp-comp", 1))
         {
-            auto trans = Config::get().mProject->mEnt.getComponent<Transform>();
+            auto trans = mEnt.getComponent<Transform>();
             float position[] = { trans->x, trans->y };
             float itemWidth = 150;
 
@@ -93,12 +95,12 @@ namespace Plutus
             }
         }
     }
-
+    /***********************************Sprite Comopnent********************************************************/
     void ComponentPanel::DrawSprite() {
         if (CollapseComponent<Sprite>("Sprite##sprite-comp", 3))
         {
             if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
-                auto sprite = Config::get().mProject->mEnt.getComponent<Sprite>();
+                auto sprite = mEnt.getComponent<Sprite>();
                 auto& textures = AssetManager::get()->mTextures.mTileSets;
 
                 auto color = sprite->mColor;
@@ -151,10 +153,26 @@ namespace Plutus
             }
         }
     }
+
+    /***********************************Animate Comopnent********************************************************/
     void ComponentPanel::DrawAnimation() {
 
     }
-    void ComponentPanel::DrawScript() {
 
+    /***********************************Script Comopnent********************************************************/
+    void ComponentPanel::DrawScript() {
+        if (CollapseComponent<Script>("Script##script-comp", 5))
+        {
+            auto script = mEnt.getComponent<Script>();
+            auto files = Utils::listFiles("assets/script", ".lua");
+            if (files.size())
+            {
+                int selected = Utils::getIndex(files, script->path);
+                if (ImGui::ComboBox("Script", files, selected))
+                {
+                    script->init(files[selected], mEnt, Config::get().mProject->mScene.get());
+                }
+            }
+        }
     }
 }

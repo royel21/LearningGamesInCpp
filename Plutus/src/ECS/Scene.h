@@ -100,6 +100,7 @@ namespace Plutus
     template <typename T>
     T* Entity::getComponent()
     {
+        if (!hasComponent<T>()) return nullptr;
         return &(mScene->mRegistry.get<T>(mId));
     }
 

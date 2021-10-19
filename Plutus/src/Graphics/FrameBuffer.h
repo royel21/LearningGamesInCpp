@@ -3,6 +3,9 @@
 
 #include <Core/type.h>
 #include <glm/glm.hpp>
+
+#include <Physics/Vectors.h>
+
 namespace Plutus
 {
 
@@ -38,6 +41,7 @@ namespace Plutus
         u32 getTextureId() const { return mTexId; }
 
         void setColor(glm::vec4 bgColor) { mBGColor = bgColor; }
+        void setColor(vec4f bgColor) { mBGColor = { bgColor.x,bgColor.y,bgColor.z,bgColor.w }; }
 
         void cleanUp();
     private:

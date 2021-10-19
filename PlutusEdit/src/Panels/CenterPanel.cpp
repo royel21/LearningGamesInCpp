@@ -59,8 +59,8 @@ namespace Plutus
                 {
                     vec2f result = pos - mMouseLastCoords;
                     result /= camera.getScale();
-                    auto newPos = mCamCoords - result;
-                    camera.setPosition({ newPos.x, newPos.y });
+                    Config::get().vpPos = mCamCoords - result;
+                    camera.setPosition(Config::get().vpPos);
                 }
 
                 auto scroll = Input::get()->getMouseWheel();

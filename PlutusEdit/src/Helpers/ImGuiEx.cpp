@@ -275,103 +275,105 @@ namespace ImGui {
             ImVec2 cvDestEnd(cvPos.x + w * scale, cvPos.y + h * scale);
             ImGui::Image((void*)texture->texId, ImVec2(w * scale, h * scale));
             {
-                auto color = IM_COL32(255, 255, 255, 100);
-                if (texture->texId)
-                {
-                    drawList->AddRect(cvPos, cvDestEnd, color);
-                }
-
-                if (texture->tileWidth && texture->tileHeight)
-                {
-                    float tilWidth = texture->tileWidth * scale;
-                    float tilHeight = texture->tileHeight * scale;
-
-                    float textureHeight = h * scale;
-                    float textureWidth = w * scale;
-                    int columns = static_cast<int>(textureWidth / tilWidth);
-                    for (float y = 0; y < textureHeight; y += tilHeight)
+                if (selected) {
+                    auto color = IM_COL32(255, 255, 255, 100);
+                    if (texture->texId)
                     {
-                        drawList->AddLine(ImVec2(cvPos.x, cvPos.y + y),
-                            ImVec2(cvDestEnd.x, cvPos.y + y), color, 1.0f);
-                    }
-                    for (float x = 0; x < textureWidth; x += tilWidth)
-                    {
-                        drawList->AddLine(ImVec2(cvPos.x + x, cvPos.y),
-                            ImVec2(cvPos.x + x, cvDestEnd.y), color, 1.0f);
+                        drawList->AddRect(cvPos, cvDestEnd, color);
                     }
 
-                    if (selected) {
-                        static std::vector<glm::ivec2> sels;
-                        static std::vector<glm::ivec2> drawSelect;
+                    if (texture->tileWidth && texture->tileHeight)
+                    {
+                        float tilWidth = texture->tileWidth * scale;
+                        float tilHeight = texture->tileHeight * scale;
 
-                        static bool mDown = false;
-                        if (ImGui::IsItemHovered())
+                        float textureHeight = h * scale;
+                        float textureWidth = w * scale;
+                        int columns = static_cast<int>(textureWidth / tilWidth);
+                        for (float y = 0; y < textureHeight; y += tilHeight)
                         {
-                            ImVec2 mpos_in_canvas = ImVec2(ImGui::GetIO().MousePos.x - cvPos.x, ImGui::GetIO().MousePos.y - cvPos.y);
+                            drawList->AddLine(ImVec2(cvPos.x, cvPos.y + y),
+                                ImVec2(cvDestEnd.x, cvPos.y + y), color, 1.0f);
+                        }
+                        for (float x = 0; x < textureWidth; x += tilWidth)
+                        {
+                            drawList->AddLine(ImVec2(cvPos.x + x, cvPos.y),
+                                ImVec2(cvPos.x + x, cvDestEnd.y), color, 1.0f);
+                        }
 
-                            float x = floor(mpos_in_canvas.x / tilWidth);
-                            float y = floor(mpos_in_canvas.y / tilHeight);
-                            ImVec2 start(x * tilWidth + cvPos.x, y * tilHeight + cvPos.y);
-                            ImVec2 end(start.x + tilWidth, start.y + tilHeight);
+                        if (selected) {
+                            static std::vector<glm::ivec2> sels;
+                            static std::vector<glm::ivec2> drawSelect;
 
-                            drawList->AddRect(start, end, IM_COL32(255, 0, 0, 255));
-
-                            if (mInput->onKeyPressed("MouseLeft"))
+                            static bool mDown = false;
+                            if (ImGui::IsItemHovered())
                             {
-                                mDown = true;
-                                sels.clear();
-                                selected->clear();
-                                drawSelect.clear();
-                            }
+                                ImVec2 mpos_in_canvas = ImVec2(ImGui::GetIO().MousePos.x - cvPos.x, ImGui::GetIO().MousePos.y - cvPos.y);
 
-                            if (!mInput->onKeyDown("MouseLeft"))
-                            {
-                                mDown = false;
-                            }
+                                float x = floor(mpos_in_canvas.x / tilWidth);
+                                float y = floor(mpos_in_canvas.y / tilHeight);
+                                ImVec2 start(x * tilWidth + cvPos.x, y * tilHeight + cvPos.y);
+                                ImVec2 end(start.x + tilWidth, start.y + tilHeight);
 
-                            if (mDown)
-                            {
-                                if (!Plutus::hasVec(sels, static_cast<int>(x), static_cast<int>(y)))
+                                drawList->AddRect(start, end, IM_COL32(255, 0, 0, 255));
+
+                                if (mInput->onKeyPressed("MouseLeft"))
                                 {
-                                    sels.emplace_back(x, y);
+                                    mDown = true;
+                                    sels.clear();
+                                    selected->clear();
+                                    drawSelect.clear();
+                                }
 
-                                    if (sels.size())
+                                if (!mInput->onKeyDown("MouseLeft"))
+                                {
+                                    mDown = false;
+                                }
+
+                                if (mDown)
+                                {
+                                    if (!Plutus::hasVec(sels, static_cast<int>(x), static_cast<int>(y)))
                                     {
-                                        std::sort(sels.begin(), sels.end(), Plutus::compare);
-                                        auto first = sels.front();
-                                        auto last = sels.back();
-                                        selected->clear();
-                                        int i = 0;
-                                        for (int xPos = first.x; xPos <= last.x; xPos++)
+                                        sels.emplace_back(x, y);
+
+                                        if (sels.size())
                                         {
-                                            int i2 = 0;
-                                            for (int yPos = first.y; yPos <= last.y; yPos++)
+                                            std::sort(sels.begin(), sels.end(), Plutus::compare);
+                                            auto first = sels.front();
+                                            auto last = sels.back();
+                                            selected->clear();
+                                            int i = 0;
+                                            for (int xPos = first.x; xPos <= last.x; xPos++)
                                             {
-                                                selected->emplace_back(i, i2++, xPos + yPos * columns);
-                                                if (!Plutus::hasVec(drawSelect, xPos, yPos))
-                                                    drawSelect.emplace_back(xPos, yPos);
+                                                int i2 = 0;
+                                                for (int yPos = first.y; yPos <= last.y; yPos++)
+                                                {
+                                                    selected->emplace_back(i, i2++, xPos + yPos * columns);
+                                                    if (!Plutus::hasVec(drawSelect, xPos, yPos))
+                                                        drawSelect.emplace_back(xPos, yPos);
+                                                }
+                                                i++;
                                             }
-                                            i++;
                                         }
                                     }
                                 }
+
+                                if (mInput->onKeyDown("MouseRight"))
+                                {
+                                    drawSelect.clear();
+                                    selected->clear();
+                                }
                             }
 
-                            if (mInput->onKeyDown("MouseRight"))
+                            for (uint32_t i = 0; i < drawSelect.size(); i++)
                             {
-                                drawSelect.clear();
-                                selected->clear();
+                                if (onlyOne && i > 0) {
+                                    break;
+                                }
+                                ImVec2 start(drawSelect[i].x * tilWidth + cv_destStart.x, drawSelect[i].y * tilHeight + cv_destStart.y);
+                                ImVec2 end(start.x + tilWidth, start.y + tilHeight);
+                                drawList->AddRectFilled(start, end, IM_COL32(0, 255, 255, 50));
                             }
-                        }
-
-                        for (uint32_t i = 0; i < drawSelect.size(); i++)
-                        {
-                            if (onlyOne && i > 0) {
-                                break;
-                            }
-                            ImVec2 start(drawSelect[i].x * tilWidth + cv_destStart.x, drawSelect[i].y * tilHeight + cv_destStart.y);
-                            ImVec2 end(start.x + tilWidth, start.y + tilHeight);
-                            drawList->AddRectFilled(start, end, IM_COL32(0, 255, 255, 50));
                         }
                     }
                 }
@@ -461,6 +463,50 @@ namespace ImGui {
         }
         ImGui::PopStyleColor(3);
         return clicked;
+    }
+
+    bool Draw2Float(char* label, Plutus::vec2f& value, float step, const char* btntag1, const char* btntag2) {
+        bool changed = false;
+
+        ImGui::BeginGroup();
+        ImGui::PushID(label);
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+
+        float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.0f;
+        ImVec2 buttonSize(lineHeight + 3.0f, lineHeight);
+        float widthEach = (ImGui::CalcItemWidth() - buttonSize.x * 2.0f) / 2.0f;
+
+        ImGui::PushItemWidth(widthEach);
+        if (LabelButton(btntag1, buttonSize)) {
+            value.x = 0;
+            changed = true;
+        }
+        ImGui::SameLine();
+
+        float vecValuesX = value.x;
+        if (ImGui::DragFloat("##x", &vecValuesX, step, 0, 0, "%0.1f")) changed = true;
+        ImGui::PopItemWidth();
+        ImGui::SameLine();
+
+        ImGui::PushItemWidth(widthEach);
+        if (LabelButton(btntag2, buttonSize, 1)) {
+            value.y = 0;
+            changed = true;
+        }
+
+        ImGui::SameLine();
+        float vecValuesY = value.y;
+        if (ImGui::DragFloat("##y", &vecValuesY, step, 0, 0, "%0.1f")) changed = true;
+        ImGui::PopItemWidth();
+        ImGui::SameLine();
+
+        value.x = vecValuesX;
+        value.y = vecValuesY;
+
+        ImGui::PopStyleVar();
+        ImGui::EndGroup();
+        ImGui::PopID();
+        return changed;
     }
 
     bool Draw2Float(char* label, glm::vec2& value, float step, const char* btntag1, const char* btntag2) {

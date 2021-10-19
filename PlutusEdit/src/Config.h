@@ -10,6 +10,13 @@
 namespace Plutus
 {
 
+    struct FloatColor {
+        float r = 1;
+        float g = 1;
+        float b = 1;
+        float a = 1;
+    };
+
     struct Project {
         int vpWidth = 1280;
         int vpHeight = 768;
@@ -32,6 +39,9 @@ namespace Plutus
 
     struct Config
     {
+        float vpZoom = 1.0f;
+        vec4f vpColor = { 1.0f };
+        vec2f vpPos;
         //Mouse Coords in view port
         vec2f mMouseCoords;
         // Is Viewport hovered

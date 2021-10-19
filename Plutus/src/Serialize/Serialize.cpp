@@ -53,10 +53,17 @@ namespace Plutus
         writer.Bool(data);
     }
 
+    void Serializer::StartObj(const std::string& id)
+    {
+        writer.String(id.c_str());
+        writer.StartObject();
+    }
+
     void Serializer::StartObj()
     {
         writer.StartObject();
     }
+
     void Serializer::EndObj()
     {
         writer.EndObject();
@@ -99,6 +106,24 @@ namespace Plutus
     std::string PJson::getString(const char* key)
     {
         return doc.HasMember(key) ? doc[key].GetString() : "";
+    }
+    vec2f PJson::getFloat2(const char* key)
+    {
+        vec2f f2{ 0,0 };
+        if (doc.HasMember(key)) {
+            auto arr = doc[key].GetArray();
+            f2 = { arr[0].GetFloat(), arr[1].GetFloat() };
+        }
+        return f2;
+    }
+    vec4f PJson::getFloat4(const char* key)
+    {
+        vec4f f4{ 0, 0, 0, 0 };
+        if (doc.HasMember(key)) {
+            auto arr = doc[key].GetArray();
+            f4 = { arr[0].GetFloat(), arr[1].GetFloat(), arr[2].GetFloat(), arr[3].GetFloat() };
+        }
+        return f4;
     }
     /********************************************************************/
     bool loadJson(const char* filePath, rapidjson::Document* document)

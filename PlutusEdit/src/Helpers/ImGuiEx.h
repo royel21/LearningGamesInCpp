@@ -127,6 +127,7 @@ namespace ImGui
     void BeginCol(const char* label, float width = -1);
 
     bool Draw2Float(char* id, glm::vec2& value, float step = 1.0f, const char* btntag1 = "X", const char* btntag2 = "Y");
+    bool Draw2Float(char* id, Plutus::vec2f& value, float step = 1.0f, const char* btntag1 = "X", const char* btntag2 = "Y");
 
     bool InputString(const char* label, std::string& text);
 

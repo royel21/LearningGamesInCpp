@@ -1,9 +1,11 @@
 #include "Config.h"
 #include <Input/Input.h>
 #include <rapidjson/document.h>
-#include <filesystem>
-#include <iostream>
+
+#include <math.h>
 #include <fstream>  
+#include <iostream>
+#include <filesystem>
 
 #include <Serialize/Serialize.h>
 #include <Serialize/SceneLoader.h>
@@ -12,6 +14,7 @@
 #include <Utils/Utils.h>
 #include <Assets/AssetManager.h>
 #include <Platforms/Windows/FileUtils.h>
+
 
 namespace Plutus
 {
@@ -141,6 +144,11 @@ namespace Plutus
             winWidth = json.getInt("win-width");
             winHeight = json.getInt("win-height");
             OpenProject = json.getString("open-project");
+            vpZoom = json.getFloat("vp-zoom");
+            vpPos = json.getFloat2("vp-pos");
+            vpColor = json.getFloat4("vp-color");
+            auto arr = json.doc["vp-color"].GetArray();
+
             for (auto& obj : json.doc["projects"].GetArray()) {
                 auto& p = mProjects[obj["name"].GetString()];
                 p.mOpenScene = obj["open-scene"].GetString();
@@ -169,6 +177,21 @@ namespace Plutus
             ser.addInt("win-width", winWidth);
             ser.addInt("win-height", winHeight);
             ser.addString("open-project", OpenProject);
+            ser.addFloat("vp-zoom", roundf(vpZoom * 100) / 100);
+            ser.StartArr("vp-pos");
+            {
+                ser.addFloat(vpPos.x);
+                ser.addFloat(vpPos.y);
+            }
+            ser.EndArr();
+            ser.StartArr("vp-color");
+            {
+                ser.addFloat(roundf(vpColor.x * 100) / 100);
+                ser.addFloat(roundf(vpColor.y * 100) / 100);
+                ser.addFloat(roundf(vpColor.z * 100) / 100);
+                ser.addFloat(roundf(vpColor.w * 100) / 100);
+            }
+            ser.EndArr();
             ser.StartArr("projects");
             {
                 for (auto& p : mProjects) {

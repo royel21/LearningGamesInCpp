@@ -267,7 +267,7 @@ namespace Plutus
                     texture.texHeight = glTexture.height;
                 }
                 type = 1;
-                showTexure(texture);
+                showTexure(texture, true);
             }
 
             if (substr.compare("fonts") == 0 && fontTypes[ex]) {
@@ -318,37 +318,38 @@ namespace Plutus
 
     }
 
-    void AssetsTab::showTexure(Texture& texture) {
+    void AssetsTab::showTexure(Texture& texture, bool newTex) {
 
         static float scale = 1.0f;
         if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingStretchProp)) {
             ImGui::BeginCol("Columns");
-            ImGui::InputInt("##Columns", &texture.columns);
+            if (ImGui::InputInt("##Columns", &texture.columns)) texture.calculateUV();
 
             ImGui::BeginCol("Tile Width");
-            ImGui::InputInt("##Tile Width", &texture.tileWidth);
+            if (ImGui::InputInt("##Tile Width", &texture.tileWidth))  texture.calculateUV();
 
             ImGui::BeginCol("Tile Height");
-            ImGui::InputInt("##Tile Height", &texture.tileHeight);
+            if (ImGui::InputInt("##Tile Height", &texture.tileHeight)) texture.calculateUV();
+            if (newTex) {
+                ImGui::BeginCol("Filters");
+                if (ImGui::BeginCombo("##Filters", texfilter.Name))
+                {
+                    for (int i = 0; i < IM_ARRAYSIZE(filters); i++) {
+                        bool is_selected = filters[i].filter == texfilter.filter;
+                        if (ImGui::Selectable(filters[i].Name, is_selected)) {
+                            texfilter = filters[i];
 
-            ImGui::BeginCol("Filters");
-            if (ImGui::BeginCombo("##Filters", texfilter.Name))
-            {
-                for (int i = 0; i < IM_ARRAYSIZE(filters); i++) {
-                    bool is_selected = filters[i].filter == texfilter.filter;
-                    if (ImGui::Selectable(filters[i].Name, is_selected)) {
-                        texfilter = filters[i];
+                            if (texture.texWidth) {
+                                texture.texWidth = 0;
+                                glDeleteTextures(1, &texture.texId);
+                            }
 
-                        if (texture.texWidth) {
-                            texture.texWidth = 0;
-                            glDeleteTextures(1, &texture.texId);
+                            if (is_selected)
+                                ImGui::SetItemDefaultFocus();
                         }
-
-                        if (is_selected)
-                            ImGui::SetItemDefaultFocus();
                     }
+                    ImGui::EndCombo();
                 }
-                ImGui::EndCombo();
             }
             ImGui::BeginCol("Scale");
             ImGui::DragFloat("##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
