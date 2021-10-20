@@ -248,8 +248,6 @@ namespace Plutus
 
             bool show = true;
 
-            ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-            ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
             ImGui::BeginDialog("Asset Modal");
             //Texure Or Font Id
             ImGui::Text("Asset Id");
@@ -288,7 +286,7 @@ namespace Plutus
             {
                 switch (type) {
                 case 1:
-                    AssetManager::get()->mTextures.addTexture(name, selectedDir, texture.columns, texture.tileHeight, texture.tileWidth, texfilter.filter, texfilter.filter);
+                    AssetManager::get()->mTextures.addTexture(name, selectedDir, texture.columns, texture.tileWidth, texture.tileHeight, texfilter.filter, texfilter.filter);
                     break;
                 case 2:
                     AssetManager::get()->mFonts.addFont(name, selectedDir, fontSize);
@@ -355,6 +353,7 @@ namespace Plutus
             ImGui::DragFloat("##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
             ImGui::EndUIGroup();
         }
-        ImGui::DrawTexture(&texture, 400, 300, scale);
+        std::vector<glm::ivec3> selected;
+        ImGui::DrawTexture(&texture, 400, 300, scale, &selected);
     }
 }

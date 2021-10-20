@@ -70,7 +70,7 @@ namespace Plutus
     class Scene
     {
     public:
-        Scene() = default;
+        Scene();
         ~Scene();
 
         Entity createEntity(const std::string& name);

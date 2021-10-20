@@ -7,11 +7,16 @@
 #include <ECS/Components.h>
 
 namespace ImGui {
+
+    const uint32_t color1 = IM_COL32(50, 50, 50, 255);
+    const uint32_t color2 = IM_COL32(50, 50, 60, 255);
+    const uint32_t color3 = IM_COL32(60, 60, 70, 255);
+
     bool TransparentButton(const char* label, bool isIcon, ImVec4 color) {
         ImVec2 buttonSize = { 0,0 };
         if (isIcon) {
             float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.0f;
-            buttonSize = { lineHeight - 4, lineHeight };
+            buttonSize = { lineHeight, lineHeight };
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
         }
 
@@ -26,6 +31,7 @@ namespace ImGui {
         ImGui::PopStyleColor(3);
         if (isIcon) {
             ImGui::PopStyleVar();
+            ImGui::SameLine();
         }
         return isActive;
     }
@@ -283,7 +289,8 @@ namespace ImGui {
             auto pos = ImGui::GetWindowPos();
             ImGui::SetNextWindowPos({ pos.x + 5, pos.y + 60 });
         }
-
+        ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+        ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
         ImGui::OpenPopup(name);
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize;
         ImGui::BeginPopupModal(name, NULL, window_flags);
@@ -394,10 +401,6 @@ namespace ImGui {
         }
         return false;
     }
-
-    const uint32_t color1 = IM_COL32(50, 50, 50, 255);
-    const uint32_t color2 = IM_COL32(50, 50, 60, 255);
-    const uint32_t color3 = IM_COL32(60, 60, 70, 255);
 
     void DrawTexCoords(Plutus::Texture* tileset, glm::vec4& coords) {
         auto mInput = Plutus::Input::get();

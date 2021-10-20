@@ -32,7 +32,8 @@ namespace Plutus
 
     void Texture::calculateUV()
     {
-        if (tileWidth > 0)
+        uvs.clear();
+        if (tileWidth > 0 && tileHeight > 0)
         {
             auto totalTiles = columns * int(texHeight / tileHeight);
 

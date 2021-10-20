@@ -14,14 +14,22 @@ namespace Plutus
         mTextures.push_back(id);
     }
 
-    void Animation::addSequence(const std::string id, Sequence seq)
+    void Animation::addSequence(const std::string& id, Sequence seq)
     {
         mSequences[id] = seq;
     }
 
-    void Animation::addSeq(const std::string id, std::vector<int> frames, int texIndex, int frameTime)
+    void Animation::addSeq(const std::string& id, std::vector<int> frames, int texIndex, int frameTime)
     {
         mSequences[id] = { frames, texIndex, frameTime };
+    }
+
+    void Animation::replaceSeq(const std::string& oldid, const std::string& newid) {
+        auto it = mSequences.find(oldid);
+        if (it != mSequences.end()) {
+            mSequences[newid] = mSequences[oldid];
+            mSequences.erase(oldid);
+        }
     }
 
     void Animation::play(const std::string& id)

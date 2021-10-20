@@ -1,7 +1,10 @@
 #pragma once
 #include "../Config.h"
 
+#include <vector>
 #include <imgui.h> 
+#include <algorithm>
+
 #include "../Helpers/IconsFontAwesome5.h"
 
 namespace Plutus
@@ -18,5 +21,17 @@ namespace Plutus
         ImGui::PopID();
         return isOpen;
     }
+
+    template<typename T>
+    void removeItem(std::vector<T>& vec, T* item) {
+        auto it = std::find_if(vec.begin(), vec.end(), [&](T& e) {
+            return &e == item;
+            });
+
+        if (it != vec.end()) {
+            vec.erase(e);
+        }
+    }
+
 } // namespace Plutus
 

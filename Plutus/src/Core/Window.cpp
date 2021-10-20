@@ -1,6 +1,8 @@
 
 #include "Window.h"
 
+#pragma warning(disable: 4005)
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #define GL_GLEXT_PROTOTYPES

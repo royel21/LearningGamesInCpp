@@ -11,7 +11,7 @@ namespace Plutus
 
     struct Sequence
     {
-        float mSeqTime;
+        float mSeqTime = 0.1f;
         int mTexIndex;
         uint32_t mFrame = 0;
         std::vector<int> mFrames;
@@ -25,8 +25,9 @@ namespace Plutus
         Animation() = default;
 
         void addTexture(const std::string& id);
-        void addSequence(const std::string id, Sequence seq);
-        void addSeq(const std::string id, std::vector<int> frames, int texIndex, int frameTime);
+        void addSequence(const std::string& id, Sequence seq);
+        void addSeq(const std::string& id, std::vector<int> frames, int texIndex, int frameTime);
+        void replaceSeq(const std::string& oldid, const std::string& newid);
 
         void setLoop(bool _loop) { loop = _loop; }
         void play(const std::string& id);

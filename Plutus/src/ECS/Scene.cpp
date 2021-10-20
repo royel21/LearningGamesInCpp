@@ -1,10 +1,13 @@
 #include "Scene.h"
+#include "ScriptServer.h"
 #include "Components.h"
 
 namespace Plutus
 {
     /*******************************     Scene    ************************/
+    Scene::Scene() {
 
+    }
     Scene::~Scene()
     {
         mRegistry.clear();
