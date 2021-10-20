@@ -2,6 +2,10 @@ local SPEED = 5.0;
 
 print("player1 init")
 
+local Player
+
+function init() Player = scene:getEntity("Player") end
+
 function update(dt)
     local trans = Player:getTransform();
 

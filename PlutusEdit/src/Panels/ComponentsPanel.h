@@ -1,6 +1,9 @@
 #pragma once
-#include "TileMapPanel.h"
 #include <ECS/Scene.h>
+
+
+#include "TileMapPanel.h"
+#include "AnimationTab.h"
 
 namespace Plutus
 {
@@ -11,10 +14,10 @@ namespace Plutus
     private:
         void DrawTransform();
         void DrawSprite();
-        void DrawAnimation();
         void DrawScript();
     private:
         TileMapPanel mTileMapPanel;
+        AnimationTab mAnimation;
         float mSpriteScale = 1.0f;
         Entity mEnt;
     };

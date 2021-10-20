@@ -51,12 +51,11 @@ namespace Plutus
             }
 
             ImGui::Separator();
-            auto& ent = mEnt;
-            if (ent.hasComponent<Transform>()) DrawTransform();
-            if (ent.hasComponent<Sprite>()) DrawSprite();
-            if (ent.hasComponent<Animation>()) DrawAnimation();
-            if (ent.hasComponent<TileMap>()) mTileMapPanel.DrawTileMapComponet();
-            if (ent.hasComponent<Script>()) DrawScript();
+            if (mEnt.hasComponent<Transform>()) DrawTransform();
+            if (mEnt.hasComponent<Sprite>()) DrawSprite();
+            if (mEnt.hasComponent<Animation>()) mAnimation.DrawAnimation(&mEnt);
+            if (mEnt.hasComponent<TileMap>()) mTileMapPanel.DrawTileMapComponet();
+            if (mEnt.hasComponent<Script>()) DrawScript();
         }
         ImGui::End();
     }
@@ -154,11 +153,6 @@ namespace Plutus
         }
     }
 
-    /***********************************Animate Comopnent********************************************************/
-    void ComponentPanel::DrawAnimation() {
-
-    }
-
     /***********************************Script Comopnent********************************************************/
     void ComponentPanel::DrawScript() {
         if (CollapseComponent<Script>("Script##script-comp", 5))
@@ -171,10 +165,10 @@ namespace Plutus
                 ImGui::Text("Scripts");
                 ImGui::SameLine();
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
-                int selected = Utils::getIndex(files, script->path);
+                int selected = Utils::getIndex(files, script->mScript);
                 if (ImGui::ComboBox("##slist", files, selected))
                 {
-                    script->init(files[selected], mEnt, Config::get().mProject->mScene.get());
+                    script->init(files[selected]);
                 }
                 ImGui::SameLine();
                 if (ImGui::TransparentButton(ICON_FA_TRASH "", true, { 1,0,0,1 }) && selected > -1) {

@@ -5,22 +5,22 @@
 
 namespace Plutus
 {
+    Script::Script(const std::string& script) {
+        init(script);
+    }
     Script::Script(const Script& script) {
-        init(script.path, script.ent, script.scene);
+        init(script.mScript);
     }
 
-    void Script::init(const std::string& _path, Entity _ent, Scene* _scene)
+    void Script::init(const std::string& _script)
     {
-        path = _path;
-        ent = _ent;
-        scene = _scene;
+        if (!_script.empty()) mScript = _script;
 
         auto lua = ScriptServer::get()->getState();
 
         mEnv = sol::environment(*lua, sol::create, lua->globals());
-        mEnv[ent.getName()] = &ent;
 
-        lua->do_file(_path, mEnv);
+        lua->do_file(mScript, mEnv);
 
         if (mEnv["init"] != sol::nil) {
             mEnv["init"]();
@@ -28,9 +28,6 @@ namespace Plutus
     }
 
     void Script::destroy() {
-        path = "";
-        ent = {};
-        scene = nullptr;
         mEnv = sol::environment();
     }
 

@@ -177,7 +177,7 @@ namespace Plutus
                     ser.StartObj();
                     {
                         ser.addString("name", "Script");
-                        ser.addString("path", script->path);
+                        ser.addString("script", script->mScript);
                     }
                     ser.EndObj();
                 }

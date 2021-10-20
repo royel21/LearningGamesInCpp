@@ -134,8 +134,7 @@ namespace Plutus
                         }
                         if (compType == "Script")
                         {
-                            auto script = entity.addComponent<Script>();
-                            script->init(component["path"].GetString(), entity, scene.get());
+                            auto script = entity.addComponent<Script>(component["script"].GetString());
                         }
                     }
                 }

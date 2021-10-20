@@ -17,7 +17,8 @@ namespace Plutus
     {
         mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
         mRenderer.init();
-
+        mRenderer.setShader(&mShader);
+        mRenderer.setCamera(camera);
         mDebug.init(camera);
     }
 
@@ -84,13 +85,11 @@ namespace Plutus
         mRenderables.resize(i);
         // sort by layer, y position, texture
         std::sort(mRenderables.begin(), mRenderables.end());
-
         mRenderer.submit(mRenderables);
 
-        mRenderer.begin(&mShader, mCamera);
+        mRenderer.begin();
         mRenderer.draw();
         mRenderer.end();
-        // std::printf("time: %llu\n", Timer::millis() - start);
     }
 
     void RenderSystem::destroy()

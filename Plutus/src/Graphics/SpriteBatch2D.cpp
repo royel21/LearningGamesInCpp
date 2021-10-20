@@ -142,14 +142,12 @@ namespace Plutus
 		}
 	}
 
-	void SpriteBatch2D::begin(Shader* shader, Camera2D* camera, bool isText)
+	void SpriteBatch2D::begin(bool isText)
 	{
-		mCamera = camera;
-		mShader = shader;
-		shader->enable();
-		shader->setUniform1b("isText", isText);
-		shader->setUniform1i("mySampler", 0);
-		shader->setUniformMat4("camera", mCamera->getCameraMatrix());
+		mShader->enable();
+		mShader->setUniform1b("isText", isText);
+		mShader->setUniform1i("mySampler", 0);
+		mShader->setUniformMat4("camera", mCamera->getCameraMatrix());
 
 		glClearDepth(1.0f);
 

@@ -5,22 +5,19 @@
 #include <iostream>
 #include <sol/sol.hpp>
 
-#include "../Scene.h"
-
 namespace Plutus
 {
     class Script
     {
     public:
-        Entity ent;
-        Scene* scene;
-        std::string path;
+        std::string mScript;
 
     public:
         Script() = default;
         Script(const Script& script);
+        Script(const std::string& script);
 
-        void init(const std::string& _path, Entity _ent, Scene* _scene);
+        void init(const std::string& _path = "");
 
         void update(float dt) {
             if (mEnv["update"] != sol::nil) {

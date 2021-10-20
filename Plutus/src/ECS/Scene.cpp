@@ -38,12 +38,13 @@ namespace Plutus
     Entity Scene::getEntityByName(const std::string name)
     {
         entt::entity ent = entt::null;
-        mRegistry.each([&](auto e) {
-            auto& tag = mRegistry.get<Tag>(e);
+        auto view = mRegistry.view<const Tag>();
+        for (auto& [e, tag] : view.each()) {
             if (tag.Name.compare(name) == 0) {
                 ent = e;
+                break;
             }
-            });
+        }
 
         return { ent, this };
     }

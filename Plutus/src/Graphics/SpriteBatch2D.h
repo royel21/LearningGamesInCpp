@@ -55,12 +55,10 @@ namespace Plutus
 		~SpriteBatch2D();
 		void init();
 		//Prepare the Vertex buffer to add objects
-		void begin(Shader* shader, Camera2D* camera, bool isText = false);
-		//Reserve the memory for the objects
-		void reserve(uint32_t size)
-		{
-			// vertices.reserve(vertices.size() + (size << 2));
-		};
+		void begin(bool isText = false);
+
+		void setShader(Shader* shader) { mShader = shader; }
+		void setCamera(Camera2D* cam) { mCamera = cam; }
 
 		void submit(const std::vector<Renderable>& renderables);
 

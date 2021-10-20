@@ -46,6 +46,9 @@ void EditorScreen::build()
 
     mDebug = Plutus::DebugRender::get();
     mDebug->init(&mCamera);
+
+    mRender.setShader(&mShader);
+    mRender.setCamera(&mCamera);
 }
 
 void EditorScreen::onEntry()
@@ -98,7 +101,7 @@ void EditorScreen::draw()
 
     mRender.submit(renderables);
 
-    mRender.begin(&mShader, &mCamera, true);
+    mRender.begin(true);
     mRender.draw();
     mRender.end();
 
@@ -108,7 +111,7 @@ void EditorScreen::draw()
     renderables2.push_back({ Plutus::AssetManager::get()->mTextures.getTexture("bats")->texId, { 180, 220, 64, 64 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 30, 0, false });
     mRender.submit(renderables2);
 
-    mRender.begin(&mShader, &mCamera);
+    mRender.begin();
 
     mFB.bind();
     mRender.draw(true);

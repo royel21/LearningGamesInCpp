@@ -26,6 +26,9 @@ namespace Plutus
         mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
 
         mSpriteBatch.init();
+        mSpriteBatch.setShader(&mShader);
+        mSpriteBatch.setCamera(&mCamera);
+
         mFramePicker.init(w, h, true);
         mFrameBuffer.init(w, h);
 
@@ -37,7 +40,7 @@ namespace Plutus
     void Render::draw()
     {
         prepare();
-        mSpriteBatch.begin(&mShader, &mCamera);
+        mSpriteBatch.begin();
 
         mFramePicker.bind();
         mSpriteBatch.draw(true);

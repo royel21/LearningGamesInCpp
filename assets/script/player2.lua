@@ -1,10 +1,10 @@
-print("player2 init")
-
 local SPEED = 4
 
 local curAnime = "stand-r"
 
 local vel = 0;
+
+local Player2
 
 local stand = {
     right = "stand-right",
@@ -16,21 +16,8 @@ local stand = {
 local direction = "right";
 local state = ""
 
-function move(dir, trans)
-    if dir == "up" then
-        trans.y = trans.y + SPEED
-    elseif dir == "down" then
-        trans.y = trans.y - SPEED
-    end
-    -- Move Right - Left
-    if dir == "right" then
-        trans.x = trans.x + SPEED
-    elseif dir == "left" then
-        trans.x = trans.x - SPEED
-    end
-end
-
 function init()
+    Player2 = scene:getEntity("Player2")
     local anim = Player2:getAnimate();
 
     if anim then
@@ -60,16 +47,22 @@ function init()
     anim:play(curAnime)
 end
 
-function update(dt)
-    local trans = Player2:getTransform();
-    local anim = Player2:getAnimate();
+local vel = {x = 0, y = 0}
 
-    vel = {x = 0, y = 0}
+function move()
+    local trans = Player2:getTransform();
+    trans.x = trans.x + vel.x
+    trans.y = trans.y + vel.y
+end
+
+function update(dt)
+    local anim = Player2:getAnimate();
 
     if not anim.loop then
         state = ""
         curAnime = stand[direction]
         anim:play(curAnime)
+        vel = {x = 0, y = 0}
     end
 
     if state ~= "attacking" and state ~= "jumping" then
@@ -77,21 +70,27 @@ function update(dt)
         if input:onKeyDown("Up") then
             direction = "up"
             state = "running"
+            vel.y = SPEED
         elseif input:onKeyDown("Down") then
             direction = "down"
             state = "running"
+            vel.y = -SPEED
         end
         -- Move Right - Left
         if input:onKeyDown("Right") then
             direction = "right"
             state = "running"
+            vel.x = SPEED
         elseif input:onKeyDown("Left") then
             direction = "left"
             state = "running"
+            vel.x = -SPEED
         end
         -- Jump animation
         if input:onKeyPressed("X") and state == "running" then
             state = "jumping"
+            vel.x = vel.x * 1.8;
+            vel.y = vel.y * 1.8;
             anim:play("jump-" .. direction);
             anim:setLoop(true);
         elseif not anim.loop and state == "running" then
@@ -100,7 +99,7 @@ function update(dt)
         end
     end
     -- Jumping
-    if state == "jumping" or state == "running" then move(direction, trans) end
+    if state == "jumping" or state == "running" then move() end
     -- Attack Animation
     if input:onKeyPressed("Z") and state ~= "jumping" then
         anim:play("attack-" .. direction);

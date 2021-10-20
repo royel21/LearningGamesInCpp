@@ -3,8 +3,12 @@ print("bat init")
 local SPEED = 5
 
 local curAnime = "down"
+local Player
+local Bat
 
 function init()
+    Bat = scene:getEntity("Bat")
+    player = scene:getEntity("Player")
     local anim = Bat:getAnimate();
 
     if anim then
@@ -16,8 +20,6 @@ function init()
     end
     anim:play(curAnime)
 end
-
-player = scene:getEntity("Player")
 
 -- print("scene", );
 

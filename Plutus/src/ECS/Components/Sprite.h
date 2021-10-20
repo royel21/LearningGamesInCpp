@@ -14,7 +14,7 @@ namespace Plutus
         bool mUseUV = false;
         int mUvIndex = 0;
         glm::vec4 mUVCoord;
-        uint32_t mColor;
+        uint32_t mColor = -1;
 
         Sprite() : mUseUV(true) {};
         Sprite(std::string texId) : mTextureId(texId), mUVCoord(0, 0, 1, 1) {};
