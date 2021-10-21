@@ -1,16 +1,16 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "Windows",
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/src/**",
-                "${workspaceFolder}/Plutus/**",
                 "${workspaceFolder}/Plutus/libs/**",
                 "${workspaceFolder}/Plutus/libs/freetype/include/**",
                 "${workspaceFolder}/Plutus/libs/glm/**",
-                "${workspaceFolder}/PlutusEditor/src/**",
-                "${workspaceFolder}/PlutusEditor/libs/imgui/src/**"
+                "${workspaceFolder}/PlutusEdit/src/**",
+                "${workspaceFolder}/PlutusEdit/libs/imgui/src/**",
+                "${workspaceFolder}/Plutus/src/**"
             ],
             "configurationProvider": "ms-vscode.cmake-tools"
         }
