@@ -13,6 +13,8 @@
 #include "../Helpers/Render.h"
 #include "ComponentUtil.h"
 
+#include <Assets/AssetManager.h>
+
 namespace Plutus
 {
 
@@ -116,37 +118,37 @@ namespace Plutus
                 ImGui::BeginCol("Scale");
                 ImGui::DragFloat("##sc-spr", &mSpriteScale, 0.01f, 0.2f, 5, "%0.2");
                 ImGui::BeginCol("Use Coords");
-                ImGui::Checkbox("##spr-usecoords", &sprite->mUseUV);
+                ImGui::Checkbox("##spr-usecoords", &mUseCoords);
 
                 bool found = textures.find(selected) != textures.end();
                 if (found) {
-                    if (!sprite->mUseUV) {
+                    if (!mUseCoords) {
                         int max = (int)textures[selected].uvs.size();
                         if (max) {
                             ImGui::BeginCol("UV");
-                            int uvIndex = sprite->mUvIndex;
                             if (ImGui::InputInt("#spr-uv", &uvIndex)) {
-                                sprite->mUvIndex = CHECKLIMIT(uvIndex, 0, max - 1);
+                                uvIndex = CHECKLIMIT(uvIndex, 0, max - 1);
+                                sprite->mUVCoord = AssetManager::get()->getTexCoords(selected, uvIndex);
                             }
                         }
                     }
                     else {
                         static int coords[4] = { 0 };
                         ImGui::BeginCol("Coords");
-                        if (ImGui::DragFloat4("#spr-uv", glm::value_ptr(sprite->mUVCoord)), 0.001f) {
-
-                        }
+                        ImGui::DragFloat4("#spr-uv", glm::value_ptr(sprite->mUVCoord), 0.001f);
                     }
                 }
                 ImGui::EndUIGroup();
                 ImGui::Separator();
                 if (found) {
                     auto& texture = textures[selected];
-                    if (sprite->mUseUV) {
+                    if (mUseCoords) {
                         ImGui::DrawTexCoords(&texture, sprite->mUVCoord);
                     }
                     else {
-                        ImGui::DrawTextureOne(&texture, sprite->mUvIndex);
+                        if (ImGui::DrawTextureOne(&texture, uvIndex)) {
+                            sprite->mUVCoord = AssetManager::get()->getTexCoords(selected, uvIndex);
+                        }
                     }
                 }
             }
@@ -168,7 +170,7 @@ namespace Plutus
                 int selected = Utils::getIndex(files, script->mScript);
                 if (ImGui::ComboBox("##slist", files, selected))
                 {
-                    script->init(files[selected]);
+                    script->setScript(files[selected]);
                 }
                 ImGui::SameLine();
                 if (ImGui::TransparentButton(ICON_FA_TRASH "", true, { 1,0,0,1 }) && selected > -1) {

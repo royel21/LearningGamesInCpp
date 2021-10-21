@@ -17,7 +17,9 @@ namespace Plutus
         Script(const Script& script);
         Script(const std::string& script);
 
-        void init(const std::string& _path = "");
+        void setScript(const std::string& script);
+
+        void init(sol::state& lua);
 
         void update(float dt) {
             if (mEnv["update"] != sol::nil) {

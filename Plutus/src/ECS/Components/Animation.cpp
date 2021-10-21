@@ -2,7 +2,7 @@
 
 namespace Plutus
 {
-    Sequence::Sequence(const std::string& texId, std::vector<int> frames, int _seqTime)
+    Sequence::Sequence(const std::string& texId, Frames frames, int _seqTime)
     {
         mTexId = texId;
         mFrames = frames;
@@ -14,7 +14,7 @@ namespace Plutus
         mSequences[id] = seq;
     }
 
-    void Animation::addSeq(const std::string& id, std::vector<int> frames, int frameTime)
+    void Animation::addSeq(const std::string& id, Frames frames, int frameTime)
     {
         mSequences[id] = { tempSprite, frames, frameTime };
     }

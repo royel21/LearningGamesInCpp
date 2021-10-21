@@ -16,9 +16,12 @@ namespace Plutus
         void DrawSprite();
         void DrawScript();
     private:
-        TileMapPanel mTileMapPanel;
-        AnimationTab mAnimation;
-        float mSpriteScale = 1.0f;
         Entity mEnt;
+        AnimationTab mAnimation;
+        TileMapPanel mTileMapPanel;
+
+        int uvIndex = 0;
+        bool mUseCoords = false;
+        float mSpriteScale = 1.0f;
     };
 } // namespace Plutus

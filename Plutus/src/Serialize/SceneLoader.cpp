@@ -132,8 +132,6 @@ namespace Plutus
                             spr->mFlipX = component["fx"].GetInt();
                             spr->mFlipY = component["fy"].GetInt();
                             spr->mColor = component["c"].GetInt();
-                            spr->mUseUV = component["usuv"].GetInt();
-                            spr->mUvIndex = component["uvi"].GetInt();
                             auto uvs = component["uvc"].GetArray();
                             spr->mUVCoord = { uvs[0].GetFloat(),uvs[1].GetFloat(),uvs[2].GetFloat(),uvs[3].GetFloat() };
                             continue;

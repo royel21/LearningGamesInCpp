@@ -143,11 +143,9 @@ namespace Plutus
                     {
                         ser.addString("name", "Sprite");
                         ser.addString("tex", sprite->mTextureId);
-                        ser.addInt("uvi", sprite->mUvIndex);
                         ser.addInt("c", sprite->mColor);
                         ser.addInt("fx", sprite->mFlipX);
                         ser.addInt("fy", sprite->mFlipY);
-                        ser.addInt("usuv", sprite->mUseUV);
                         ser.StartArr("uvc");
                         {
                             ser.addFloat(sprite->mUVCoord.x);

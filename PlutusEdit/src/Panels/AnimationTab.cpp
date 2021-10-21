@@ -85,13 +85,13 @@ namespace Plutus
                         size_t i = 0;
                         int index2RM = -1;;
                         for (auto frame : seq.mFrames) {
-                            ImGui::PushID(i);
+                            ImGui::PushID((int)i);
                             if (i % 6 != 0)
                                 ImGui::SameLine();
 
                             auto uv = tex.uvs[frame];
                             if (ImGui::ImageButton((ImTextureID)tex.texId, { 64, 64 }, { uv.x, uv.y }, { uv.z, uv.w })) {
-                                index2RM = i;
+                                index2RM = (int)i;
                             }
                             ImGui::PopID();
                             i++;
@@ -106,13 +106,13 @@ namespace Plutus
                     if (ImGui::BeginChild("##tex-img", { curPos.x, 217 })) {
                         for (size_t i = 0; i < tex.uvs.size(); i++) {
 
-                            ImGui::PushID(i);
+                            ImGui::PushID((int)i);
                             if (i % 6 != 0)
                                 ImGui::SameLine();
 
                             auto uv = tex.uvs[i];
                             if (ImGui::ImageButton((ImTextureID)tex.texId, { 64, 64 }, { uv.x, uv.y }, { uv.z, uv.w })) {
-                                seq.mFrames.push_back(i);
+                                seq.mFrames.push_back((int)i);
                             }
                             ImGui::PopID();
                         }

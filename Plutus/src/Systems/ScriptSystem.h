@@ -1,5 +1,6 @@
 #pragma once
 #include "System.h"
+#include <sol/sol.hpp>
 
 namespace Plutus
 {
@@ -10,5 +11,8 @@ namespace Plutus
 
         void init();
         void update(float dt);
+        void destroy();
+    private:
+        sol::state mGlobalLua;
     };
 } // namespace Plutus

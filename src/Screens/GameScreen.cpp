@@ -64,29 +64,29 @@ void GameScreen::build()
 void GameScreen::onEntry()
 {
     // Plutus::SceneLoader::loadFromJson("assets/scenes/Physics.json", mScene);
-    mSystemManager.start();
     const int h = mEngine->getHeight();
     // Player 1
     auto player = mScene->createEntity("Player");
-    auto trasn1 = player.addComponent<Plutus::Transform>(192.0f, 0.0f, 64, 64, 0.0f, 0, true);
+    player.addComponent<Plutus::Transform>(192.0f, 0.0f, 64, 64, 0.0f, 0, true);
     player.addComponent<Plutus::Sprite>("player1");
-    auto script = player.addComponent<Plutus::Script>("assets/script/player1.lua");
+    player.addComponent<Plutus::Script>("assets/script/player1.lua");
 
     // Player 2
     auto player2 = mScene->createEntity("Player2");
     player2.addComponent<Plutus::Transform>(400.0f, 0.0f, 128, 128, 0.0f, 0, true);
     player2.addComponent<Plutus::Sprite>("player2");
-
-    auto anim2 = player2.addComponent<Plutus::Animation>();
-    auto player2Script = player2.addComponent<Plutus::Script>("assets/script/player2.lua");
+    player2.addComponent<Plutus::Animation>();
+    player2.addComponent<Plutus::Script>("assets/script/player2.lua");
     // Bat1
     auto bat = mScene->createEntity("Bat");
     bat.addComponent<Plutus::Transform>(288.0f, 0.0f, 64, 64, 0.0f, 0, true);
     bat.addComponent<Plutus::Sprite>("bats");
 
-    auto anim = bat.addComponent<Plutus::Animation>();
-    auto batScript = bat.addComponent<Plutus::Script>("assets/script/bat.lua");
-    Plutus::SoundEngine.play("bg-sound");
+    bat.addComponent<Plutus::Animation>();
+    bat.addComponent<Plutus::Script>("assets/script/bat.lua");
+    // Plutus::SoundEngine.play("bg-sound");
+
+    mSystemManager.start();
 }
 
 void GameScreen::update(float dt)

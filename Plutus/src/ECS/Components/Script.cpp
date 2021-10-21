@@ -1,26 +1,24 @@
 #include "Script.h"
-#include "../ScriptServer.h"
 
-#include <lua.h>
 
 namespace Plutus
 {
     Script::Script(const std::string& script) {
-        init(script);
+        mScript = script;
     }
     Script::Script(const Script& script) {
-        init(script.mScript);
+        mScript = script.mScript;
     }
 
-    void Script::init(const std::string& _script)
+    void Script::setScript(const std::string& script) {
+        mScript = script;
+    }
+
+    void Script::init(sol::state& lua)
     {
-        if (!_script.empty()) mScript = _script;
+        mEnv = sol::environment(lua, sol::create, lua.globals());
 
-        auto lua = ScriptServer::get()->getState();
-
-        mEnv = sol::environment(*lua, sol::create, lua->globals());
-
-        lua->do_file(mScript, mEnv);
+        lua.do_file(mScript, mEnv);
 
         if (mEnv["init"] != sol::nil) {
             mEnv["init"]();

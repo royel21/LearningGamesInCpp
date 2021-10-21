@@ -20,6 +20,8 @@ namespace Plutus
         std::vector<Renderable> mRenderables;
         int mTotalTemp = 0;
 
+        ~Render();
+
         static Render& get();
         //Initialize the shader, camera viewport size and debug render shader
         void Init();

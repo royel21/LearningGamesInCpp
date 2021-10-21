@@ -4,8 +4,11 @@
 #include <string>
 #include <unordered_map>
 
+#define Frames std::vector<uint32_t>
+
 namespace Plutus
 {
+
     class Entity;
     struct Texture;
 
@@ -14,10 +17,10 @@ namespace Plutus
         std::string mTexId;
         float mSeqTime = 0.1f;
         uint32_t mFrame = 0;
-        std::vector<int> mFrames;
+        Frames mFrames;
 
         Sequence() = default;
-        Sequence(const std::string& texId, std::vector<int> frames, int _seqTime = 100);
+        Sequence(const std::string& texId, Frames frames, int _seqTime = 100);
     };
 
     class Animation
@@ -25,7 +28,7 @@ namespace Plutus
     public:
         Animation() = default;
         void addSequence(const std::string& id, const Sequence& seq);
-        void addSeq(const std::string& id, std::vector<int> frames, int frameTime);
+        void addSeq(const std::string& id, Frames frames, int frameTime);
 
         void setTexture(const std::string& texId);
 

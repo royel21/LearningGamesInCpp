@@ -1,5 +1,4 @@
 #include "Scene.h"
-#include "ScriptServer.h"
 #include "Components.h"
 
 namespace Plutus

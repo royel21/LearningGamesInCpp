@@ -93,7 +93,6 @@ namespace Plutus
 
         circleDef.shape = &circleShapeA;
         capsule.body->CreateFixture(&circleDef);
-
     }
 
     void App::createBox(float x, float y, float w, float h, int type, float friction) {
@@ -126,12 +125,7 @@ namespace Plutus
 
         createBox(15, 30, 64, 64, 2, 0.3f);
         createBox(704, 384, 64, 64, 2);
-        // createBox(5, 5, 1260, 20);
-        // createBox(1420, 100, 350, 20);
         createBox(910, 240, 350, 20);
-        // createBox(910 - 510, 20, 350, 20);
-
-        // createBox(-300, 50, 260, 20);
 
         createCapsule(mWorld.get());
 
@@ -144,27 +138,13 @@ namespace Plutus
         createLine(750, 150, 1050, 28);
 
         createLine(1050, 28, 1350, 100);
-
-        // auto& box = mBoxes[0];
-        // auto pos = box.body->GetPosition();
-        // b2CircleShape circleShape;
-        // circleShape.m_radius = box.size.x * 0.5f * HMPP;
-        // circleShape.m_p = { pos.x * 0.5f, pos.y * 0.5f };
-
-        // // polygonShape.SetAsBox(halfSize.x, halfSize.y, halfSize, 0); //a 2x2 rectangle
-        // //fixture definition
-        // b2FixtureDef myFixtureDef;
-        // myFixtureDef.shape = &circleShape;
-        // myFixtureDef.density = 1.0f;
-        // myFixtureDef.restitution = 0;
-
-        // box.body->CreateFixture(myFixtureDef);
     }
 
     uint64_t time = 0;
     float force = 0.2f;
     float cscale = 1;
     float force2 = 20.0f;
+
     void App::Update(float dt)
     {
         if (Input::get()->onKeyPressed("R")) {
@@ -202,6 +182,7 @@ namespace Plutus
         }
 
         capsule.update();
+
         if (Input::get()->isCtrl) {
             if (Input::get()->onKeyDown("+")) {
                 cscale += 0.05f;
@@ -239,9 +220,6 @@ namespace Plutus
         setBackgoundColor(0, 0, 0, 1);
 
         for (auto& shape : mShapes) {
-            if (shape->type == PBox) {
-
-            }
             switch (shape->type) {
             case PBox: {
                 mDebug->drawBox(*reinterpret_cast<Box2d*>(shape));
@@ -256,7 +234,6 @@ namespace Plutus
                 break;
             }
             }
-
         }
 
         // mDebug->drawBox(Box2d(capsule.x, capsule.y, capsule.w, capsule.h));

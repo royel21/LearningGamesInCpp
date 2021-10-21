@@ -5,12 +5,18 @@
 #include <ECS/Components.h>
 #include <Graphics/DebugRenderer.h>
 
+#include <Assets/AssetManager.h>
+
 namespace Plutus
 {
     Render& Render::get()
     {
         static Render render;
         return render;
+    }
+
+    Render::~Render() {
+        mShader.dispose();
     }
 
     void Render::Init()
@@ -47,7 +53,6 @@ namespace Plutus
         mFramePicker.unBind();
 
         mFrameBuffer.bind();
-        mFrameBuffer.setColor(Config::get().vpColor);
         mSpriteBatch.draw();
         mSpriteBatch.end();
 
@@ -102,7 +107,8 @@ namespace Plutus
             auto rect = trans.getRect();
             if (mCamera.isBoxInView(rect, 200))
             {
-                mRenderables[i++] = { sprite.getTexId(), rect, sprite.getUV(), sprite.mColor,
+                auto texId = AssetManager::get()->getTexId(sprite.mTextureId);
+                mRenderables[i++] = { texId, rect, sprite.mUVCoord, sprite.mColor,
                     trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
             }
 

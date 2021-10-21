@@ -8,6 +8,8 @@
 #include <ECS/Components/TileMap.h>
 #include <ECS/Components/Transform.h>
 
+#include <Assets/AssetManager.h>
+
 // #include <Time/Timer.h>
 
 
@@ -73,7 +75,8 @@ namespace Plutus
             auto rect = trans.getRect();
             if (mCamera->isBoxInView(rect, 200))
             {
-                mRenderables[i++] = { sprite.getTexId(), rect, sprite.getUV(), sprite.mColor,
+                auto texId = AssetManager::get()->getTexId(sprite.mTextureId);
+                mRenderables[i++] = { texId, rect, sprite.mUVCoord, sprite.mColor,
                     trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
 
                 mDebug.drawBox(rect, trans.r);

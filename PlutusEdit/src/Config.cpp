@@ -173,8 +173,8 @@ namespace Plutus
         Serializer ser;
         ser.StartObj();
         {
-            ser.addInt("win-width", winWidth);
-            ser.addInt("win-height", winHeight);
+            ser.addInt("win-width", winWidth ? winWidth : 1280);
+            ser.addInt("win-height", winHeight ? winHeight : 1280);
             ser.addString("open-project", OpenProject);
             ser.addFloat("vp-zoom", roundf(vpZoom * 100) / 100);
             ser.StartArr("vp-pos");

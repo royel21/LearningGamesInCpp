@@ -4,6 +4,8 @@
 #include <ECS/Components/Sprite.h> 
 #include <ECS/Components/Animation.h>
 
+#include <Assets/AssetManager.h>
+
 namespace Plutus
 {
     void AnimationSystem::update(float dt)
@@ -29,7 +31,7 @@ namespace Plutus
                 }
 
                 sprite.mTextureId = seq->mTexId;
-                sprite.mUvIndex = frames[seq->mFrame];
+                sprite.mUVCoord = AssetManager::get()->getTexCoords(seq->mTexId, frames[seq->mFrame]);
             }
         }
     }
