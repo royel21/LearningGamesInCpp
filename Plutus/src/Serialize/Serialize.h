@@ -47,13 +47,13 @@ namespace Plutus
         PJson(const char* path);
         bool load(const char* path);
 
-        int getInt(const char* key);
-        float getFloat(const char* key);
-        bool getBool(const char* key);
-        std::string getString(const char* key);
+        int getInt(const char* key, int def = 0);
+        float getFloat(const char* key, float def = 0);
+        bool getBool(const char* key, bool def = 0);
+        std::string getString(const char* key, const char* def = "");
 
-        vec2f getFloat2(const char* key);
-        vec4f getFloat4(const char* key);
+        vec2f getFloat2(const char* key, vec2f def = { 0 });
+        vec4f getFloat4(const char* key, vec4f def = { 0 });
     };
 
     bool loadJson(const char* filePath, rapidjson::Document* doc);

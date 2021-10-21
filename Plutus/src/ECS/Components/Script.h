@@ -25,11 +25,9 @@ namespace Plutus
             }
         }
 
-        void clear();
-
         void destroy();
 
     private:
-        sol::environment mEnv = sol::environment();
+        sol::environment mEnv;
     };
 } // namespace Plutus class Script

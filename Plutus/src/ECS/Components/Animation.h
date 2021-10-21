@@ -11,23 +11,25 @@ namespace Plutus
 
     struct Sequence
     {
+        std::string mTexId;
         float mSeqTime = 0.1f;
-        int mTexIndex;
         uint32_t mFrame = 0;
         std::vector<int> mFrames;
+
         Sequence() = default;
-        Sequence(std::vector<int> frames, int texIndex, int _seqTime = 100);
+        Sequence(const std::string& texId, std::vector<int> frames, int _seqTime = 100);
     };
 
     class Animation
     {
     public:
         Animation() = default;
+        void addSequence(const std::string& id, const Sequence& seq);
+        void addSeq(const std::string& id, std::vector<int> frames, int frameTime);
 
-        void addTexture(const std::string& id);
-        void addSequence(const std::string& id, Sequence seq);
-        void addSeq(const std::string& id, std::vector<int> frames, int texIndex, int frameTime);
-        void replaceSeq(const std::string& oldid, const std::string& newid);
+        void setTexture(const std::string& texId);
+
+        void swapSeq(const std::string& oldid, const std::string& newid);
 
         void setLoop(bool _loop) { loop = _loop; }
         void play(const std::string& id);
@@ -35,13 +37,11 @@ namespace Plutus
         Sequence* getCurrentSeq();
 
     public:
-        std::string mState;
-        std::string mPrevState;
         bool loop = false;
         bool animating = false;
         float currentTime = 0.0f;
+        std::string tempSprite;
         std::string currentSeq;
         std::unordered_map<std::string, Sequence> mSequences;
-        std::vector<std::string> mTextures;
     };
 } // namespace Plutus

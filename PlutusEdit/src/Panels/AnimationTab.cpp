@@ -31,12 +31,15 @@ namespace Plutus
                 showSeqWindow = true;
                 mNewSeqId = "";
                 mMode = NEW;
+                if (mTestures->mTileSets.size())
+                    mCurTex = mTestures->mTileSets.begin()->first;
             }
             if (sequences.size() && !mCurSeq.empty()) {
                 if (ImGui::TransparentButton(ICON_FA_EDIT "##edit-seq", true)) {
                     showSeqWindow = true;
                     mCurrentSeq = &sequences[mCurSeq];
                     mNewSeqId = mCurSeq;
+                    mCurTex = mCurrentSeq->mTexId;
                     mMode = EDIT;
                 }
             }
@@ -52,11 +55,8 @@ namespace Plutus
 
     void AnimationTab::SeqWindow() {
         if (showSeqWindow) {
-            auto& seq = mMode ? mAnimation->mSequences[mCurSeq] : newSeq;
 
-            if (mCurTex.empty() && mTestures->mTileSets.size()) {
-                mCurTex = mTestures->mTileSets.begin()->first;
-            }
+            auto& seq = mMode ? mAnimation->mSequences[mCurSeq] : newSeq;
 
             ImGui::SetNextWindowSize({ 465, 650 });
             ImGui::BeginDialog("Sequence");
@@ -69,20 +69,20 @@ namespace Plutus
                     ImGui::BeginCol("Time", 300);
                     ImGui::InputFloat("##seq-time", &seq.mSeqTime, 0.001f);
                     ImGui::BeginCol("Texure", 300);
-                    ImGui::ComboBox("##tex-seq", mTestures->mTileSets, mCurTex);
+                    ImGui::ComboBox("##tex-seq", mTestures->mTileSets, seq.mTexId);
                     ImGui::EndUIGroup();
                 }
 
                 ImGui::Separator();
                 ImGui::Text("Frames %0.2f", ImGui::GetIO().Framerate);
-                // ImGui::GetIO().Framerate
+
                 ImGui::Separator();
                 auto curPos = ImGui::GetWindowSize();
-                if (!mCurTex.empty()) {
-                    auto& tex = mTestures->mTileSets[mCurTex];
+                if (!seq.mTexId.empty()) {
+                    auto& tex = mTestures->mTileSets[seq.mTexId];
                     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 1, 2 });
                     if (ImGui::BeginChild("##frames-img", { curPos.x, 142 })) {
-                        int i = 0;
+                        size_t i = 0;
                         int index2RM = -1;;
                         for (auto frame : seq.mFrames) {
                             ImGui::PushID(i);
@@ -104,7 +104,7 @@ namespace Plutus
                     }
                     ImGui::Separator();
                     if (ImGui::BeginChild("##tex-img", { curPos.x, 217 })) {
-                        for (int i = 0; i < tex.uvs.size(); i++) {
+                        for (size_t i = 0; i < tex.uvs.size(); i++) {
 
                             ImGui::PushID(i);
                             if (i % 6 != 0)
@@ -157,7 +157,8 @@ namespace Plutus
                 if (ImGui::Button("Save##s-seq") && !mNewSeqId.empty()) {
                     showSeqWindow = false;
                     if (mMode) {
-
+                        mAnimation->swapSeq(mNewSeqId, mCurSeq);
+                        mCurSeq = mNewSeqId;
                     }
                     else {
                         mAnimation->addSequence(mNewSeqId, seq);

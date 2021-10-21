@@ -141,13 +141,12 @@ namespace Plutus
     void Config::load() {
         PJson json("Config.json");
         if (json.isLoaded) {
-            winWidth = json.getInt("win-width");
-            winHeight = json.getInt("win-height");
+            winWidth = json.getInt("win-width", 1280);
+            winHeight = json.getInt("win-height", 768);
             OpenProject = json.getString("open-project");
-            vpZoom = json.getFloat("vp-zoom");
+            vpZoom = json.getFloat("vp-zoom", 1);
             vpPos = json.getFloat2("vp-pos");
-            vpColor = json.getFloat4("vp-color");
-            auto arr = json.doc["vp-color"].GetArray();
+            vpColor = json.getFloat4("vp-color", { 1,1,1,1 });
 
             for (auto& obj : json.doc["projects"].GetArray()) {
                 auto& p = mProjects[obj["name"].GetString()];

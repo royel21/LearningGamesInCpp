@@ -34,14 +34,6 @@ namespace Plutus
         ser.StartObj();
         {
             ser.addString("name", "Animation");
-            ser.StartArr("texture");
-            {
-                for (auto tx : anim->mTextures)
-                {
-                    ser.addString(tx);
-                }
-            }
-            ser.EndArr();
             ser.StartArr("sequences");
             {
                 for (auto seq : anim->mSequences)
@@ -49,7 +41,7 @@ namespace Plutus
                     ser.StartObj();
                     {
                         ser.addString("name", seq.first);
-                        ser.addInt("texIndex", seq.second.mTexIndex);
+                        ser.addString("texId", seq.second.mTexId);
                         ser.addFloat("seqTime", seq.second.mSeqTime);
                         ser.StartArr("frames");
                         {

@@ -78,8 +78,6 @@ void GameScreen::onEntry()
     player2.addComponent<Plutus::Sprite>("player2");
 
     auto anim2 = player2.addComponent<Plutus::Animation>();
-    anim2->addTexture("player2");
-
     auto player2Script = player2.addComponent<Plutus::Script>("assets/script/player2.lua");
     // Bat1
     auto bat = mScene->createEntity("Bat");
@@ -87,7 +85,6 @@ void GameScreen::onEntry()
     bat.addComponent<Plutus::Sprite>("bats");
 
     auto anim = bat.addComponent<Plutus::Animation>();
-    anim->addTexture("bats");
     auto batScript = bat.addComponent<Plutus::Script>("assets/script/bat.lua");
     Plutus::SoundEngine.play("bg-sound");
 }

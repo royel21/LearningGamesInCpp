@@ -96,17 +96,16 @@ namespace Plutus
         animate["play"] = &Animation::play;
         animate["setLoop"] = &Animation::setLoop;
         animate["loop"] = &Animation::loop;
-        animate["state"] = &Animation::mState;
-        animate["prevState"] = &Animation::mPrevState;
         animate["addSeq"] = &Animation::addSeq;
         animate["addSeq2"] = &Animation::addSequence;
+        animate["setTexture"] = &Animation::setTexture;
 
         auto sequence = lua.new_usertype<Sequence>("Sequence",
             sol::constructors<Sequence(),
-            Sequence(std::vector<int>, int, int)>());
+            Sequence(const std::string&, std::vector<int>, int)>());
 
         sequence["frames"] = &Sequence::mFrames;
-        sequence["texIndex"] = &Sequence::mTexIndex;
+        sequence["texId"] = &Sequence::mTexId;
         sequence["time"] = &Sequence::mSeqTime;
 
         /*****************************Register Entity**********************************************/

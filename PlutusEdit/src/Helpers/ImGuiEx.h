@@ -84,7 +84,7 @@ namespace ImGui
     template <typename T>
     inline bool ComboBox(const char* label, const std::unordered_map<std::string, T>& data, std::string& selected, const std::string& defaultItem = "")
     {
-        if (!selected.empty() && !defaultItem.empty()) {
+        if (selected.empty() && !defaultItem.empty()) {
             selected = defaultItem;
         }
 

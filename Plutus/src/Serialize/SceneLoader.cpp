@@ -13,12 +13,28 @@
 
 namespace Plutus
 {
-    void loadAnimation(Entity& ent, rapidjson::Value::Object value)
+    void loadAnimation(Entity& ent, rapidjson::Value::Object& value)
     {
-        // auto anim = ent.addComponent<Animation>(ent);
+        auto anim = ent.addComponent<Animation>();
+        if (value.HasMember("sequences")) {
+            auto arr = value["sequences"].GetArray();
+
+            if (arr.Size()) {
+                for (auto& a : arr) {
+                    auto name = a["name"].GetString();
+                    Sequence seq;
+                    seq.mTexId = a["texId"].GetString();
+                    seq.mSeqTime = a["seqTime"].GetFloat();
+                    for (auto& f : a["frames"].GetArray()) {
+                        seq.mFrames.push_back(f.GetInt());
+                    }
+                    anim->addSequence(name, seq);
+                }
+            }
+        }
     }
 
-    void loadTileMap(Entity& ent, rapidjson::Value::Object value)
+    void loadTileMap(Entity& ent, rapidjson::Value::Object& value)
     {
         int w = value["tilewidth"].GetInt();
         int h = value["tileheight"].GetInt();

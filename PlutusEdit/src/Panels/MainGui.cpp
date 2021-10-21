@@ -151,6 +151,7 @@ namespace Plutus
                         if (ImGui::MenuItem(item.c_str()))
                         {
                             Config::get().LoadProject(recent.first.c_str());
+                            Config::get().OpenProject = recent.first;
                         }
                     }
                     ImGui::EndMenu();

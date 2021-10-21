@@ -2,29 +2,31 @@
 
 namespace Plutus
 {
-    Sequence::Sequence(std::vector<int> frames, int texIndex, int _seqTime)
+    Sequence::Sequence(const std::string& texId, std::vector<int> frames, int _seqTime)
     {
+        mTexId = texId;
         mFrames = frames;
-        mTexIndex = texIndex;
         mSeqTime = _seqTime / 1000.0f;
     }
 
-    void Animation::addTexture(const std::string& id)
-    {
-        mTextures.push_back(id);
-    }
-
-    void Animation::addSequence(const std::string& id, Sequence seq)
+    void Animation::addSequence(const std::string& id, const Sequence& seq)
     {
         mSequences[id] = seq;
     }
 
-    void Animation::addSeq(const std::string& id, std::vector<int> frames, int texIndex, int frameTime)
+    void Animation::addSeq(const std::string& id, std::vector<int> frames, int frameTime)
     {
-        mSequences[id] = { frames, texIndex, frameTime };
+        mSequences[id] = { tempSprite, frames, frameTime };
     }
 
-    void Animation::replaceSeq(const std::string& oldid, const std::string& newid) {
+    void Animation::setTexture(const std::string& texId)
+    {
+        tempSprite = texId;
+    }
+
+    void Animation::swapSeq(const std::string& oldid, const std::string& newid) {
+        if (oldid == newid) return;
+
         auto it = mSequences.find(oldid);
         if (it != mSequences.end()) {
             mSequences[newid] = mSequences[oldid];
@@ -41,7 +43,11 @@ namespace Plutus
 
     Sequence* Animation::getCurrentSeq()
     {
-        return &mSequences[currentSeq];
+        auto it = mSequences.find(currentSeq);
+        if (it != mSequences.end()) {
+            return &it->second;
+        }
+        return nullptr;
     }
 
 } // namespace Plutus

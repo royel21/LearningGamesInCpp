@@ -89,36 +89,36 @@ namespace Plutus
         return isLoaded = loadJsonFromFile(path, doc);
     }
 
-    int PJson::getInt(const char* key) {
-        return doc.HasMember(key) ? doc[key].GetInt() : 0;
+    int PJson::getInt(const char* key, int def) {
+        return doc.HasMember(key) ? doc[key].GetInt() : def;
     }
 
-    float PJson::getFloat(const char* key)
+    float PJson::getFloat(const char* key, float def)
     {
-        return doc.HasMember(key) ? doc[key].GetFloat() : 0.0f;
+        return doc.HasMember(key) ? doc[key].GetFloat() : def;
     }
 
-    bool PJson::getBool(const char* key)
+    bool PJson::getBool(const char* key, bool def)
     {
-        return doc.HasMember(key) ? doc[key].GetBool() : false;
+        return doc.HasMember(key) ? doc[key].GetBool() : def;
     }
 
-    std::string PJson::getString(const char* key)
+    std::string PJson::getString(const char* key, const char* def)
     {
-        return doc.HasMember(key) ? doc[key].GetString() : "";
+        return doc.HasMember(key) ? doc[key].GetString() : def;
     }
-    vec2f PJson::getFloat2(const char* key)
+    vec2f PJson::getFloat2(const char* key, vec2f def)
     {
-        vec2f f2{ 0,0 };
+        vec2f f2 = def;
         if (doc.HasMember(key)) {
             auto arr = doc[key].GetArray();
             f2 = { arr[0].GetFloat(), arr[1].GetFloat() };
         }
         return f2;
     }
-    vec4f PJson::getFloat4(const char* key)
+    vec4f PJson::getFloat4(const char* key, vec4f def)
     {
-        vec4f f4{ 0, 0, 0, 0 };
+        vec4f f4 = def;
         if (doc.HasMember(key)) {
             auto arr = doc[key].GetArray();
             f4 = { arr[0].GetFloat(), arr[1].GetFloat(), arr[2].GetFloat(), arr[3].GetFloat() };

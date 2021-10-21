@@ -13,7 +13,7 @@ namespace Plutus
         {
             auto [sprite, animation] = view.get(ent);
             auto seq = animation.getCurrentSeq();
-            if (seq->mFrames.size()) {
+            if (seq && seq->mFrames.size()) {
                 animation.currentTime += dt;
                 auto& frames = seq->mFrames;
 
@@ -28,7 +28,7 @@ namespace Plutus
                     }
                 }
 
-                sprite.mTextureId = animation.mTextures[seq->mTexIndex];
+                sprite.mTextureId = seq->mTexId;
                 sprite.mUvIndex = frames[seq->mFrame];
             }
         }
