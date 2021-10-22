@@ -1,15 +1,11 @@
 #include "App.h"
 
+#include <imgui.h>
 #include "Config.h"
 #include "Helpers/Render.h"
 #include "Panels/ScenesList.h"
 
 #include <Serialize/Serialize.h>
-
-#include <cstdio>
-
-#include <imgui.h>
-
 #include <Systems/AnimationSystem.h>
 #include <Systems/ScriptSystem.h>
 

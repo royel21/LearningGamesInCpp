@@ -33,7 +33,7 @@ namespace Plutus
                         ImGui::BeginCol("Zoom");
                         if (ImGui::InputFloat("##vp-Zoom", &zoom, 0.05f))
                         {
-                            zoom = CHECKLIMIT(zoom, 0.20f, 6.0f);
+                            zoom = CHECKLIMIT(zoom, 0.20f, 10.0f);
                             camera.setScale(zoom);
                         }
                         ImGui::BeginCol("Position");

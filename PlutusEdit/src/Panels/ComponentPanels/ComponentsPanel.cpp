@@ -63,7 +63,6 @@ namespace Plutus
         {
             auto trans = mEnt.getComponent<Transform>();
             float position[] = { trans->x, trans->y };
-            float itemWidth = 150;
 
             if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
 
