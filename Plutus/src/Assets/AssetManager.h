@@ -24,7 +24,7 @@ namespace Plutus
 
 		GLuint getTexId(const std::string& id)
 		{
-			return mTextures.getTexture(id)->texId;
+			return mTextures.getTextureId(id);
 		}
 
 		glm::vec4 getTexCoords(const std::string& id, int index)

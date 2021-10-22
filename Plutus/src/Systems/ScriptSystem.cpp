@@ -1,12 +1,15 @@
 #include "ScriptSystem.h"
 
 #include <ECS/Scene.h>
-#include <Graphics/Camera2D.h>
 #include <ECS/Components.h>
 
 #include <Time/Timer.h>
 #include <Input/Input.h>
+
+#include <Graphics/Camera2D.h>
 #include <Graphics/GLheaders.h>
+
+#include <Assets/SoundEngine.h>
 
 namespace Plutus
 {
@@ -36,6 +39,12 @@ namespace Plutus
         /*****************************Register EntityManager**********************************************/
         auto scene_table = mGlobalLua.new_usertype<Scene>("Scene");
         scene_table["getEntity"] = &Scene::getEntityByName;
+
+        /**************************Register Audio Engine*************************************************/
+        auto audioEngine = mGlobalLua.new_usertype<AudioEngine>("AudioEngine");
+        audioEngine["play"] = &AudioEngine::play;
+        audioEngine["pause"] = &AudioEngine::pause;
+        audioEngine["stop"] = &AudioEngine::stop;
 
         /*****************************Register Input manager**********************************************/
         auto input = mGlobalLua.new_usertype<Input>("Input");
@@ -84,6 +93,7 @@ namespace Plutus
 
         mGlobalLua.set("input", Input::get());
         mGlobalLua.set("scene", scene);
+        mGlobalLua.set("SoundEngine", &SoundEngine);
     }
 
     void ScriptSystem::init()

@@ -44,12 +44,10 @@ namespace Plutus
 		bool add(const std::string& name, std::string path, SoundType type);
 		void remove(const std::string& name);
 
-		bool play(AudioEvent* tempEvent, bool loop = false);
-		bool play(const std::string& name, bool loop = false) {
-			return play(mSounds[name], loop);
-		}
-		bool pause(AudioEvent* tempEvent);
-		bool stop(AudioEvent* tempEvent);
+		bool playEvent(AudioEvent* tempEvent, bool loop = false);
+		bool play(const std::string& name, bool loop = false);
+		bool pauseEvent(AudioEvent* tempEvent);
+		bool stopEvent(AudioEvent* tempEvent);
 
 		bool pause(const std::string& name);
 		bool stop(const std::string& name);

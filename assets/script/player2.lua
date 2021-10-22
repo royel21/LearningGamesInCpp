@@ -1,4 +1,4 @@
-local SPEED = 4
+local SPEED = 2
 
 local curAnime = "stand-r"
 
@@ -21,27 +21,7 @@ function init()
     local anim = Player2:getAnimate()
 
     if anim then
-        anim:setTexture("player2");
-        --     -- Standing
-        anim:addSeq("stand-right", {0}, 0)
-        anim:addSeq("stand-up", {6}, 0)
-        anim:addSeq("stand-left", {12}, 0)
-        anim:addSeq("stand-down", {18}, 0)
-        -- -- Running
-        anim:addSeq("run-right", {1, 2, 3, 4, 5}, 100)
-        anim:addSeq("run-up", {7, 8, 9, 10, 11}, 100)
-        anim:addSeq("run-left", {13, 14, 15, 16, 17}, 100)
-        anim:addSeq("run-down", {19, 20, 21, 22, 23}, 100)
-        -- Attacking
-        anim:addSeq("attack-right", {24, 25, 26, 27}, 65)
-        anim:addSeq("attack-up", {28, 29, 30, 31}, 65)
-        anim:addSeq("attack-left", {32, 33, 34, 35}, 65)
-        anim:addSeq("attack-down", {36, 37, 38, 39}, 65)
-        -- Jumpin
-        anim:addSeq("jump-up", {45, 46, 47, 48, 49}, 90)
-        anim:addSeq("jump-down", {55, 56, 57, 58, 59}, 90)
-        anim:addSeq("jump-right", {40, 41, 42, 43, 44}, 90)
-        anim:addSeq("jump-left", {50, 51, 52, 53, 54}, 90)
+        anim:setTexture("player");
         anim:play(curAnime)
     end
     print("player2 init")
@@ -89,8 +69,8 @@ function update(dt)
         -- Jump animation
         if input:onKeyPressed("X") and state == "running" then
             state = "jumping"
-            vel.x = vel.x * 1.8;
-            vel.y = vel.y * 1.8;
+            vel.x = vel.x * 1.1;
+            vel.y = vel.y * 1.1;
             anim:play("jump-" .. direction);
             anim:setLoop(true);
         elseif not anim.loop and state == "running" then
@@ -107,3 +87,5 @@ function update(dt)
         state = "attacking"
     end
 end
+
+

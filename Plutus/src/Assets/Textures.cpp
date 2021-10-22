@@ -32,9 +32,9 @@ namespace Plutus
 
     void Texture::calculateUV()
     {
-        uvs.clear();
         if (tileWidth > 0 && tileHeight > 0)
         {
+            uvs.clear();
             auto totalTiles = columns * int(texHeight / tileHeight);
 
             for (int i = 0; i < totalTiles; i++)
@@ -65,24 +65,29 @@ namespace Plutus
 
     Texture* Textures::getTexture(const std::string& id)
     {
-        if (mTileSets.find(id) == mTileSets.end())
-            return nullptr;
-        return &mTileSets[id];
+        auto found = mTileSets.find(id);
+
+        return found != mTileSets.end() ? &found->second : nullptr;
+    }
+
+    uint32_t Textures::getTextureId(const std::string& id)
+    {
+        auto found = mTileSets.find(id);
+
+        return found != mTileSets.end() ? found->second.texId : 0;
     }
 
     glm::vec4 Textures::getTextureUV(const std::string& id, int uvIndex)
     {
-        if (mTileSets.find(id) == mTileSets.end())
-            return {};
-
-        return mTileSets[id].getUV(uvIndex);
+        auto found = mTileSets.find(id);
+        return found != mTileSets.end() ? found->second.getUV(uvIndex) : glm::vec4(0, 0, 1, 1);
     }
 
     void Textures::remove(std::string texture)
     {
         auto it = mTileSets.find(texture);
         if (it != mTileSets.end()) {
-            mTextureMap[mTileSets[texture].path] = false;
+            mTextureMap[it->second.path] = false;
             mTileSets.erase(it);
         }
     }
@@ -98,9 +103,10 @@ namespace Plutus
         if (mit == mTileSets.end())
         {
             mTileSets[id] = Texture(id, c, w, h, createGLTexure(path, minFilter, magFilter), path);
+            return &mTileSets[id];
         }
 
-        return &mTileSets[id];
+        return &mit->second;
     }
 
     void Textures::removeTexture(const std::string& id)

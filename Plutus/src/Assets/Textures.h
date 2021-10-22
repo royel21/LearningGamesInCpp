@@ -26,7 +26,7 @@ namespace Plutus
         int tileHeight = 0;
         int texWidth = 0;
         int texHeight = 0;
-        uint32_t texId = -1;
+        uint32_t texId = 0;
         std::vector<glm::vec4> uvs;
 
         Texture() : columns(0), tileWidth(0), tileHeight(0) {}
@@ -43,7 +43,7 @@ namespace Plutus
 
         glm::vec4 getUV(int texcoord)
         {
-            return uvs[texcoord];
+            return uvs.size() ? uvs[texcoord] : glm::vec4(0, 0, 1, 1);
         }
 
         void calculateUV();
@@ -59,6 +59,7 @@ namespace Plutus
         ~Textures();
 
         Texture* getTexture(const std::string& id);
+        uint32_t getTextureId(const std::string& id);
         glm::vec4 getTextureUV(const std::string& id, int uvIndex);
 
         std::unordered_map<std::string, Texture>& getItems() { return mTileSets; }

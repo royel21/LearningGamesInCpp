@@ -54,6 +54,7 @@ namespace Plutus
 		glm::vec2 getSquareCoords(glm::vec2 mousePos, const glm::vec2& size);
 
 		void setShouldDraw(bool shouldDraw) { isDraw = shouldDraw; }
+		bool getShouldDraw() { return isDraw; }
 
 		void setColor(ColorRGBA8 color) { mGridColor = color; }
 

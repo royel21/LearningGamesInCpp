@@ -122,8 +122,15 @@ namespace Plutus
 			mSounds.erase(name);
 		}
 	}
+	bool AudioEngine::play(const std::string& id, bool loop) {
+		auto it = mSounds.find(id);
+		if (it != mSounds.end())
+			return playEvent(it->second, loop);
 
-	bool AudioEngine::play(AudioEvent* event, bool loop) {
+		return false;
+	}
+
+	bool AudioEngine::playEvent(AudioEvent* event, bool loop) {
 		if (event)
 		{
 			XAUDIO2_VOICE_STATE aState;
@@ -143,11 +150,11 @@ namespace Plutus
 		return false;
 	}
 
-	bool AudioEngine::pause(AudioEvent* event) {
+	bool AudioEngine::pauseEvent(AudioEvent* event) {
 		return event->pause();
 	}
 
-	bool AudioEngine::stop(AudioEvent* event) {
+	bool AudioEngine::stopEvent(AudioEvent* event) {
 		return event->stop();
 	}
 

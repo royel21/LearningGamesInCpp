@@ -28,22 +28,23 @@ namespace Plutus
         Render::get().Init();
         mMainGui.Init();
         Render::get().setScene(Config::get().mProject->mScene.get());
-        // Ref<Scene> scene = CreateRef<Scene>();
-        // CopyScene(Config::get().mProject->mScene.get(), scene.get());
     }
 
     void App::Update(float dt) {
         Render::get().mCamera.update();
         mExit = mMainGui.mExit;
+        mCentralPanel.update(dt);
     }
 
     void App::Draw() {
         mMainGui.Begin();
         mCentralPanel.DrawCenterPanel();
-        DrawScenes();
-        AssetsTab.drawAssets();
-        mCompPanel.DrawComponentsPanel();
-        mConfigPanel.DrawConfigPanel();
+        if (Config::get().state == Editing) {
+            AssetsTab.drawAssets();
+            DrawScenes();
+            mCompPanel.DrawComponentsPanel();
+            mConfigPanel.DrawConfigPanel();
+        }
         mMainGui.End();
 
         Render::get().draw();

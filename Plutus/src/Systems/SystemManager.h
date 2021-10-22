@@ -17,7 +17,7 @@ namespace Plutus
         SystemManager() = default;
         ~SystemManager() { cleanup(); };
 
-        void init(Scene* scene) { mScene = scene; }
+        void setScene(Scene* scene) { mScene = scene; }
 
         void start();
         void stop();
@@ -31,7 +31,7 @@ namespace Plutus
             if (!hasSystem<T>()) {
                 T* newSystem = new T(mScene, std::forward<TArgs>(args)...);
 
-                mSystems[&typeid(*newSystem)] = newSystem;
+                mSystems[&typeid(T)] = newSystem;
                 return newSystem;
             }
             return getSystem<T>();

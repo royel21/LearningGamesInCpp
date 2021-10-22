@@ -12,8 +12,14 @@
 #include "../Helpers/Render.h"
 #include "../Helpers/ImGuiEx.h"
 #include "../Helpers/IconsFontAwesome5.h"
+#include "../Helpers/EditorUtils.h"
 
 #include "ECS/Components/Transform.h"
+
+#include <Systems/AnimationSystem.h>
+#include <Systems/ScriptSystem.h>
+
+#include <Graphics/DebugRenderer.h>
 
 #define mapIn(x, min_in, max_in, min_out, max_out) (x - min_in) * (max_out - min_out) / (max_in - min_in) + min_out
 
@@ -31,19 +37,23 @@ namespace Plutus
         if (!currentScript.empty()) {
             editor.SetText(readFileAsString(currentScript.c_str()));
         }
+
+        mSysManager.setScene(Config::get().mProject->mTempScene.get());
+        mSysManager.AddSystem<Plutus::ScriptSystem>(&Render::get().mCamera);
+        mSysManager.AddSystem<Plutus::AnimationSystem>();
     }
 
 
-    void CenterPanel::DrawViewPortControls()
+    void CenterPanel::CameraControl()
     {
         if (Config::get().isHover) {
             auto pos = Config::get().mMouseCoords;
             auto& camera = Render::get().mCamera;
 
-            if (Input::get()->onKeyPressed("R"))
+            if (Input::get()->onKeyPressed("F2"))
                 camera.setPosition(0, 0);
 
-            if (Input::get()->onKeyPressed("Z"))
+            if (Input::get()->onKeyPressed("F3"))
                 camera.setScale(1);
 
             if (Input::get()->onKeyPressed("MouseLeft"))
@@ -108,6 +118,7 @@ namespace Plutus
     }
 
     void CenterPanel::DrawViewPort() {
+
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImVec4 WHITE = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
         ImGui::PushStyleColor(ImGuiCol_ChildBg, WHITE);
@@ -143,17 +154,30 @@ namespace Plutus
             {
                 Config::get().mMouseCoords = { xPos, yPos };
 
-                DrawViewPortControls();
+                CameraControl();
             }
+
+            auto curPos = ImGui::GetWindowSize();
+            ImGui::SetCursorPos({ 0, curPos.y - 20.0f });
+            ImGui::PushStyleColor(ImGuiCol_Text, { 1,0,0,1 });
+            ImGui::Text("FPS: %0.2f", ImGui::GetIO().Framerate);
+            ImGui::PopStyleColor();
+
             ImGui::EndChild();
         }
         ImGui::PopStyleVar(1);
         ImGui::PopStyleColor(1);
         SelectEntity();
-    }
 
+    }
+    void CenterPanel::update(float dt) {
+        mSysManager.update(dt);
+    }
     void CenterPanel::DrawCenterPanel()
     {
+
+        auto& project = Config::get().mProject;
+
         ImGuiWindowClass window_class;
         window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
         ImGui::SetNextWindowClass(&window_class);
@@ -165,7 +189,7 @@ namespace Plutus
                 DrawViewPort();
                 ImGui::EndTabItem();
             }
-            if (ImGui::BeginTabItem("Script Editor")) {
+            if (Config::get().state == Editing && ImGui::BeginTabItem("Script Editor")) {
                 editor.Render("TextEditor");
                 isViewPort = false;
                 ImGui::EndTabItem();
@@ -178,14 +202,36 @@ namespace Plutus
         ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f);
         ImGui::SetCursorPosY(4);
         if (isViewPort) {
-            ImGui::TransparentButton(ICON_FA_PLAY);
+            static bool drawGrid = DebugRender::get()->getShouldDraw();
+            bool isRunning = Config::get().state == Running;
+
+            if (ImGui::TransparentButton(isRunning ? ICON_FA_STOP : ICON_FA_PLAY)) {
+                if (isRunning) {
+                    Render::get().setScene(project->mScene.get());
+                    Config::get().state = Editing;
+                    project->mTempScene->clear();
+                    mSysManager.stop();
+                    DebugRender::get()->setShouldDraw(drawGrid);
+                }
+                else {
+                    project->mTempScene->clear();
+                    CopyScene(project->mScene.get(), project->mTempScene.get());
+                    Render::get().setScene(project->mTempScene.get());
+                    Config::get().state = Running;
+                    mSysManager.start();
+                    drawGrid = DebugRender::get()->getShouldDraw();
+                    DebugRender::get()->setShouldDraw(false);
+                }
+            }
             ImGui::SameLine();
-            ImGui::TransparentButton(ICON_FA_STOP);
+            ImGui::TransparentButton(ICON_FA_COG);
         }
         else {
             ImGui::TransparentButton(ICON_FA_FILE " New");
             ImGui::SameLine();
-            ImGui::TransparentButton(ICON_FA_SAVE " Save");
+            if (ImGui::TransparentButton(ICON_FA_SAVE " Save")) {
+                Utils::saveFile(currentScript.c_str(), editor.GetText().c_str());
+            }
             ImGui::SameLine();
             ImGui::PushItemWidth(200);
             int selected = Utils::getIndex(scripts, currentScript);

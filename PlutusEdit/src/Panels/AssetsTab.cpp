@@ -69,7 +69,7 @@ namespace Plutus
     void audioPlay(AudioEvent* event, const char* name) {
         bool state = event->getState() != 1;
         if (ImGui::TransparentButton(state ? ICON_FA_PLAY : ICON_FA_STOP, true, { 0,0,1,1 })) {
-            state ? SoundEngine.play(event) : SoundEngine.stop(event);
+            state ? SoundEngine.playEvent(event) : SoundEngine.stopEvent(event);
         }
         ImGui::SameLine();
         ImGui::Text(name);

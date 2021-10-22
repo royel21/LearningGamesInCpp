@@ -9,6 +9,10 @@
 
 namespace Plutus
 {
+    enum State {
+        Editing,
+        Running
+    };
 
     struct FloatColor {
         float r = 1;
@@ -23,6 +27,7 @@ namespace Plutus
 
         Entity mEnt;
         Ref<Scene> mScene;
+        Ref<Scene> mTempScene;
         std::string mOpenScene;
 
         std::unordered_map<std::string, std::string> mScenes = {};
@@ -56,6 +61,8 @@ namespace Plutus
         //List Of Project
         std::unordered_map<std::string, Project> mProjects = {};
         bool isLoaded = false;
+
+        State state = Editing;
 
         ~Config();
 

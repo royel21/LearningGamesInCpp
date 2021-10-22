@@ -20,6 +20,11 @@ namespace Plutus
 
         if (!isForPicking) {
             mTexId = createTexture(w, h, 0, GL_RGB, GL_RGB);
+            glBindTexture(GL_TEXTURE_2D, mTexId);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glGenerateMipmap(GL_TEXTURE_2D);
             // Create render buffer for store the depth info
             glGenRenderbuffers(1, &mRbufferId);
             glBindRenderbuffer(GL_RENDERBUFFER, mRbufferId);

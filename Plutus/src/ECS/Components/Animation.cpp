@@ -11,12 +11,14 @@ namespace Plutus
 
     void Animation::addSequence(const std::string& id, const Sequence& seq)
     {
-        mSequences[id] = seq;
+        if (!id.empty())
+            mSequences[id] = seq;
     }
 
     void Animation::addSeq(const std::string& id, Frames frames, int frameTime)
     {
-        mSequences[id] = { tempSprite, frames, frameTime };
+        if (!id.empty())
+            mSequences[id] = { tempSprite, frames, frameTime };
     }
 
     void Animation::setTexture(const std::string& texId)

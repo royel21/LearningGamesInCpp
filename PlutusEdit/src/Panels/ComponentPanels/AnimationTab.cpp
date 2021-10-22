@@ -40,7 +40,15 @@ namespace Plutus
                 }
             }
             if (ImGui::TransparentButton(ICON_FA_TRASH "##rm-seq", true, { 1,0,0,1 })) {
-
+                sequences.erase(mCurSeq);
+                if (sequences.size()) {
+                    mCurrentSeq = &sequences.begin()->second;
+                    mCurSeq = sequences.begin()->first;
+                }
+                else {
+                    mCurrentSeq = nullptr;
+                    mCurSeq = "";
+                }
             }
             ImGui::ComboBox("##a-seq", sequences, mCurSeq, defItem);
             ImGui::PopStyleVar();
@@ -51,8 +59,8 @@ namespace Plutus
 
     void AnimationTab::SeqWindow() {
         if (showSeqWindow) {
-
-            auto& seq = mMode ? mAnimation->mSequences[mCurSeq] : newSeq;
+            auto found = mAnimation->mSequences.find(mCurSeq);
+            auto& seq = mMode ? found->second : newSeq;
 
             ImGui::SetNextWindowSize({ 465, 650 });
             ImGui::BeginDialog("Sequence");
@@ -151,13 +159,18 @@ namespace Plutus
 
                 ImGui::SetCursorPos({ curPos.x * 0.5f - 50.0f, curPos.y - 34.0f });
                 if (ImGui::Button("Save##s-seq") && !mNewSeqId.empty()) {
-                    showSeqWindow = false;
-                    if (mMode) {
-                        mAnimation->swapSeq(mNewSeqId, mCurSeq);
-                        mCurSeq = mNewSeqId;
-                    }
-                    else {
-                        mAnimation->addSequence(mNewSeqId, seq);
+                    if (!mNewSeqId.empty()) {
+                        if (mMode) {
+                            mAnimation->swapSeq(mNewSeqId, mCurSeq);
+                            mCurSeq = mNewSeqId;
+                            showSeqWindow = false;
+                        }
+                        else {
+                            mAnimation->addSequence(mNewSeqId, seq);
+                            mNewSeqId = "";
+                            newSeq.mFrames = {};
+                            newSeq.mFrame = 0;
+                        }
                     }
                 }}
             ImGui::EndDialog(showSeqWindow);

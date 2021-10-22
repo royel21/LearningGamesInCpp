@@ -48,7 +48,7 @@ namespace Plutus
         {
             auto it = std::find_if(vec.begin(), vec.end(), [s](auto& s1) -> bool
                 { return s1.compare(s) == 0; });
-            return it != vec.end() ? it - vec.begin() : -1;
+            return it != vec.end() ? int(it - vec.begin()) : -1;
         }
 
         bool createFile(const char* file, const char* content, bool asString)
@@ -63,6 +63,13 @@ namespace Plutus
                 return true;
             }
             return false;
+        }
+
+        void saveFile(const char* filePath, const char* buffer) {
+            std::ofstream outfile;
+            outfile.open(filePath, std::ios_base::out); //std::ios_base::app
+            outfile << buffer;
+            outfile.close();
         }
     } // namespace Utils
 } // namespace Plutus

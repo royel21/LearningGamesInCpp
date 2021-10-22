@@ -21,6 +21,7 @@ namespace Plutus
     Project::Project()
     {
         mScene = CreateRef<Scene>();
+        mTempScene = CreateRef<Scene>();
     }
 
     void Project::Create(const std::string& name)
