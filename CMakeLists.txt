@@ -90,6 +90,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   # Add source files
   file(GLOB_RECURSE P_EDITOR PlutusEdit/src/*.h PlutusEdit/src/*.cpp)
 
+  include_directories(PlutusEdit/src)
+
   add_subdirectory(PlutusEdit/libs/imgui)
 
   add_executable("PlutusEdit" ${P_EDITOR})

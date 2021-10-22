@@ -1,16 +1,11 @@
 #include "ComponentsPanel.h"
 
-#include "../Config.h"
-#include "../Helpers/ImGuiEx.h"
-#include "../Helpers/IconsFontAwesome5.h"
-
 #include <imgui.h>
 #include <Input/Input.h>
 #include <ECS/Components.h>
 #include <Physics/Vectors.h>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "../Helpers/Render.h"
 #include "ComponentUtil.h"
 
 #include <Assets/AssetManager.h>

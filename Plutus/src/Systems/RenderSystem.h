@@ -3,7 +3,6 @@
 
 #include <Graphics/Shader.h>
 #include <Graphics/SpriteBatch2D.h>
-#include <Graphics/DebugRenderer.h>
 
 namespace Plutus
 {
@@ -18,7 +17,6 @@ namespace Plutus
     private:
         Shader mShader;
         SpriteBatch2D mRenderer;
-        DebugRender mDebug;
         std::vector<Renderable> mRenderables;
     };
 } // namespace Plutus

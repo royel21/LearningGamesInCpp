@@ -6,10 +6,6 @@
 
 #include <Assets/AssetManager.h>
 
-#include "../Helpers/Render.h"
-#include "../Helpers/ImGuiEx.h"
-#include "../Helpers/IconsFontAwesome5.h"
-
 #include "ComponentUtil.h"
 
 namespace Plutus

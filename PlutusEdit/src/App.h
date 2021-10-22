@@ -5,7 +5,10 @@
 #include "Panels/AssetsTab.h"
 #include "Panels/ConfigPanel.h"
 #include "Panels/CenterPanel.h"
-#include "Panels/ComponentsPanel.h"
+#include "Panels/ComponentPanels/ComponentsPanel.h"
+#include "Helpers/EditorUtils.h"
+
+#include <Systems/SystemManager.h>
 
 namespace Plutus
 {
@@ -20,7 +23,7 @@ namespace Plutus
         ConfigPanel mConfigPanel;
 
     public:
-        App();
+        App() = default;
         App(const char* name, int width, int height);
         ~App();
 

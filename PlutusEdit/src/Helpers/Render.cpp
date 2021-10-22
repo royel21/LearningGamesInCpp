@@ -45,6 +45,7 @@ namespace Plutus
 
     void Render::draw()
     {
+        mFrameBuffer.setColor(Config::get().vpColor);
         prepare();
         mSpriteBatch.begin();
 
@@ -62,8 +63,8 @@ namespace Plutus
 
     void Render::prepare()
     {
-        auto viewMap = Config::get().mProject->mScene->getRegistry()->view<TileMap>();
-        auto view = Config::get().mProject->mScene->getRegistry()->view<Transform, Sprite>();
+        auto viewMap = mScene->getRegistry()->view<TileMap>();
+        auto view = mScene->getRegistry()->view<Transform, Sprite>();
 
         /******************Resize temp buffer************************/
         auto size = view.size_hint();

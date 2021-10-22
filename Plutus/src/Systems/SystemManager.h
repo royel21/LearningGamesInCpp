@@ -23,6 +23,7 @@ namespace Plutus
         void stop();
 
         void update(float dt);
+        void draw();
 
         template <typename T, typename... TArgs>
         T* AddSystem(TArgs &&... args)

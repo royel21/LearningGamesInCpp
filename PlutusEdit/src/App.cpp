@@ -3,7 +3,6 @@
 #include "Config.h"
 #include "Helpers/Render.h"
 #include "Panels/ScenesList.h"
-#include "Panels/ComponentsPanel.h"
 
 #include <Serialize/Serialize.h>
 
@@ -11,24 +10,17 @@
 
 #include <imgui.h>
 
+#include <Systems/AnimationSystem.h>
+#include <Systems/ScriptSystem.h>
+
 namespace Plutus
 {
-    App::App() {
-
-    }
-
     App::App(const char* name, int width, int height) : Core(name, width, height) {
         auto& config = Config::get();
         if (config.isLoaded) {
             mWidth = config.winWidth;
             mHeight = config.winHeight;
         }
-        else {
-            mWidth = width;
-            mHeight = height;
-        }
-        mName = name;
-
     };
 
     App::~App() {
@@ -39,6 +31,9 @@ namespace Plutus
         Config::get().LoadProject("");
         Render::get().Init();
         mMainGui.Init();
+        Render::get().setScene(Config::get().mProject->mScene.get());
+        // Ref<Scene> scene = CreateRef<Scene>();
+        // CopyScene(Config::get().mProject->mScene.get(), scene.get());
     }
 
     void App::Update(float dt) {

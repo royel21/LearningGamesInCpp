@@ -10,6 +10,7 @@
 namespace Plutus
 {
     class DebugRender;
+    class Scene;
 
     class Render
     {
@@ -27,12 +28,14 @@ namespace Plutus
         void Init();
         void draw();
 
+        void setScene(Scene* scene) { mScene = scene; }
+
     private:
         Render() = default;
         void prepare();
 
     private:
-
+        Scene* mScene;
         Shader mShader;
         SpriteBatch2D mSpriteBatch;
         DebugRender* mDebugRender = nullptr;

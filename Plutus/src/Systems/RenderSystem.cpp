@@ -10,9 +10,6 @@
 
 #include <Assets/AssetManager.h>
 
-// #include <Time/Timer.h>
-
-
 namespace Plutus
 {
     RenderSystem::RenderSystem(Scene* scene, Camera2D* camera) : ISystem(scene, camera)
@@ -21,7 +18,6 @@ namespace Plutus
         mRenderer.init();
         mRenderer.setShader(&mShader);
         mRenderer.setCamera(camera);
-        mDebug.init(camera);
     }
 
     RenderSystem::~RenderSystem()
@@ -78,10 +74,6 @@ namespace Plutus
                 auto texId = AssetManager::get()->getTexId(sprite.mTextureId);
                 mRenderables[i++] = { texId, rect, sprite.mUVCoord, sprite.mColor,
                     trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
-
-                mDebug.drawBox(rect, trans.r);
-                mDebug.end();
-                mDebug.render(2);
             }
 
         }

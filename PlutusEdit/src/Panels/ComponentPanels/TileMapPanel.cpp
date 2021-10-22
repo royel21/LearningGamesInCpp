@@ -4,15 +4,11 @@
 #include <imgui.h>
 #include <ECS/Components/TileMap.h>
 
-#include "ComponentUtil.h"
-
-#include "../Helpers/Render.h"
-#include "../Helpers/ImGuiEx.h"
-#include "../Config.h"
-
 #include <glm/glm.hpp>
 #include <Input/Input.h>
 #include <Graphics/DebugRenderer.h>
+
+#include "ComponentUtil.h"
 
 #include <stdio.h>
 

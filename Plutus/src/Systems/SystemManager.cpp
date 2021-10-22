@@ -24,6 +24,11 @@ namespace Plutus
         }
     }
 
+    void SystemManager::draw()
+    {
+
+    }
+
     void SystemManager::cleanup()
     {
         for (auto& sys : mSystems) {
