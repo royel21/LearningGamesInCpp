@@ -6,7 +6,9 @@
 #include "vertex.h"
 #include <unordered_map>
 
-#define DEF_UV glm::vec4(0,0,1,1)
+#include <Math/Vectors.h>
+
+#define DEF_UV vec4f(0,0,1,1)
 
 namespace Plutus
 {
@@ -62,7 +64,7 @@ namespace Plutus
 
 		void submit(const std::vector<Renderable>& renderables);
 
-		void submit(glm::vec4 rect, float r) { submit(0, rect, DEF_UV, {}, r); }
+		void submit(vec4f rect, float r) { submit(0, rect, DEF_UV, {}, r); }
 		/*
 			Submit a single Object to draw in the screen
 			@param texture Texture image from where to draw
@@ -73,7 +75,7 @@ namespace Plutus
 			@param flipX optional flip the image from X coordinate
 			@param flipY optional flip the image from Y coordinate
 		*/
-		void submit(GLuint texture, glm::vec4 rect, glm::vec4 uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
+		void submit(GLuint texture, vec4f rect, vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
 
 		void draw(bool usePicking = false);
 		//Flush the Vertex buffer to the screen

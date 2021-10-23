@@ -49,7 +49,7 @@ namespace Plutus
         cleanUp();
     }
 
-    u32 FrameBuffer::getEntId(glm::vec2 pos)
+    int FrameBuffer::getEntId(glm::vec2 pos)
     {
         float pixels[] = { 0, 0, 0, 0 };
         if (mIsPicking) {
@@ -60,7 +60,7 @@ namespace Plutus
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
-        return (u32)pixels[0] - 1;
+        return (int)pixels[0] - 1;
     }
     void FrameBuffer::bind()
     {

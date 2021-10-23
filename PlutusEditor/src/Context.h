@@ -3,7 +3,7 @@
 #include <ECS/Scene.h>
 #include <string>
 
-#include <Physics/Vectors.h>
+#include <Math/Vectors.h>
 
 namespace Plutus
 {

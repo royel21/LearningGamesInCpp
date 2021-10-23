@@ -4,8 +4,8 @@
 #include "GLheaders.h"
 
 #include <tuple>
-#include <glm/glm.hpp>
 #include <Utils/Utils.h>
+#include <Math/Vectors.h>
 
 namespace Plutus
 {
@@ -37,7 +37,7 @@ namespace Plutus
 
 		ColorRGBA8(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) { rgba = RGBA2Int(r, g, b, a); }
 
-		ColorRGBA8(const glm::vec4& c) {
+		ColorRGBA8(const vec4f& c) {
 			rgba = RGBA2Int(float2ubyte(c.x), float2ubyte(c.y), float2ubyte(c.z), float2ubyte(c.w));
 		}
 
@@ -48,7 +48,7 @@ namespace Plutus
 
 		operator uint32_t() const { return rgba; }
 		//a << 24 | b << 16 | g << 8 | r
-		operator glm::vec4() const { return { (rgba & 0xff) / 255.0f, ((rgba >> 8) & 0xff) / 255.0f, ((rgba >> 16) & 0xff) / 255.0f, ((rgba >> 24) & 0xff) / 255.0f }; }
+		operator vec4f() const { return { (rgba & 0xff) / 255.0f, ((rgba >> 8) & 0xff) / 255.0f, ((rgba >> 16) & 0xff) / 255.0f, ((rgba >> 24) & 0xff) / 255.0f }; }
 	};
 	/*
 		Represent a single Vertex information:
@@ -88,9 +88,9 @@ namespace Plutus
 		// Texture Id
 		uint32_t TexId;
 		// Rectangle with position x,y and width, height
-		glm::vec4 trans;
+		vec4f trans;
 		// Texture coords "UV"
-		glm::vec4 uv = { 0,0,1,1 };
+		vec4f uv = { 0,0,1,1 };
 		// Color
 		ColorRGBA8 color = {};
 		// Rotation
@@ -106,9 +106,9 @@ namespace Plutus
 		// Sort in Y order
 		bool sortY = false;
 		Renderable() = default;
-		Renderable(uint32_t texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c) : TexId(texture), trans(rect), uv(_uv), color(_c) {}
+		Renderable(uint32_t texture, vec4f rect, vec4f _uv, ColorRGBA8 _c) : TexId(texture), trans(rect), uv(_uv), color(_c) {}
 
-		Renderable(uint32_t texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, int id, int _layer, bool sY)
+		Renderable(uint32_t texture, vec4f rect, vec4f _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, int id, int _layer, bool sY)
 			: TexId(texture), trans(rect), uv(_uv), color(_c), r(_r), flipX(fx), flipY(fy), entId(id), layer(_layer), sortY(sY) {
 		}
 

@@ -4,8 +4,9 @@
 #include <unordered_map>
 
 #include <ECS/Scene.h>
-#include <Physics/Vectors.h>
+#include <Math/Vectors.h>
 
+#include <Utils/types.h>
 
 namespace Plutus
 {

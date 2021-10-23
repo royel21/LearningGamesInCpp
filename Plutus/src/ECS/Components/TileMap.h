@@ -3,7 +3,7 @@
 #include <cstring>
 #include <vector>
 #include <unordered_map>
-#include <glm/glm.hpp>
+#include <Math/Vectors.h>
 
 namespace Plutus
 {
@@ -38,7 +38,7 @@ namespace Plutus
             parent = _parent;
         }
 
-        glm::vec4 getRect();
+        vec4f getRect();
 
         inline bool operator==(Tile tile)
         {
@@ -69,8 +69,8 @@ namespace Plutus
         Texture* getTexture(int id);
 
         void addTile(Tile& tile);
-        Tile* getTile(const glm::ivec2& mCoords);
-        int getIndex(const glm::ivec2& mCoords);
-        bool removeTile(const glm::ivec2& mCoords);
+        Tile* getTile(const vec2i& mCoords);
+        int getIndex(const vec2i& mCoords);
+        bool removeTile(const vec2i& mCoords);
     };
 } // namespace Plutus

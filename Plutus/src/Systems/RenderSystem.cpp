@@ -53,7 +53,7 @@ namespace Plutus
 
                 for (auto& tile : tilemap.mTiles)
                 {
-                    glm::vec4 rect = tile.getRect();
+                    auto rect = tile.getRect();
                     if (mCamera->isBoxInView(rect, 200))
                     {
                         auto tex = tilemap.getTexture(tile.texture);

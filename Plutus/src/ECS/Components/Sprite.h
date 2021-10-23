@@ -1,8 +1,7 @@
 #pragma once
 
 #include <string>
-#include <glm/glm.hpp>
-#include <Assets/AssetManager.h>
+#include <Math/Vectors.h>
 
 namespace Plutus
 {
@@ -11,8 +10,8 @@ namespace Plutus
         std::string mTextureId;
         bool mFlipX = false;
         bool mFlipY = false;
-        glm::vec4 mUVCoord;
         uint32_t mColor = -1;
+        vec4f mUVCoord;
 
         Sprite() {};
         Sprite(std::string texId) : mTextureId(texId), mUVCoord(0, 0, 1, 1) {};

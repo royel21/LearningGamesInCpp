@@ -1,5 +1,6 @@
 #include "Collider.h"
-#include "PMath.h"
+
+#include <Math/PMath.h>
 
 namespace Plutus
 {

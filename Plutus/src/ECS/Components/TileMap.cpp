@@ -5,7 +5,7 @@
 namespace Plutus
 {
 
-    glm::vec4 Tile::getRect() {
+    vec4f Tile::getRect() {
         return { x * parent->mTileWidth, y * parent->mTileHeight, parent->mTileWidth, parent->mTileHeight };
     }
 
@@ -41,13 +41,13 @@ namespace Plutus
         mTiles.back().setParent(this);
     }
 
-    Tile* TileMap::getTile(const glm::ivec2& mCoords)
+    Tile* TileMap::getTile(const vec2i& mCoords)
     {
         int index = getIndex(mCoords);
         return index > -1 ? &mTiles[index] : nullptr;
     }
 
-    int TileMap::getIndex(const glm::ivec2& pos)
+    int TileMap::getIndex(const vec2i& pos)
     {
         auto it = std::find_if(mTiles.begin(), mTiles.end(), [=](const Tile& ntile) -> bool
             { return ntile.x == pos.x && ntile.y == pos.y; });
@@ -55,7 +55,7 @@ namespace Plutus
         return it != mTiles.end() ? int(it - mTiles.begin()) : -1;
     }
 
-    bool TileMap::removeTile(const glm::ivec2& mCoords)
+    bool TileMap::removeTile(const vec2i& mCoords)
     {
         int index = getIndex(mCoords);
         if (index > -1)

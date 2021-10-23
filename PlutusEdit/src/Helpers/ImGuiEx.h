@@ -6,11 +6,11 @@
 #include <unordered_map>
 
 #include <entt.hpp>
-#include <Core/type.h>
+#include <Utils/types.h>
 #include <ECS/Scene.h>
 #include <Assets/AssetManager.h>
 
-#include <Physics/Vectors.h>
+#include <Math/Vectors.h>
 
 #define IM_F4_2_I32COLOR(color) static_cast<int>(color[3] * 255) << 24 | \
                                 static_cast<int>(color[2] * 255) << 16 | \
@@ -117,8 +117,6 @@ namespace ImGui
 
     bool ListBox(const char* label, std::vector<Plutus::Entity*> data, Plutus::Entity* selected);
 
-    bool Entities(const char* label, std::vector<Plutus::Ref<Plutus::Entity>>& entities, int& selected, int& remove);
-
     bool ColorInt(const char* label, unsigned int& color);
 
     void BeginDialog(const char* name, bool fixedPos = false);
@@ -134,11 +132,11 @@ namespace ImGui
 
     bool InputString(const char* label, std::string& text);
 
-    bool Texture(Plutus::Texture* tileset, float scale, std::vector<glm::ivec3>& selected);
+    bool Texture(Plutus::Texture* tileset, float scale, std::vector<Plutus::vec3i>& selected);
 
     bool DrawTextureOne(Plutus::Texture* tileset, int& selected);
 
-    bool DrawTexture(Plutus::Texture* tileset, int winWidth = 0, int winHeight = 0, float scale = 1.0f, std::vector<glm::ivec3>* selected = nullptr, bool onlyOne = false);
+    bool DrawTexture(Plutus::Texture* tileset, int winWidth = 0, int winHeight = 0, float scale = 1.0f, std::vector<Plutus::vec3i>* selected = nullptr, bool onlyOne = false);
 
-    void DrawTexCoords(Plutus::Texture* tileset, glm::vec4& coords);
+    void DrawTexCoords(Plutus::Texture* tileset, Plutus::vec4f& coords);
 } // namespace ImGui

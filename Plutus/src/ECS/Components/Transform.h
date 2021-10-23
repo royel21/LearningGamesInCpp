@@ -1,5 +1,5 @@
 #pragma once
-#include <glm/glm.hpp>
+#include <Math/Vectors.h>
 
 namespace Plutus
 {
@@ -38,9 +38,9 @@ namespace Plutus
             }
         }
 
-        glm::vec4 getRect() { return { x, y, w, h }; }
-        glm::vec2 getPosition() { return { x,y }; }
-        glm::ivec2 getSize() { return { w, h }; }
+        vec4f getRect() { return { x, y, w, h }; }
+        vec2f getPosition() { return { x,y }; }
+        vec2i getSize() { return { w, h }; }
     };
 
 } // namespace Plutus

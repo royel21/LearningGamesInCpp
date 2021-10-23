@@ -130,7 +130,7 @@ namespace Plutus
 
             auto winPos = ImGui::GetContentRegionAvail();
 
-            glm::vec2 newSize(winPos.x, winPos.x / aspectRation);
+            vec2f newSize(winPos.x, winPos.x / aspectRation);
             if (newSize.y > winPos.y)
             {
                 newSize.y = winPos.y;

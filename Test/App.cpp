@@ -3,7 +3,7 @@
 
 #include <Input/Input.h>
 #include <Graphics/DebugRenderer.h>
-#include <Physics/Vectors.h>
+#include <Math/Vectors.h>
 
 #include "Capsule.h"
 

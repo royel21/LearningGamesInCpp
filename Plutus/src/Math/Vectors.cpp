@@ -1,4 +1,5 @@
 #include "Vectors.h"
+
 #include <math.h>
 
 namespace Plutus
@@ -21,7 +22,7 @@ namespace Plutus
             return { x / vecLength, y / vecLength };
         }
         else {
-            return {};
+            return { 0,0 };
         }
     }
 
@@ -49,18 +50,11 @@ namespace Plutus
     {
         return { x - v.x, y - v.y };
     }
-    vec2f vec2f::operator* (const vec2f& v) const {
-        return { x * v.x, y * v.y };
-    }
-
-    vec2f vec2f::operator-()
-    {
-        return { x * -1, y * -1 };
-    }
 
     vec2f vec2f::operator+(float val) const {
         return { x + val, y + val };
     }
+
     vec2f vec2f::operator-(float val) const {
         return { x - val, y - val };
     }
@@ -72,7 +66,13 @@ namespace Plutus
 
     vec2f vec2f::operator/(float v) const
     {
+        if (v == 0) return { x, y };
         return { x / v, y / v };
+    }
+
+    vec2f vec2f::operator-()
+    {
+        return { x * -1, y * -1 };
     }
 
     vec2f& vec2f::operator+=(const vec2f& v)
@@ -107,8 +107,20 @@ namespace Plutus
     {
         return x == v.x && y == v.y;
     }
+
     bool vec2f::operator!=(const vec2f& v) const
     {
         return !(*this == v);
+    }
+
+    /***********************************************************************/
+    vec4f vec4f::operator+(const vec4f& v) const
+    {
+        return { x + v.x, y + v.y, z + v.z, w + v.w };
+    }
+
+    vec4f vec4f::operator-(const vec4f& v) const
+    {
+        return { x - v.x, y - v.y, z - v.z, w - v.w };
     }
 } // namespace Plutus

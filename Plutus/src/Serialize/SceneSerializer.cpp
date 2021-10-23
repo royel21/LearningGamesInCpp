@@ -3,7 +3,6 @@
 #include "Serialize.h"
 
 #include <ECS/Scene.h>
-#include <Core/type.h>
 #include <ECS/Components.h>
 #include <Assets/AssetManager.h>
 
@@ -104,7 +103,7 @@ namespace Plutus
         ser.EndObj();
     }
 
-    std::string SceneSerializer(Ref<Scene>& scene)
+    std::string SceneSerializer(Scene* scene)
     {
         Serializer ser;
         auto writer = ser.getWriter();
@@ -114,7 +113,7 @@ namespace Plutus
 
         ser.StartArr("entities");
         scene->getRegistry()->each([&](entt::entity e) {
-            Plutus::Entity ent = { e, scene.get() };
+            Plutus::Entity ent = { e, scene };
             ser.StartObj();
             ser.addString("name", ent.getName());
 

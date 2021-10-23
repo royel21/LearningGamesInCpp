@@ -10,7 +10,6 @@
 
 #include "../Helpers/Render.h"
 
-#include <glm/gtc/type_ptr.hpp>
 #include <Graphics/DebugRenderer.h>
 
 namespace Plutus
@@ -56,11 +55,11 @@ namespace Plutus
                         }
                         ImGui::BeginCol("Cell Size");
                         auto cellSize = mDebugRender->getCellSize();
-                        if (ImGui::DragInt2("##Cell-Size", glm::value_ptr(cellSize)))
+                        if (ImGui::DragInt2("##Cell-Size", &cellSize.x))
                             mDebugRender->setCellSize(cellSize);
-                        static glm::vec4 color = mDebugRender->getGridLineColor();
+                        static vec4f color = mDebugRender->getGridLineColor();
                         ImGui::BeginCol("Line Color");
-                        if (ImGui::ColorEdit3("###Grid-Color", glm::value_ptr(color)))
+                        if (ImGui::ColorEdit3("###Grid-Color", &color.x))
                         {
                             color.w = 1;
                             mDebugRender->setColor({ color });

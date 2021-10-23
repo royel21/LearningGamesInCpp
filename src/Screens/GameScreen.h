@@ -1,9 +1,16 @@
 #pragma once
 
-#include <ECS/Scene.h>
+#include <Utils/types.h>
 #include <Core/IGameScreen.h>
 #include <Graphics/Camera2D.h>
 #include <Systems/SystemManager.h>
+
+namespace Plutus
+{
+    class Scene;
+}
+
+
 
 class GameScreen : public Plutus::IGameScreen
 {
@@ -27,7 +34,7 @@ public:
     void onScreenResize(int w, int h) override;
 
 private:
-    Plutus::Ref<Plutus::Scene> mScene;
+    Ref<Plutus::Scene> mScene;
     Plutus::Camera2D mWorldCamera;
     Plutus::SystemManager mSystemManager;
 };

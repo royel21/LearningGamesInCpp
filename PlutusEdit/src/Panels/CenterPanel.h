@@ -1,5 +1,5 @@
 #pragma once
-#include <Physics/Vectors.h>
+#include <Math/Vectors.h>
 #include <Systems/SystemManager.h>
 
 #include "../ImGuiColorTextEdit/TextEditor.h"

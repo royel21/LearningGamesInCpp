@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include <Math/Vectors.h>
+
 using u8 = unsigned char;
 using u16 = unsigned short;
 using u32 = unsigned int;
@@ -25,7 +27,7 @@ namespace Plutus
 		float bl; // bitmap left;
 		float bt; // bitmap top;
 
-		glm::vec4 uv; // x offset of glyph in texture coordinates
+		vec4f uv; // x offset of glyph in texture coordinates
 	};
 
 	struct FontTexture

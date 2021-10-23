@@ -3,7 +3,7 @@
 #include <imgui.h>
 #include <Input/Input.h>
 #include <ECS/Components.h>
-#include <Physics/Vectors.h>
+#include <Math/Vectors.h>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "ComponentUtil.h"
@@ -127,9 +127,8 @@ namespace Plutus
                         }
                     }
                     else {
-                        static int coords[4] = { 0 };
                         ImGui::BeginCol("Coords");
-                        ImGui::DragFloat4("#spr-uv", glm::value_ptr(sprite->mUVCoord), 0.001f);
+                        ImGui::DragFloat4("#spr-uv", &sprite->mUVCoord.x, 0.001f);
                     }
                 }
                 ImGui::EndUIGroup();

@@ -41,7 +41,7 @@ namespace Plutus
             {
                 int y = i / columns;
                 int x = i % columns;
-                glm::vec4 UV;
+                vec4f UV;
                 UV.x = ((float)(x * tileWidth) / (float)texWidth);
                 UV.y = ((float)(y * tileHeight) / (float)texHeight);
                 UV.z = ((float)(x * tileWidth + tileWidth) / (float)texWidth);
@@ -51,7 +51,7 @@ namespace Plutus
         }
     }
 
-    glm::vec4 Texture::getUV(float column, float row, float w, float h)
+    vec4f Texture::getUV(float column, float row, float w, float h)
     {
         float xw = column * tileWidth;
         float yh = row * tileHeight;
@@ -77,10 +77,10 @@ namespace Plutus
         return found != mTileSets.end() ? found->second.texId : 0;
     }
 
-    glm::vec4 Textures::getTextureUV(const std::string& id, int uvIndex)
+    vec4f Textures::getTextureUV(const std::string& id, int uvIndex)
     {
         auto found = mTileSets.find(id);
-        return found != mTileSets.end() ? found->second.getUV(uvIndex) : glm::vec4(0, 0, 1, 1);
+        return found != mTileSets.end() ? found->second.getUV(uvIndex) : vec4f(0, 0, 1, 1);
     }
 
     void Textures::remove(std::string texture)

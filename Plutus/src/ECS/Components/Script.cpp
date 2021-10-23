@@ -1,6 +1,5 @@
 #include "Script.h"
 
-
 namespace Plutus
 {
     Script::Script(const std::string& script) {

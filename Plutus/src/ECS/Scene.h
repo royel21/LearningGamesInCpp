@@ -1,12 +1,8 @@
 #pragma once
 #pragma warning(disable : 4307) //disable warning integral constant overflow for entt
 
-#include <vector>
 #include <string>
-#include <unordered_map>
-#include <Core/type.h>
 #include <entt.hpp>
-#include <algorithm>
 
 namespace Plutus
 {

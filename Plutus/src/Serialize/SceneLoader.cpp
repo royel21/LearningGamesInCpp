@@ -64,7 +64,7 @@ namespace Plutus
         }
     }
 
-    bool SceneLoader::loadFromJson(const char* path, Ref<Scene>& scene)
+    bool SceneLoader::loadFromJson(const char* path, Scene* scene)
     {
         std::string ex = Utils::getExtension(path);
         if (ex == "json")
@@ -77,7 +77,7 @@ namespace Plutus
         return false;
     }
 
-    bool SceneLoader::loadFromString(const std::string& jsonData, Ref<Scene>& scene)
+    bool SceneLoader::loadFromString(const std::string& jsonData, Scene* scene)
     {
         bool success = false;
         rapidjson::Document doc;

@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include <Input/InputListener.h>
 
+#include <Math/Vectors.h>
+
 namespace Plutus
 {
 
@@ -31,6 +33,6 @@ namespace Plutus
         bool mShowAddModal = false;
         TileMap* mTileMap = nullptr;
         Tile* mCurrentTile = nullptr;
-        std::vector<glm::ivec3> mTempTiles;
+        std::vector<vec3i> mTempTiles;
     };
 } // namespace Plutus

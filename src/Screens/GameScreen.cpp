@@ -5,15 +5,17 @@
 #include <cstdlib>
 #include <ctime>
 
+#include <ECS/Scene.h>
+#include <ECS/Components.h>
+
 #include <Assets/AssetManager.h>
 #include <Serialize/SceneLoader.h>
-#include <ECS/Components.h>
 #include <Graphics/GLSL.h>
 
-#include <Core/Engine.h>
-#include <Utils/Utils.h>
 #include <time.h>
 #include <Time/Timer.h>
+#include <Core/Engine.h>
+#include <Utils/Utils.h>
 #include <Systems/RenderSystem.h>
 #include <Systems/ScriptSystem.h>
 #include <Systems/AnimationSystem.h>
@@ -40,7 +42,7 @@ int GameScreen::getPrevScreentIndex() const
 
 void GameScreen::build()
 {
-    mScene = Plutus::CreateRef<Plutus::Scene>();
+    mScene = CreateRef<Plutus::Scene>();
     const int w = mEngine->getWidth();
     const int h = mEngine->getHeight();
     mEngine->setFPS(60);
@@ -63,7 +65,7 @@ void GameScreen::build()
 
 void GameScreen::onEntry()
 {
-    Plutus::SceneLoader::loadFromJson("assets/scenes/scene4.json", mScene);
+    Plutus::SceneLoader::loadFromJson("assets/scenes/scene4.json", mScene.get());
     // const int h = mEngine->getHeight();
     // // Player 1
     // auto player = mScene->createEntity("Player");

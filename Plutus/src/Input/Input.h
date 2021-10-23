@@ -4,8 +4,9 @@
 #include <vector>
 #include <string>
 #include <functional>
-#include <glm/glm.hpp>
 #include <unordered_map>
+
+#include <Math/Vectors.h>
 
 #include "InputListener.h"
 
@@ -45,7 +46,7 @@ namespace Plutus
 
 		int getMouseWheel() { return mMouseWheel; }
 
-		glm::vec2 getMouseCoords() const { return mMouseCoords; }
+		vec2f getMouseCoords() const { return mMouseCoords; }
 
 		void addEventListener(InputListener* listener);
 		void addRemoveListener(InputListener* listener);
@@ -55,7 +56,7 @@ namespace Plutus
 	private:
 		bool mMouseMove = false;
 		int mMouseWheel = 0;
-		glm::vec2 mMouseCoords;
+		vec2f mMouseCoords;
 		std::vector<InputListener*> mEventListeners;
 		std::unordered_map<std::string, bool> mKeyMap;
 		std::unordered_map<std::string, bool> mPrevKeyMap;

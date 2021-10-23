@@ -7,6 +7,8 @@
 
 #include <Assets/AssetManager.h>
 
+#include <Time/Timer.h>
+
 namespace Plutus
 {
     Render& Render::get()
@@ -45,6 +47,7 @@ namespace Plutus
 
     void Render::draw()
     {
+        auto start = Timer::millis();
         mFrameBuffer.setColor(Config::get().vpColor);
         prepare();
         mSpriteBatch.begin();
@@ -59,6 +62,7 @@ namespace Plutus
 
         mDebugRender->drawGrid();
         mFrameBuffer.unBind();
+        printf("time: %llu\n", Timer::millis() - start);
     }
 
     void Render::prepare()
@@ -90,7 +94,7 @@ namespace Plutus
 
                 for (auto& tile : tilemap.mTiles)
                 {
-                    glm::vec4 rect = tile.getRect();
+                    auto rect = tile.getRect();
                     if (mCamera.isBoxInView(rect, 200))
                     {
                         auto tex = tilemap.getTexture(tile.texture);

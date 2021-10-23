@@ -4,7 +4,7 @@
 #include <imgui.h>
 #include <ECS/Components/TileMap.h>
 
-#include <glm/glm.hpp>
+#include <Math/Vectors.h>
 #include <Input/Input.h>
 #include <Graphics/DebugRenderer.h>
 
@@ -18,7 +18,7 @@
 
 namespace Plutus
 {
-    glm::vec2 getCoords() {
+    vec2i getCoords() {
         auto pos = Config::get().mMouseCoords;
         return DebugRender::get()->getSquareCoords({ pos.x, pos.y });
     }
@@ -50,14 +50,25 @@ namespace Plutus
             ImGui::Text("Textures");
             ImGui::SameLine();
             ImGui::PushItemWidth(120);
-            ImGui::ComboBox("##mttexture", mTileMap->mTextures, mCurrentTexture);
+            if (ImGui::ComboBox("##mttexture", mTileMap->mTextures, mCurrentTexture)) {
+                mTempTiles.clear();
+                if (mCurrentTile)
+                    mCurrentTile->texcoord = 0;
+            }
             ImGui::PopItemWidth();
             ImGui::SameLine();
             //Add, Remove Buttons
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
-            if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE " ##tm-add-tex")) addTexture = true;
+            if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE " ##tm-add-tex")) {
+                addTexture = true;
+            }
             ImGui::SameLine();
-            if (ImGui::TransparentButton(ICON_FA_TRASH " ##tm-rm-tex")) mTileMap->removeTexture(mCurrentTexture);
+            if (ImGui::TransparentButton(ICON_FA_TRASH " ##tm-rm-tex")) {
+                mTempTiles.clear();
+                mTileMap->removeTexture(mCurrentTexture);
+                if (mCurrentTile)
+                    mCurrentTile->texcoord = 0;
+            }
             ImGui::PopStyleVar();
             ImGui::Separator();
 
@@ -171,8 +182,8 @@ namespace Plutus
         auto& tiles = mTileMap->mTiles;
         for (auto tile : mTempTiles)
         {
-            uint32_t x = (int)coords.x + tile.x;
-            uint32_t y = (int)coords.y - tile.y;
+            int x = (int)coords.x + tile.x;
+            int y = (int)coords.y - tile.y;
 
             int index = mTileMap->getIndex({ x, y });
             if (index == -1)

@@ -3,7 +3,7 @@
 #include <rapidjson/writer.h> // for stringify JSON
 #include <rapidjson/document.h>
 #include <unordered_map>
-#include <Physics/Vectors.h>
+#include <Math/Vectors.h>
 
 namespace Plutus
 {

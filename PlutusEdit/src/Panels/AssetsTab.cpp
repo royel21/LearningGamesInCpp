@@ -235,7 +235,7 @@ namespace Plutus
     {
         static char name[128];
         static int fontSize = 20;
-        ImVec2 vec = glm::vec2(1);
+        ImVec2 vec = { 1,1 };
 
         int type = 0;
 
@@ -353,7 +353,7 @@ namespace Plutus
             ImGui::DragFloat("##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
             ImGui::EndUIGroup();
         }
-        std::vector<glm::ivec3> selected;
+        std::vector<vec3i> selected;
         ImGui::DrawTexture(&texture, 400, 300, scale, &selected);
     }
 }

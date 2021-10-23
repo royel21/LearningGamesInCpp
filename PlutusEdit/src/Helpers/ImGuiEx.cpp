@@ -42,6 +42,9 @@ namespace ImGui {
         if (it != data.end()) {
             name = it->second;
         }
+        else if (data.size()) {
+            name = data.begin()->second;
+        }
 
         bool isSelected = false;
 
@@ -118,33 +121,7 @@ namespace ImGui {
         return isSelected;
     }
 
-    bool Entities(const char* label, std::vector<Plutus::Ref<Plutus::Entity>>& entities, int& selected, int& remove)
-    {
-        bool isSelected = false;
-        for (uint32_t i = 0; i < entities.size(); i++)
-        {
-            bool is_selected = i == selected;
-            ImGui::PushID(i);
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.0f));
-            if (ImGui::Button(ICON_FA_TRASH_ALT " ##remove"))
-            {
-                remove = i;
-            }
-            ImGui::PopID();
-            ImGui::PopStyleColor();
-            ImGui::SameLine();
-            if (ImGui::Selectable(entities[i]->getName().c_str(), is_selected))
-            {
-                isSelected = true;
-                selected = i;
-            }
-            if (isSelected)
-                ImGui::SetItemDefaultFocus();
-        }
-        return isSelected;
-    }
-
-    bool Texture(Plutus::Texture* tileset, float scale, std::vector<glm::ivec3>& selected)
+    bool Texture(Plutus::Texture* tileset, float scale, std::vector<Plutus::vec3i>& selected)
     {
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
         ImGui::BeginChild("##texture-map", { 0,0 }, true, ImGuiWindowFlags_HorizontalScrollbar);
@@ -402,7 +379,7 @@ namespace ImGui {
         return false;
     }
 
-    void DrawTexCoords(Plutus::Texture* tileset, glm::vec4& coords) {
+    void DrawTexCoords(Plutus::Texture* tileset, Plutus::vec4f& coords) {
         auto mInput = Plutus::Input::get();
         const int w = tileset->texWidth;
         const int h = tileset->texHeight;
@@ -505,7 +482,7 @@ namespace ImGui {
     }
 
     bool DrawTextureOne(Plutus::Texture* texture, int& selected) {
-        std::vector<glm::ivec3> selecteds;
+        std::vector<Plutus::vec3i> selecteds;
         if (DrawTexture(texture, 0, 200, 1.0f, &selecteds, true)) {
             selected = selecteds[0].z;
             return true;
@@ -514,7 +491,7 @@ namespace ImGui {
     }
 
 
-    bool DrawTexture(Plutus::Texture* texture, int winWidth, int winHeight, float scale, std::vector<glm::ivec3>* selected, bool onlyOne)
+    bool DrawTexture(Plutus::Texture* texture, int winWidth, int winHeight, float scale, std::vector<Plutus::vec3i>* selected, bool onlyOne)
     {
         if (texture != nullptr) {
             ImGui::BeginChild("##texture-map", { (float)winWidth, (float)winHeight }, false, ImGuiWindowFlags_HorizontalScrollbar);
@@ -630,6 +607,9 @@ namespace ImGui {
                                 drawList->AddRectFilled(start, end, IM_COL32(0, 255, 255, 50));
                             }
                         }
+                    }
+                    else {
+                        selected->push_back({ 0,0,0 });
                     }
                 }
             }

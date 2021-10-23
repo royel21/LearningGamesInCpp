@@ -2,13 +2,13 @@
 #define _DEBUGRENDERER_H
 
 #include <vector>
-#include <glm/glm.hpp>
-
 #include "vertex.h"
 #include "Shader.h"
 #include "GLheaders.h"
 
 #include <Physics/Shapes.h>
+
+#include <Math/Vectors.h>
 
 namespace Plutus
 {
@@ -19,7 +19,7 @@ namespace Plutus
 
 	struct DebugVertex
 	{
-		glm::vec2 position;
+		vec2f position;
 		ColorRGBA8 color;
 	};
 
@@ -30,16 +30,16 @@ namespace Plutus
 		static DebugRender* get();
 		~DebugRender();
 		void init(Camera2D* _camera);
-		void drawLine(const glm::vec2& a, const glm::vec2& b, const ColorRGBA8& color = {});
-		void drawBox(const glm::vec4& destRect, float angle = 0, const ColorRGBA8& color = {});
-		void drawCircle(const glm::vec2& center, float radius, const ColorRGBA8& color = {});
+		void drawLine(const vec2f& a, const vec2f& b, const ColorRGBA8& color = {});
+		void drawBox(const vec4f& destRect, float angle = 0, const ColorRGBA8& color = {});
+		void drawCircle(const vec2f& center, float radius, const ColorRGBA8& color = {});
 		void render(float lineWidth = 1.0f);
 		void drawGrid();
 		void end();
 		void dispose();
 		//Grid Cell Size w = Width, h = Height
 		void setCellSize(const glm::ivec2& cellSize);
-		glm::vec4 getGridLineColor() { return mGridColor; }
+		vec4f getGridLineColor() { return mGridColor; }
 
 		//Draw Shapes
 		void drawBox(const Box2d& c, const ColorRGBA8& color = {});
@@ -50,8 +50,8 @@ namespace Plutus
 
 		inline void resizeBuffer(unsigned int size) { mVertexs.reserve(size); }
 
-		glm::vec2 getSquareCoords(glm::vec2 mousePos);
-		glm::vec2 getSquareCoords(glm::vec2 mousePos, const glm::vec2& size);
+		vec2i getSquareCoords(vec2f mousePos);
+		vec2i getSquareCoords(vec2f mousePos, const vec2f& size);
 
 		void setShouldDraw(bool shouldDraw) { isDraw = shouldDraw; }
 		bool getShouldDraw() { return isDraw; }

@@ -27,12 +27,12 @@ namespace Plutus
 			return mTextures.getTextureId(id);
 		}
 
-		glm::vec4 getTexCoords(const std::string& id, int index)
+		vec4f getTexCoords(const std::string& id, int index)
 		{
 			return mTextures.getTextureUV(id, index);
 		}
 
-		glm::vec4 getTexCoords(const std::string& id, glm::vec4 coords)
+		vec4f getTexCoords(const std::string& id, vec4f coords)
 		{
 			return mTextures.getTexture(id)->getUV(coords.x, coords.y, coords.z, coords.w);
 		}

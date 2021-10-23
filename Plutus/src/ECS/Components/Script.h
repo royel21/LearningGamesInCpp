@@ -1,8 +1,6 @@
 #pragma once
 
 #include <string>
-#include <lua.hpp>
-#include <iostream>
 #include <sol/sol.hpp>
 
 namespace Plutus

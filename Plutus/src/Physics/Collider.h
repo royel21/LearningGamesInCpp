@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Shapes.h"
-#include "Vectors.h"
+
+#include <Math/Vectors.h>
 
 namespace Plutus
 {

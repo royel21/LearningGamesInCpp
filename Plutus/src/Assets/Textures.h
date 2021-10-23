@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
-#include <glm/glm.hpp>
+#include <Math/Vectors.h>
 #include "Graphics/GLheaders.h"
 
 namespace Plutus
@@ -27,7 +27,7 @@ namespace Plutus
         int texWidth = 0;
         int texHeight = 0;
         uint32_t texId = 0;
-        std::vector<glm::vec4> uvs;
+        std::vector<vec4f> uvs;
 
         Texture() : columns(0), tileWidth(0), tileHeight(0) {}
 
@@ -39,11 +39,11 @@ namespace Plutus
          * **/
         Texture(const std::string& id, int columns, int w, int h, GLTexture tex, const std::string& _path);
 
-        glm::vec4 getUV(float column, float row, float w, float h);
+        vec4f getUV(float column, float row, float w, float h);
 
-        glm::vec4 getUV(int texcoord)
+        vec4f getUV(int texcoord)
         {
-            return uvs.size() ? uvs[texcoord] : glm::vec4(0, 0, 1, 1);
+            return uvs.size() && texcoord < (int)uvs.size() ? uvs[texcoord] : vec4f(0, 0, 1, 1);
         }
 
         void calculateUV();
@@ -60,7 +60,7 @@ namespace Plutus
 
         Texture* getTexture(const std::string& id);
         uint32_t getTextureId(const std::string& id);
-        glm::vec4 getTextureUV(const std::string& id, int uvIndex);
+        vec4f getTextureUV(const std::string& id, int uvIndex);
 
         std::unordered_map<std::string, Texture>& getItems() { return mTileSets; }
 

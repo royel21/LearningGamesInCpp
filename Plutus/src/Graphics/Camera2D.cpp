@@ -12,11 +12,11 @@ namespace Plutus
 		update();
 	}
 
-	glm::vec4 Camera2D::getViewPortDim()
+	vec4f Camera2D::getViewPortDim()
 	{
-		auto half = glm::vec2(mScreenWidth >> 1, mScreenHeight >> 1) + mCamPos;
+		auto half = vec2f(mScreenWidth >> 1, mScreenHeight >> 1) + mCamPos;
 		auto halfScale = getScaleScreen() / 2.0f;
-		glm::vec4 size = { half.x - halfScale.x, half.y - halfScale.y, half.x + halfScale.x, half.y + halfScale.y };
+		vec4f size = { half.x - halfScale.x, half.y - halfScale.y, half.x + halfScale.x, half.y + halfScale.y };
 		return size;
 	}
 
@@ -31,13 +31,13 @@ namespace Plutus
 		}
 	}
 
-	glm::vec2 Camera2D::convertScreenToWold(glm::vec2 coords, bool invertY)
+	vec2f Camera2D::convertScreenToWold(vec2f coords, bool invertY)
 	{
 
 		if (invertY)
 			coords.y = mScreenHeight - coords.y;
 		// translate coord to center of the screen
-		coords -= glm::vec2(mScreenWidth >> 1, mScreenHeight >> 1);
+		coords -= vec2f(mScreenWidth >> 1, mScreenHeight >> 1);
 		//have to scale the coordinate and the camera current pos
 		coords /= mScale;
 		auto camScale = mCamPos / mScale;
@@ -45,14 +45,14 @@ namespace Plutus
 		//Translate with the camera position
 		coords += mCamPos;
 
-		coords += glm::vec2(mScreenWidth >> 1, mScreenHeight >> 1);
+		coords += vec2f(mScreenWidth >> 1, mScreenHeight >> 1);
 
 		return coords;
 	}
 
-	bool Camera2D::isBoxInView(const glm::vec4 box, int offset)
+	bool Camera2D::isBoxInView(const vec4f box, int offset)
 	{
-		auto camSize = getViewPortDim() + glm::vec4(-offset, -offset, offset, offset);
+		auto camSize = getViewPortDim() + vec4f(-offset, -offset, offset, offset);
 
 		if (box.x + box.z > camSize.x && box.y + box.w > camSize.y && box.x < camSize.z && box.y < camSize.w) {
 			return true;

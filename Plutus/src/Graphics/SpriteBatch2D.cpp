@@ -78,14 +78,14 @@ namespace Plutus
 		delete[] indices;
 	}
 
-	void SpriteBatch2D::submit(GLuint texture, glm::vec4 rect, glm::vec4 _uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
+	void SpriteBatch2D::submit(GLuint texture, vec4f rect, vec4f _uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
 	{
 		// Check if is it inside the view port
 		float id = static_cast<float>(entId);
 
 		createBatch(texture);
 
-		glm::vec4 uv(_uv);
+		vec4f uv(_uv);
 
 		if (flipX)
 			std::swap(uv.x, uv.z);
@@ -95,15 +95,15 @@ namespace Plutus
 
 		if (r)
 		{
-			glm::vec2 halfDim(rect.z / 2, rect.w / 2);
+			vec2f halfDim(rect.z / 2, rect.w / 2);
 			//top left
-			glm::vec2 tl(-halfDim.x, halfDim.y);
+			vec2f tl(-halfDim.x, halfDim.y);
 			//bottom left
-			glm::vec2 bl(-halfDim.x, -halfDim.y);
+			vec2f bl(-halfDim.x, -halfDim.y);
 			//bottom right
-			glm::vec2 br(halfDim.x, -halfDim.y);
+			vec2f br(halfDim.x, -halfDim.y);
 			//top right
-			glm::vec2 tr(halfDim.x, halfDim.y);
+			vec2f tr(halfDim.x, halfDim.y);
 
 			tl = rotatePoint2D(tl, r) + halfDim;
 			bl = rotatePoint2D(bl, r) + halfDim;

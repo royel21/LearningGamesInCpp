@@ -51,7 +51,7 @@ namespace Plutus
             mEnt = {};
             mScene->clear();
             AssetManager::get()->clearData();
-            if (SceneLoader::loadFromJson(newScene.c_str(), mScene)) {
+            if (SceneLoader::loadFromJson(newScene.c_str(), mScene.get())) {
                 mScenes[name] = newScene;
                 mOpenScene = name;
             }
@@ -67,7 +67,7 @@ namespace Plutus
             mEnt = {};
             mScene->clear();
             AssetManager::get()->clearData();
-            if (SceneLoader::loadFromJson(path.c_str(), mScene)) {
+            if (SceneLoader::loadFromJson(path.c_str(), mScene.get())) {
                 found->second = path;
                 std::replace(found->second.begin(), found->second.end(), '\\', '/');
                 mOpenScene = name;
@@ -77,8 +77,7 @@ namespace Plutus
 
     void Project::Save()
     {
-        auto buffer = SceneSerializer(mScene);
-        std::string json = Plutus::SceneSerializer(mScene);
+        std::string json = Plutus::SceneSerializer(mScene.get());
         auto found = mScenes.find(mOpenScene);
         if (found != mScenes.end())
             toJsonFile(found->second, json.c_str());

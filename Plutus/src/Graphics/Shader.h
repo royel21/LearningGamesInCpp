@@ -7,6 +7,8 @@
 #include <string>
 #include <glm/glm.hpp>
 
+#include <Math/Vectors.h>
+
 namespace Plutus
 {
 	/*
@@ -56,7 +58,7 @@ namespace Plutus
 		//Upload Uniform 3 float
 		void setUniform3f(std::string name, glm::vec3 value);
 		//Upload Uniform 4 float
-		void setUniform4f(std::string name, const glm::vec4& value);
+		void setUniform4f(std::string name, const vec4f& value);
 		//Upload Uniform matrix 4x4 of float
 		void setUniformMat4(std::string name, const glm::mat4& value);
 
