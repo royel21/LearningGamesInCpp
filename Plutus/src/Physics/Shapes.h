@@ -13,8 +13,11 @@ constexpr float HMPP = PPM / 2.0f;
 
 class b2Body;
 
+
 namespace Plutus
 {
+    using Points = std::vector<vec2f>;
+
     enum ShapeType {
         PLine = 0,
         PCircle,
@@ -76,6 +79,6 @@ namespace Plutus
         vec2f getLocalMax() const { return pos + half; }
         vec2f getMax() const { return pos + size; }
         vec2f getCenter() const { return pos + half; }
-        std::vector<vec2f> getVertices();
+        Points getVertices();
     };
 }

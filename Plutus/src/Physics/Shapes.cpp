@@ -37,15 +37,15 @@ namespace Plutus
         half = size * 0.5f;
     }
 
-    std::vector<vec2f> Box2d::getVertices() {
+    Points Box2d::getVertices() {
 
         auto min = pos;
         auto max = getMax();
 
-        std::vector<vec2f> vertices{ {min}, {min.x, max.y}, {max}, {max.x, min.y} };
+        Points vertices{ {min}, {min.x, max.y}, {max}, {max.x, min.y} };
         if (rotation != 0.0f) {
             for (auto& vert : vertices) {
-                rotate(vert, pos, rotation);
+                rotate(vert, getCenter(), rotation);
             }
         }
 
