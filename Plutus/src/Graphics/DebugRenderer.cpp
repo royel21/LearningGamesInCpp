@@ -85,23 +85,59 @@ namespace Plutus
 		mVertexs.clear();
 	}
 	/***************************** Shapes **********************************************/
-	void DebugRender::drawBox(const Box2d& b, const ColorRGBA8& color)
+	void DebugRender::drawBox(Box2d& b, const ColorRGBA8& color)
 	{
-		drawBox(vec4f(b.pos.x, b.pos.y, b.size.x, b.size.y), b.rotation, color);
+		// drawBox(vec4f(b.pos.x, b.pos.y, b.size.x, b.size.y), b.rotation, color);
+		uint32_t i = (uint32_t)mVertexs.size();
+		mVertexs.resize(mVertexs.size() + 4);
+		auto vertices = b.getVertices();
+
+		int index = 0;
+		for (uint32_t j = i; j < i + 4; j++) {
+			mVertexs[j].position = vertices[index++];
+			mVertexs[j].color = color;
+		}
+
+		mIndices.reserve(mIndices.size() + 8);
+
+		mIndices.push_back(i);
+		mIndices.push_back(i + 1);
+
+		mIndices.push_back(i + 1);
+		mIndices.push_back(i + 2);
+
+		mIndices.push_back(i + 2);
+		mIndices.push_back(i + 3);
+
+		mIndices.push_back(i + 3);
+		mIndices.push_back(i);
 	}
 
-	void DebugRender::drawLine(const Line2d& l, const ColorRGBA8& color)
+	void DebugRender::drawLine(Line2d& line, const ColorRGBA8& color)
 	{
-		drawLine({ l.pos.x, l.pos.y }, { l.end.x, l.end.y }, color);
+		// drawLine({ l.pos.x, l.pos.y }, { l.end.x, l.end.y }, l.rotation, color);
+
+		uint32_t i = (uint32_t)mVertexs.size();
+		mVertexs.resize(mVertexs.size() + 2);
+
+		auto vertices = line.getVertices();
+
+		mVertexs[i].position = vertices[0];
+		mVertexs[i].color = color;
+		mVertexs[i + 1].position = vertices[1];
+		mVertexs[i + 1].color = color;
+
+		mIndices.push_back(i);
+		mIndices.push_back(i + 1);
 	}
 
-	void DebugRender::drawCircle(const Circle2d& c, const ColorRGBA8& color)
+	void DebugRender::drawCircle(Circle2d& c, const ColorRGBA8& color)
 	{
 		drawCircle({ c.pos.x, c.pos.y }, c.radius, color);
 	}
 	/*******************************************************************************************************/
 
-	void DebugRender::drawLine(const vec2f& a, const vec2f& b, const ColorRGBA8& color)
+	void DebugRender::drawLine(const vec2f& a, const vec2f& b, float angle, const ColorRGBA8& color)
 	{
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 2);

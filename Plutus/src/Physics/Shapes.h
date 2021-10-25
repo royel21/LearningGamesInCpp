@@ -54,6 +54,8 @@ namespace Plutus
         Line2d(const vec2f& _start, const vec2f& _end, float r = 0);
 
         vec2f getDir() { return (end - pos).unit(); }
+        vec2f getCenter();
+        Points getVertices();
     };
 
     struct Circle2d : public Shape

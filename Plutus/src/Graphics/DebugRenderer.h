@@ -30,9 +30,7 @@ namespace Plutus
 		static DebugRender* get();
 		~DebugRender();
 		void init(Camera2D* _camera);
-		void drawLine(const vec2f& a, const vec2f& b, const ColorRGBA8& color = {});
-		void drawBox(const vec4f& destRect, float angle = 0, const ColorRGBA8& color = {});
-		void drawCircle(const vec2f& center, float radius, const ColorRGBA8& color = {});
+
 		void render(float lineWidth = 1.0f);
 		void drawGrid();
 		void end();
@@ -42,9 +40,14 @@ namespace Plutus
 		vec4f getGridLineColor() { return mGridColor; }
 
 		//Draw Shapes
-		void drawBox(const Box2d& c, const ColorRGBA8& color = {});
-		void drawLine(const Line2d& c, const ColorRGBA8& color = {});
-		void drawCircle(const Circle2d& c, const ColorRGBA8& color = {});
+
+		void drawLine(const vec2f& a, const vec2f& b, float angle = 0, const ColorRGBA8& color = {});
+		void drawBox(const vec4f& destRect, float angle = 0, const ColorRGBA8& color = {});
+		void drawCircle(const vec2f& center, float radius, const ColorRGBA8& color = {});
+
+		void drawBox(Box2d& c, const ColorRGBA8& color = {});
+		void drawLine(Line2d& c, const ColorRGBA8& color = {});
+		void drawCircle(Circle2d& c, const ColorRGBA8& color = {});
 
 		vec2i getCellSize() { return mCellSize; };
 

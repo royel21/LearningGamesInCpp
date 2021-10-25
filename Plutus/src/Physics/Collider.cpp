@@ -2,6 +2,7 @@
 #include "PUtils.h"
 
 #include <Math/PMath.h>
+#include <Graphics/DebugRenderer.h>
 
 #define CLAMPVAL(v, min, max) v < min ? min : v > max ? max : v
 
@@ -10,130 +11,186 @@ namespace Plutus
     namespace Collider {
 
         //Circle Vs Circle
-        bool isColliding(Circle2d& c1, Circle2d& c2)
+        bool isColliding(Circle2d& c1, Circle2d& c2, bool response)
         {
+
             float r = c1.radius + c2.radius;
-            return (c2.pos - c1.pos).lengthSqrt() - 1 <= r * r;
+            auto dist1 = c1.pos - c2.pos;
+            float sqrtLength = dist1.lengthSqrt();
+            bool isColliding = sqrtLength <= r * r;
+
+            if (isColliding && response) {
+                float length = sqrtf(sqrtLength);
+                float pen_deth = r - length;
+                c1.pos += (dist1 / length) * pen_deth;
+            }
+            return isColliding;
         }
         // Circle Vs Line
-        bool isColliding(Circle2d& circle, Line2d& line)
+        bool isColliding(Circle2d& circle, Line2d& line, bool response)
         {
-            if (PUtils::PointInCircle(line.pos, circle) || PUtils::PointInCircle(line.end, circle)) {
-                return true;
+            auto vertices = line.getVertices();
+            auto p1 = vertices[0];
+            auto p2 = vertices[1];
+
+            bool result = false;
+            vec2f closestPoint;
+            vec2f dist = circle.pos - p1;
+            float csqrt = circle.radiusSqrt();
+
+            float lengthSqtr = dist.lengthSqrt();
+
+            if (lengthSqtr - 1 < csqrt) {
+                result = true;
+                closestPoint = p1;
+            }
+            if (!result) {
+                dist = circle.pos - p2;
+                lengthSqtr = dist.lengthSqrt();
+
+                result = lengthSqtr - 1 < csqrt;
+                closestPoint = p2;
             }
 
-            auto lineSeg = line.end - line.pos;
+            if (!result)
+            {
+                auto lineSeg = p2 - p1;
 
-            auto centerToLineStart = circle.pos - line.pos;
+                auto centerToLineStart = circle.pos - p1;
 
-            float t = centerToLineStart.dot(lineSeg) / lineSeg.dot(lineSeg);
-            // t is a percentage of the line and can't be smaller or bigger of the line size
-            if (t < 0.0f || t > 1.0f) {
-                return false;
+                float t = centerToLineStart.dot(lineSeg) / lineSeg.dot(lineSeg);
+                // t is a percentage of the line and can't be smaller or bigger of the line size
+                if (t < 0.0f || t > 1.0f) {
+                    return false;
+                }
+
+                //find the point close to the segment
+                closestPoint = p1 + (lineSeg * t);
+
+                dist = circle.pos - closestPoint;
+                lengthSqtr = dist.lengthSqrt();
+
+                result = lengthSqtr - 1 < csqrt;
             }
 
-            //find the point close to the segment
-            auto closestPoint = line.pos + (lineSeg * t);
+            if (result && response) {
 
-            return PUtils::PointInCircle(closestPoint, circle);
+                auto length = sqrt(lengthSqtr);
+
+                auto pos = (dist / length) * (circle.radius - length);
+                pos = 0;
+            }
+            DebugRender::get()->drawLine(circle.pos, closestPoint, 0);
+            return result;
         }
+        // Circle Vs Box
+        bool isColliding(Circle2d& circle, Box2d& box, bool response)
+        {
+            auto min = box.pos;
+            auto max = box.getMax();
 
-        bool rotateBox(Circle2d& circle, Box2d& box) {
-            vec2f min;
-            vec2f max = box.half * 2;
+            auto circlePos = circle.pos;
 
-            auto c2boxCenter = circle.pos - box.pos;
-            rotate(c2boxCenter, min, -box.rotation);
+            if (box.rotation)
+                rotate(circlePos, box.getCenter(), box.rotation);
 
-            auto localCirclePos = c2boxCenter + box.half;
-
-            auto closest = localCirclePos;
+            auto closest = circlePos;
 
             closest.x = CLAMPVAL(closest.x, min.x, max.x);
             closest.y = CLAMPVAL(closest.y, min.y, max.y);
 
-            auto circle2box = localCirclePos - closest;
+            auto circle2box = circlePos - closest;
+            bool result = circle2box.lengthSqrt() <= circle.radiusSqrt();
+            if (result && response) {
 
-            return circle2box.lengthSqrt() <= circle.radiusSqrt();
-        }
-        // Circle Vs Box
-        bool isColliding(Circle2d& circle, Box2d& box)
-        {
-            if (box.rotation) {
-                return rotateBox(circle, box);
             }
-
-            else {
-                auto min = box.pos;
-                auto max = box.getMax();
-                auto closest = circle.pos;
-
-                closest.x = CLAMPVAL(closest.x, min.x, max.x);
-                closest.y = CLAMPVAL(closest.y, min.y, max.y);
-
-                auto circle2box = circle.pos - closest;
-
-                return circle2box.lengthSqrt() <= circle.radiusSqrt();
-            }
+            return result;
         }
         // Line Vs Line
-        bool isColliding(Line2d& line1, Line2d& line2)
+        bool isColliding(Line2d& line1, Line2d& line2, bool response)
         {
-            return false;
+            auto verts1 = line1.getVertices();
+            auto verts2 = line2.getVertices();
+            if (PUtils::TestVertices(verts1, verts2)) return false;
+            if (PUtils::TestVertices(verts2, verts1)) return false;
+            if (response) {
+
+            }
+            return true;
         }
         // Line Vs Circle
-        bool isColliding(Line2d& line, Circle2d& circle)
+        bool isColliding(Line2d& line, Circle2d& circle, bool response)
         {
-            return isColliding(circle, line);
+            return isColliding(circle, line, response);
         }
         // Line Vs Box
-        bool isColliding(Line2d& line, Box2d& box)
+        bool isColliding(Line2d& line, Box2d& box, bool response)
         {
-            return false;
-        }
-        /**********************************Box Collision*************************************/
+            auto verts1 = line.getVertices();
+            auto verts2 = box.getVertices();
 
-        // Box Vs Box
-        bool isColliding(Box2d& b1, Box2d& b2)
-        {
-            auto verts1 = b1.getVertices();
-            auto verts2 = b2.getVertices();
-
-            Points axices = {
+            Points axes = {
                  (verts1[1] - verts1[0]).normal(),
-                 (verts1[2] - verts1[1]).normal(),
                  (verts2[1] - verts2[0]).normal(),
                  (verts2[2] - verts2[1]).normal()
             };
 
+            if (PUtils::TestVertices(verts1, verts2, axes)) return false;
+            if (PUtils::TestVertices(verts2, verts1, axes)) return false;
+
+            if (response) {
+
+            }
+            return true;
+        }
+        /**********************************Box Collision*************************************/
+
+        // Box Vs Box
+        bool isColliding(Box2d& b1, Box2d& b2, bool response)
+        {
+            auto verts1 = b1.getVertices();
+            auto verts2 = b2.getVertices();
+            bool result = true;
+
             if (b1.rotation || b2.rotation && 0) {
                 vec2f result;
 
-                if (PUtils::TestVertices(verts1, verts2, axices)) return false;
-                if (PUtils::TestVertices(verts2, verts1, axices)) return false;
+                Points axes = {
+                     (verts1[1] - verts1[0]).normal(),
+                     (verts1[2] - verts1[1]).normal(),
+                     (verts2[1] - verts2[0]).normal(),
+                     (verts2[2] - verts2[1]).normal()
+                };
 
+                if (PUtils::TestVertices(verts1, verts2, axes)) return false;
+                if (PUtils::TestVertices(verts2, verts1, axes)) return false;
+                if (response) {
+
+                }
                 return true;
             }
             else {
-                for (auto p : verts2) {
-                    if (PUtils::PointInBox(p, b1)) return true;
-                }
 
                 for (auto p : verts1) {
-                    if (PUtils::PointInBox(p, b2)) return true;
+                    if (PUtils::PointInBox(p, b2)) {
+                        if (response) {
+
+                        }
+                        return true;
+                    }
                 }
                 return false;
             }
         }
         // Box Vs Circle
-        bool isColliding(Box2d& box, Circle2d& circle)
+        bool isColliding(Box2d& box, Circle2d& circle, bool response)
         {
-            return false;
+            return isColliding(circle, box, response);
         }
         // Box Vs Line
-        bool isColliding(Box2d& box, Line2d& line)
+        bool isColliding(Box2d& box, Line2d& line, bool response)
         {
-            return false;
+            return isColliding(line, box, response);
         }
     }
 } // namespace Plutus

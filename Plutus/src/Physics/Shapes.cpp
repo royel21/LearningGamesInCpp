@@ -23,6 +23,21 @@ namespace Plutus
         end = _end;
     }
 
+    vec2f Line2d::getCenter() {
+        return (pos + end) * 0.5;
+    }
+
+    Points Line2d::getVertices() {
+        Points vertices{ pos, end };
+        if (rotation != 0.0f) {
+            for (auto& vert : vertices) {
+                rotate(vert, getCenter(), rotation);
+            }
+        }
+
+        return vertices;
+    }
+
     Box2d::Box2d(float x, float y, float w, float h, float r) : Shape(x, y), size(w, h)
     {
         type = PBox;

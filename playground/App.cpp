@@ -31,18 +31,23 @@ namespace Plutus
     vec2f pos;
     vec2f mpos;
 
-    void App::Update(float dt)
-    {
-
-    }
-
     Circle2d c1 = { 640,384, 50 };
     Circle2d c2 = { 320,384, 25 };
-    Line2d line = { 200,300, 200, 750 };
+    Line2d line = { 600,300, 600, 750, 90 };
+    Line2d line2 = { 200,200, 200, 600 };
+    float speed = 5;
+    void App::Update(float dt)
+    {
+        if (Input::get()->onKeyDown("Up")) { c1.pos.y += speed; }
+        if (Input::get()->onKeyDown("Down")) { c1.pos.y -= speed; }
+        if (Input::get()->onKeyDown("Right")) { c1.pos.x += speed; }
+        if (Input::get()->onKeyDown("Left")) { c1.pos.x -= speed; }
+    }
+
 
     Box2d box(50, 50, 100, 100, 45);
     // Box2d box3(50, 50, 100, 100);
-    Box2d box2(50, 50, 100, 100);
+    Box2d box2(50, 200, 100, 100);
 
     void App::Draw()
     {
@@ -55,24 +60,35 @@ namespace Plutus
             c1.pos = pos - dis;
         }
 
-        if (Collider::isColliding(c1, c2)) {
+        if (Collider::isColliding(c1, c2, true)) {
             printf("Circle & Circle\n");
         }
 
-        if (Collider::isColliding(line, c1)) {
+        if (Collider::isColliding(line, c1, true) || Collider::isColliding(c1, line2, true)) {
             printf("Circle & Line\n");
         }
 
-        if (Collider::isColliding(c1, box)) {
+        if (Collider::isColliding(c1, box, true)) {
             printf("Circle & Box1\n");
         }
 
-        if (Collider::isColliding(c1, box2)) {
+        if (Collider::isColliding(c1, box2, true)) {
             printf("Circle & Box2\n");
         }
 
-        if (Collider::isColliding(box, box2)) {
+        if (Collider::isColliding(box, box2, true)) {
             printf("Box & Box\n");
+            // color2.rgba.b = 255;
+        }
+        if (Collider::isColliding(box, line, true) || Collider::isColliding(line2, box, true)) {
+            printf("Box & line\n");
+            // color2.rgba.b = 255;
+        }
+
+        // line.end = mpos;
+
+        if (Collider::isColliding(line, line2, true)) {
+            printf("line & line2\n");
             // color2.rgba.b = 255;
         }
 
@@ -85,6 +101,7 @@ namespace Plutus
         // mDebug->drawBox(box3);
 
         mDebug->drawLine(line);
+        mDebug->drawLine(line2);
 
         mDebug->render();
         mDebug->end();
