@@ -8,6 +8,8 @@
 #include <Graphics/GLSL.h>
 #include <GLFW/glfw3.h>
 
+#include <memory>
+
 #ifdef __EMSCRIPTEN__
 #include <functional>
 #include <emscripten.h>

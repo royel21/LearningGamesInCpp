@@ -36,6 +36,21 @@ namespace Plutus
 
         bool operator==(const vec2f& v) const;
         bool operator!=(const vec2f& v) const;
+
+        bool operator< (const vec2f& v) const;
+        bool operator> (const vec2f& v) const;
+        bool operator<= (const vec2f& v) const;
+        bool operator>= (const vec2f& v) const;
+    };
+
+    struct vec3f {
+        float x;
+        float y;
+        float z;
+
+        vec3f() : x(0), y(0), z(0) {};
+        vec3f(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {};
+        vec3f(const vec2f& v, float _z = 0) : x(v.x), y(v.y), z(_z) {};
     };
 
     struct vec2i {
@@ -68,6 +83,8 @@ namespace Plutus
         vec4f(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {}
         vec4f(float _x, float _y, int _z, int _w) : x(_x), y(_y), z((float)_z), w((float)_w) {}
         vec4f(int _x, int _y, int _z, int _w) : x((float)_x), y((float)_y), z((float)_z), w((float)_w) {}
+        vec4f(const vec2f& v, float _z = 0, float _w = 1) : x(v.x), y(_z), z(1), w(_w) {}
+        vec4f(const vec3f& v, float _w = 1) : x(v.x), y(v.y), z(v.z), w(_w) {}
 
         vec4f operator+(const vec4f& v) const;
         vec4f operator-(const vec4f& v) const;

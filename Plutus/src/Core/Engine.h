@@ -1,13 +1,13 @@
 #pragma once
 
-#include <memory>
-#include "Input/Input.h"
-#include "Graphics/Shader.h"
-#include "glm/glm.hpp"
 #include "Window.h"
 #include "ScreenList.h"
+
+#include <Input/Input.h>
+#include <Graphics/Shader.h>
 #include <Graphics/Shader.h>
 #include <Graphics/SpriteBatch2D.h>
+
 #include <Time/Limiter.h>
 
 namespace Plutus
@@ -56,7 +56,7 @@ namespace Plutus
 
         inline int getHeight() { return mScreenHeight; }
         inline int getWidth() { return mScreenWidth; }
-        inline glm::vec2 getWindowSize()
+        inline vec2f getWindowSize()
         {
             return { mScreenWidth, mScreenHeight };
         }

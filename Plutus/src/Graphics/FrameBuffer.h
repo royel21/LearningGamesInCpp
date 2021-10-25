@@ -1,8 +1,8 @@
 #ifndef __FRAMEBUFFER_H__
 #define __FRAMEBUFFER_H__
 
-#include <glm/glm.hpp>
 #include <Math/Vectors.h>
+#include <Utils/types.h>
 
 namespace Plutus
 {
@@ -10,15 +10,15 @@ namespace Plutus
     class FrameBuffer
     {
     public:
-        FrameBuffer() : mBGColor(0) {};
+        FrameBuffer() : mBGColor(1) {};
         ~FrameBuffer();
         void init(int width, int height, bool isForPicking = false);
         void bind();
         void unBind();
 
-        int getEntId(glm::vec2 pos);
+        int getEntId(vec2f pos);
 
-        void resize(const glm::ivec2& size)
+        void resize(const vec2i& size)
         {
             isDirty = true;
             mSize = size;
@@ -30,29 +30,28 @@ namespace Plutus
             mSize = { w, h };
         }
 
-        glm::vec2 getSize() { return mSize; }
+        vec2f getSize() { return { mSize.x, mSize.y }; }
 
         float getAspectRatio() { return static_cast<float>(mSize.x) / static_cast<float>(mSize.y); }
 
         void setDirty() { isDirty = true; };
 
-        uint32_t getTextureId() const { return mTexId; }
+        u32 getTextureId() const { return mTexId; }
 
-        void setColor(glm::vec4 bgColor) { mBGColor = bgColor; }
         void setColor(vec4f bgColor) { mBGColor = { bgColor.x,bgColor.y,bgColor.z,bgColor.w }; }
 
         void cleanUp();
     private:
         //Framebuffer Id
-        uint32_t mFbId = 0;
+        u32 mFbId = 0;
         //texture Id
-        uint32_t mTexId = 0;
+        u32 mTexId = 0;
         //renderbuffer Id
-        uint32_t mRbufferId = 0;
+        u32 mRbufferId = 0;
         bool isDirty = false;
-        glm::ivec2 mSize;
+        vec2i mSize;
 
-        glm::vec4 mBGColor;
+        vec4f mBGColor;
 
         bool mIsPicking = false;
     };

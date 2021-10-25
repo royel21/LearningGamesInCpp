@@ -5,7 +5,6 @@
 #include <cstdlib>
 #include <ctime>
 
-#include <ECS/Scene.h>
 #include <ECS/Components.h>
 
 #include <Assets/AssetManager.h>
@@ -66,6 +65,7 @@ void GameScreen::build()
 void GameScreen::onEntry()
 {
     Plutus::SceneLoader::loadFromJson("assets/scenes/scene4.json", mScene.get());
+    Player = mScene->getEntityByName("Player2");
     // const int h = mEngine->getHeight();
     // // Player 1
     // auto player = mScene->createEntity("Player");
@@ -105,6 +105,7 @@ void GameScreen::update(float dt)
 
     mWorldCamera.update();
     mSystemManager.update(dt);
+    mWorldCamera.setPosition(Player.getComponent<Plutus::Transform>()->getPosition());
 }
 
 void GameScreen::draw()

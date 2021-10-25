@@ -1,13 +1,14 @@
 #pragma once
 
 #include <limits>
-#include <glm/glm.hpp>
+
+#include "Vectors.h"
 
 namespace Plutus
 {
-    void rotate(glm::vec2& point, const glm::vec2& Origin, float angle);
+    void rotate(vec2f& point, const vec2f& Origin, float angle);
 
     bool compareF(float x, float y, float epsilon = std::numeric_limits<float>::min());
 
-    bool compare(const glm::vec2& v1, const glm::vec2& v2, float epsilon = std::numeric_limits<float>::min());
+    bool compare(const vec2f& v1, const vec2f& v2, float epsilon = std::numeric_limits<float>::min());
 } // namespace Plutus

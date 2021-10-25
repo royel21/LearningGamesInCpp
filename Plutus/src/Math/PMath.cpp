@@ -7,7 +7,7 @@ constexpr float PI = 3.14159265359f;
 
 namespace Plutus
 {
-    void rotate(glm::vec2& point, const glm::vec2& origin, float angle)
+    void rotate(vec2f& point, const vec2f& origin, float angle)
     {
         float x = point.x - origin.x;
         float y = point.y - origin.y;
@@ -22,7 +22,7 @@ namespace Plutus
         point.y = yPrime + origin.y;
     }
 
-    float dotProduct(const glm::vec2& vec1, const glm::vec2& vec2)
+    float dotProduct(const vec2f& vec1, const vec2f& vec2)
     {
         return vec1.x * vec2.x + vec1.y * vec2.y;
     }
@@ -32,7 +32,7 @@ namespace Plutus
         return abs(x - y) <= epsilon * std::max(1.0f, std::max(abs(x), abs(y)));
     }
 
-    bool compare(const glm::vec2& v1, const glm::vec2& v2, float epsilon) {
+    bool compare(const vec2f& v1, const vec2f& v2, float epsilon) {
         return compareF(v1.x, v2.x, epsilon) && compareF(v1.y, v2.y, epsilon);
     }
 }

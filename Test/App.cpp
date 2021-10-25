@@ -222,15 +222,15 @@ namespace Plutus
         for (auto& shape : mShapes) {
             switch (shape->type) {
             case PBox: {
-                mDebug->drawBox(*reinterpret_cast<Box2d*>(shape));
+                mDebug->drawBox(*(Box2d*)shape);
                 break;
             }
             case PLine: {
-                mDebug->drawLine(*reinterpret_cast<Line2d*>(shape));
+                mDebug->drawLine(*(Line2d*)shape);
                 break;
             }
             case PCircle: {
-                mDebug->drawCircle(*reinterpret_cast<Circle2d*>(shape));
+                mDebug->drawCircle(*(Circle2d*)shape);
                 break;
             }
             }

@@ -38,7 +38,7 @@ namespace Plutus
 		void end();
 		void dispose();
 		//Grid Cell Size w = Width, h = Height
-		void setCellSize(const glm::ivec2& cellSize);
+		void setCellSize(const vec2i& cellSize);
 		vec4f getGridLineColor() { return mGridColor; }
 
 		//Draw Shapes
@@ -46,7 +46,7 @@ namespace Plutus
 		void drawLine(const Line2d& c, const ColorRGBA8& color = {});
 		void drawCircle(const Circle2d& c, const ColorRGBA8& color = {});
 
-		glm::ivec2 getCellSize() { return mCellSize; };
+		vec2i getCellSize() { return mCellSize; };
 
 		inline void resizeBuffer(unsigned int size) { mVertexs.reserve(size); }
 
@@ -59,7 +59,7 @@ namespace Plutus
 		void setColor(ColorRGBA8 color) { mGridColor = color; }
 
 	private:
-		glm::ivec2 mCellSize;
+		vec2i mCellSize;
 
 		bool isDraw = true;
 

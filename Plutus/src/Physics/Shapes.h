@@ -15,14 +15,11 @@ class b2Body;
 
 namespace Plutus
 {
-    using Points = std::vector<vec2f>;
-
     enum ShapeType {
         PLine = 0,
         PCircle,
         PBox
     };
-
 
     inline b2Vec2 toWorld(const vec2f& value) {
         return { value.x * PPM, value.y * PPM };
@@ -48,23 +45,12 @@ namespace Plutus
 
     struct Line2d : public Shape {
         vec2f end;
-        vec2f dir;
+        float rotation = 0;
         Line2d() { type = PLine; };
-        Line2d(float x1, float y1, float x2, float y2) : end(x2, y2) {
-            pos = { x1, y1 };
-            type = PLine;
-            dir = (end - pos).unit();
-        }
-        Line2d(const vec2f& _start, const vec2f& _end) {
-            type = PLine;
-            pos = _start;
-            end = _end;
-            dir = (end - pos).unit();
-        }
+        Line2d(float x1, float y1, float x2, float y2, float r = 0);
+        Line2d(const vec2f& _start, const vec2f& _end, float r = 0);
 
-        Points getPoints() {
-            return { pos, end };
-        }
+        vec2f getDir() { return (end - pos).unit(); }
     };
 
     struct Circle2d : public Shape
@@ -73,14 +59,23 @@ namespace Plutus
         Circle2d() { type = PCircle; };
         Circle2d(float x, float y, float r) : Shape(x, y), radius(r) { type = PCircle; }
         Circle2d(const vec2f& _pos, float r) : Shape(_pos), radius(r) { type = PCircle; }
+
+        float radiusSqrt() const { return radius * radius; }
     };
 
     struct Box2d : public Shape
     {
         vec2f size;
         vec2f half;
+        float rotation = 0;
         Box2d() { type = PBox; };
-        Box2d(float x, float y, float w, float h) : Shape(x, y), size(w, h) { type = PBox; half = { w * 0.5f, h * 0.5f }; }
-        Box2d(const vec2f& pos, const vec2f& _size) : Shape(pos), size(size) { type = PBox; half = size * 0.5f; }
+        Box2d(float x, float y, float w, float h, float r = 0);
+        Box2d(const vec2f& pos, const vec2f& _size, float r = 0);
+
+        vec2f getLocalMin() const { return pos - half; }
+        vec2f getLocalMax() const { return pos + half; }
+        vec2f getMax() const { return pos + size; }
+        vec2f getCenter() const { return pos + half; }
+        std::vector<vec2f> getVertices();
     };
 }

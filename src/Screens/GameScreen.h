@@ -4,13 +4,7 @@
 #include <Core/IGameScreen.h>
 #include <Graphics/Camera2D.h>
 #include <Systems/SystemManager.h>
-
-namespace Plutus
-{
-    class Scene;
-}
-
-
+#include <ECS/Scene.h>
 
 class GameScreen : public Plutus::IGameScreen
 {
@@ -37,4 +31,5 @@ private:
     Ref<Plutus::Scene> mScene;
     Plutus::Camera2D mWorldCamera;
     Plutus::SystemManager mSystemManager;
+    Plutus::Entity Player;
 };

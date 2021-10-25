@@ -87,7 +87,7 @@ namespace Plutus
 	/***************************** Shapes **********************************************/
 	void DebugRender::drawBox(const Box2d& b, const ColorRGBA8& color)
 	{
-		drawBox(vec4f(b.pos.x, b.pos.y, b.size.x, b.size.y), 0, color);
+		drawBox(vec4f(b.pos.x, b.pos.y, b.size.x, b.size.y), b.rotation, color);
 	}
 
 	void DebugRender::drawLine(const Line2d& l, const ColorRGBA8& color)
@@ -268,7 +268,7 @@ namespace Plutus
 		return { x, y };
 	}
 
-	void DebugRender::setCellSize(const glm::ivec2& cellSize)
+	void DebugRender::setCellSize(const vec2i& cellSize)
 	{
 		mCellSize = { std::max(0, cellSize.x), std::max(0, cellSize.y) };
 	}

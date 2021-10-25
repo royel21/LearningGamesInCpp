@@ -55,23 +55,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL Emscripten)
   target_link_options(${PROJECT_NAME} --shell-file webbuild/game.html)
   target_link_options(${PROJECT_NAME} -o1)
 endif()
-  # add_executable("TEST" Test/test.cpp Test/Timer.cpp Test/Timer.h)
-  # target_link_libraries("TEST")
+
 if(CMAKE_SYSTEM_NAME STREQUAL Windows)
-  # # Editor
-  # add_subdirectory(PlutusEditor)
-# include_directories(PlutusEditor/src)
-# include_directories(PlutusEditor/libs/imgui/src)
-
-  # # Add source files
-  # file(GLOB_RECURSE EDITOR_SRC Editor/*.c Editor/*.cpp)
-    
-  # # Add header files
-  # file(GLOB_RECURSE EDITOR_HEADER Editor/*.h Editor/*.hpp)
-
-  # add_executable("Editor" ${EDITOR_SRC} ${EDITOR_HEADER})
-  # target_link_libraries("Editor" PUBLIC Plutus PlutusEditor)
-
 
   # Add source files
   file(GLOB_RECURSE BOX2D_SRC box2dtest/*.cpp box2dtest/*.h)
@@ -96,5 +81,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
 
   add_executable("PlutusEdit" ${P_EDITOR})
   target_link_libraries("PlutusEdit" PUBLIC Plutus imgui)
+  
+  # play ground
+  file(GLOB_RECURSE P_Ground playground/*.h playground/*.cpp)
+
+  add_executable("playground" ${P_Ground})
+  target_link_libraries("playground" PUBLIC Plutus)
+
 
 endif()

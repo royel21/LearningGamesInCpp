@@ -90,7 +90,8 @@
         "csignal": "cpp",
         "future": "cpp",
         "numeric": "cpp",
-        "shared_mutex": "cpp"
+        "shared_mutex": "cpp",
+        "valarray": "cpp"
     },
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}"

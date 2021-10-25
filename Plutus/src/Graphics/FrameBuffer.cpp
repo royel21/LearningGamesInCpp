@@ -49,7 +49,7 @@ namespace Plutus
         cleanUp();
     }
 
-    int FrameBuffer::getEntId(glm::vec2 pos)
+    int FrameBuffer::getEntId(vec2f pos)
     {
         float pixels[] = { 0, 0, 0, 0 };
         if (mIsPicking) {

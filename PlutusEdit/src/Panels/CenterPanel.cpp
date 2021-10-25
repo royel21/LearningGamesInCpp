@@ -59,8 +59,7 @@ namespace Plutus
             if (Input::get()->onKeyPressed("MouseLeft"))
             {
                 mMouseLastCoords = pos;
-                auto cPos = camera.getPosition();
-                mCamCoords = { cPos.x, cPos.y };
+                mCamCoords = camera.getPosition();
             }
             // move the camera
             if (Input::get()->isCtrl)

@@ -28,7 +28,7 @@ namespace Plutus
 
     vec2f vec2f::normal()
     {
-        return vec2f(-y, x).unit();
+        return vec2f(-y, x);
     }
 
     float vec2f::dot(const vec2f& vec)
@@ -111,6 +111,19 @@ namespace Plutus
     bool vec2f::operator!=(const vec2f& v) const
     {
         return !(*this == v);
+    }
+
+    bool vec2f::operator< (const vec2f& v) const {
+        return x < v.x&& y < v.y;
+    }
+    bool vec2f::operator> (const vec2f& v) const {
+        return x > v.x && y > v.y;
+    }
+    bool vec2f::operator<= (const vec2f& v) const {
+        return x <= v.x && y <= v.y;
+    }
+    bool vec2f::operator>= (const vec2f& v) const {
+        return x >= v.x && y >= v.y;
     }
 
     /***********************************************************************/

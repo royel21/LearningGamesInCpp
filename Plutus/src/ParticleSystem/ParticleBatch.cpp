@@ -5,9 +5,9 @@ namespace Plutus
 {
 
 	ParticleBatch::ParticleBatch() : m_decayRate(0.01f),
-									 m_maxParticles(200),
-									 m_lastParticle(0),
-									 m_particles(nullptr)
+		m_maxParticles(200),
+		m_lastParticle(0),
+		m_particles(nullptr)
 	{
 	}
 
@@ -18,8 +18,8 @@ namespace Plutus
 
 	void ParticleBatch::init(
 		int maxParticles, float dr,
-		GLTexture *texture,
-		std::function<void(Particle2D &, float)> updatefunc /* = defaultParticleUpdate*/)
+		GLTexture* texture,
+		std::function<void(Particle2D&, float)> updatefunc /* = defaultParticleUpdate*/)
 	{
 		m_texture = texture;
 		m_maxParticles = maxParticles;
@@ -40,27 +40,27 @@ namespace Plutus
 		}
 	}
 
-	void ParticleBatch::draw(SpriteBatch2D *sp)
+	void ParticleBatch::draw(SpriteBatch2D* sp)
 	{
-		glm::vec4 uv(0.0f, 0.0f, 1.0f, 1.0f);
+		vec4f uv(0.0f, 0.0f, 1.0f, 1.0f);
 		for (int i = 0; i < m_maxParticles; i++)
 		{
-			auto &p = m_particles[i];
+			auto& p = m_particles[i];
 			if (p.m_life > 0.0f)
 			{
-				sp->submit(m_texture->id, {p.m_position.x, p.m_position.y, p.m_width, p.m_width}, uv, p.m_color);
+				sp->submit(m_texture->id, { p.m_position.x, p.m_position.y, p.m_width, p.m_width }, uv, p.m_color);
 			}
 		}
 	}
 
 	void ParticleBatch::addParticles(
-		const glm::vec2 &position,
-		const glm::vec2 &velocity,
-		const ColorRGBA8 &color,
+		const vec2f& position,
+		const vec2f& velocity,
+		const ColorRGBA8& color,
 		float width)
 	{
 		int pIndex = getLastParticle();
-		auto &p = m_particles[pIndex];
+		auto& p = m_particles[pIndex];
 
 		p.m_life = 1.0f;
 		p.m_color = color;
