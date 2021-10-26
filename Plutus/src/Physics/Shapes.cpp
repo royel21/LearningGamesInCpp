@@ -57,7 +57,7 @@ namespace Plutus
         auto min = pos;
         auto max = getMax();
 
-        Points vertices{ {min}, {min.x, max.y}, {max}, {max.x, min.y} };
+        Points vertices{ {min}, {max.x, min.y}, {max}, {min.x, max.y} };
         if (rotation != 0.0f) {
             for (auto& vert : vertices) {
                 rotate(vert, getCenter(), rotation);
