@@ -76,7 +76,7 @@ namespace Plutus
             return result;
         }
 
-        bool TestVertices(const Points& verts1, const Points& verts2, const Points axices) {
+        bool TestVertices(const Points& verts1, const Points& verts2, const Points axices, MTV* mtv) {
 
             for (auto& axis : axices) {
                 auto  proj1 = getProjection(verts1, axis);
@@ -88,7 +88,7 @@ namespace Plutus
             return false;
         }
 
-        bool TestVertices(const Points& verts1, const Points& verts2) {
+        bool TestVertices(const Points& verts1, const Points& verts2, MTV* mtv) {
             auto size = verts1.size();
             for (size_t i = 0; i < size; i++) {
                 auto axis = (verts1[(i + 1) % size] - verts1[i]).normal();

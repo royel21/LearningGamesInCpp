@@ -27,19 +27,25 @@ namespace Plutus
         mDebug->init(&mCamera);
         auto size = mCamera.getScaleScreen() - 5;
         shapes.push_back(new Circle2d{ 640, 600, 50 });
-        // shapes.push_back(new Circle2d{ 400, 700, 50 });
+        shapes.push_back(new Box2d{ 300, 300, 100, 100 });
+        shapes.push_back(new Box2d{ 150, 300, 100, 100, 45 });
         // shapes.push_back(new Circle2d{ 100, 50, 50 });
         // shapes.push_back(new Circle2d{ 160, 170, 50 });
         // shapes.push_back(new Circle2d{ 250, 100, 50 });
         // shapes.push_back(new Circle2d{ 40, 80, 50 });
+        // float x = 40;
+        // float y = 40;
+        // for (size_t i = 0; i < 500; i++) {
+        //     shapes.push_back(new Circle2d{ 30 + float(int(x * i) % 1100), 30 + float(int(y * i) % 650), 20 });
+        // }
         shapes.push_back(new Line2d{ 5, 5, 5, size.y });
         shapes.push_back(new Line2d{ 5, size.y, size.x, size.y });
         shapes.push_back(new Line2d{ size.x, size.y, size.x, 5 });
         shapes.push_back(new Line2d{ 5, 5, size.x, 5 });
 
-        shapes.push_back(new Line2d{ 0, 0, size.x - 300, size.y - 300 });
+        // shapes.push_back(new Line2d{ 0, 0, size.x - 300, size.y - 300 });
 
-        shapes.push_back(new Line2d{ 100, 40, 768, 900 });
+        // shapes.push_back(new Line2d{ 100, 40, 768, 900 });
 
         // for (float i = 0; i < 100; i++) {
         //     shapes.push_back(Circle2d{ float(rand() % 400), float(rand() % 400), float(40 + rand() % 100) });
@@ -68,11 +74,20 @@ namespace Plutus
 
     Box2d box(50, 50, 100, 100, 45);
     // Box2d box3(50, 50, 100, 100);
-    Box2d box2(50, 200, 100, 100);
+    Box2d box2(50, 200, 100, 100, 45);
 
     float speed = 5;
     void App::Update(float dt)
     {
+        float cscale = mCamera.getScale();
+        if (Input::get()->onKeyDown("+")) {
+            cscale += 0.05f;
+            mCamera.setScale(cscale);
+        }
+        if (Input::get()->onKeyDown("-")) {
+            cscale -= 0.05f;
+            mCamera.setScale(cscale);
+        }
         if (Input::get()->onKeyDown("Up")) { shapes[0]->pos.y += speed; }
         if (Input::get()->onKeyDown("Down")) { shapes[0]->pos.y -= speed; }
         if (Input::get()->onKeyDown("Right")) { shapes[0]->pos.x += speed; }
@@ -80,18 +95,18 @@ namespace Plutus
 
         if (isMouseDownInBox) {
             auto dis = initPos - mpos;
-            box.pos = pos - dis;
+            shapes[1]->pos = pos - dis;
         }
         if (isMouseDownInCircle) {
             auto dis = initPos - mpos;
             shapes[0]->pos = pos - dis;
         }
-        for (size_t i = 0; i < shapes.size(); i++) {
-            auto shapeA = shapes[i];
-            if (shapeA->type & PCircle) {
-                shapeA->pos.y -= 8;
-            }
-        }
+        // for (size_t i = 0; i < shapes.size(); i++) {
+        //     auto shapeA = shapes[i];
+        //     if (shapeA->type & PCircle) {
+        //         shapeA->pos.y -= 1;
+        //     }
+        // }
 
         for (size_t i = 0; i < shapes.size(); i++) {
             auto shapeA = shapes[i];
@@ -140,7 +155,9 @@ namespace Plutus
 
                 //Box Collision
                 if (isBoxA && isBoxB) {
-                    Collider::isColliding((Box2d*)shapeA, (Box2d*)shapeB, &manifold);
+                    if (Collider::isColliding((Box2d*)shapeA, (Box2d*)shapeB, &manifold)) {
+                        printf("Box & Box\n");
+                    }
                     continue;
                 }
 
@@ -154,13 +171,14 @@ namespace Plutus
                     continue;
                 }
             }
-            if (isCircleA) {
-                vec2f forces;
-                for (auto& f : manifold.forces) {
-                    forces += f;
-                }
-                shapeA->pos += forces;
-            }
+            // if (isCircleA) {
+            //     vec2f forces;
+            //     for (auto& f : manifold.forces) {
+            //         forces += f;
+            //     }
+            //     DebugRender::get()->drawLine(shapeA->pos, (shapeA->pos + forces), 0);
+            //     shapeA->pos += forces;
+            // }
         }
     }
 
@@ -244,9 +262,9 @@ namespace Plutus
     {
         initPos = Input::get()->getMouseCoords();
 
-        if (PUtils::PointInBox(initPos, &box)) {
+        if (PUtils::PointInBox(initPos, (Box2d*)shapes[1])) {
             isMouseDownInBox = true;
-            pos = box.pos;
+            pos = shapes[1]->pos;
         }
 
         if (PUtils::PointInCircle(initPos, (Circle2d*)shapes[0])) {
