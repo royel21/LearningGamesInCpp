@@ -46,8 +46,10 @@ export function collResCvsC(b1, b2) {
   b2.vel = b2.vel.add(impulseVec.mul(-b2.invMass));
 }
 
+/************************************************************** */
 export function closePointCircleLine(circle, line) {
   let line2CircleStart = line.start.subtr(circle.pos);
+
   if (vec2.dot(line.unit(), line2CircleStart) > 0) {
     return line.start;
   }
@@ -63,7 +65,7 @@ export function closePointCircleLine(circle, line) {
 
   return line.start.subtr(closestVec);
 }
-
+/************************************************************** */
 export function collCircleLine(circle, line) {
   let circle2ClosestPoint = closePointCircleLine(circle, line).subtr(circle.pos);
 
@@ -80,18 +82,8 @@ export function circleVsLinePenResolver(circle, line) {
   let normal = circle.pos.subtr(closePointCircleLine(circle, line)).unit();
 
   let separationVel = vec2.dot(circle.vel, normal);
-
-  let newVel = -separationVel * circle.elasticity;
-
+  let newVel = -separationVel * 0;
   let velSepDiff = separationVel - newVel;
-
-  let pen2 = normal.mul(-velSepDiff);
-  if (pen2.x > circle.r || pen2.y > circle.r) {
-    // console.log("circle vs line: ", pen2, circle.r);
-    pen2.x = pen2.x > 0 ? circle.r : -circle.r;
-    pen2.y = pen2.y > 0 ? circle.r : -circle.r;
-
-    circle.vel = new vec2(circle.r, circle.r);
-  }
-  circle.vel = pen2;
+  let pen2 = normal.mul(0);
+  circle.vel = n;
 }

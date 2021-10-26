@@ -1,6 +1,7 @@
 #pragma once
 #include <Core.h>
 #include <Input/InputListener.h>
+#include <Physics/Shapes.h>
 
 namespace Plutus
 {
@@ -23,5 +24,6 @@ namespace Plutus
 
     private:
         DebugRender* mDebug;
+        std::vector<Shape*> shapes;
     };
 } // namespace Plurus

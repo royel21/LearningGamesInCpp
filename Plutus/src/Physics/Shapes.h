@@ -19,9 +19,9 @@ namespace Plutus
     using Points = std::vector<vec2f>;
 
     enum ShapeType {
-        PLine = 0,
-        PCircle,
-        PBox
+        PLine = 0x01,
+        PCircle = 0x02,
+        PBox = 0x04
     };
 
     inline b2Vec2 toWorld(const vec2f& value) {

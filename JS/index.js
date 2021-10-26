@@ -34,12 +34,6 @@ let ball = new Ball(60, 60, 30, "lightblue", 1);
 ball.player = true;
 ball.elasticity = 0.5;
 
-let ball2 = new Ball(120, 60, 30, "lightblue", 1);
-ball2.elasticity = 1;
-let ball3 = new Ball(120, 120, 30, "lightblue", 1);
-ball3.elasticity = 1;
-let ball4 = new Ball(240, 400, 30, "lightblue", 1);
-ball4.elasticity = 1;
 //
 new Wall(100, 200, 400, 400);
 new Wall(350, 200, 650, 200);
@@ -72,46 +66,37 @@ canvas.addEventListener("mousemove", (e) => {
   mpos = { x: e.clientX, y: e.clientY };
 });
 
-function drawCircle() {
-  ctx.beginPath();
-  ctx.arc(x, y, 80, 0, 2 * Math.PI);
-  ctx.strokeStyle = "black";
-  ctx.stroke();
-  ctx.fillStyle = "red";
-  ctx.fill();
-}
-
 const mainloop = () => {
   // console.time("fps");
   ctx.clearRect(0, 0, cw, ch);
-  drawCircle();
-  drawLine(mpos.x, mpos.y);
-  // drawLine();
-  // Balls.forEach((b, i) => {
-  //   if (b.player) {
-  //     move(b);
-  //   }
+  // drawCircle();
+  // drawLine(mpos.x, mpos.y);
+  drawLine();
+  Balls.forEach((b, i) => {
+    if (b.player) {
+      move(b);
+    }
 
-  //   for (let x = i + 1; x < Balls.length; x++) {
-  //     if (CircleVsCircleCollision(Balls[i], Balls[x])) {
-  //       penetrationResolver(Balls[i], Balls[x]);
-  //       collResCvsC(Balls[i], Balls[x]);
-  //     }
-  //   }
-  //   Walls.forEach((w) => {
-  //     if (collCircleLine(b, w)) {
-  //       circleVsLineResolver(b, w);
-  //       circleVsLinePenResolver(b, w);
-  //     }
-  //   });
-  //   b.reposition();
-  //   b.display(ctx);
-  //   b.draw(ctx);
-  // });
+    for (let x = i + 1; x < Balls.length; x++) {
+      if (CircleVsCircleCollision(Balls[i], Balls[x])) {
+        penetrationResolver(Balls[i], Balls[x]);
+        collResCvsC(Balls[i], Balls[x]);
+      }
+    }
+    Walls.forEach((w) => {
+      if (collCircleLine(b, w)) {
+        circleVsLineResolver(b, w);
+        circleVsLinePenResolver(b, w);
+      }
+    });
+    b.reposition();
+    b.display(ctx);
+    b.draw(ctx);
+  });
 
-  // Walls.forEach((w, i) => {
-  //   w.draw(ctx);
-  // });
+  Walls.forEach((w, i) => {
+    w.draw(ctx);
+  });
 
   // console.timeEnd("fps");
   requestAnimationFrame(mainloop);
@@ -127,10 +112,10 @@ function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-for (let i = 0; i < 15; i++) {
-  let ball = new Ball(randInt(50, 600), randInt(50, 600), randInt(10, 30), "red", randInt(1, 2));
-  if (i === 0) {
-    ball.setMass(0);
-  }
-  ball.elasticity = 3;
-}
+// for (let i = 0; i < 1; i++) {
+//   let ball = new Ball(randInt(50, 600), randInt(50, 600), randInt(10, 30), "red", randInt(1, 2));
+//   if (i === 0) {
+//     ball.setMass(0);
+//   }
+//   ball.elasticity = 3;
+// }

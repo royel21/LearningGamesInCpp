@@ -5,34 +5,59 @@
 namespace Plutus
 {
     namespace PUtils {
-        bool PointOnLine(vec2f& point, Line2d& line)
+        vec2f ClosestPointLineCircle(Circle2d* circle, Line2d* line)
         {
-            float dy = line.end.y - line.pos.y;
-            float dx = line.end.x - line.pos.x;
+            Points points = line->getVertices();
+            auto p1 = points[0];
+            auto p2 = points[1];
+            auto unit = (p2 - p1).unit();
+
+            auto line2Circle = p1 - circle->pos;
+
+            if (unit.dot(line2Circle) > 0) {
+                return p1;
+            }
+
+            line2Circle = circle->pos - p2;
+            if (unit.dot(line2Circle) > 0) {
+                return p2;
+            }
+
+            auto closestDist = unit.dot(p1 - circle->pos);
+
+            auto closestVec = unit * closestDist;
+
+            return p1 - closestVec;
+        }
+
+        bool PointOnLine(vec2f& point, Line2d* line)
+        {
+            float dy = line->end.y - line->pos.y;
+            float dx = line->end.x - line->pos.x;
             if (dx == 0) {
-                return compareF(point.x, line.pos.x);
+                return compareF(point.x, line->pos.x);
             }
 
             float m = dy / dx;
-            float b = line.end.y - (m * line.end.x);
+            float b = line->end.y - (m * line->end.x);
 
             //check the line equation
             return point.y == m * point.x + b;
         }
 
-        bool PointInBox(vec2f& point, Box2d& box)
+        bool PointInBox(vec2f& point, Box2d* box)
         {
             vec2f p = point;
-            if (box.rotation) {
-                rotate(p, box.getCenter(), box.rotation);
+            if (box->rotation) {
+                rotate(p, box->getCenter(), box->rotation);
             }
-            return p >= box.pos && p <= box.getMax();
+            return p >= box->pos && p <= box->getMax();
         }
 
 
-        bool PointInCircle(vec2f& p, Circle2d& c)
+        bool PointInCircle(vec2f& p, Circle2d* c)
         {
-            return (p - c.pos).lengthSqrt() - 1 < c.radiusSqrt();
+            return (p - c->pos).lengthSqrt() - 1 < c->radiusSqrt();
         }
 
 

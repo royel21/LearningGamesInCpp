@@ -267,7 +267,7 @@ namespace Plutus
 
 				lineEnd.x = cPos.x + (x * tw);
 				lineEnd.y = screenEnd.y;
-				drawLine(lineStart, lineEnd, mGridColor);
+				drawLine(lineStart, lineEnd, 0, mGridColor);
 			}
 
 			for (int y = 0; y <= sizeY; y++)
@@ -277,7 +277,7 @@ namespace Plutus
 
 				lineEnd.x = screenEnd.x;
 				lineEnd.y = cPos.y + (y * th);
-				drawLine(lineStart, lineEnd, mGridColor);
+				drawLine(lineStart, lineEnd, 0, mGridColor);
 			}
 			end();
 
