@@ -28,7 +28,6 @@ namespace Plutus
                 float collisionDepth = r - length;
 
                 vec2f collisionDepthVec = (distVec / length) * collisionDepth;
-                // DebugRender::get()->drawLine(c1->pos, collisionDepthVec, 0);
                 collisionDepth *= 0.5f;
                 c1->pos += collisionDepthVec;
                 c2->pos -= collisionDepthVec;
@@ -47,35 +46,33 @@ namespace Plutus
 
             if (lengthSqtr <= circle->radiusSqrt()) {
                 if (manifold) {
-                    // float length = circle->radius - sqrt(lengthSqtr);
-                    // float depth = circle->radius - length;
-                    // vec2f force = circle->pos + (distVec / length) * depth;
-                    // manifold->forces.push_back((distVec / length) * (circle->radius - length));
                     DebugRender::get()->drawLine(circle->pos, closeVec, 0);
-                    float xDepth = circle->radius - abs(distVec.x);
-                    float yDepth = circle->radius - abs(distVec.y);
-
-                    if (xDepth > 0 && yDepth > 0)
-                    {
-                        if (std::max(xDepth, 0.0f) < std::max(yDepth, 0.0f))
-                        {
-                            if (distVec.x < 0) {
-                                circle->pos.x -= xDepth;
-                            }
-                            else {
-                                circle->pos.x += xDepth;
-                            }
-                        }
-                        else
-                        {
-                            if (distVec.y < 0) {
-                                circle->pos.y -= yDepth;
-                            }
-                            else {
-                                circle->pos.y += yDepth;
-                            }
-                        }
+                    float length = sqrtf(lengthSqtr);
+                    float sept = circle->radius - length;
+                    if (sept > 0) {
+                        circle->pos += (distVec / length) * sept;
                     }
+                    // if (xDepth > 0 && yDepth > 0)
+                    // {
+                    //     if (std::max(xDepth, 0.0f) < std::max(yDepth, 0.0f))
+                    //     {
+                    //         if (distVec.x < 0) {
+                    //             circle->pos.x -= xDepth;
+                    //         }
+                    //         else {
+                    //             circle->pos.x += xDepth;
+                    //         }
+                    //     }
+                    //     else
+                    //     {
+                    //         if (distVec.y < 0) {
+                    //             circle->pos.y -= yDepth;
+                    //         }
+                    //         else {
+                    //             circle->pos.y += yDepth;
+                    //         }
+                    //     }
+                    // }
                 }
                 result = true;
             }
@@ -97,8 +94,7 @@ namespace Plutus
             closest.x = CLAMPVAL(closest.x, min.x, max.x);
             closest.y = CLAMPVAL(closest.y, min.y, max.y);
 
-            auto circle2box = circlePos - closest;
-            bool result = circle2box.lengthSqrt() <= circle->radiusSqrt();
+            bool result = (circlePos - closest).lengthSqrt() <= circle->radiusSqrt();
             if (result && manifold) {
 
             }
@@ -127,75 +123,75 @@ namespace Plutus
             auto verts1 = line->getVertices();
             auto verts2 = box->getVertices();
 
-            Points axes = {
-                 (verts1[1] - verts1[0]).normal(),
-                 (verts2[1] - verts2[0]).normal(),
-                 (verts2[2] - verts2[1]).normal()
-            };
+            MTV mtv;
+            mtv.dist = std::numeric_limits<float>::max();
 
-            if (PUtils::TestVertices(verts1, verts2, axes)) return false;
-            if (PUtils::TestVertices(verts2, verts1, axes)) return false;
+            for (size_t i = 0; i < 3; i++)
+            {
+                bool firstAxes = i < line->axes.size();
+                auto& axis = firstAxes ? line->axes[i] : box->axes[i - line->axes.size()];
+
+                auto  proj1 = PUtils::getProjection(verts1, axis);
+                auto  proj2 = PUtils::getProjection(verts2, axis);
+                float overlap = std::min(proj2.y - proj1.x, proj1.y - proj2.x);
+                if (overlap < 0) {
+                    return false;
+                }
+
+                if (overlap < mtv.dist) {
+                    mtv.dist = overlap;
+                    mtv.axis = axis;
+                    if (proj1.y > proj2.y) {
+                        mtv.axis = -mtv.axis;
+                    }
+                }
+            }
 
             if (manifold) {
-
+                auto dir = line->getCenter() - box->getCenter();
+                float dot = dir.dot(mtv.axis);
+                if (dot < 0) {
+                    mtv.axis = -mtv.axis;
+                }
+                box->pos += -(mtv.axis.unit() * mtv.dist);
             }
             return true;
         }
         /**********************************Box Collision*************************************/
+        bool getCollision(const Points& vertsA, const Points& vertsB, const Points& axesA, const Points& axesB, MTV& mtv) {
+            size_t acount = axesA.size();
+            size_t count = acount + axesB.size();
+            for (size_t i = 0; i < count; i++)
+            {
+                auto& axis = i < acount ? axesA[i] : axesB[i - acount];
 
+                auto  proj1 = PUtils::getProjection(vertsA, axis);
+                auto  proj2 = PUtils::getProjection(vertsB, axis);
+                float overlap = std::min(proj2.y - proj1.x, proj1.y - proj2.x);
+                if (overlap < 0) {
+                    return true;
+                }
+
+                if (overlap < mtv.dist) {
+                    mtv.dist = overlap;
+                    mtv.axis = axis;
+                }
+            }
+            return false;
+        }
         // Box Vs Box
         bool isColliding(Box2d* b1, Box2d* b2, Manifold* manifold)
         {
             MTV mtv;
             mtv.dist = std::numeric_limits<float>::max();
+            if (getCollision(b1->getVertices(), b2->getVertices(), b1->axes, b2->axes, mtv)) return false;
 
-            auto verts1 = b1->getVertices();
-            auto verts2 = b2->getVertices();
-            bool result = true;
-
-            Points axes = {
-                 (verts1[1] - verts1[0]).normal(),
-                 (verts1[2] - verts1[1]).normal(),
-                 (verts2[1] - verts2[0]).normal(),
-                 (verts2[2] - verts2[1]).normal()
-            };
-
-            for (auto& axis : axes) {
-                auto  proj1 = PUtils::getProjection(verts1, axis);
-                auto  proj2 = PUtils::getProjection(verts2, axis);
-                if (proj1.x >= proj2.y || proj2.x >= proj1.y) {
-                    return false;
-                }
-                else {
-                    float ov = std::min(proj2.y - proj1.x, proj1.y - proj2.x);
-                    if (ov < mtv.dist) {
-                        mtv.dist = ov;
-                        mtv.axis = axis;
-                    }
-                }
-            }
-
-            for (auto& axis : axes) {
-                auto  proj1 = PUtils::getProjection(verts1, axis);
-                auto  proj2 = PUtils::getProjection(verts2, axis);
-                if (proj1.x >= proj2.y || proj2.x >= proj1.y) {
-                    return false;
-                }
-                else {
-                    // float axisDepth = MathF.Min(maxB - minA, maxA - minB);
-                    float ov = std::min(proj2.y - proj1.x, proj1.y - proj2.x);
-                    float ov2 = std::min(proj1.y, proj2.y) - std::max(proj1.x, proj2.x);
-                    if (ov < mtv.dist) {
-                        mtv.dist = ov = ov2;
-                        mtv.axis = axis;
-                    }
-                }
-            }
             if (manifold) {
                 auto dir = b2->getCenter() - b1->getCenter();
-                if (dir.dot(mtv.axis)) {
+                if (dir.dot(mtv.axis) > 0) {
                     mtv.axis = -mtv.axis;
                 }
+
                 auto sept = (mtv.axis.unit() * mtv.dist) * 0.5f;
                 b1->pos += sept;
                 b2->pos -= sept;

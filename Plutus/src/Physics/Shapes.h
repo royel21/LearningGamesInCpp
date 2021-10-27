@@ -39,6 +39,9 @@ namespace Plutus
         ShapeType type;
         b2Body* body;
 
+        Points axes;
+        Points vertices;
+
         Shape() = default;
         Shape(float x, float y) : pos(x, y) {}
         Shape(const vec2f _pos) : pos(_pos) {}
@@ -49,6 +52,7 @@ namespace Plutus
     struct Line2d : public Shape {
         vec2f end;
         float rotation = 0;
+
         Line2d() { type = PLine; };
         Line2d(float x1, float y1, float x2, float y2, float r = 0);
         Line2d(const vec2f& _start, const vec2f& _end, float r = 0);
@@ -56,6 +60,9 @@ namespace Plutus
         vec2f getDir() { return (end - pos).unit(); }
         vec2f getCenter();
         Points getVertices();
+
+    private:
+        float lastRotation = -1;
     };
 
     struct Circle2d : public Shape
@@ -72,7 +79,9 @@ namespace Plutus
     {
         vec2f size;
         vec2f half;
+        Points axes;
         float rotation = 0;
+
         Box2d() { type = PBox; };
         Box2d(float x, float y, float w, float h, float r = 0);
         Box2d(const vec2f& pos, const vec2f& _size, float r = 0);
@@ -81,6 +90,10 @@ namespace Plutus
         vec2f getLocalMax() const { return pos + half; }
         vec2f getMax() const { return pos + size; }
         vec2f getCenter() const { return pos + half; }
+
         Points getVertices();
+
+    private:
+        float lastRotation = -1;
     };
 }

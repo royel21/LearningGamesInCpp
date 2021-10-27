@@ -35,6 +35,11 @@ namespace Plutus
             }
         }
 
+        if (lastRotation != rotation) {
+            axes.push_back((vertices[1] - vertices[0]).normal().unit());
+            lastRotation = rotation;
+        }
+
         return vertices;
     }
 
@@ -43,6 +48,8 @@ namespace Plutus
         type = PBox;
         rotation = r;
         half = { w * 0.5f, h * 0.5f };
+
+        getVertices();
     }
 
     Box2d::Box2d(const vec2f& pos, const vec2f& _size, float r) : Shape(pos), size(size)
@@ -50,20 +57,26 @@ namespace Plutus
         type = PBox;
         rotation = r;
         half = size * 0.5f;
+
+        getVertices();
     }
 
     Points Box2d::getVertices() {
-
         auto min = pos;
         auto max = getMax();
-
         Points vertices{ {min}, {max.x, min.y}, {max}, {min.x, max.y} };
-        if (rotation != 0.0f) {
+        if (rotation) {
             for (auto& vert : vertices) {
                 rotate(vert, getCenter(), rotation);
             }
         }
 
+        if (lastRotation != rotation) {
+            axes.clear();
+            axes.push_back((vertices[1] - vertices[0]).normal().unit());
+            axes.push_back((vertices[2] - vertices[1]).normal().unit());
+            lastRotation = rotation;
+        }
         return vertices;
     }
 } // namespace Plutus
