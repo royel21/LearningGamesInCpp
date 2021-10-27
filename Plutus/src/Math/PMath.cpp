@@ -22,11 +22,6 @@ namespace Plutus
         point.y = yPrime + origin.y;
     }
 
-    float dotProduct(const vec2f& vec1, const vec2f& vec2)
-    {
-        return vec1.x * vec2.x + vec1.y * vec2.y;
-    }
-
     bool compareF(float x, float y, float epsilon)
     {
         return abs(x - y) <= epsilon * std::max(1.0f, std::max(abs(x), abs(y)));
@@ -34,5 +29,23 @@ namespace Plutus
 
     bool compare(const vec2f& v1, const vec2f& v2, float epsilon) {
         return compareF(v1.x, v2.x, epsilon) && compareF(v1.y, v2.y, epsilon);
+    }
+    //from  Quake III Arena Game and wikipedia
+    float invSqrt(float n) {
+        const float threehalfs = 1.5F;
+
+        float x2 = n * 0.5F;
+        float y = n;
+
+        // evil floating point bit level hacking
+        long i = *(long*)&y;
+
+        // value is pre-assumed
+        i = 0x5f3759df - (i >> 1);
+        y = *(float*)&i;
+
+        // 1st iteration
+        y = y * (threehalfs - (x2 * y * y));
+        return y;
     }
 }

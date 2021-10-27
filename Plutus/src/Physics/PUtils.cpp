@@ -10,24 +10,28 @@ namespace Plutus
             Points points = line->getVertices();
             auto p1 = points[0];
             auto p2 = points[1];
-            auto unit = (p2 - p1).unit();
 
-            auto line2Circle = p1 - circle->pos;
+            // distance between line points
+            auto lineDist = (p1 - p2);
+            // length square of the line
+            auto lengthSqtr = lineDist.lengthSqrt();
 
-            if (unit.dot(line2Circle) > 0) {
-                return p1;
+            // unit vector in the direction of the line
+            auto dist = lineDist.unit();
+
+            float dot = dist.dot(((p1 - circle->pos)));
+
+            //closest point on the line
+            vec2f closestVec = line->pos - (dist * dot);
+            // if point out of the line in the negative side of the axis return start point because is the closest point
+            if (dot * dot > lengthSqtr) {
+                closestVec = p2;
             }
-
-            line2Circle = circle->pos - p2;
-            if (unit.dot(line2Circle) > 0) {
-                return p2;
+            // if point out of the line in the positive side of the axis return end point because is the closest point
+            if (dot < 0) {
+                closestVec = p1;
             }
-
-            auto closestDist = unit.dot(p1 - circle->pos);
-
-            auto closestVec = unit * closestDist;
-
-            return p1 - closestVec;
+            return closestVec;
         }
 
         bool PointOnLine(vec2f& point, Line2d* line)

@@ -13,6 +13,8 @@
 #include <time.h>
 #include <stdlib.h>
 
+#include <Math/PMath.h>
+
 namespace Plutus
 {
     App::App(const char* name, int width, int height) : Core(name, width, height)
@@ -28,14 +30,14 @@ namespace Plutus
         auto size = mCamera.getScaleScreen() - 5;
         shapes.push_back(new Circle2d{ 640, 500, 50 });
         shapes.push_back(new Box2d{ 200, 100, 100, 100, 45 });
-        shapes.push_back(new Box2d{ 360, 200, 100, 100 });
+        shapes.push_back(new Box2d{ 360, 50, 100, 100 });
         // shapes.push_back(new Circle2d{ 100, 50, 50 });
         // shapes.push_back(new Circle2d{ 160, 170, 50 });
         // shapes.push_back(new Circle2d{ 250, 100, 50 });
         // shapes.push_back(new Circle2d{ 40, 80, 50 });
         // float x = 40;
         // float y = 40;
-        // for (size_t i = 0; i < 500; i++) {
+        // for (size_t i = 0; i < 100; i++) {
         //     shapes.push_back(new Circle2d{ 30 + float(int(x * i) % 1100), 30 + float(int(y * i) % 650), 20 });
         // }
         shapes.push_back(new Line2d{ 5, 5, 5, size.y });
@@ -44,7 +46,7 @@ namespace Plutus
         shapes.push_back(new Line2d{ 5, 5, size.x, 5 });
 
 
-        shapes.push_back(new Line2d{ 0, 0, 600, 600 });
+        shapes.push_back(new Line2d{ 300, 300, 600, 600 });
 
         // shapes.push_back(new Line2d{ 0, 0, size.x - 300, size.y - 300 });
 
@@ -66,13 +68,13 @@ namespace Plutus
     Circle2d c1 = { 640,384, 50 };
     Circle2d c2 = { 320,384, 25 };
     vec2f size = { 1280,768 };
-    // Line2d lineAB = { 5, 1, 5, size.y };
-    // Line2d lineBC = { 1, size.y - 5, size.x, size.y - 5 };
+    Line2d lineA = { 40, 30, 600, 30 };
+    Line2d lineB = { 40, 29.999999f, 600, 250 };
     // Line2d lineCD = { size.x - 50, size.y - 30, size.x - 50, 50 };
     // Line2d lineDA = { 50, 50, size.x - 50, 50 };
 
 
-    Box2d box(50, 50, 100, 100, 45);
+    Box2d box(200, 200, 100, 100, 45);
     // Box2d box3(50, 50, 100, 100);
     Box2d box2(50, 200, 100, 100, 45);
 
@@ -100,14 +102,15 @@ namespace Plutus
             auto dis = initPos - mpos;
             shapes[1]->pos = pos - dis;
         }
+
         if (isMouseDownInCircle) {
             auto dis = initPos - mpos;
-            shapes[0]->pos = pos - dis;
+            c1.pos = pos - dis;
         }
         // for (size_t i = 0; i < shapes.size(); i++) {
         //     auto shapeA = shapes[i];
         //     if (shapeA->type & PCircle) {
-        //         shapeA->pos.y -= 1;
+        //         shapeA->pos.y -= 3;
         //     }
         // }
 
@@ -117,60 +120,59 @@ namespace Plutus
             bool isBoxA = shapeA->type & PBox;
             bool isLineA = shapeA->type & PLine;
 
-            Manifold manifold;
+            std::vector<MTV> forces;
 
             for (size_t x = i + 1; x < shapes.size(); x++) {
                 auto shapeB = shapes[x];
                 bool isCircleB = shapeB->type & PCircle;
                 bool isBoxB = shapeB->type & PBox;
                 bool isLineB = shapeB->type & PLine;
+                MTV mtv;
 
-                if (isCircleA && isCircleB) {
-                    Collider::isColliding((Circle2d*)shapeA, (Circle2d*)shapeB, &manifold);
+                if (isCircleA && isCircleB && Collider::isColliding((Circle2d*)shapeA, (Circle2d*)shapeB, &mtv)) {
                     continue;
                 }
 
-                if (isCircleA && isLineB) {
-                    Collider::isColliding((Circle2d*)shapeA, (Line2d*)shapeB, &manifold);
-                    continue;
-                }
-
-                if (isCircleA && isBoxB && Collider::isColliding((Circle2d*)shapeA, (Box2d*)shapeB, &manifold)) {
+                if (isCircleA && isBoxB && Collider::isColliding((Circle2d*)shapeA, (Box2d*)shapeB, &mtv)) {
                     printf("Circle & Box\n");
                     continue;
                 }
 
+                if (isCircleA && isLineB && Collider::isColliding((Circle2d*)shapeA, (Line2d*)shapeB, &mtv)) {
+                    printf("Circle & Line\n");
+                    continue;
+                }
+
                 //Line Collision
-                if (isLineA && isLineB) {
-                    Collider::isColliding((Line2d*)shapeA, (Line2d*)shapeB, &manifold);
+                // if (isLineA && isLineB) {
+                //     Collider::isColliding((Line2d*)shapeA, (Line2d*)shapeB, &manifold);
+                //     continue;
+                // }
+
+                if (isLineA && isCircleB && Collider::isColliding((Circle2d*)shapeB, (Line2d*)shapeA, &mtv)) {
+
                     continue;
                 }
 
-                if (isLineA && isCircleB) {
-                    Collider::isColliding((Circle2d*)shapeB, (Line2d*)shapeA, &manifold);
-                    continue;
-                }
+                if (isLineA && isBoxB && Collider::isColliding((Box2d*)shapeA, (Line2d*)shapeB, &mtv)) {
 
-                if (isLineA && isBoxB) {
-                    Collider::isColliding((Box2d*)shapeA, (Line2d*)shapeB, &manifold);
                     // printf("Line & Box\n");
                     continue;
                 }
 
                 //Box Collision
-                if (isBoxA && isBoxB) {
-                    if (Collider::isColliding((Box2d*)shapeA, (Box2d*)shapeB, &manifold)) {
-                        printf("Box & Box\n");
-                    }
+                if (isBoxA && isBoxB && Collider::isColliding((Box2d*)shapeA, (Box2d*)shapeB, &mtv)) {
+                    printf("Box & Box\n");
+
                     continue;
                 }
 
-                if (isBoxA && isCircleB && Collider::isColliding((Box2d*)shapeA, (Circle2d*)shapeB, &manifold)) {
+                if (isBoxA && isCircleB && Collider::isColliding((Box2d*)shapeA, (Circle2d*)shapeB, &mtv)) {
                     printf("Box & Circle\n");
                     continue;
                 }
 
-                if (isBoxA && isLineB && Collider::isColliding((Box2d*)shapeA, (Line2d*)shapeB, &manifold)) {
+                if (isBoxA && isLineB && Collider::isColliding((Box2d*)shapeA, (Line2d*)shapeB, &mtv)) {
                     printf("Box & Line\n");
                     continue;
                 }
@@ -183,73 +185,60 @@ namespace Plutus
             //     DebugRender::get()->drawLine(shapeA->pos, (shapeA->pos + forces), 0);
             //     shapeA->pos += forces;
             // }
+
+            if (Collider::isColliding(&lineA, &lineB)) {
+                // printf("Line & Line\n");
+            }
         }
     }
-
 
     void App::Draw()
     {
 
-        // if (Collider::isColliding(c1, c2, &manifold)) {
-        //     printf("Circle & Circle\n");
+
+        // for (auto shape : shapes) {
+        //     switch (shape->type) {
+        //     case PBox: {
+        //         mDebug->drawBox(*(Box2d*)shape);
+        //         break;
+        //     }
+        //     case PLine: {
+        //         mDebug->drawLine(*(Line2d*)shape);
+        //         break;
+        //     }
+        //     case PCircle: {
+        //         mDebug->drawCircle(*(Circle2d*)shape);
+        //         break;
+        //     }
+        //     }
         // }
+        // Points points = box.getVertices();
 
-        // if (Collider::isColliding(c1, lineDA, &manifold) || Collider::isColliding(c1, lineCD, &manifold)) {
-        //     printf("Circle & Line\n");
-        // }
+        // auto pos = c1.pos;
+        // auto center = box.pos + box.half;
 
-        // if (Collider::isColliding(c1, box, &manifold)) {
-        //     printf("Circle & Box1\n");
-        // }
+        // rotate(pos, center, box.rotation);
+        Points points = lineA.getVertices();
+        auto p1 = points[0];
+        auto p2 = points[1];
 
-        // if (Collider::isColliding(c1, box2, &manifold)) {
-        //     printf("Circle & Box2\n");
-        // }
+        auto lineDist = (p1 - p2);
+        auto lengthSqtr = lineDist.lengthSqrt();
 
-        // if (Collider::isColliding(box, box2, &manifold)) {
-        //     printf("Box & Box\n");
-        //     // color2.rgba.b = 255;
-        // }
-        // if (Collider::isColliding(box, line, &manifold) || Collider::isColliding(line2, box, &manifold)) {
-        //     printf("Box & line\n");
-        //     // color2.rgba.b = 255;
-        // }
+        float dot = lineDist.dot(((p1 - c1.pos)));
 
-        // // line.end = mpos;
+        printf("length^2: %0.2f, dot: %0.2f\n", 1 / invSqrt(lengthSqtr), 1 / invSqrt(dot));
 
-        // if (Collider::isColliding(line, line2, &manifold)) {
-        //     printf("line & line2\n");
-        //     // color2.rgba.b = 255;
-        // }
+        mDebug->drawLine(lineA);
+        mDebug->drawCircle(c1);
 
-        for (auto shape : shapes) {
-            switch (shape->type) {
-            case PBox: {
-                mDebug->drawBox(*(Box2d*)shape);
-                break;
-            }
-            case PLine: {
-                mDebug->drawLine(*(Line2d*)shape);
-                break;
-            }
-            case PCircle: {
-                mDebug->drawCircle(*(Circle2d*)shape);
-                break;
-            }
-            }
-        }
-
-        // mDebug->drawCircle(c1);
-
-        // mDebug->drawCircle(c2);
-
+        // mDebug->drawCircle(pos, c1.radius);
         // mDebug->drawBox(box);
-        // mDebug->drawBox(box2);
 
-        // mDebug->drawLine(lineAB);
-        // mDebug->drawLine(lineBC);
-        // mDebug->drawLine(lineCD);
-        // mDebug->drawLine(lineDA);
+
+        mDebug->drawCircle(c1.pos, 5);
+        mDebug->drawCircle(lineA.pos - (lineDist / (1 / invSqrt(dot))), 5);
+
 
         mDebug->render();
         mDebug->end();
@@ -271,9 +260,9 @@ namespace Plutus
             pos = shapes[1]->pos;
         }
 
-        if (PUtils::PointInCircle(initPos, (Circle2d*)shapes[0])) {
+        if (PUtils::PointInCircle(initPos, &c1)) {
             isMouseDownInCircle = true;
-            pos = shapes[0]->pos;
+            pos = c1.pos;
         }
     }
 

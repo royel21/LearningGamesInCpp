@@ -1,6 +1,6 @@
 #include "Vectors.h"
 
-#include <math.h>
+#include "PMath.h"
 
 namespace Plutus
 {
@@ -12,7 +12,11 @@ namespace Plutus
 
     float vec2f::length()
     {
-        return sqrtf(x * x + y * y);
+        return 1 / invSqrt(x * x + y * y);
+    }
+
+    float vec2f::invLength() {
+        return invSqrt(x * x + y * y);
     }
 
     vec2f vec2f::unit()
@@ -105,7 +109,7 @@ namespace Plutus
 
     bool vec2f::operator==(const vec2f& v) const
     {
-        return x == v.x && y == v.y;
+        return compareF(x, v.x, 0.00001f) && compareF(y, v.y, 0.00001f);
     }
 
     bool vec2f::operator!=(const vec2f& v) const
@@ -127,6 +131,33 @@ namespace Plutus
     }
 
     /***********************************************************************/
+
+    vec4f& vec4f::operator*=(float n) {
+        x *= n;
+        y *= n;
+        z *= n;
+        w *= n;
+
+        return *this;
+    }
+
+    vec4f& vec4f::operator/=(float n) {
+        x /= n;
+        y /= n;
+        z /= n;
+        w /= n;
+
+        return *this;
+    }
+
+    vec4f vec4f::operator*(float n) const {
+        return { x * n, y * n, z * n, w * n };
+    }
+
+    vec4f vec4f::operator/(float n) const {
+        return { x / n, y / n, z / n, w / n };
+    }
+
     vec4f vec4f::operator+(const vec4f& v) const
     {
         return { x + v.x, y + v.y, z + v.z, w + v.w };

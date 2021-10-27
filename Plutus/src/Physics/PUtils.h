@@ -8,13 +8,6 @@ using Points = std::vector<Plutus::vec2f>;
 
 namespace Plutus
 {
-
-    //Min Translation Vector for SAT separation
-    struct MTV {
-        float dist;
-        vec2f axis;
-    };
-
     namespace PUtils {
         vec2f ClosestPointLineCircle(Circle2d* c, Line2d* line);
         bool PointInBox(vec2f& p, Box2d* box);

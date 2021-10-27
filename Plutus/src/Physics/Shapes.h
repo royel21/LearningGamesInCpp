@@ -18,6 +18,13 @@ namespace Plutus
 {
     using Points = std::vector<vec2f>;
 
+    //Min Translation Vector for SAT separation
+    struct MTV {
+        float dist;
+        vec2f axis;
+        MTV() = default;
+    };
+
     enum ShapeType {
         PLine = 0x01,
         PCircle = 0x02,

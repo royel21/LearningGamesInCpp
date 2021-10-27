@@ -12,6 +12,7 @@ namespace Plutus
         vec2f(int _x, int _y) : x((float)_x), y((float)_y) {}
 
         float length();
+        float invLength();
         float lengthSqrt();
 
         vec2f unit();
@@ -85,6 +86,12 @@ namespace Plutus
         vec4f(int _x, int _y, int _z, int _w) : x((float)_x), y((float)_y), z((float)_z), w((float)_w) {}
         vec4f(const vec2f& v, float _z = 0, float _w = 1) : x(v.x), y(_z), z(1), w(_w) {}
         vec4f(const vec3f& v, float _w = 1) : x(v.x), y(v.y), z(v.z), w(_w) {}
+
+        vec4f& operator*=(float n);
+        vec4f& operator/=(float n);
+
+        vec4f operator*(float v) const;
+        vec4f operator/(float v) const;
 
         vec4f operator+(const vec4f& v) const;
         vec4f operator-(const vec4f& v) const;
