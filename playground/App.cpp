@@ -112,11 +112,11 @@ namespace Plutus
         for (size_t i = 0; i < shapes.size(); i++) {
             auto shapeA = shapes[i];
             if (shapeA->type & PCircle) {
-                shapeA->pos.y -= 5;
+                shapeA->pos.y -= 2;
             }
         }
         auto start = Timer::millis();
-        for (size_t y = 0; y < 3; y++)
+        for (size_t y = 0; y < 8; y++)
             for (size_t i = 0; i < shapes.size(); i++) {
                 auto shapeA = shapes[i];
                 bool isCircleA = shapeA->type & PCircle;

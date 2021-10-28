@@ -6,8 +6,7 @@
 #include "Panels/ScenesList.h"
 
 #include <Serialize/Serialize.h>
-#include <Systems/AnimationSystem.h>
-#include <Systems/ScriptSystem.h>
+#include <Systems/Systems.h>
 
 namespace Plutus
 {

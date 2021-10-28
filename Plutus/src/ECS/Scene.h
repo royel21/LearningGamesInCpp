@@ -3,6 +3,9 @@
 
 #include <string>
 #include <entt.hpp>
+#include <Utils/types.h>
+
+class b2World;
 
 namespace Plutus
 {
@@ -80,8 +83,12 @@ namespace Plutus
 
         void clear() { mRegistry.clear(); }
 
+        void resetWorld();
+        b2World* getWorld() { return mWorld; }
+
     private:
         entt::registry mRegistry;
+        b2World* mWorld;
         friend class Entity;
         friend class System;
     };

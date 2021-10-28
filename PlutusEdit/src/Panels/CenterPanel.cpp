@@ -16,8 +16,7 @@
 
 #include "ECS/Components/Transform.h"
 
-#include <Systems/AnimationSystem.h>
-#include <Systems/ScriptSystem.h>
+#include <Systems/Systems.h>
 
 #include <Graphics/DebugRenderer.h>
 

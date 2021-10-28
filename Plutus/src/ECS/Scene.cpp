@@ -1,14 +1,18 @@
 #include "Scene.h"
 #include "Components/Tag.h"
 
+#include <box2d/box2d.h>
+
 namespace Plutus
 {
     /*******************************     Scene    ************************/
     Scene::Scene() {
-
+        mWorld = new b2World({ 0, -9.8f });
     }
+
     Scene::~Scene()
     {
+        if (mWorld) delete mWorld;
         mRegistry.clear();
     }
 
@@ -49,6 +53,11 @@ namespace Plutus
         }
 
         return { ent, this };
+    }
+
+    void Scene::resetWorld() {
+        delete mWorld;
+        mWorld = new b2World({ 0, -9.8f });
     }
 
     void Scene::removeEntity(entt::entity ent)

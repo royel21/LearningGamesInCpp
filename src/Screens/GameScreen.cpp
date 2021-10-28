@@ -15,9 +15,7 @@
 #include <Time/Timer.h>
 #include <Core/Engine.h>
 #include <Utils/Utils.h>
-#include <Systems/RenderSystem.h>
-#include <Systems/ScriptSystem.h>
-#include <Systems/AnimationSystem.h>
+#include <Systems/Systems.h>
 
 #include <Assets/SoundEngine.h>
 
