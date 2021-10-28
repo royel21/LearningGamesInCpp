@@ -21,17 +21,15 @@ namespace Plutus
 
             float dot = dist.dot(((p1 - circle->pos)));
 
-            //closest point on the line
-            vec2f closestVec = line->pos - (dist * dot);
             // if point out of the line in the negative side of the axis return start point because is the closest point
-            if (dot * dot > lengthSqtr) {
-                closestVec = p2;
+            if (dot > lengthSqtr) {
+                return p2;
             }
             // if point out of the line in the positive side of the axis return end point because is the closest point
             if (dot < 0) {
-                closestVec = p1;
+                return p1;
             }
-            return closestVec;
+            return p1 - (dist * dot);
         }
 
         bool PointOnLine(vec2f& point, Line2d* line)

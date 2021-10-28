@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <limits>
 
+float iter = 0.7;
+
 namespace Plutus
 {
     namespace Collider {
@@ -45,7 +47,7 @@ namespace Plutus
                 float length = 1.0f / invSqrt(lengthSqtr);
                 float sept = circle->radius - length;
                 if (sept > 0) {
-                    circle->pos += (distVec / length) * sept;
+                    circle->pos += ((distVec / length) * sept) * iter;
                 }
             }
             return result;
@@ -72,13 +74,14 @@ namespace Plutus
 
             bool result = lengthSqrt <= circle->radiusSqrt();
 
+            DebugRender::get()->drawCircle(circle->pos - dirVec, 5);
             if (result && mtv) {
 
                 float length = 1 / invSqrt(lengthSqrt);
                 float dist = circle->radius - length;
                 auto septV = ((dirVec / length) * dist);
 
-                circle->pos += septV;
+                circle->pos += septV * iter;
             }
             return result;
         }
@@ -143,7 +146,7 @@ namespace Plutus
                 if (dot < 0) {
                     mtv->axis = -mtv->axis;
                 }
-                box->pos += -(mtv->axis.unit() * mtv->dist);
+                box->pos -= (mtv->axis.unit() * mtv->dist) * iter;
             }
             return true;
         }
@@ -162,8 +165,8 @@ namespace Plutus
                 }
 
                 auto sept = (mtv->axis.unit() * mtv->dist) * 0.5f;
-                b1->pos += sept;
-                b2->pos -= sept;
+                b1->pos += sept * iter;
+                b2->pos -= sept * iter;
             }
             return true;
         }
