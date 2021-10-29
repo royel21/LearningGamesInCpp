@@ -101,7 +101,7 @@ namespace Plutus
         auto view = mScene->getRegistry()->view<Script>();
 
         for (auto [ent, script] : view.each()) {
-            script.init(mGlobalLua);
+            script.init(mGlobalLua, { ent, mScene });
         }
     }
 

@@ -56,14 +56,24 @@ void GameScreen::build()
     mSystemManager.AddSystem<Plutus::RenderSystem>(&mWorldCamera);
     mSystemManager.AddSystem<Plutus::ScriptSystem>(&mWorldCamera);
     mSystemManager.AddSystem<Plutus::AnimationSystem>();
+    mSystemManager.AddSystem<Plutus::PhysicSystem>();
 
     // Plutus::SoundEngine.add("bg-sound", "assets/sounds/XYZ2.ogg", Plutus::MUSIC);
 }
 
 void GameScreen::onEntry()
 {
-    Plutus::SceneLoader::loadFromJson("assets/scenes/scene4.json", mScene.get());
+    Plutus::SceneLoader::loadFromJson("assets/scenes/Physics.json", mScene.get());
     Player = mScene->getEntityByName("Player2");
+
+    auto pbody = Player.addComponent<Plutus::BodyDynamic>(Player);
+
+    auto ground = mScene->getEntityByName("block");
+    auto body = ground.addComponent<Plutus::BodyStatic>(ground);
+
+    body->addBox({ 0,0 }, { 1280, 768 });
+
+
     // const int h = mEngine->getHeight();
     // // Player 1
     // auto player = mScene->createEntity("Player");
@@ -103,7 +113,9 @@ void GameScreen::update(float dt)
 
     mWorldCamera.update();
     mSystemManager.update(dt);
-    mWorldCamera.setPosition(Player.getComponent<Plutus::Transform>()->getPosition());
+    auto screen = mWorldCamera.getScaleScreen();
+    auto pos = Player.getComponent<Plutus::Transform>()->getPosition();
+    mWorldCamera.setPosition({ pos.x - 100.0f, pos.y - 50.0f });
 }
 
 void GameScreen::draw()

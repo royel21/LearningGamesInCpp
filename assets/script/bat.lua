@@ -4,15 +4,13 @@ local SPEED = 5
 
 local curAnime = "down"
 local Player
-local Bat
 
 function init()
-    Bat = scene:getEntity("Bat")
-    player = scene:getEntity("Player")
-    local anim = Bat:getAnimate();
+    player = scene:getEntity("Player2")
+    local anim = Bat:getAnimate()
 
     if anim then
-        anim:setTexture("bats");
+        anim:setTexture("bats")
         -- -- Standing
         anim:addSeq("up", {0, 1, 2}, 120)
         anim:addSeq("left", {3, 4, 5}, 120)
@@ -26,8 +24,8 @@ function update(dt)
     local playerPos = player:getTransform()
 
     local trans = Bat:getTransform()
-    trans.x = playerPos.x - 64.0
-    trans.y = playerPos.y + 64.0
+    trans.x = playerPos.x
+    trans.y = playerPos.y + 32.0
     local anim = Bat:getAnimate()
 
     if input:onKeyDown("Up") then anim:play("up") end
@@ -35,3 +33,4 @@ function update(dt)
     if input:onKeyDown("Right") then anim:play("right") end
     if input:onKeyDown("Left") then anim:play("left") end
 end
+

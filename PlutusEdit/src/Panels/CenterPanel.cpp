@@ -12,7 +12,6 @@
 #include "../Helpers/Render.h"
 #include "../Helpers/ImGuiEx.h"
 #include "../Helpers/IconsFontAwesome5.h"
-#include "../Helpers/EditorUtils.h"
 
 #include "ECS/Components/Transform.h"
 
@@ -209,14 +208,15 @@ namespace Plutus
                     Config::get().state = Editing;
                     project->mTempScene->clear();
                     mSysManager.stop();
+
                     DebugRender::get()->setShouldDraw(drawGrid);
                 }
                 else {
-                    project->mTempScene->clear();
-                    CopyScene(project->mScene.get(), project->mTempScene.get());
+                    project->mTempScene.get()->copyScene(project->mScene.get());
                     Render::get().setScene(project->mTempScene.get());
                     Config::get().state = Running;
                     mSysManager.start();
+
                     drawGrid = DebugRender::get()->getShouldDraw();
                     DebugRender::get()->setShouldDraw(false);
                 }

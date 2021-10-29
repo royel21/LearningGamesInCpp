@@ -64,7 +64,6 @@ namespace Plutus
         Line2d(float x1, float y1, float x2, float y2, float r = 0);
         Line2d(const vec2f& _start, const vec2f& _end, float r = 0);
 
-        vec2f getDir() { return (end - pos).unit(); }
         vec2f getCenter();
         Points getVertices();
 
@@ -93,8 +92,6 @@ namespace Plutus
         Box2d(float x, float y, float w, float h, float r = 0);
         Box2d(const vec2f& pos, const vec2f& _size, float r = 0);
 
-        vec2f getLocalMin() const { return pos - half; }
-        vec2f getLocalMax() const { return pos + half; }
         vec2f getMax() const { return pos + size; }
         vec2f getCenter() const { return pos + half; }
 

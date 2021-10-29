@@ -15,10 +15,14 @@ namespace Plutus
             mSequences[id] = seq;
     }
 
-    void Animation::addSeq(const std::string& id, Frames frames, int frameTime)
+    void Animation::addSeq(const std::string& id, Frames frames, int frameTime, bool isDefault)
     {
-        if (!id.empty())
+        if (!id.empty()) {
             mSequences[id] = { tempSprite, frames, frameTime };
+
+            if (isDefault)
+                currentSeq = id;
+        }
     }
 
     void Animation::setTexture(const std::string& texId)
@@ -48,6 +52,9 @@ namespace Plutus
         auto it = mSequences.find(currentSeq);
         if (it != mSequences.end()) {
             return &it->second;
+        }
+        else if (mSequences.size()) {
+            return &mSequences.begin()->second;
         }
         return nullptr;
     }

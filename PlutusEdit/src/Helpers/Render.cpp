@@ -47,7 +47,7 @@ namespace Plutus
 
     void Render::draw()
     {
-        auto start = Timer::millis();
+        // auto start = Timer::millis();
         mFrameBuffer.setColor(Config::get().vpColor);
         prepare();
         mSpriteBatch.begin();
@@ -62,7 +62,7 @@ namespace Plutus
 
         mDebugRender->drawGrid();
         mFrameBuffer.unBind();
-        printf("time: %llu\n", Timer::millis() - start);
+        // printf("time: %llu\n", Timer::millis() - start);
     }
 
     void Render::prepare()

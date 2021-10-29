@@ -4,8 +4,6 @@ local curAnime = "stand-r"
 
 local vel = 0;
 
-local Player2
-
 local stand = {
     right = "stand-right",
     left = "stand-left",
@@ -17,26 +15,21 @@ local direction = "right";
 local state = ""
 
 function init()
-    Player2 = scene:getEntity("Player2")
     local anim = Player2:getAnimate()
-
-    if anim then
-        anim:setTexture("player");
-        anim:play(curAnime)
-    end
+    if anim then anim:play(curAnime) end
     print("player2 init")
 end
 
 local vel = {x = 0, y = 0}
 
 function move()
-    local trans = Player2:getTransform();
+    local trans = Player2:getTransform()
     trans.x = trans.x + vel.x
     trans.y = trans.y + vel.y
 end
 
 function update(dt)
-    local anim = Player2:getAnimate();
+    local anim = Player2:getAnimate()
 
     if not anim.loop then
         state = ""
@@ -82,10 +75,9 @@ function update(dt)
     if state == "jumping" or state == "running" then move() end
     -- Attack Animation
     if input:onKeyPressed("Z") and state ~= "jumping" then
-        anim:play("attack-" .. direction);
+        anim:play("attack-" .. direction)
         anim:setLoop(true);
         state = "attacking"
     end
 end
-
 

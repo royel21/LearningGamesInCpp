@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <limits>
 
-float iter = 0.7;
+float iter = 0.7f;
 
 namespace Plutus
 {

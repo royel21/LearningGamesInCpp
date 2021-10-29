@@ -6,7 +6,6 @@
 #include "Panels/ConfigPanel.h"
 #include "Panels/CenterPanel.h"
 #include "Panels/ComponentPanels/ComponentsPanel.h"
-#include "Helpers/EditorUtils.h"
 
 #include <Systems/SystemManager.h>
 

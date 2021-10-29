@@ -7,12 +7,14 @@
 
 namespace Plutus {
 
-	class PhysicsSystem : public ISystem {
+	class PhysicSystem : public ISystem {
 	public:
-		PhysicsSystem(Scene* scene, vec2f gravity);
+		PhysicSystem(Scene* scene, vec2f gravity = { 0.0f, -9.8f });
 
 		void init();
 		void update(float dt);
 		void destroy();
+
+		void addBody();
 	};
 }

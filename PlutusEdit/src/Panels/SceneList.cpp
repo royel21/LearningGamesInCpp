@@ -25,14 +25,15 @@ namespace Plutus
 
         if (ImGui::BeginPopupContextItem())
         {
+            if (ImGui::MenuItem(("Copy " + tag).c_str())) {
+                project->mEnt = project->mScene->CreateCopy(ent);
+            }
+
             if (ImGui::MenuItem(("Delete " + tag).c_str()))
             {
                 if (isCurrent)
                     project->mEnt = ent;
                 project->mScene->removeEntity(ent);
-            }
-            if (ImGui::MenuItem(("Copy " + tag).c_str())) {
-
             }
             ImGui::EndPopup();
         }

@@ -13,12 +13,13 @@ namespace Plutus
         mScript = script;
     }
 
-    void Script::init(sol::state& lua)
+    void Script::init(sol::state& lua, Entity ent)
     {
         mEnv = sol::environment(lua, sol::create, lua.globals());
 
         lua.do_file(mScript, mEnv);
 
+        mEnv[ent.getName()] = Entity{ ent.mId, ent.mScene };
         if (mEnv["init"] != sol::nil) {
             mEnv["init"]();
         }

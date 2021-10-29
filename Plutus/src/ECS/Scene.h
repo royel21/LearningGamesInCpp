@@ -75,7 +75,10 @@ namespace Plutus
         Entity createEntity(const std::string& name);
 
         Entity getEntity(int Id);
+        Entity CreateCopy(Entity& ent);
         Entity getEntityByName(const std::string name);
+
+        void copyScene(Scene* scene);
         void removeEntity(entt::entity ent);
         bool isValid(Entity ent);
 
@@ -85,12 +88,16 @@ namespace Plutus
 
         void resetWorld();
         b2World* getWorld() { return mWorld; }
+        void updateWorld();
 
     private:
-        entt::registry mRegistry;
-        b2World* mWorld;
         friend class Entity;
         friend class System;
+        int velocityIter = 3;
+        int bodyIter = 8;
+        float timeStepInMillis = 0.01667f;
+        b2World* mWorld;
+        entt::registry mRegistry;
     };
 
     /**********************Entity definitions***************/
@@ -122,4 +129,13 @@ namespace Plutus
     {
         return mScene->mRegistry.any_of<T>(mId);
     }
+
+    template<typename T>
+    void CopyComponent(Entity& ent1, Entity& ent2) {
+        if (ent1.hasComponent<T>()) {
+            ent2.addComponent<T>(*ent1.getComponent<T>());
+        }
+    }
+
+    void CopyEntity(Entity& source, Entity& dest);
 } // namespace Plutus

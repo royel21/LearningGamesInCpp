@@ -2,6 +2,7 @@
 
 #include <string>
 #include <sol/sol.hpp>
+#include "../Scene.h"
 
 namespace Plutus
 {
@@ -17,7 +18,7 @@ namespace Plutus
 
         void setScript(const std::string& script);
 
-        void init(sol::state& lua);
+        void init(sol::state& lua, Entity ent);
 
         void update(float dt) {
             if (mEnv["update"] != sol::nil) {

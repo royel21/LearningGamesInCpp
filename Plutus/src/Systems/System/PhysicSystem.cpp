@@ -1,22 +1,26 @@
-#include "PhysicsSystem.h"
+#include "PhysicSystem.h"
 #include <ECS/Scene.h>
 #include <ECS/Components.h>
 
 namespace Plutus
 {
-    PhysicsSystem::PhysicsSystem(Scene* scene, vec2f gravity) : ISystem(scene) {
+    PhysicSystem::PhysicSystem(Scene* scene, vec2f gravity) : ISystem(scene) {
         mScene->getWorld()->SetGravity(b2Vec2{ gravity.x, gravity.y });
     }
 
-    void PhysicsSystem::init() {
+    void PhysicSystem::init() {
         // auto view = mScene->getRegistry()->view<RigidBody>();
     }
 
-    void PhysicsSystem::update(float dt) {
+    void PhysicSystem::update(float dt) {
+        mScene->updateWorld();
+
 
     }
 
-    void PhysicsSystem::destroy() {
+
+
+    void PhysicSystem::destroy() {
         mScene->resetWorld();
     }
 } // namespace Plutus

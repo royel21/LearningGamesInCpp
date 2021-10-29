@@ -8,6 +8,21 @@
 
 namespace Plutus
 {
+    void AnimationSystem::init() {
+        auto view = mScene->getRegistry()->view<Sprite, Animation>();
+        for (auto ent : view)
+        {
+            auto [sprite, animation] = view.get(ent);
+            auto seq = animation.getCurrentSeq();
+            if (!seq && animation.mSequences.size()) seq = &animation.mSequences.begin()->second;
+
+            if (seq && seq->mFrames.size()) {
+                sprite.mTextureId = seq->mTexId;
+                sprite.mUVCoord = AssetManager::get()->getTexCoords(seq->mTexId, seq->mFrames[0]);
+            }
+        }
+    }
+
     void AnimationSystem::update(float dt)
     {
         auto view = mScene->getRegistry()->view<Sprite, Animation>();

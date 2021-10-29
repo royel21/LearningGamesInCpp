@@ -1,5 +1,5 @@
 #include "Scene.h"
-#include "Components/Tag.h"
+#include "Components.h"
 
 #include <box2d/box2d.h>
 
@@ -21,6 +21,7 @@ namespace Plutus
         auto tag = getComponent<Tag>();
         return tag->Name;
     }
+
     void Entity::setName(const std::string& name)
     {
         auto tag = getComponent<Tag>();
@@ -55,6 +56,10 @@ namespace Plutus
         return { ent, this };
     }
 
+    void Scene::updateWorld() {
+        mWorld->Step(timeStepInMillis, velocityIter, bodyIter);
+    }
+
     void Scene::resetWorld() {
         delete mWorld;
         mWorld = new b2World({ 0, -9.8f });
@@ -67,6 +72,31 @@ namespace Plutus
 
     bool Scene::isValid(Entity ent) {
         return mRegistry.valid(ent.mId);
+    }
+
+    void Scene::copyScene(Scene* scene) {
+
+        mRegistry.clear();
+        scene->getRegistry()->each([&](auto& e) {
+            Entity ent(e, scene);
+            Entity newEnt = createEntity(ent.getName());
+            CopyEntity(ent, newEnt);
+            });
+    }
+
+    Entity Scene::CreateCopy(Entity& ent) {
+        Entity newEnt = createEntity(ent.getName() + " copy");
+        CopyEntity(ent, newEnt);
+        return newEnt;
+    }
+
+    void CopyEntity(Entity& source, Entity& dest) {
+
+        CopyComponent<Transform>(source, dest);
+        CopyComponent<Sprite>(source, dest);
+        CopyComponent<Animation>(source, dest);
+        CopyComponent<TileMap>(source, dest);
+        CopyComponent<Script>(source, dest);
     }
 
 } // namespace Plutus
