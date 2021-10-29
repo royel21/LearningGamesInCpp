@@ -40,9 +40,9 @@ namespace Plutus
                 ImGui::BeginCol("Tile Width");
                 ImGui::InputInt("#tm-w", &mTileMap->mTileWidth);
                 ImGui::BeginCol("Tile Heigth");
-                ImGui::InputInt("#tm-w", &mTileMap->mTileHeight);
+                ImGui::InputInt("#tm-h", &mTileMap->mTileHeight);
                 ImGui::BeginCol("Layer");
-                ImGui::InputInt("#tm-w", &mTileMap->mLayer);
+                ImGui::InputInt("#tm-l", &mTileMap->mLayer);
             }
             ImGui::EndUIGroup();
             ImGui::Separator();
@@ -218,8 +218,8 @@ namespace Plutus
         {
             int x = ((int)gridCoords.x * w) + (tile.x * w);
             int y = ((int)gridCoords.y * h) - (tile.y * h);
-
-            renderables[i++] = { tex->texId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation, false, false, -1, 99, false };
+            if (tex)
+                renderables[i++] = { tex->texId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation, false, false, -1, 99, false };
         }
     }
 
