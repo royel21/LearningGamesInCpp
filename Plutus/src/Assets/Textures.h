@@ -70,13 +70,13 @@ namespace Plutus
             @param id the Id of the texture
             @param path route to file
         ***/
-        const Texture* addTexture(const std::string& id, const std::string& path, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
+        Texture* addTexture(const std::string& id, const std::string& path, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
         /***
            *Create a texture atlas from the image from the tile width and height
             @param id the Id of the texture
             @param path route to file
        ***/
-        const Texture* addTexture(const std::string& id, const std::string& path, int c, int w, int h, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
+        Texture* addTexture(const std::string& id, const std::string& path, int c, int w, int h, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
         void removeTexture(const std::string& id);
 
         void cleanUp();

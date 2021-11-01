@@ -78,8 +78,15 @@ namespace Plutus
 		delete[] indices;
 	}
 
+	void SpriteBatch2D::submitOne(GLuint texture, vec4f rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {
+		vertices.clear();
+		vertices.resize(4);
+		submit(texture, rect, uv, c, r, flipX, flipX, entId);
+	}
+
 	void SpriteBatch2D::submit(GLuint texture, vec4f rect, vec4f _uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
 	{
+
 		// Check if is it inside the view port
 		float id = static_cast<float>(entId);
 

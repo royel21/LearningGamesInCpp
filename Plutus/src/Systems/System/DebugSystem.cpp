@@ -20,22 +20,26 @@ namespace Plutus
     {
         auto view = mScene->getRegistry()->view<Transform, RigidBody>();
         for (auto [e, trans, rbody] : view.each()) {
-            auto pos = trans.getPosition();
 
             for (auto& fixture : rbody.mFixtures) {
-                switch (fixture.type) {
-                case PBox: {
-                    mDebug->drawBox({ pos.x, pos.y, fixture.size.x, fixture.size.y });
-                    break;
-                }
-                case PLine: {
-                    mDebug->drawLine(pos, fixture.size);
-                    break;
-                }
-                case PCircle: {
-                    mDebug->drawCircle(pos, fixture.radius);
-                    break;
-                }
+                auto pos = fromWorld(rbody.mBody->GetPosition());
+                vec4f rect = { pos.x, pos.y, fixture.size.x, fixture.size.y };
+                if (mCamera->isBoxInView(rect, 200))
+                {
+                    switch (fixture.type) {
+                    case PBox: {
+                        mDebug->drawBox(rect);
+                        break;
+                    }
+                    case PLine: {
+                        mDebug->drawLine(pos, fixture.size);
+                        break;
+                    }
+                    case PCircle: {
+                        mDebug->drawCircle(pos, fixture.radius);
+                        break;
+                    }
+                    }
                 }
             }
         }

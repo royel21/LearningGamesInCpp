@@ -73,8 +73,8 @@ void GameScreen::onEntry()
     Player.addComponent<Plutus::Velocity>();
 
     auto pbody = Player.addComponent<Plutus::RigidBody>(Player, Plutus::DynamicBody);
-    pbody->mOffset = { 22, 21 };
-    pbody->addBox({ 0, 0 }, { 15,15 }, 1, 3, 0);
+    pbody->mOffset = { 26, 21 };
+    pbody->addBox({ 0, 0 }, { 8,8 }, 1, 3, 0);
 
     auto ground = mScene->getEntityByName("Floor");
     auto body = ground.addComponent<Plutus::RigidBody>(ground, Plutus::StaticBody);

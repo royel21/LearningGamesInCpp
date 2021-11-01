@@ -92,12 +92,12 @@ namespace Plutus
         }
     }
 
-    const Texture* Textures::addTexture(const std::string& id, const std::string& path, GLint minFilter, GLint magFilter)
+    Texture* Textures::addTexture(const std::string& id, const std::string& path, GLint minFilter, GLint magFilter)
     {
         return addTexture(id, path, 0, 0, 0, minFilter, magFilter);
     }
 
-    const Texture* Textures::addTexture(const std::string& id, const std::string& path, int c, int w, int h, GLint minFilter, GLint magFilter)
+    Texture* Textures::addTexture(const std::string& id, const std::string& path, int c, int w, int h, GLint minFilter, GLint magFilter)
     {
         auto mit = mTileSets.find(id);
         if (mit == mTileSets.end())

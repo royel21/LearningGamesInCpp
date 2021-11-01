@@ -28,10 +28,13 @@ namespace Plutus
 	{
 		if (mVao)
 			glDeleteVertexArrays(1, &mVao);
+
 		if (mVbo)
 			glDeleteBuffers(1, &mVao);
+
 		if (mIbo)
 			glDeleteBuffers(1, &mVao);
+
 		mShader.dispose();
 	}
 

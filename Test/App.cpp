@@ -8,6 +8,8 @@
 #include "Capsule.h"
 
 #include <Time/Timer.h>
+#include <Graphics/GLSL.h>
+#include <Assets/AssetManager.h>
 
 namespace Plutus
 {
@@ -120,6 +122,12 @@ namespace Plutus
 
     void App::Setup()
     {
+        mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
+        mBatch.init();
+        mBatch.setCamera(&mCamera);
+        mBatch.setShader(&mShader);
+        texture = AssetManager::get()->mTextures.addTexture("player", "assets/textures/Player.png", 60, 64, 64);
+
         mDebug = DebugRender::get();
         mDebug->init(&mCamera);
         mWorld = std::make_unique<b2World>(b2Vec2{ 0, -10.0f });
@@ -238,7 +246,14 @@ namespace Plutus
         }
 
         // mDebug->drawBox(Box2d(capsule.x, capsule.y, capsule.w, capsule.h));
+        vec4f rect = { capsule.position.x, capsule.position.y, capsule.size.x, capsule.size.y };
+        mBatch.submitOne(texture->texId, rect, texture->getUV(0));
+        mBatch.begin();
+        mBatch.draw();
+        mBatch.end();
+
         mDebug->drawBox(capsule.getBox(), { 0xff0000ff });
+        mDebug->drawBox(rect);
         mDebug->drawCircle(capsule.getBCircle());
         mDebug->drawCircle(capsule.getTCircle());
 

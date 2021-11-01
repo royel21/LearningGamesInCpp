@@ -4,11 +4,16 @@
 #include <box2d/box2d.h>
 #include <vector>
 
+#include <Graphics/Shader.h>
+#include <Graphics/SpriteBatch2D.h>
+
 #include <memory>
 
 namespace Plutus
 {
     class DebugRender;
+    struct Texture;
+
     class App : public Core
     {
     public:
@@ -27,6 +32,9 @@ namespace Plutus
         int32_t velIter = 6;
         int32_t posIter = 2;
         DebugRender* mDebug;
+        Texture* texture;
+        Shader mShader;
+        SpriteBatch2D mBatch;
         std::unique_ptr<b2World> mWorld;
         std::vector<Shape*> mShapes;
     };
