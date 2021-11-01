@@ -1,4 +1,5 @@
 #include "SystemManager.h"
+#include "Systems.h"
 
 namespace Plutus
 {
@@ -6,36 +7,32 @@ namespace Plutus
     void SystemManager::start()
     {
         for (auto& sys : mSystems) {
-            sys.second->init();
+            sys->init();
         }
     }
 
     void SystemManager::stop()
     {
         for (auto& sys : mSystems) {
-            sys.second->destroy();
+            sys->destroy();
         }
     }
 
     void SystemManager::update(float dt)
     {
         for (auto sys : mSystems) {
-            sys.second->update(dt);
+            sys->update(dt);
         }
-    }
-
-    void SystemManager::draw()
-    {
-
     }
 
     void SystemManager::cleanup()
     {
         for (auto& sys : mSystems) {
-            sys.second->destroy();
-            delete sys.second;
+            sys->destroy();
+            delete sys;
         }
         mSystems.clear();
+        mIndices.clear();
     }
 
 } // namespace Plutus

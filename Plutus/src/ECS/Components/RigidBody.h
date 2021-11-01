@@ -13,9 +13,9 @@ class b2Body;
 namespace Plutus
 {
     enum BodyType {
-        Static = b2_staticBody,
-        Dynamic = b2_dynamicBody,
-        Kinematic = b2_kinematicBody
+        StaticBody = b2_staticBody,
+        DynamicBody = b2_dynamicBody,
+        KinematicBody = b2_kinematicBody
     };
 
     struct Fixture {
@@ -35,62 +35,26 @@ namespace Plutus
         }
     };
 
-    class Body {
-
-    protected:
+    class RigidBody {
+    public:
         Entity mEnt;
         b2Body* mBody;
-        BodyType bodyType;
-        std::vector<Shape*> shapes;
-        std::vector<Fixture> fixtures;
-    public:
-        vec2f offset;
-        bool fixedRotation = true;
-        float bullet = false;
+        BodyType mBodyType;
+        std::vector<Fixture> mFixtures;
+        vec2f mOffset;
+        bool mFixedRotation = true;
+        float mBullet = false;
 
     public:
-        Body(Entity ent) { mEnt = ent; };
-        ~Body();
+        RigidBody(Entity ent, BodyType type, const vec2f& _offset = { 0,0 }, float isFixedRotation = true, bool isBullet = false);
+
         void init();
         void addEdge(vec2f offset, vec2f size, float friction = 0.3f, float density = 1.0f, float restitution = 0, bool isSensor = false);
         void addCircle(vec2f offset, float radius, float friction = 0.3f, float density = 1.0f, float restitution = 0, bool isSensor = false);
         void addBox(vec2f offset, vec2f size, float friction = 0.3f, float density = 1.0f, float restitution = 0, bool isSensor = false);
 
-    };
+        void ApplyForce(float x, float y);
+        void ApplyImpulse(float x, float y);
 
-    class BodyDynamic : public Body
-    {
-    public:
-        BodyDynamic(Entity ent) : Body(ent) {};
-        ~BodyDynamic() = default;
-        BodyDynamic(Entity ent, const vec2f& _offset, float _mass = 0, float isFixedRotation = false, bool isBullet = false) : Body(ent) {
-            offset = _offset;
-            fixedRotation = isFixedRotation;
-            bullet = isBullet;
-            bodyType = Dynamic;
-        }
-    };
-
-    class BodyKinematic : public Body
-    {
-    public:
-        BodyKinematic(Entity ent) : Body(ent) {};
-        ~BodyKinematic() = default;
-        BodyKinematic(Entity ent, const vec2f& _offset, float isFixedRotation = false, bool isBullet = false) : Body(ent) {
-            offset = _offset;
-            fixedRotation = isFixedRotation;
-            bullet = isBullet;
-            bodyType = Kinematic;
-        }
-    };
-
-    class BodyStatic : public Body
-    {
-    public:
-        BodyStatic(Entity ent) : Body(ent) {};
-        BodyStatic(Entity ent, const vec2f& _offset) : Body(ent) {
-            offset = _offset;
-            bodyType = Static;
-        }
     };
 } // namespace Plutus

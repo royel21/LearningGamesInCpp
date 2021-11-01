@@ -32,7 +32,8 @@ namespace Plutus
             if (!hasSystem<T>()) {
                 T* newSystem = new T(mScene, std::forward<TArgs>(args)...);
 
-                mSystems[&typeid(T)] = newSystem;
+                mSystems.push_back(newSystem);
+                mIndices[&typeid(T)] = mSystems.size() - 1;
                 return newSystem;
             }
             return getSystem<T>();
@@ -41,20 +42,23 @@ namespace Plutus
         template <typename T>
         T* getSystem()
         {
-            return static_cast<T*>(mSystems[&typeid(T)]);
+            if (!hasSystem<T>()) return nullptr;
+
+            return static_cast<T*>(mSystems[mIndices[&typeid(T)]]);
         }
 
         template <typename T>
         bool hasSystem()
         {
-            return mSystems[&typeid(T)] != nullptr;
+            return mIndices.find(&typeid(T)) != mIndices.end();
         }
 
         void cleanup();
 
     private:
         Scene* mScene;
-        std::unordered_map<const std::type_info*, ISystem*> mSystems;
+        std::unordered_map<const std::type_info*, int> mIndices;
+        std::vector<ISystem*> mSystems;
 
         friend class ISystem;
     };

@@ -1,11 +1,14 @@
 #pragma once
+#include <Math/Vectors.h>
 
 namespace Plutus
 {
     struct Velocity
     {
-        float x;
-        float y;
-        Velocity(float _x, float _y) : x(_x), y(_y) {};
+        vec2f mVelocity;
+        Velocity() = default;
+        Velocity(float x, float y) : mVelocity(x, y) {};
+
+        void setVel(float x, float y) { mVelocity = { x, y }; }
     };
 } // namespace Plutus

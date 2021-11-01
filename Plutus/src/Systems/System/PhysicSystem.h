@@ -14,7 +14,5 @@ namespace Plutus {
 		void init();
 		void update(float dt);
 		void destroy();
-
-		void addBody();
 	};
 }

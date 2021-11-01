@@ -21,7 +21,6 @@ namespace Plutus
             delete shape;
     }
 
-    Capsule capsule;
 
     b2Body* createBody(b2World* world, b2Vec2 pos, const b2Vec2& size, float friction = 1, int type = 0) {
         b2BodyDef myBodyDef;
@@ -46,6 +45,8 @@ namespace Plutus
         b->CreateFixture(&myFixtureDef);
         return b;
     }
+
+    Capsule capsule;
 
     void createCapsule(b2World* world) {
 

@@ -35,6 +35,11 @@ namespace Plutus
         mGlobalLua.open_libraries(sol::lib::base, sol::lib::math);
         mGlobalLua.set_exception_handler(&my_exception_handler);
 
+
+        mGlobalLua.set("input", Input::get());
+        mGlobalLua.set("scene", scene);
+        mGlobalLua.set("SoundEngine", &SoundEngine);
+
         mGlobalLua.set("getMillis", &Timer::millis);
         /*****************************Register EntityManager**********************************************/
         auto scene_table = mGlobalLua.new_usertype<Scene>("Scene");
@@ -76,6 +81,7 @@ namespace Plutus
         animate["addSeq2"] = &Animation::addSequence;
         animate["setTexture"] = &Animation::setTexture;
 
+        /*******************************************Register Animation Sequence**********************************************/
         auto sequence = mGlobalLua.new_usertype<Sequence>("Sequence",
             sol::constructors<Sequence(),
             Sequence(const std::string&, std::vector<uint32_t>, int)>());
@@ -90,10 +96,18 @@ namespace Plutus
         entity["getTileMap"] = &Entity::getComponent<TileMap>;
         entity["getAnimate"] = &Entity::getComponent<Animation>;
         entity["getSprite"] = &Entity::getComponent<Sprite>;
+        entity["getRigidBody"] = &Entity::getComponent<RigidBody>;
+        entity["getVelocity"] = &Entity::getComponent<Velocity>;
 
-        mGlobalLua.set("input", Input::get());
-        mGlobalLua.set("scene", scene);
-        mGlobalLua.set("SoundEngine", &SoundEngine);
+        /*****************************Register Velocity**********************************************/
+        auto rigidBody = mGlobalLua.new_usertype<RigidBody>("RigidBody");
+        rigidBody["applyImpulse"] = &RigidBody::ApplyImpulse;
+        rigidBody["applyForce"] = &RigidBody::ApplyForce;
+        /*****************************Register Velocity**********************************************/
+        auto velocity = mGlobalLua.new_usertype<Velocity>("Velocity");
+
+        velocity["velocity"] = &Velocity::mVelocity;
+        velocity["setVel"] = &Velocity::setVel;
     }
 
     void ScriptSystem::init()

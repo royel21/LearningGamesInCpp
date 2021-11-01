@@ -1,4 +1,4 @@
-local SPEED = 2
+local SPEED = 5
 
 local curAnime = "stand-r"
 
@@ -17,15 +17,18 @@ local state = ""
 function init()
     local anim = Player2:getAnimate()
     if anim then anim:play(curAnime) end
+
     print("player2 init")
 end
 
 local vel = {x = 0, y = 0}
 
 function move()
-    local trans = Player2:getTransform()
-    trans.x = trans.x + vel.x
-    trans.y = trans.y + vel.y
+    local rbody = Player2:getRigidBody()
+    -- local trans = Player2:getTransform()
+    -- trans.x = trans.x + vel.x
+    -- trans.y = trans.y + vel.y;
+    rbody:applyImpulse(vel.x, vel.y)
 end
 
 function update(dt)
