@@ -7,8 +7,7 @@
 #include "PUtils.h"
 #include <algorithm>
 #include <limits>
-
-float iter = 0.7f;
+#include <Time/Timer.h>
 
 namespace Plutus
 {
@@ -21,16 +20,16 @@ namespace Plutus
 
             auto distVec = c1->pos - c2->pos;
             float sqrtLength = distVec.lengthSqrt();
-            bool isColliding = sqrtLength <= r * r;
+            bool isColliding = sqrtLength < r* r;
 
             if (isColliding && mtv) {
                 float length = 1 / invSqrt(sqrtLength);
                 float collisionDepth = r - length;
 
                 vec2f collisionDepthVec = (distVec / length) * collisionDepth;
-                collisionDepth *= 0.5f;
+                // collisionDepth *= 0.5f;
                 c1->pos += collisionDepthVec;
-                c2->pos -= collisionDepthVec;
+                // c2->pos -= collisionDepthVec;
             }
             return isColliding;
         }
@@ -41,15 +40,19 @@ namespace Plutus
 
             auto distVec = (circle->pos - closeVec);
             float lengthSqtr = distVec.lengthSqrt();
-            bool result = lengthSqtr <= circle->radiusSqrt();
+            bool result = lengthSqtr < circle->radiusSqrt();
 
             if (result && mtv) {
                 float length = 1.0f / invSqrt(lengthSqtr);
+
                 float sept = circle->radius - length;
                 if (sept > 0) {
-                    circle->pos += ((distVec / length) * sept) * iter;
+                    // circle->pos += (distVec / length) * sept;
+                    mtv->axis += (distVec / length) * sept;
                 }
             }
+            // DebugRender::get()->drawCircle(closest, 5);
+            // DebugRender::get()->drawLine(circle->pos, closest, 0);
             return result;
         }
         // Circle Vs Box
@@ -72,16 +75,13 @@ namespace Plutus
 
             float lengthSqrt = dirVec.lengthSqrt();
 
-            bool result = lengthSqrt <= circle->radiusSqrt();
+            bool result = lengthSqrt < circle->radiusSqrt();
 
-            DebugRender::get()->drawCircle(circle->pos - dirVec, 5);
             if (result && mtv) {
 
                 float length = 1 / invSqrt(lengthSqrt);
-                float dist = circle->radius - length;
-                auto septV = ((dirVec / length) * dist);
-
-                circle->pos += septV * iter;
+                // circle->pos += ((dirVec / length) * (circle->radius - length));
+                mtv->axis += ((dirVec / length) * (circle->radius - length));
             }
             return result;
         }
@@ -146,7 +146,7 @@ namespace Plutus
                 if (dot < 0) {
                     mtv->axis = -mtv->axis;
                 }
-                box->pos -= (mtv->axis.unit() * mtv->dist) * iter;
+                box->pos -= (mtv->axis.unit() * mtv->dist);
             }
             return true;
         }
@@ -165,8 +165,8 @@ namespace Plutus
                 }
 
                 auto sept = (mtv->axis.unit() * mtv->dist) * 0.5f;
-                b1->pos += sept * iter;
-                b2->pos -= sept * iter;
+                b1->pos += sept;
+                b2->pos -= sept;
             }
             return true;
         }

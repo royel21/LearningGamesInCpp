@@ -46,6 +46,8 @@ namespace Plutus
 
         // 1st iteration
         y = y * (threehalfs - (x2 * y * y));
+        y = y * (threehalfs - (x2 * y * y));
+        y = y * (threehalfs - (x2 * y * y));
         return y;
     }
 }
