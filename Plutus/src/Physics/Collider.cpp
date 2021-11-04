@@ -27,9 +27,9 @@ namespace Plutus
                 float collisionDepth = r - length;
 
                 vec2f collisionDepthVec = (distVec / length) * collisionDepth;
-                // collisionDepth *= 0.5f;
+                // collisionDepthVec *= 0.5f;
                 c1->pos += collisionDepthVec;
-                // c2->pos -= collisionDepthVec;
+                c2->pos -= collisionDepthVec;
             }
             return isColliding;
         }

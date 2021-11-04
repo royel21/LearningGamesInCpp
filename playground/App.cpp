@@ -29,7 +29,7 @@ namespace Plutus
         mDebug = DebugRender::get();
         mDebug->init(&mCamera);
         auto size = mCamera.getScaleScreen() - 5;
-        size = vec2f(140.0f, size.y);
+        size = vec2f(180.0f, size.y);
         shapes.push_back(new Circle2d{ 6, 200, 30 });
         // shapes.push_back(new Box2d{ 200, 100, 100, 100, 45 });
         shapes.push_back(new Box2d{ 360, 90, 100, 100 });
@@ -39,7 +39,7 @@ namespace Plutus
         // shapes.push_back(new Circle2d{ 40, 80, 50 });
         float x = 40;
         float y = 40;
-        for (size_t i = 0; i < 1; i++) {
+        for (size_t i = 0; i < 2; i++) {
             shapes.push_back(new Circle2d{ 30 + float(int(x * i) % 1100), 30 + float(int(y * i) % 650), 20 });
         }
         shapes.push_back(new Line2d{ 5, 5, 5, size.y }); // Left
