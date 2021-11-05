@@ -29,34 +29,30 @@ namespace Plutus
         mDebug = DebugRender::get();
         mDebug->init(&mCamera);
         auto size = mCamera.getScaleScreen() - 5;
-        size = vec2f(180.0f, size.y);
-        shapes.push_back(new Circle2d{ 6, 200, 30 });
+        size = vec2f(size.x, size.y);
+        shapes.push_back(new Circle2d{ 70, 100, 30 });
+        shapes.push_back(new Circle2d{ 640, 150, 30 });
+        // shapes.push_back(new Circle2d{ 70, 200, 30 });
+        // shapes.push_back(new Circle2d{ 70, 250, 30 });
+        // shapes.push_back(new Circle2d{ 70, 300, 30 });
         // shapes.push_back(new Box2d{ 200, 100, 100, 100, 45 });
         shapes.push_back(new Box2d{ 360, 90, 100, 100 });
         // shapes.push_back(new Circle2d{ 100, 50, 50 });
         // shapes.push_back(new Circle2d{ 160, 170, 50 });
         // shapes.push_back(new Circle2d{ 250, 100, 50 });
         // shapes.push_back(new Circle2d{ 40, 80, 50 });
-        float x = 40;
-        float y = 40;
-        for (size_t i = 0; i < 2; i++) {
-            shapes.push_back(new Circle2d{ 30 + float(int(x * i) % 1100), 30 + float(int(y * i) % 650), 20 });
-        }
+        // float x = 40;
+        // float y = 40;
+        // for (size_t i = 0; i < 5; i++) {
+        //     shapes.push_back(new Circle2d{ 50, 30 + float(int(y * i) % 650), 20 });
+        // }
         shapes.push_back(new Line2d{ 5, 5, 5, size.y }); // Left
         shapes.push_back(new Line2d{ 5, size.y, size.x, size.y }); // Top
         shapes.push_back(new Line2d{ size.x, size.y, size.x, 5 }); // Right
         shapes.push_back(new Line2d{ 5, 5, size.x, 5 }); // Bottom
 
 
-        shapes.push_back(new Line2d{ 300, 300, 600, 600 });
-
-        // shapes.push_back(new Line2d{ 0, 0, size.x - 300, size.y - 300 });
-
-        // shapes.push_back(new Line2d{ 100, 40, 768, 900 });
-
-        // for (float i = 0; i < 100; i++) {
-        //     shapes.push_back(Circle2d{ float(rand() % 400), float(rand() % 400), float(40 + rand() % 100) });
-        // }
+        shapes.push_back(new Line2d{ 80, 62, 600, 600 });
 
     }
     bool isMouseDown = false;
@@ -67,18 +63,6 @@ namespace Plutus
     vec2f pos;
     vec2f mpos;
 
-    Circle2d c1 = { 640,384, 50 };
-    Circle2d c2 = { 320,384, 25 };
-    vec2f size = { 1280,768 };
-    Line2d lineA = { 40, 30, 600, 30 };
-    Line2d lineB = { 40, 29.999999f, 600, 250 };
-    // Line2d lineCD = { size.x - 50, size.y - 30, size.x - 50, 50 };
-    // Line2d lineDA = { 50, 50, size.x - 50, 50 };
-
-
-    Box2d box(200, 200, 100, 100, 45);
-    // Box2d box3(50, 50, 100, 100);
-    Box2d box2(50, 200, 100, 100, 45);
 
     float speed = 5;
 
@@ -117,7 +101,6 @@ namespace Plutus
 
         if (isMouseDownInCircle) {
             auto dis = initPos - mpos;
-            c1.pos = pos - dis;
         }
 
         for (size_t i = 0; i < shapes.size(); i++) {
@@ -127,8 +110,6 @@ namespace Plutus
             }
         }
 
-        auto start = Timer::millis();
-        // for (size_t y = 0; y < 8; y++)
         for (size_t i = 0; i < shapes.size(); i++) {
             MTV mtvA;
             auto shapeA = shapes[i];
@@ -143,71 +124,48 @@ namespace Plutus
                 bool isLineB = shapeB->type & PLine;
                 MTV mtv;
 
-                if (isCircleA && isCircleB && Collider::isColliding((Circle2d*)shapeA, (Circle2d*)shapeB, &mtv)) {
-                    // continue;
+                if (isCircleA && isLineB) {
+                    Collider::isColliding((Circle2d*)shapeA, (Line2d*)shapeB, &mtv);
                 }
 
-                if (isCircleA && isLineB && Collider::isColliding((Circle2d*)shapeA, (Line2d*)shapeB, &mtv)) {
-                    // continue;
+                if (isCircleA && isCircleB) {
+                    Collider::isColliding((Circle2d*)shapeA, (Circle2d*)shapeB, &mtv);
                 }
 
-                if (isCircleA && isBoxB && Collider::isColliding((Circle2d*)shapeA, (Box2d*)shapeB, &mtv)) {
-                    // continue;
+                if (isCircleA && isBoxB) {
+                    Collider::isColliding((Circle2d*)shapeA, (Box2d*)shapeB, &mtv);
                 }
 
-                // //Line Collision
-                // // if (isLineA && isLineB) {
-                // //     Collider::isColliding((Line2d*)shapeA, (Line2d*)shapeB, &manifold);
-                // //     continue;
-                // // }
+                if (isBoxA && isBoxB) {
+                    Collider::isColliding((Box2d*)shapeA, (Box2d*)shapeB, &mtv);
+                }
 
-                // if (isLineA && isCircleB && Collider::isColliding((Circle2d*)shapeB, (Line2d*)shapeA, &mtv)) {
+                if (isBoxA && isCircleB) {
+                    Collider::isColliding((Box2d*)shapeA, (Circle2d*)shapeB, &mtv);
+                }
 
-                //     continue;
-                // }
+                if (isBoxA && isLineB) {
+                    Collider::isColliding((Box2d*)shapeA, (Line2d*)shapeB, &mtv);
+                }
 
-                // if (isLineA && isBoxB && Collider::isColliding((Box2d*)shapeA, (Line2d*)shapeB, &mtv)) {
-
-                //     // printf("Line & Box\n");
-                //     continue;
-                // }
-
-                // //Box Collision
-                // if (isBoxA && isBoxB && Collider::isColliding((Box2d*)shapeA, (Box2d*)shapeB, &mtv)) {
-
-                //     continue;
-                // }
-
-                // if (isBoxA && isCircleB && Collider::isColliding((Box2d*)shapeA, (Circle2d*)shapeB, &mtv)) {
-                //     continue;
-                // }
-
-                // if (isBoxA && isLineB && Collider::isColliding((Box2d*)shapeA, (Line2d*)shapeB, &mtv)) {
-                //     continue;
-                // }
                 if (isCircleB) {
                     auto half = mtv.axis * 0.5;
-                    shapeB->pos += half;
-                    mtvA.axis += half;
+                    shapeA->pos += half;
+                    shapeB->pos -= half;
+
                 }
                 else {
-                    mtvA.axis += mtv.axis;
+                    shapeA->pos += mtv.axis;
                 }
             }
-            shapeA->pos += mtvA.axis;
             if (isCircleA) {
                 DebugRender::get()->drawCircle(shapeA->pos, 5);
-
-                printf("pos: %0.2f %0.2f \n", shapeA->pos.x, shapeA->pos.y);
             }
         }
-        // printf("time: %llu\n", Timer::millis() - start);
     }
 
     void App::Draw()
     {
-
-
         for (auto shape : shapes) {
             switch (shape->type) {
             case PBox: {
@@ -224,30 +182,6 @@ namespace Plutus
             }
             }
         }
-
-        // Points points = box.getVertices();
-
-
-
-        // mDebug->drawCircle(c1);
-        // mDebug->drawBox(box);
-        // Points closest;
-        // float dist = std::numeric_limits<float>::max();
-        // for (auto& a : box.axes) {
-        //     mDebug->drawLine(a, c1.pos, 0);
-        //     // auto cp = (c1.pos - p).lengthSqrt();
-        //     // if (cp < dist) {
-        //     //     dist = cp;
-        //     //     closest.push_back(p);
-        //     // }
-        // }
-
-        // mDebug->drawCircle(pos, c1.radius);
-        // auto unit = lineDist.unit();
-
-        // mDebug->drawCircle(c1.pos, 5);
-        // mDebug->drawCircle(lineA.pos - (unit * unit.dot(p1 - c1.pos)), 5);
-
 
         mDebug->render();
         mDebug->end();
@@ -269,10 +203,10 @@ namespace Plutus
             pos = shapes[1]->pos;
         }
 
-        if (PUtils::PointInCircle(initPos, &c1)) {
-            isMouseDownInCircle = true;
-            pos = c1.pos;
-        }
+        // if (PUtils::PointInCircle(initPos, &c1)) {
+        //     isMouseDownInCircle = true;
+        //     pos = c1.pos;
+        // }
     }
 
     void App::onKeyUp(const std::string& key)
