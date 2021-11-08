@@ -22,7 +22,7 @@ namespace Plutus
         for (auto [e, trans, rbody] : view.each()) {
 
             for (auto& fixture : rbody.mFixtures) {
-                auto pos = fromWorld(rbody.mBody->GetPosition());
+                auto pos = trans.getPosition();//fromWorld(rbody.mBody->GetPosition());
                 vec4f rect = { pos.x, pos.y, fixture.size.x, fixture.size.y };
                 if (mCamera->isBoxInView(rect, 200))
                 {
@@ -43,7 +43,17 @@ namespace Plutus
                 }
             }
         }
-        mDebug->render();
         mDebug->end();
+        mDebug->render();
+
+        if (mIsDrawGrid) {
+            mDebug->drawGrid();
+        }
+    }
+
+    void DebugSystem::drawGrid(bool isDraw, int cellW, int cellH) {
+        mDebug = DebugRender::get();
+        mIsDrawGrid = isDraw;
+        mDebug->setCellSize({ cellW, cellH });
     }
 }

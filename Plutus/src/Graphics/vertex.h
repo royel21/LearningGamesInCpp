@@ -9,15 +9,6 @@
 
 namespace Plutus
 {
-	struct Position
-	{
-		float x;
-		float y;
-
-		Position() : x(0), y(0) {}
-		Position(float _x, float _y) : x(_x), y(_y) {}
-	};
-
 	struct UV
 	{
 		float u;
@@ -45,10 +36,16 @@ namespace Plutus
 		void setColor(uint32_t c) { rgba = c; }
 		void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) { rgba = RGBA2Int(r, g, b, a); }
 
-
 		operator uint32_t() const { return rgba; }
 		//a << 24 | b << 16 | g << 8 | r
-		operator vec4f() const { return { (rgba & 0xff) / 255.0f, ((rgba >> 8) & 0xff) / 255.0f, ((rgba >> 16) & 0xff) / 255.0f, ((rgba >> 24) & 0xff) / 255.0f }; }
+		operator vec4f() const {
+			return {
+				(rgba & 0xff) / 255.0f,
+				((rgba >> 8) & 0xff) / 255.0f,
+				((rgba >> 16) & 0xff) / 255.0f,
+				((rgba >> 24) & 0xff) / 255.0f
+			};
+		}
 	};
 	/*
 		Represent a single Vertex information:
@@ -58,13 +55,17 @@ namespace Plutus
 	*/
 	struct Vertex
 	{
-		Position position; /* Positon X,Y */
+		vec2f position; /* Positon X,Y */
 		UV uv;	/* Texture coord from where to sample */
 		ColorRGBA8 color; /* RGBA Color for the sample */
 		float entId;
 
 		Vertex() : position(), uv() {}
-		Vertex(float x, float y, float uvX, float uvY, ColorRGBA8 c, float _entId = 0) : position(x, y), uv(uvX, uvY), color(c), entId(_entId) {}
+		Vertex(float x, float y, float uvX, float uvY, ColorRGBA8 c, float _entId = 0)
+			: position(x, y), uv(uvX, uvY), color(c), entId(_entId) {}
+
+		Vertex(vec2f pos, float uvX, float uvY, ColorRGBA8 c, float _entId = 0)
+			: position(pos), uv(uvX, uvY), color(c), entId(_entId) {}
 
 		void setPosition(float x, float y)
 		{

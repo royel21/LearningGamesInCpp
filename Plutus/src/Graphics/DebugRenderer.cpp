@@ -5,6 +5,8 @@
 #include "GraphicsUtil.h"
 #include <algorithm>
 
+#include <Math/PMath.h>
+
 constexpr uint32_t NUmVERTS = 64;
 
 namespace Plutus
@@ -153,35 +155,33 @@ namespace Plutus
 		mIndices.push_back(i);
 		mIndices.push_back(i + 1);
 	}
-	void DebugRender::drawBox(const vec4f& destRect, float angle, const ColorRGBA8& color)
+	void DebugRender::drawBox(const vec4f& rect, float angle, const ColorRGBA8& color)
 	{
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 4);
+
+		vec2f bl(rect.x, rect.y);
+		//top left
+		vec2f tl(rect.x, rect.y + rect.w);
+		//bottom right
+		vec2f tr(rect.x + rect.z, rect.y + rect.w);
+		//top right
+		vec2f br(rect.x + rect.z, rect.y);
+
 		if (angle)
 		{
-			vec2f halfDim(destRect.z / 2.0f, destRect.w / 2.0f);
-
-			vec2f tl(-halfDim.x, halfDim.y);
-			vec2f bl(-halfDim.x, -halfDim.y);
-			vec2f br(halfDim.x, -halfDim.y);
-			vec2f tr(halfDim.x, halfDim.y);
-
-			vec2f positionOffset(destRect.x, destRect.y);
-
-			mVertexs[i].position = rotatePoint2D(tl, angle) + halfDim + positionOffset;
-			mVertexs[i + 1].position = rotatePoint2D(bl, angle) + halfDim + positionOffset;
-			mVertexs[i + 2].position = rotatePoint2D(br, angle) + halfDim + positionOffset;
-			mVertexs[i + 3].position = rotatePoint2D(tr, angle) + halfDim + positionOffset;
+			vec2f halfDim(rect.z * 0.5f, rect.w * 0.5f);
+			vec2f center = vec2f(rect.x, rect.y) + halfDim;
+			rotate(bl, center, angle);
+			rotate(tl, center, angle);
+			rotate(tr, center, angle);
+			rotate(br, center, angle);
 		}
-		else
-		{
-			mVertexs[i].position = { destRect.x, destRect.y };
-			mVertexs[i + 1].position = { destRect.x, destRect.y + destRect.w };
-			mVertexs[i + 2].position = { destRect.x + destRect.z, destRect.y + destRect.w };
-			mVertexs[i + 3].position = { destRect.x + destRect.z, destRect.y };
-		}
-		for (uint32_t j = i; j < i + 4; j++)
-			mVertexs[j].color = color;
+
+		mVertexs[i + 0] = { bl, color };
+		mVertexs[i + 1] = { tl, color };
+		mVertexs[i + 2] = { tr, color };
+		mVertexs[i + 3] = { br, color };
 
 		mIndices.reserve(mIndices.size() + 8);
 
@@ -226,7 +226,7 @@ namespace Plutus
 		if (isDraw) {
 			mShader.enable();
 			mShader.setUniformMat4("camera", mCamera->getCameraMatrix());
-
+			glEnable(GL_LINE_SMOOTH);
 			glLineWidth(lineWidth);
 			glBindVertexArray(mVao);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);

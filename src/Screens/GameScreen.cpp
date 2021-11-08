@@ -59,8 +59,8 @@ void GameScreen::build()
     mSystemManager.AddSystem<Plutus::PhysicSystem>();
     mSystemManager.AddSystem<Plutus::AnimationSystem>();
     mSystemManager.AddSystem<Plutus::RenderSystem>(&mWorldCamera);
-    mSystemManager.AddSystem<Plutus::DebugSystem>(&mWorldCamera);
-
+    auto debugSys = mSystemManager.AddSystem<Plutus::DebugSystem>(&mWorldCamera);
+    debugSys->drawGrid(true);
     mScene->getWorld()->SetGravity({ 0.0f, -9.8f });
     // Plutus::SoundEngine.add("bg-sound", "assets/sounds/XYZ2.ogg", Plutus::MUSIC);
 }
@@ -110,6 +110,7 @@ void GameScreen::onEntry()
 
 void GameScreen::update(float dt)
 {
+
     float cscale = mWorldCamera.getScale();
 
     if (mInput->onKeyPressed("R")) {
@@ -142,6 +143,24 @@ void GameScreen::update(float dt)
         }
         mWorldCamera.setPosition(cPos);
     }
+    else {
+        auto trans = Player.getComponent<Plutus::Transform>();
+        if (mInput->onKeyDown("Right")) {
+            trans->x += 5;
+        }
+        if (mInput->onKeyDown("Left")) {
+            trans->x -= 5;
+        }
+        if (mInput->onKeyDown("Up")) {
+            trans->y += 5;
+        }
+        if (mInput->onKeyDown("Down")) {
+            trans->y -= 5;
+        }
+
+        auto size = mWorldCamera.getScaleScreen();
+        mWorldCamera.setPosition({ trans->x - (size.x * 0.5f), trans->y - (size.y * 0.15f) });
+    }
 
     if (mInput->onKeyPressed("PageUp"))
     {
@@ -152,12 +171,9 @@ void GameScreen::update(float dt)
     {
         mCurrentState = Plutus::ScreenState::CHANGE_NEXT;
     }
-
     mWorldCamera.update();
     mSystemManager.update(dt);
-    auto screen = mWorldCamera.getScaleScreen();
-    auto pos = Player.getComponent<Plutus::Transform>()->getPosition();
-    mWorldCamera.setPosition({ pos.x - 100.0f, pos.y - 50.0f });
+
 }
 
 void GameScreen::draw()

@@ -26,6 +26,8 @@
 #define SHADER_COLOR_INDEX 2
 #define SHADER_ENTITYID_INDEX 3
 
+#include <Math/PMath.h>
+
 namespace Plutus
 {
 	SpriteBatch2D::~SpriteBatch2D()
@@ -78,57 +80,51 @@ namespace Plutus
 		delete[] indices;
 	}
 
-	void SpriteBatch2D::submitOne(GLuint texture, vec4f rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {
+	void SpriteBatch2D::submitOne(GLuint texture, const vec4f& rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {
 		vertices.clear();
 		vertices.resize(4);
 		submit(texture, rect, uv, c, r, flipX, flipX, entId);
 	}
 
-	void SpriteBatch2D::submit(GLuint texture, vec4f rect, vec4f _uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
+	void SpriteBatch2D::submit(GLuint texture, const vec4f& rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
 	{
-
 		// Check if is it inside the view port
 		float id = static_cast<float>(entId);
 
 		createBatch(texture);
 
-		vec4f uv(_uv);
+		if (flipX || flipY) {
+			if (flipX)
+				std::swap(uv.x, uv.z);
 
-		if (flipX)
-			std::swap(uv.x, uv.z);
+			if (flipY)
+				std::swap(uv.y, uv.w);
+		}
 
-		if (flipY)
-			std::swap(uv.y, uv.w);
+		//bottom left
+		vec2f bl(rect.x, rect.y);
+		//top left
+		vec2f tl(rect.x, rect.y + rect.w);
+		//bottom right
+		vec2f tr(rect.x + rect.z, rect.y + rect.w);
+		//top right
+		vec2f br(rect.x + rect.z, rect.y);
 
 		if (r)
 		{
-			vec2f halfDim(rect.z / 2, rect.w / 2);
-			//top left
-			vec2f tl(-halfDim.x, halfDim.y);
-			//bottom left
-			vec2f bl(-halfDim.x, -halfDim.y);
-			//bottom right
-			vec2f br(halfDim.x, -halfDim.y);
-			//top right
-			vec2f tr(halfDim.x, halfDim.y);
-
-			tl = rotatePoint2D(tl, r) + halfDim;
-			bl = rotatePoint2D(bl, r) + halfDim;
-			br = rotatePoint2D(br, r) + halfDim;
-			tr = rotatePoint2D(tr, r) + halfDim;
-
-			vertices[mVertexCount + 0] = { rect.x + bl.x, rect.y + bl.y, uv.x, uv.w, c, id };
-			vertices[mVertexCount + 1] = { rect.x + tl.x, rect.y + tl.y, uv.x, uv.y, c, id };
-			vertices[mVertexCount + 2] = { rect.x + tr.x, rect.y + tr.y, uv.z, uv.y, c, id };
-			vertices[mVertexCount + 3] = { rect.x + br.x, rect.y + br.y, uv.z, uv.w, c, id };
+			vec2f halfDim(rect.z * 0.5f, rect.w * 0.5f);
+			vec2f center = vec2f(rect.x, rect.y) + halfDim;
+			rotate(bl, center, r);
+			rotate(tl, center, r);
+			rotate(tr, center, r);
+			rotate(br, center, r);
 		}
-		else
-		{
-			vertices[mVertexCount + 0] = { rect.x/*     */, rect.y/*     */, uv.x, uv.w, c, id };
-			vertices[mVertexCount + 1] = { rect.x/*     */, rect.y + rect.w, uv.x, uv.y, c, id };
-			vertices[mVertexCount + 2] = { rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, c, id };
-			vertices[mVertexCount + 3] = { rect.x + rect.z, rect.y/*     */, uv.z, uv.w, c, id };
-		}
+
+		vertices[mVertexCount + 0] = { bl.x, bl.y, uv.x, uv.w, c, id };
+		vertices[mVertexCount + 1] = { tl.x, tl.y, uv.x, uv.y, c, id };
+		vertices[mVertexCount + 2] = { tr.x, tr.y, uv.z, uv.y, c, id };
+		vertices[mVertexCount + 3] = { br.x, br.y, uv.z, uv.w, c, id };
+
 		mVertexCount += 4;
 	}
 

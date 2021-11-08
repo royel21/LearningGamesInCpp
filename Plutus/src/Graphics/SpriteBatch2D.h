@@ -75,13 +75,13 @@ namespace Plutus
 			@param flipX optional flip the image from X coordinate
 			@param flipY optional flip the image from Y coordinate
 		*/
-		void submitOne(GLuint texture, vec4f rect, vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
+		void submitOne(GLuint texture, const vec4f& rect, vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
 		void draw(bool usePicking = false);
 		//Flush the Vertex buffer to the screen
 		void end();
 
 	private:
-		void submit(GLuint texture, vec4f rect, vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
+		void submit(GLuint texture, const vec4f& rect, vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
 		/*
 			Create a render Batch for this texture
 		*/

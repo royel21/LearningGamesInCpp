@@ -80,11 +80,15 @@ namespace Plutus
         float z = 0;
         float w = 0;
         vec4f() = default;
+
         vec4f(float v) : x(v), y(v), z(v), w(v) {}
         vec4f(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {}
         vec4f(float _x, float _y, int _z, int _w) : x(_x), y(_y), z((float)_z), w((float)_w) {}
+
         vec4f(int _x, int _y, int _z, int _w) : x((float)_x), y((float)_y), z((float)_z), w((float)_w) {}
-        vec4f(const vec2f& v, float _z = 0, float _w = 1) : x(v.x), y(_z), z(1), w(_w) {}
+
+        vec4f(const vec2f& v, float _z = 0, float _w = 1) : x(v.x), y(v.y), z(_z), w(_w) {}
+        vec4f(const vec2f& v1, const vec2f v2) : x(v1.x), y(v1.y), z(v2.x), w(v2.y) {}
         vec4f(const vec3f& v, float _w = 1) : x(v.x), y(v.y), z(v.z), w(_w) {}
 
         vec4f& operator*=(float n);
@@ -95,5 +99,7 @@ namespace Plutus
 
         vec4f operator+(const vec4f& v) const;
         vec4f operator-(const vec4f& v) const;
+
+
     };
 } // namespace Plutus

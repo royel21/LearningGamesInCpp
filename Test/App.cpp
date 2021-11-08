@@ -246,7 +246,7 @@ namespace Plutus
         }
 
         // mDebug->drawBox(Box2d(capsule.x, capsule.y, capsule.w, capsule.h));
-        vec4f rect = { capsule.position.x, capsule.position.y, capsule.size.x, capsule.size.y };
+        vec4f rect = { capsule.position, capsule.size };
         mBatch.submitOne(texture->texId, rect, texture->getUV(0));
         mBatch.begin();
         mBatch.draw();
@@ -257,8 +257,11 @@ namespace Plutus
         mDebug->drawCircle(capsule.getBCircle());
         mDebug->drawCircle(capsule.getTCircle());
 
-        mDebug->render();
         mDebug->end();
+        mDebug->render();
+
+        // mDebug->setColor({});
+        // mDebug->drawGrid();
     }
 
     void App::Exit()
