@@ -1,5 +1,4 @@
 local SPEED = 5
-
 local curAnime = "stand-r"
 
 local vel = 0;
@@ -28,7 +27,7 @@ function move()
     -- local trans = Player2:getTransform()
     -- trans.x = trans.x + vel.x
     -- trans.y = trans.y + vel.y;
-    rbody:applyImpulse(vel.x, vel.y)
+    rbody:applyForce(vel.x, vel.y)
 end
 
 function update(dt)

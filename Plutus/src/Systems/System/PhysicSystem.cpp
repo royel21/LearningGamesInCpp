@@ -22,7 +22,7 @@ namespace Plutus
             body.bullet = rbody.mBullet;
             body.fixedRotation = rbody.mFixedRotation;
             rbody.mBody = world->CreateBody(&body);
-
+            body.linearDamping = 10;
 
             for (auto& fixture : rbody.mFixtures) {
                 auto offset = toWorld(fixture.offset);

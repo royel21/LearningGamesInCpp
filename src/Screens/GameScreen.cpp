@@ -59,9 +59,13 @@ void GameScreen::build()
     mSystemManager.AddSystem<Plutus::PhysicSystem>();
     mSystemManager.AddSystem<Plutus::AnimationSystem>();
     mSystemManager.AddSystem<Plutus::RenderSystem>(&mWorldCamera);
+
     auto debugSys = mSystemManager.AddSystem<Plutus::DebugSystem>(&mWorldCamera);
+
     debugSys->drawGrid(true);
+
     mScene->getWorld()->SetGravity({ 0.0f, -9.8f });
+    mScene->getWorld()->SetAutoClearForces(true);
     // Plutus::SoundEngine.add("bg-sound", "assets/sounds/XYZ2.ogg", Plutus::MUSIC);
 }
 
@@ -74,7 +78,7 @@ void GameScreen::onEntry()
 
     auto pbody = Player.addComponent<Plutus::RigidBody>(Player, Plutus::DynamicBody);
     pbody->mOffset = { 26, 21 };
-    pbody->addBox({ 0, 0 }, { 8,8 }, 1, 3, 0);
+    pbody->addBox({ 0, 0 }, { 8,8 }, 0.5f);
 
     auto ground = mScene->getEntityByName("Floor");
     auto body = ground.addComponent<Plutus::RigidBody>(ground, Plutus::StaticBody);

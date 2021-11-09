@@ -22,7 +22,7 @@ namespace Plutus
         for (auto [e, trans, rbody] : view.each()) {
 
             for (auto& fixture : rbody.mFixtures) {
-                auto pos = trans.getPosition();//fromWorld(rbody.mBody->GetPosition());
+                auto pos = fromWorld(rbody.mBody->GetPosition());
                 vec4f rect = { pos.x, pos.y, fixture.size.x, fixture.size.y };
                 if (mCamera->isBoxInView(rect, 200))
                 {
