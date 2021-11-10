@@ -21,16 +21,10 @@ out vec4 color;
 out float entityId;
 
 uniform mat4 camera;
-uniform vec2 offset;
 
 void main() {
     //Set the x,y position on the screen
-    vec2 pos = vertexPosition + offset;
-    gl_Position.xy = (camera * vec4(pos, 0, 1.0)).xy;
-
-    gl_Position.z = 0.0;
-
-	gl_Position.w = 1.0;
+    gl_Position = camera * vec4(vertexPosition, 0, 1.0);
     
     uv = vertexUV;
     
@@ -72,34 +66,6 @@ void main() {
     }else{
         fragColor = color;
     }
-
-})END";
-
-    const std::string pickingFragShader = std::string(VERTEX_HEADER) + R"END(
-in vec2 uv;
-in vec4 color;
-in float entityId;
-
-uniform bool isText;
-uniform bool picking;
-uniform int hasTexture;
-uniform sampler2D mySampler;
-
-out vec3 fragColor;
-
-void main() {
-
-   if(hasTexture > 0){
-        vec4 textColor = vec4(1,1,1,1);
-
-        textColor = color * texture(mySampler, uv);
-
-        if(textColor.a < 0.5f){
-            discard;
-        }
-    }
-
-    fragColor = vec3(entityId, entityId, entityId);
 
 })END";
 
