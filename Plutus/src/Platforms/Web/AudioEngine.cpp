@@ -58,7 +58,7 @@ namespace Plutus
         }
         return  true;
     }
-    bool AudioEngine::add(std::string id, std::string path, SoundType type) {
+    bool AudioEngine::add(const std::string& id, std::string path, SoundType type) {
 
         std::vector<u8> data;
         WaveFormatEx waveformat;
@@ -91,22 +91,20 @@ namespace Plutus
         return false;
     }
 
-    bool remove(std::string id) {
+    bool AudioEngine::remove(const std::string& id) {
         auto event = mSounds.find(id);
         if (event != mSounds.end()) {
+            alSourceStop(event->second.source);
+            alDeleteSources(1, &event->second.source);
+            alDeleteBuffers(1, &event->second.buffer);
 
-            auto& event = mSounds[id];
-            alSourceStop(event.second.source);
-            alDeleteSources(1, &event.second.source);
-            alDeleteBuffers(1, &event.second.buffer);
-
-            mSounds.erease(id);
+            mSounds.erase(id);
             return true;
         }
         return false;
     }
 
-    bool AudioEngine::play(std::string id, bool loop) {
+    bool AudioEngine::play(const std::string& id, bool loop) {
         if (mSounds.find(id) != mSounds.end()) {
             auto& event = mSounds[id];
 
@@ -124,7 +122,7 @@ namespace Plutus
         return false;
     }
 
-    bool AudioEngine::pause(std::string id) {
+    bool AudioEngine::pause(const std::string& id) {
         auto it = mSounds.find(id);
         if (it != mSounds.end()) {
             auto& event = it->second;
@@ -138,7 +136,7 @@ namespace Plutus
         return false;
     }
 
-    bool AudioEngine::stop(std::string id) {
+    bool AudioEngine::stop(const std::string& id) {
         auto it = mSounds.find(id);
         if (it != mSounds.end()) {
             auto& event = it->second;

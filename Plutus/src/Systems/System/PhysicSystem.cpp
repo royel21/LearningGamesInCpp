@@ -21,9 +21,11 @@ namespace Plutus
             body.position = pos;
             body.bullet = rbody.mBullet;
             body.fixedRotation = rbody.mFixedRotation;
-            rbody.mBody = world->CreateBody(&body);
-            body.linearDamping = 10;
+            body.linearDamping = rbody.linearDamping;
+            body.gravityScale = rbody.gravityScale;
 
+            rbody.mBody = world->CreateBody(&body);
+            // rbody.mBody.
             for (auto& fixture : rbody.mFixtures) {
                 auto offset = toWorld(fixture.offset);
 

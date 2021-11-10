@@ -2,7 +2,6 @@
 #include "PUtils.h"
 
 #include <Math/PMath.h>
-#include <Graphics/DebugRenderer.h>
 
 #include "PUtils.h"
 #include <algorithm>
@@ -52,8 +51,6 @@ namespace Plutus
                     mtv->axis += (distVec / length) * sept;
                 }
             }
-            // DebugRender::get()->drawCircle(closest, 5);
-            // DebugRender::get()->drawLine(circle->pos, closest, 0);
             return result;
         }
         // Circle Vs Box

@@ -5,7 +5,6 @@
 #include <Time/Timer.h>
 #include <chrono>
 #include <cstdio>
-#include <Graphics/GLSL.h>
 #include <GLFW/glfw3.h>
 
 #include <memory>

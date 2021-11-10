@@ -48,7 +48,7 @@ namespace Plutus
 			auto& p = m_particles[i];
 			if (p.m_life > 0.0f)
 			{
-				sp->submit(m_texture->id, { p.m_position.x, p.m_position.y, p.m_width, p.m_width }, uv, p.m_color);
+				sp->submitOne(m_texture->id, { p.m_position.x, p.m_position.y, p.m_width, p.m_width }, uv, p.m_color);
 			}
 		}
 	}

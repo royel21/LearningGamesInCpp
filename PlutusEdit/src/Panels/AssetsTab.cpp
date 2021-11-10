@@ -221,6 +221,7 @@ namespace Plutus
                         }
 
                         if (!isScene && ImGui::MenuItem(("Add " + name + " to scene").c_str())) {
+                            std::replace(path.begin(), path.end(), '\\', '/');
                             selectedDir = path;
                         }
                         ImGui::EndPopup();
@@ -243,7 +244,7 @@ namespace Plutus
             auto ex = Utils::getExtension(selectedDir);
 
             size_t start = 9;
-            size_t end = selectedDir.find_first_of(SEPARATOR, start);
+            size_t end = selectedDir.find_first_of("/", start);
             auto substr = selectedDir.substr(start, end - start);
 
             bool show = true;

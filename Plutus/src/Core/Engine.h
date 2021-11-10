@@ -4,11 +4,9 @@
 #include "ScreenList.h"
 
 #include <Input/Input.h>
-#include <Graphics/Shader.h>
-#include <Graphics/Shader.h>
-#include <Graphics/SpriteBatch2D.h>
 
 #include <Time/Limiter.h>
+#include <Graphics/GLheaders.h>
 
 namespace Plutus
 {

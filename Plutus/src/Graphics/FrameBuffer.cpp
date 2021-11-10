@@ -19,11 +19,14 @@ namespace Plutus
         glBindFramebuffer(GL_FRAMEBUFFER, mFbId);
 
         if (!isForPicking) {
-            mTexId = createTexture(w, h, 0, GL_RGB, GL_RGB);
+            mTexId = createTexture(w, h, 0, GL_RGBA8, GL_RGBA);
             glBindTexture(GL_TEXTURE_2D, mTexId);
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glGenerateMipmap(GL_TEXTURE_2D);
             // Create render buffer for store the depth info
             glGenRenderbuffers(1, &mRbufferId);
@@ -34,6 +37,7 @@ namespace Plutus
         else {
             mTexId = createTexture(w, h, 0, GL_RGBA32F, GL_RGBA, GL_FLOAT);
         }
+
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexId, 0);
 
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)

@@ -1,7 +1,7 @@
 #ifndef _CAMERA2D_H
 #define _CAMERA2D_H
 
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 #include <Math/Vectors.h>
 
 namespace Plutus

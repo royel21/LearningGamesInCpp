@@ -152,7 +152,7 @@ namespace Plutus
 		mShader->setUniform1i("mySampler", 0);
 		mShader->setUniformMat4("camera", mCamera->getCameraMatrix());
 
-		glClearDepth(1.0f);
+		glClearDepthf(1.0f);
 
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 		glBufferData(GL_ARRAY_BUFFER, mVertexCount * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);

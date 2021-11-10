@@ -46,7 +46,7 @@ namespace Plutus
     {
         entt::entity ent = entt::null;
         auto view = mRegistry.view<const Tag>();
-        for (auto& [e, tag] : view.each()) {
+        for (const auto& [e, tag] : view.each()) {
             if (tag.Name.compare(name) == 0) {
                 ent = e;
                 break;

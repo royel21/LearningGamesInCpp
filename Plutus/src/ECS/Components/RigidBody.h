@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 
-#include <Box2d/box2d.h>
+#include <box2d/box2d.h>
 #include <Physics/Shapes.h>
 #include <Math/Vectors.h>
 #include "../Scene.h"
@@ -37,16 +37,20 @@ namespace Plutus
 
     class RigidBody {
     public:
+        float mBullet = false;
+        bool mFixedRotation = true;
+        float linearDamping = 0;
+        float gravityScale = 1;
+
         Entity mEnt;
+        vec2f mOffset;
         b2Body* mBody;
         BodyType mBodyType;
         std::vector<Fixture> mFixtures;
-        vec2f mOffset;
-        bool mFixedRotation = true;
-        float mBullet = false;
 
     public:
-        RigidBody(Entity ent, BodyType type, const vec2f& _offset = { 0,0 }, float isFixedRotation = true, bool isBullet = false);
+        RigidBody() = default;
+        RigidBody(Entity ent, BodyType type, const vec2f& _offset = { 0,0 }, float liDamping = 0, float gScale = 1, float isFixedRotation = true, bool isBullet = false);
 
         void init();
         void addEdge(vec2f offset, vec2f size, float friction = 0.3f, float density = 1.0f, float restitution = 0, bool isSensor = false);

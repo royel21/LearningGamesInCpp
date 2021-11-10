@@ -1,6 +1,8 @@
 #include "SystemManager.h"
 #include "Systems.h"
 
+#include "System/System.h"
+
 namespace Plutus
 {
 

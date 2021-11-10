@@ -5,9 +5,12 @@
 
 #if __ANDROID__ || __EMSCRIPTEN__
 #include <GLES3/gl3.h>
-#define glClearDepth glClearDepthf
 #else
 #include <glad/glad.h>
+#endif
+
+#ifdef _WIN32
+#define glClearDepthf glClearDepth
 #endif
 
 inline void enableBlendMode()

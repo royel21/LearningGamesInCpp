@@ -36,12 +36,12 @@ namespace Plutus
     public:
         static AudioEngine& get();
         ~AudioEngine();
-        bool add(std::string name, std::string path, SoundType type);
-        void remove(std::string name);
+        bool add(const std::string& id, std::string path, SoundType type);
+        bool remove(const std::string& id);
 
-        bool play(std::string name, bool loop = false);
-        bool pause(std::string name);
-        bool stop(std::string name);
+        bool play(const std::string& id, bool loop = false);
+        bool pause(const std::string& id);
+        bool stop(const std::string& id);
 
         AudioMap& getItems() { return mSounds; }
 

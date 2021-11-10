@@ -1,24 +1,16 @@
+local SPEED = 5.0;
 
-local SPEED = 32;
+print("player1 init")
 
+local Player
 
-function init()
-    print("player1 init")
-end
+function init() Player = scene:getEntity("Player") end
 
 function update(dt)
-    local trans = Player:getTransform();
-    
-    if input:onKeyPressed("W") and trans.y > 0 then
-        trans.y = trans.y - SPEED;
-    end
-    if input:onKeyPressed("S") and trans.y < ScreenHeight-trans.h then
-        trans.y = trans.y + SPEED;
-    end
-    if input:onKeyPressed("D") and trans.x < ScreenWidth-trans.w then
-        trans.x = trans.x + SPEED;
-    end
-    if input:onKeyPressed("A") and trans.x > 0 then
-        trans.x = trans.x - SPEED;
-    end
+    local trans = Player:getTransform()
+
+    if input:onKeyDown("W") then trans.y = trans.y + SPEED end
+    if input:onKeyDown("S") then trans.y = trans.y - SPEED end
+    if input:onKeyDown("D") then trans.x = trans.x + SPEED end
+    if input:onKeyDown("A") then trans.x = trans.x - SPEED end
 end

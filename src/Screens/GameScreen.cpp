@@ -62,29 +62,36 @@ void GameScreen::build()
 
     auto debugSys = mSystemManager.AddSystem<Plutus::DebugSystem>(&mWorldCamera);
 
-    debugSys->drawGrid(true);
+    // debugSys->drawGrid(true);
 
-    mScene->getWorld()->SetGravity({ 0.0f, -9.8f });
+    mScene->getWorld()->SetGravity({ 0.0f, 0 });
     mScene->getWorld()->SetAutoClearForces(true);
     // Plutus::SoundEngine.add("bg-sound", "assets/sounds/XYZ2.ogg", Plutus::MUSIC);
 }
 
 void GameScreen::onEntry()
 {
-    Plutus::SceneLoader::loadFromJson("assets/scenes/Physics.json", mScene.get());
+    Plutus::SceneLoader::loadFromJson("assets/scenes/scene4.json", mScene.get());
     Player = mScene->getEntityByName("Player2");
+    if (Player) {
+        Player.addComponent<Plutus::Velocity>();
 
-    Player.addComponent<Plutus::Velocity>();
-
-    auto pbody = Player.addComponent<Plutus::RigidBody>(Player, Plutus::DynamicBody);
-    pbody->mOffset = { 26, 21 };
-    pbody->addBox({ 0, 0 }, { 8,8 }, 0.5f);
+        auto pbody = Player.addComponent<Plutus::RigidBody>(Player, Plutus::DynamicBody);
+        pbody->mOffset = { 26, 21 };
+        pbody->addBox({ 0, 0 }, { 8,8 }, 2);
+        pbody->linearDamping = 10;
+        pbody->gravityScale = 0;
+    }
+    printf("player init");
 
     auto ground = mScene->getEntityByName("Floor");
-    auto body = ground.addComponent<Plutus::RigidBody>(ground, Plutus::StaticBody);
-    auto trans = ground.getComponent<Plutus::Transform>();
+    if (ground) {
+        auto body = ground.addComponent<Plutus::RigidBody>(ground, Plutus::StaticBody);
+        auto trans = ground.getComponent<Plutus::Transform>();
 
-    body->addBox({ 0, 0 }, { (float)trans->w, (float)trans->h });
+        body->addBox({ 0, 0 }, { (float)trans->w, (float)trans->h });
+    }
+    printf("ground init");
 
 
     // const int h = mEngine->getHeight();
@@ -149,18 +156,6 @@ void GameScreen::update(float dt)
     }
     else {
         auto trans = Player.getComponent<Plutus::Transform>();
-        if (mInput->onKeyDown("Right")) {
-            trans->x += 5;
-        }
-        if (mInput->onKeyDown("Left")) {
-            trans->x -= 5;
-        }
-        if (mInput->onKeyDown("Up")) {
-            trans->y += 5;
-        }
-        if (mInput->onKeyDown("Down")) {
-            trans->y -= 5;
-        }
 
         auto size = mWorldCamera.getScaleScreen();
         mWorldCamera.setPosition({ trans->x - (size.x * 0.5f), trans->y - (size.y * 0.15f) });
@@ -182,7 +177,7 @@ void GameScreen::update(float dt)
 
 void GameScreen::draw()
 {
-    setBackgoundColor(1, 0, 0, 1);
+    setBackgoundColor(0.33f, 0.33f, 0.33f, 1);
 }
 
 void GameScreen::onScreenResize(int w, int h)

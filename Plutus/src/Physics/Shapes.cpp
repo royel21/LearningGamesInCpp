@@ -52,7 +52,7 @@ namespace Plutus
         getVertices();
     }
 
-    Box2d::Box2d(const vec2f& pos, const vec2f& _size, float r) : Shape(pos), size(size)
+    Box2d::Box2d(const vec2f& pos, const vec2f& _size, float r) : Shape(pos), size(_size)
     {
         type = PBox;
         rotation = r;

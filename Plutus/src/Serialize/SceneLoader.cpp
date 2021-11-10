@@ -13,7 +13,7 @@
 
 namespace Plutus
 {
-    void loadAnimation(Entity& ent, rapidjson::Value::Object& value)
+    void loadAnimation(Entity& ent, const rapidjson::Value::Object& value)
     {
         auto anim = ent.addComponent<Animation>();
         if (value.HasMember("sequences")) {
@@ -34,7 +34,7 @@ namespace Plutus
         }
     }
 
-    void loadTileMap(Entity& ent, rapidjson::Value::Object& value)
+    void loadTileMap(Entity& ent, const rapidjson::Value::Object& value)
     {
         int w = value["tilewidth"].GetInt();
         int h = value["tileheight"].GetInt();

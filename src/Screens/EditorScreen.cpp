@@ -124,8 +124,8 @@ void EditorScreen::draw()
     // mRender.begin(&mShader, &mCamera);
     // mRender.draw();
     // mRender.end();
-
-    mDebug->drawBox(Plutus::Box2d(10, h - 160.0f, 150, 150));
+    auto box = Plutus::Box2d(10, h - 160.0f, 150, 150);
+    mDebug->drawBox(box);
     mDebug->drawCircle({ 85.0f, h - 85.0f }, 70.0f);
     mDebug->end();
     mDebug->render(2);

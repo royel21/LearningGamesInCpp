@@ -1,15 +1,15 @@
 #pragma once
 
+#include <vector>
 #include <memory>
 #include <unordered_map>
 #include <algorithm>
 #include <typeinfo>
 
-#include "System/System.h"
-
 namespace Plutus
 {
     class Scene;
+    class ISystem;
 
     class SystemManager
     {

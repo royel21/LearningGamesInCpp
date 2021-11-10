@@ -1,4 +1,4 @@
-local SPEED = 5
+local SPEED = 6
 local curAnime = "stand-r"
 
 local vel = 0;
@@ -24,10 +24,19 @@ local vel = {x = 0, y = 0}
 
 function move()
     local rbody = Player2:getRigidBody()
-    -- local trans = Player2:getTransform()
-    -- trans.x = trans.x + vel.x
-    -- trans.y = trans.y + vel.y;
     rbody:applyForce(vel.x, vel.y)
+end
+
+function roll()
+    local rbody = Player2:getRigidBody()
+    vel.x = vel.x * 1.1;
+    vel.y = vel.y * 1.1;
+    rbody:applyForce(vel.x, vel.y)
+end
+
+function jump()
+    local rbody = Player2:getRigidBody()
+    rbody:applyImpulse(0, 2)
 end
 
 function update(dt)
@@ -61,13 +70,15 @@ function update(dt)
             state = "running"
             vel.x = -SPEED
         end
+
+        if input:onKeyPressed("C") then jump() end
+
         -- Jump animation
         if input:onKeyPressed("X") and state == "running" then
             state = "jumping"
-            vel.x = vel.x * 1.1;
-            vel.y = vel.y * 1.1;
-            anim:play("jump-" .. direction);
-            anim:setLoop(true);
+            anim:play("jump-" .. direction)
+            anim:setLoop(true)
+            roll()
         elseif not anim.loop and state == "running" then
             -- Running animation
             anim:play("run-" .. direction)
@@ -78,7 +89,7 @@ function update(dt)
     -- Attack Animation
     if input:onKeyPressed("Z") and state ~= "jumping" then
         anim:play("attack-" .. direction)
-        anim:setLoop(true);
+        anim:setLoop(true)
         state = "attacking"
     end
 end
