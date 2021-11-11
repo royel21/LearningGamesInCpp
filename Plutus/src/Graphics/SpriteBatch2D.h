@@ -17,6 +17,12 @@ namespace Plutus
 	class Camera2D;
 	class IndexBuffer;
 
+	enum BatchType {
+		BATCH_NONE = 0,
+		BATCH_TEXT,
+		BATCH_PICKING
+	};
+
 	class RenderBatch2D
 	{
 	public:
@@ -57,7 +63,7 @@ namespace Plutus
 		~SpriteBatch2D();
 		void init();
 		//Prepare the Vertex buffer to add objects
-		void begin(bool isText = false);
+		void begin();
 
 		void setShader(Shader* shader) { mShader = shader; }
 		void setCamera(Camera2D* cam) { mCamera = cam; }
@@ -76,7 +82,7 @@ namespace Plutus
 			@param flipY optional flip the image from Y coordinate
 		*/
 		void submitOne(GLuint texture, const vec4f& rect, vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
-		void draw(bool usePicking = false);
+		void draw(BatchType type = BATCH_NONE);
 		//Flush the Vertex buffer to the screen
 		void end();
 

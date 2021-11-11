@@ -94,7 +94,7 @@ namespace Plutus
         friend class Entity;
         friend class System;
         int velocityIter = 3;
-        int bodyIter = 8;
+        int bodyIter = 6;
         float timeStepInMillis = 0.01667f;
         b2World* mWorld;
         entt::registry mRegistry;

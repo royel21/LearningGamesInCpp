@@ -53,7 +53,7 @@ namespace Plutus
         mSpriteBatch.begin();
 
         mFramePicker.bind();
-        mSpriteBatch.draw(true);
+        mSpriteBatch.draw(BATCH_PICKING);
         mFramePicker.unBind();
 
         mFrameBuffer.bind();

@@ -13,9 +13,11 @@ namespace Plutus
 
         for (auto [ent, trans, rbody] : view.each()) {
             Entity Ent = { ent, mScene };
-            auto& name = Ent.getName();
+
             auto world = mScene->getWorld();
-            auto pos = toWorld(trans.getPosition() + rbody.mOffset);
+
+            auto pos = toWorld(trans.getPosition());
+
             b2BodyDef body;
             body.type = (b2BodyType)rbody.mBodyType;
             body.position = pos;
@@ -25,6 +27,7 @@ namespace Plutus
             body.gravityScale = rbody.gravityScale;
 
             rbody.mBody = world->CreateBody(&body);
+
             // rbody.mBody.
             for (auto& fixture : rbody.mFixtures) {
                 auto offset = toWorld(fixture.offset);
@@ -37,8 +40,11 @@ namespace Plutus
                 switch (fixture.type) {
                 case PBox: {
                     b2PolygonShape polygonShape;
+
                     b2Vec2 halfSize = { fixture.size.x * HMPP, fixture.size.y * HMPP };
-                    polygonShape.SetAsBox(halfSize.x, halfSize.y, halfSize, 0); //a 2x2 rectangle
+                    b2Vec2 center = { offset.x + halfSize.x, offset.y + halfSize.y };
+
+                    polygonShape.SetAsBox(halfSize.x, halfSize.y, center, 0); //a 2x2 rectangle
 
                     fixDef.shape = &polygonShape;
                     rbody.mBody->CreateFixture(&fixDef);
@@ -73,7 +79,7 @@ namespace Plutus
         auto view = mScene->getRegistry()->view<Transform, RigidBody>();
         for (auto [ent, trans, rbody] : view.each()) {
             if (rbody.mBodyType == DynamicBody || rbody.mBodyType == KinematicBody) {
-                auto pos = fromWorld(rbody.mBody->GetPosition()) - rbody.mOffset;
+                auto pos = fromWorld(rbody.mBody->GetPosition());
                 trans.x = pos.x;
                 trans.y = pos.y;
             }

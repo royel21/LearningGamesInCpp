@@ -4,7 +4,6 @@
 
 namespace Plutus
 {
-
     float vec2f::lengthSqrt()
     {
         return x * x + y * y;

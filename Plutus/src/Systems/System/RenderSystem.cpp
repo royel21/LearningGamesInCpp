@@ -48,9 +48,6 @@ namespace Plutus
             auto [tilemap] = viewMap.get(ent);
             if (tilemap.mTiles.size())
             {
-                const int w = tilemap.mTileWidth;
-                const int h = tilemap.mTileHeight;
-
                 for (auto& tile : tilemap.mTiles)
                 {
                     auto rect = tile.getRect();
@@ -58,8 +55,17 @@ namespace Plutus
                     {
                         auto tex = tilemap.getTexture(tile.texture);
                         if (tex) {
-                            mRenderables[i++] = { tex->texId, rect, tex->getUV(tile.texcoord),
-                                { tile.color }, tile.rotate, tile.flipX, tile.flipY, 0, tilemap.mLayer, false };
+                            mRenderables[i++] = {
+                                tex->texId, // Texure Id
+                                rect, // Desct Rectangle
+                                tex->getUV(tile.texcoord), // Texure Coords UV
+                                { tile.color }, // Color
+                                tile.rotate, // Rotation
+                                tile.flipX, // Flip X
+                                tile.flipY, // Flip Y
+                                0, // Entity Id
+                                tilemap.mLayer// Layer in which to be draw
+                            };
                         }
                     }
                 }
@@ -80,7 +86,7 @@ namespace Plutus
         }
         mRenderables.resize(i);
         // sort by layer, y position, texture
-        std::sort(mRenderables.begin(), mRenderables.end());
+        // std::sort(mRenderables.begin(), mRenderables.end());
         mRenderer.submit(mRenderables);
 
         mRenderer.begin();

@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <cmath>
 
 #include <ECS/Components.h>
 
@@ -48,12 +49,6 @@ void GameScreen::build()
 
     mWorldCamera.init(640, 520);
 
-    // auto& textures = Plutus::AssetManager::get()->mTextures;
-    // textures.addTexture("bats", "assets/textures/monster/bat.png", 3, 32, 32);
-    // textures.addTexture("player1", "assets/textures/player1.png");
-    // textures.addTexture("player", "assets/textures/player.png", 60, 64, 64);
-    // textures.addTexture("cave", "assets/textures/goblin_cave.png", 8, 32, 32);
-
     mSystemManager.setScene(mScene.get());
     mSystemManager.AddSystem<Plutus::ScriptSystem>(&mWorldCamera);
     mSystemManager.AddSystem<Plutus::PhysicSystem>();
@@ -61,27 +56,26 @@ void GameScreen::build()
     mSystemManager.AddSystem<Plutus::RenderSystem>(&mWorldCamera);
 
     auto debugSys = mSystemManager.AddSystem<Plutus::DebugSystem>(&mWorldCamera);
-
-    // debugSys->drawGrid(true);
-
-    mScene->getWorld()->SetGravity({ 0.0f, 0 });
+    debugSys->drawGrid(true);
+    mScene->getWorld()->SetGravity({ 0.0f, -9.8f });
     mScene->getWorld()->SetAutoClearForces(true);
-    // Plutus::SoundEngine.add("bg-sound", "assets/sounds/XYZ2.ogg", Plutus::MUSIC);
 }
 
 void GameScreen::onEntry()
 {
-    Plutus::SceneLoader::loadFromJson("assets/scenes/scene4.json", mScene.get());
+    Plutus::SceneLoader::loadFromJson("assets/scenes/Physics.json", mScene.get());
     Player = mScene->getEntityByName("Player2");
     if (Player) {
         Player.addComponent<Plutus::Velocity>();
 
         auto pbody = Player.addComponent<Plutus::RigidBody>(Player, Plutus::DynamicBody);
-        pbody->mOffset = { 26, 21 };
-        pbody->addBox({ 0, 0 }, { 8,8 }, 2);
-        pbody->linearDamping = 10;
-        pbody->gravityScale = 0;
+        pbody->linearDamping = 0;
+        pbody->gravityScale = 1;
+
+        pbody->addBox({ 24, 18 }, { 12, 24 }, 2);
+        pbody->addCircle({ 32, 24 }, 5, 2);
     }
+
     printf("player init");
 
     auto ground = mScene->getEntityByName("Floor");
@@ -91,31 +85,8 @@ void GameScreen::onEntry()
 
         body->addBox({ 0, 0 }, { (float)trans->w, (float)trans->h });
     }
+
     printf("ground init");
-
-
-    // const int h = mEngine->getHeight();
-    // // Player 1
-    // auto player = mScene->createEntity("Player");
-    // player.addComponent<Plutus::Transform>(192.0f, 0.0f, 64, 64, 0.0f, 0, true);
-    // player.addComponent<Plutus::Sprite>("player1");
-    // player.addComponent<Plutus::Script>("assets/script/player1.lua");
-
-    // // Player 2
-    // auto player2 = mScene->createEntity("Player2");
-    // player2.addComponent<Plutus::Transform>(400.0f, 0.0f, 128, 128, 0.0f, 0, true);
-    // player2.addComponent<Plutus::Sprite>("player2");
-    // player2.addComponent<Plutus::Animation>();
-    // player2.addComponent<Plutus::Script>("assets/script/player2.lua");
-    // // Bat1
-    // auto bat = mScene->createEntity("Bat");
-    // bat.addComponent<Plutus::Transform>(288.0f, 0.0f, 64, 64, 0.0f, 0, true);
-    // bat.addComponent<Plutus::Sprite>("bats");
-
-    // bat.addComponent<Plutus::Animation>();
-    // bat.addComponent<Plutus::Script>("assets/script/bat.lua");
-    // Plutus::SoundEngine.play("bg-sound");
-
     mSystemManager.start();
 }
 
@@ -128,18 +99,21 @@ void GameScreen::update(float dt)
         mWorldCamera.setScale(1);
     }
 
+    auto cPos = mWorldCamera.getPosition();
+
     if (mInput->isCtrl) {
 
         if (mInput->onKeyDown("+")) {
             cscale += 0.05f;
             mWorldCamera.setScale(cscale);
         }
+
         if (mInput->onKeyDown("-")) {
             cscale -= 0.05f;
             mWorldCamera.setScale(cscale);
         }
 
-        auto cPos = mWorldCamera.getPosition();
+
         if (mInput->onKeyDown("Right")) {
             cPos.x += 5;
         }
@@ -152,14 +126,15 @@ void GameScreen::update(float dt)
         if (mInput->onKeyDown("Down")) {
             cPos.y -= 5;
         }
-        mWorldCamera.setPosition(cPos);
     }
     else {
         auto trans = Player.getComponent<Plutus::Transform>();
 
-        auto size = mWorldCamera.getScaleScreen();
-        mWorldCamera.setPosition({ trans->x - (size.x * 0.5f), trans->y - (size.y * 0.15f) });
+        auto tpos = Plutus::vec2f(round(trans->x), round(trans->y));
+
+        cPos = tpos - mWorldCamera.getScaleScreen() * 0.5f;
     }
+    mWorldCamera.setPosition(cPos);
 
     if (mInput->onKeyPressed("PageUp"))
     {
@@ -172,6 +147,10 @@ void GameScreen::update(float dt)
     }
     mWorldCamera.update();
     mSystemManager.update(dt);
+
+    auto rbody = Player.getComponent<Plutus::RigidBody>();
+    auto vel = rbody->mBody->GetLinearVelocity();
+    printf("vel: %0.3f %0.3f\n", vel.x, vel.y);
 
 }
 

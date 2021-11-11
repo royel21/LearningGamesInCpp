@@ -109,7 +109,7 @@ namespace Plutus
 		Renderable() = default;
 		Renderable(uint32_t texture, vec4f rect, vec4f _uv, ColorRGBA8 _c) : TexId(texture), trans(rect), uv(_uv), color(_c) {}
 
-		Renderable(uint32_t texture, vec4f rect, vec4f _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, int id, int _layer, bool sY)
+		Renderable(uint32_t texture, vec4f rect, vec4f _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, int id, int _layer, bool sY = false)
 			: TexId(texture), trans(rect), uv(_uv), color(_c), r(_r), flipX(fx), flipY(fy), entId(id), layer(_layer), sortY(sY) {
 		}
 

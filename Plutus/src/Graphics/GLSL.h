@@ -38,8 +38,7 @@ in vec2 uv;
 in vec4 color;
 in float entityId;
 
-uniform bool isText;
-uniform bool picking;
+uniform int type;
 uniform int hasTexture;
 uniform sampler2D mySampler;
 
@@ -47,24 +46,23 @@ out vec4 fragColor;
 
 void main() {
 
-    if(isText){
-        fragColor = vec4(texture(mySampler, uv).r) * color;
-    } else if(picking){
-        if(hasTexture > 0){
-            vec4 textColor = vec4(1,1,1,1);
+    vec4 tex = texture(mySampler, uv);
 
-            textColor = color * texture(mySampler, uv);
-
-            if(textColor.a < 0.5f){
+    switch(type){
+        case 1:{
+            fragColor = vec4(tex.r) * color;
+            break;
+        }
+        case 2:{
+            if(tex.a < 0.5f){
                 discard;
             }
+            fragColor = vec4(entityId, entityId, entityId, 1);
+            break;
         }
-
-        fragColor = vec4(entityId, entityId, entityId, 1);
-    }else if(hasTexture > 0){
-        fragColor = color * texture(mySampler, uv); 
-    }else{
-        fragColor = color;
+        default:{
+            fragColor = hasTexture > 0 ? color * tex : color;
+        }
     }
 
 })END";

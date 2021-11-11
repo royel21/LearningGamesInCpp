@@ -101,8 +101,8 @@ void EditorScreen::draw()
 
     mRender.submit(renderables);
 
-    mRender.begin(true);
-    mRender.draw();
+    mRender.begin();
+    mRender.draw(Plutus::BATCH_TEXT);
     mRender.end();
 
     std::vector<Plutus::Renderable> renderables2;
@@ -114,7 +114,7 @@ void EditorScreen::draw()
     mRender.begin();
 
     mFB.bind();
-    mRender.draw(true);
+    mRender.draw(Plutus::BATCH_PICKING);
     mFB.unBind();
 
     mRender.draw();

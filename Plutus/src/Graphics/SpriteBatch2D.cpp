@@ -145,10 +145,9 @@ namespace Plutus
 		}
 	}
 
-	void SpriteBatch2D::begin(bool isText)
+	void SpriteBatch2D::begin()
 	{
 		mShader->enable();
-		mShader->setUniform1b("isText", isText);
 		mShader->setUniform1i("mySampler", 0);
 		mShader->setUniformMat4("camera", mCamera->getCameraMatrix());
 
@@ -161,9 +160,9 @@ namespace Plutus
 		glBindVertexArray(mVAO);
 	}
 
-	void SpriteBatch2D::draw(bool usePicking)
+	void SpriteBatch2D::draw(BatchType type)
 	{
-		mShader->setUniform1b("picking", usePicking);
+		mShader->setUniform1i("type", type);
 		for (size_t i = 0; i < mRenderBatches.size(); i++)
 		{
 			auto& batch = mRenderBatches[i];

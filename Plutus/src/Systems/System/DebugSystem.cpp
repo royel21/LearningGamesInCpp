@@ -23,24 +23,30 @@ namespace Plutus
 
             for (auto& fixture : rbody.mFixtures) {
                 auto pos = fromWorld(rbody.mBody->GetPosition());
-                vec4f rect = { pos.x, pos.y, fixture.size.x, fixture.size.y };
-                if (mCamera->isBoxInView(rect, 200))
-                {
-                    switch (fixture.type) {
-                    case PBox: {
+
+                switch (fixture.type) {
+                case PBox: {
+                    vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
+                    if (mCamera->isBoxInView(rect, 200))
+                    {
                         mDebug->drawBox(rect);
-                        break;
                     }
-                    case PLine: {
-                        mDebug->drawLine(pos, fixture.size);
-                        break;
-                    }
-                    case PCircle: {
-                        mDebug->drawCircle(pos, fixture.radius);
-                        break;
-                    }
-                    }
+                    break;
                 }
+                case PLine: {
+                    mDebug->drawLine(pos, fixture.size);
+                    break;
+                }
+                case PCircle: {
+                    vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
+                    if (mCamera->isBoxInView(rect, 200))
+                    {
+                        mDebug->drawCircle(pos + fixture.offset, fixture.radius);
+                    }
+                    break;
+                }
+                }
+
             }
         }
         mDebug->end();
