@@ -25,7 +25,6 @@ local vel = {x = 0, y = 0}
 function move()
     local rbody = Player2:getRigidBody()
     rbody:setVelocity(vel.x, vel.y)
-    print("move", vel.x, vel.y)
 end
 
 function roll()
