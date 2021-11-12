@@ -72,8 +72,8 @@ void GameScreen::onEntry()
         pbody->linearDamping = 0;
         pbody->gravityScale = 1;
 
-        pbody->addBox({ 24, 18 }, { 12, 24 }, 2);
-        pbody->addCircle({ 32, 24 }, 5, 2);
+        pbody->addBox({ 24, 18 }, { 12, 24 }, 1);
+        pbody->addCircle({ 32, 24 }, 5, 1);
     }
 
     printf("player init");

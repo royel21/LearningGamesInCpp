@@ -59,6 +59,7 @@ namespace Plutus
 
         void ApplyForce(float x, float y);
         void ApplyImpulse(float x, float y);
+        void setVelocity(float x, float y);
 
     };
 } // namespace Plutus

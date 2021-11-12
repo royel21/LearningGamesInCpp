@@ -103,6 +103,7 @@ namespace Plutus
         auto rigidBody = mGlobalLua.new_usertype<RigidBody>("RigidBody");
         rigidBody["applyImpulse"] = &RigidBody::ApplyImpulse;
         rigidBody["applyForce"] = &RigidBody::ApplyForce;
+        rigidBody["setVelocity"] = &RigidBody::setVelocity;
         /*****************************Register Velocity**********************************************/
         auto velocity = mGlobalLua.new_usertype<Velocity>("Velocity");
 

@@ -1,4 +1,4 @@
-local SPEED = 50
+local SPEED = 1.5
 local curAnime = "stand-r"
 
 local vel = 0;
@@ -24,7 +24,7 @@ local vel = {x = 0, y = 0}
 
 function move()
     local rbody = Player2:getRigidBody()
-    rbody:applyForce(vel.x, vel.y)
+    rbody:setVelocity(vel.x, vel.y)
     print("move", vel.x, vel.y)
 end
 
@@ -91,7 +91,7 @@ function update(dt)
     if input:onKeyPressed("Z") and state ~= "jumping" then
         anim:play("attack-" .. direction)
         anim:setLoop(true)
-        state = "attacking"
+        state = "     "
     end
 end
 

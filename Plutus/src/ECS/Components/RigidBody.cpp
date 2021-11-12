@@ -25,4 +25,8 @@ namespace Plutus
     void RigidBody::ApplyImpulse(float x, float y) {
         mBody->ApplyLinearImpulseToCenter(toWorld({ x, y }), true);
     }
+
+    void RigidBody::setVelocity(float x, float y) {
+        mBody->SetLinearVelocity(b2Vec2(x, y));
+    }
 } // namespace Plutus
