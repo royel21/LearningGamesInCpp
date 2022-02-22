@@ -27,7 +27,7 @@ else()
 endif()
 
 set(LIB_DIR Plutus/libs)
-
+# add the path for the project to be able find the .h files
 include_directories(Plutus/src)
 include_directories(${LIB_DIR}/glad/include)
 include_directories(${LIB_DIR}/glm)
@@ -42,7 +42,7 @@ include_directories(${LIB_DIR}/box2d/include)
 include_directories(${LIB_DIR}/freetype/include)
 include_directories(${LIB_DIR}/stb)
 
-
+#add sub project
 add_subdirectory(Plutus)
 
 find_package(OpenGL REQUIRED)
