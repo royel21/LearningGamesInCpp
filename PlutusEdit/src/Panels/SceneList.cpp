@@ -8,6 +8,15 @@
 
 namespace Plutus
 {
+    void configScene(bool& show) {
+        ImGui::SetNextWindowSize({ 350, 650 });
+        ImGui::BeginDialog("Config Scene");
+        {
+
+        }
+        ImGui::EndDialog(show);
+    }
+
     void drawEntity(Entity ent)
     {
         auto project = Config::get().mProject;
@@ -42,12 +51,13 @@ namespace Plutus
     void DrawScenes() {
         auto project = Config::get().mProject;
         static bool openNew = false;
+        static bool showConfig = false;
         ImGui::Begin("Scene Editor");
         if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE "##new-scene"))  openNew = true;
         ImGui::SameLine();
         if (ImGui::TransparentButton(ICON_FA_SAVE "##save-scene"))  project->Save();
         ImGui::SameLine();
-        if (ImGui::TransparentButton(ICON_FA_COG "##config-scene")) {}
+        if (ImGui::TransparentButton(ICON_FA_COG "##config-scene")) showConfig = true;
         ImGui::SameLine();
         ImGui::Text("Scenes");
         ImGui::Separator();
@@ -87,5 +97,7 @@ namespace Plutus
             if (!name.empty())  project->Create(name);
             openNew = false;
             });
+
+        if (showConfig) configScene(showConfig);
     }
 } // namespace Plutus

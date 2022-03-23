@@ -88,5 +88,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL Windows)
   add_executable("playground" ${P_Ground})
   target_link_libraries("playground" PUBLIC Plutus)
 
+  add_executable("SingleTest" test.cpp)
 
 endif()

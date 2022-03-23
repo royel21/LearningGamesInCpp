@@ -38,6 +38,7 @@ namespace Plutus
 
         mSysManager.setScene(Config::get().mProject->mTempScene.get());
         mSysManager.AddSystem<Plutus::ScriptSystem>(&Render::get().mCamera);
+        mSysManager.AddSystem<Plutus::PhysicSystem>();
         mSysManager.AddSystem<Plutus::AnimationSystem>();
     }
 

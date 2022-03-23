@@ -78,13 +78,31 @@ namespace Plutus
                 }
 
                 ImGui::Separator();
-                ImGui::Text("Frames %0.2f", ImGui::GetIO().Framerate);
-
+                ImGui::Text("All Frames - FPS:%0.2f", ImGui::GetIO().Framerate);
                 ImGui::Separator();
+
                 auto curPos = ImGui::GetWindowSize();
                 if (!seq.mTexId.empty()) {
                     auto& tex = mTestures->mTileSets[seq.mTexId];
                     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 1, 2 });
+                    if (ImGui::BeginChild("##tex-img", { curPos.x, 217 })) {
+                        for (size_t i = 0; i < tex.uvs.size(); i++) {
+
+                            ImGui::PushID((int)i);
+                            if (i % 6 != 0)
+                                ImGui::SameLine();
+
+                            auto uv = tex.uvs[i];
+                            if (ImGui::ImageButton((ImTextureID)tex.texId, { 64, 64 }, { uv.x, uv.y }, { uv.z, uv.w })) {
+                                seq.mFrames.push_back((int)i);
+                            }
+                            ImGui::PopID();
+                        }
+                        ImGui::EndChild();
+                    }
+                    ImGui::Separator();
+                    ImGui::Text("Frames");
+                    ImGui::Separator();
                     if (ImGui::BeginChild("##frames-img", { curPos.x, 142 })) {
                         size_t i = 0;
                         int index2RM = -1;;
@@ -103,22 +121,6 @@ namespace Plutus
                         if (index2RM > -1) {
                             seq.mFrames.erase(seq.mFrames.begin() + index2RM);
                             seq.mFrame = 0;
-                        }
-                        ImGui::EndChild();
-                    }
-                    ImGui::Separator();
-                    if (ImGui::BeginChild("##tex-img", { curPos.x, 217 })) {
-                        for (size_t i = 0; i < tex.uvs.size(); i++) {
-
-                            ImGui::PushID((int)i);
-                            if (i % 6 != 0)
-                                ImGui::SameLine();
-
-                            auto uv = tex.uvs[i];
-                            if (ImGui::ImageButton((ImTextureID)tex.texId, { 64, 64 }, { uv.x, uv.y }, { uv.z, uv.w })) {
-                                seq.mFrames.push_back((int)i);
-                            }
-                            ImGui::PopID();
                         }
                         ImGui::EndChild();
                     }
