@@ -43,7 +43,7 @@ namespace Plutus
         {
             auto it = mSystems.find(&typeid(T));
             if (it != mSystems.end()) {
-                return it->second();
+                return static_cast<T*>(it->second);
             }
             else {
                 return nullptr;

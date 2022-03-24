@@ -9,10 +9,11 @@
 namespace Plutus
 {
     void configScene(bool& show) {
-        ImGui::SetNextWindowSize({ 350, 650 });
+        ImGui::SetNextWindowSize({ 350, 0 });
         ImGui::BeginDialog("Config Scene");
         {
-
+            if (ImGui::Button("Click Me")) {
+            }
         }
         ImGui::EndDialog(show);
     }
