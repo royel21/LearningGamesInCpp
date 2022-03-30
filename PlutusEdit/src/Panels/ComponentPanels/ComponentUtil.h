@@ -9,6 +9,7 @@
 #include <Helpers/Render.h>
 #include <Helpers/ImGuiEx.h>
 #include <Helpers/IconsFontAwesome5.h>
+#include <functional>
 
 namespace Plutus
 {

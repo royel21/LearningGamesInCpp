@@ -4,6 +4,7 @@
 
 #include "TileMapPanel.h"
 #include "AnimationTab.h"
+#include "RigidBodyTab.h"
 
 namespace Plutus
 {
@@ -19,6 +20,7 @@ namespace Plutus
         Entity mEnt;
         AnimationTab mAnimation;
         TileMapPanel mTileMapPanel;
+        RigidBodyTab mRigidBodyTab;
 
         int uvIndex = 0;
         bool mUseCoords = false;

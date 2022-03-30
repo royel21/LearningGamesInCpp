@@ -25,7 +25,7 @@ namespace Plutus
                 auto pos = fromWorld(rbody.mBody->GetPosition());
 
                 switch (fixture.type) {
-                case PBox: {
+                case BoxShape: {
                     vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
                     if (mCamera->isBoxInView(rect, 200))
                     {
@@ -33,11 +33,11 @@ namespace Plutus
                     }
                     break;
                 }
-                case PLine: {
+                case EdgeShape: {
                     mDebug->drawLine(pos, fixture.size);
                     break;
                 }
-                case PCircle: {
+                case CircleShape: {
                     vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
                     if (mCamera->isBoxInView(rect, 200))
                     {

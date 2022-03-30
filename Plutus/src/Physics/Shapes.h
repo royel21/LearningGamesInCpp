@@ -13,6 +13,10 @@ constexpr float HMPP = PPM / 2.0f;
 
 class b2Body;
 
+constexpr int EdgeShape = 0;
+constexpr int CircleShape = 1;
+constexpr int BoxShape = 2;
+
 
 namespace Plutus
 {
@@ -23,12 +27,6 @@ namespace Plutus
         float dist;
         vec2f axis;
         MTV() = default;
-    };
-
-    enum ShapeType {
-        PLine = 0x01,
-        PCircle = 0x02,
-        PBox = 0x04
     };
 
     inline b2Vec2 toWorld(const vec2f& value) {
@@ -43,7 +41,7 @@ namespace Plutus
 
     struct Shape {
         vec2f pos;
-        ShapeType type;
+        int type;
         b2Body* body;
 
         Points axes;
@@ -60,7 +58,7 @@ namespace Plutus
         vec2f end;
         float rotation = 0;
 
-        Line2d() { type = PLine; };
+        Line2d() { type = EdgeShape; };
         Line2d(float x1, float y1, float x2, float y2, float r = 0);
         Line2d(const vec2f& _start, const vec2f& _end, float r = 0);
 
@@ -74,9 +72,9 @@ namespace Plutus
     struct Circle2d : public Shape
     {
         float radius = 1.0f;
-        Circle2d() { type = PCircle; };
-        Circle2d(float x, float y, float r) : Shape(x, y), radius(r) { type = PCircle; }
-        Circle2d(const vec2f& _pos, float r) : Shape(_pos), radius(r) { type = PCircle; }
+        Circle2d() { type = CircleShape; };
+        Circle2d(float x, float y, float r) : Shape(x, y), radius(r) { type = CircleShape; }
+        Circle2d(const vec2f& _pos, float r) : Shape(_pos), radius(r) { type = CircleShape; }
 
         float radiusSqrt() const { return radius * radius; }
     };
@@ -88,7 +86,7 @@ namespace Plutus
         Points axes;
         float rotation = 0;
 
-        Box2d() { type = PBox; };
+        Box2d() { type = BoxShape; };
         Box2d(float x, float y, float w, float h, float r = 0);
         Box2d(const vec2f& pos, const vec2f& _size, float r = 0);
 

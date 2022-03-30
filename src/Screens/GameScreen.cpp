@@ -57,8 +57,6 @@ void GameScreen::build()
 
     auto debugSys = mSystemManager.AddSystem<Plutus::DebugSystem>(&mWorldCamera);
     debugSys->drawGrid(true);
-    mScene->getWorld()->SetGravity({ 0.0f, -9.8f });
-    mScene->getWorld()->SetAutoClearForces(true);
 }
 
 void GameScreen::onEntry()

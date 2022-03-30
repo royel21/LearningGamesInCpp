@@ -7,15 +7,15 @@ namespace Plutus
     }
 
     void RigidBody::addEdge(vec2f offset, vec2f size, float friction, float density, float restitution, bool isSensor) {
-        mFixtures.push_back({ PCircle, offset, size,0, friction, density, restitution, isSensor, });
+        mFixtures.push_back({ EdgeShape, offset, size,0, friction, density, restitution, isSensor, });
     }
 
     void RigidBody::addCircle(vec2f offset, float radius, float friction, float density, float restitution, bool isSensor) {
-        mFixtures.push_back({ PCircle, offset, vec2f{0,0}, radius, friction, density, restitution, isSensor, });
+        mFixtures.push_back({ CircleShape, offset, vec2f{0,0}, radius, friction, density, restitution, isSensor, });
     }
 
     void RigidBody::addBox(vec2f offset, vec2f size, float friction, float density, float restitution, bool isSensor) {
-        mFixtures.push_back({ PBox, offset, size, 0.0f, friction, density, restitution, isSensor, });
+        mFixtures.push_back({ BoxShape, offset, size, 0.0f, friction, density, restitution, isSensor, });
     }
 
     void RigidBody::ApplyForce(float x, float y) {

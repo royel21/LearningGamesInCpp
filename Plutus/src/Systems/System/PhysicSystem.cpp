@@ -4,17 +4,18 @@
 
 namespace Plutus
 {
-    PhysicSystem::PhysicSystem(Scene* scene, vec2f gravity) : ISystem(scene) {
-        mScene->getWorld()->SetGravity(b2Vec2{ gravity.x, gravity.y });
-    }
+    PhysicSystem::PhysicSystem(Scene* scene) : ISystem(scene) { }
 
     void PhysicSystem::init() {
-        auto view = mScene->getRegistry()->view<Transform, RigidBody>();
+        auto gravity = mScene->getGravity();
+        mWorld = new b2World({ gravity.x, gravity.y });
+        mWorld->SetAutoClearForces(mScene->getAutoClearForce());
 
+        auto view = mScene->getRegistry()->view<Transform, RigidBody>();
+        auto size = view.size_hint();
+        printf("size: %i", size);
         for (auto [ent, trans, rbody] : view.each()) {
             Entity Ent = { ent, mScene };
-
-            auto world = mScene->getWorld();
 
             auto pos = toWorld(trans.getPosition());
 
@@ -26,7 +27,7 @@ namespace Plutus
             body.linearDamping = rbody.linearDamping;
             body.gravityScale = rbody.gravityScale;
 
-            rbody.mBody = world->CreateBody(&body);
+            rbody.mBody = mWorld->CreateBody(&body);
 
             // rbody.mBody.
             for (auto& fixture : rbody.mFixtures) {
@@ -38,7 +39,7 @@ namespace Plutus
                 fixDef.restitution = fixture.restitution;
 
                 switch (fixture.type) {
-                case PBox: {
+                case BoxShape: {
                     b2PolygonShape polygonShape;
 
                     b2Vec2 halfSize = { fixture.size.x * HMPP, fixture.size.y * HMPP };
@@ -50,7 +51,7 @@ namespace Plutus
                     rbody.mBody->CreateFixture(&fixDef);
                     break;
                 }
-                case PLine: {
+                case EdgeShape: {
                     b2EdgeShape edgeShape;
                     auto bsize = toWorld(fixture.size);
                     edgeShape.SetTwoSided(pos, bsize);
@@ -59,7 +60,7 @@ namespace Plutus
                     rbody.mBody->CreateFixture(&fixDef);
                     break;
                 }
-                case PCircle: {
+                case CircleShape: {
                     b2CircleShape circleShapeB;
                     circleShapeB.m_p = offset;
                     circleShapeB.m_radius = fixture.radius * PPM;;
@@ -74,7 +75,8 @@ namespace Plutus
     }
 
     void PhysicSystem::update(float dt) {
-        mScene->updateWorld();
+        mWorld->SetAutoClearForces(mScene->getAutoClearForce());
+        mWorld->Step(mScene->getTimeIterSec(), mScene->getVelIter(), mScene->getBodyIter());
 
         auto view = mScene->getRegistry()->view<Transform, RigidBody>();
         for (auto [ent, trans, rbody] : view.each()) {
@@ -89,7 +91,8 @@ namespace Plutus
 
 
     void PhysicSystem::destroy() {
-        mScene->resetWorld();
+        if (mWorld != nullptr) delete mWorld;
+        mWorld = nullptr;
     }
 } // namespace Plutus
 

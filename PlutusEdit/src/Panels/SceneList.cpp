@@ -8,14 +8,50 @@
 
 namespace Plutus
 {
-    void configScene(bool& show) {
+    void configScene(bool& show, Ref<Scene>& scene) {
         ImGui::SetNextWindowSize({ 350, 0 });
         ImGui::BeginDialog("Config Scene");
         {
-            if (ImGui::Button("Click Me")) {
+            ImGui::Text("Box2d Config");
+            ImGui::Separator();
+            if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
+                ImGui::BeginCol("Gravity");
+                vec2f g = scene->getGravity();
+                if (ImGui::Draw2Float("##gravity", g)) {
+                    scene->setGravity(g);
+                }
+
+                ImGui::BeginCol("Time Step Millis");
+                float timeIter = scene->getTimeIterSec();
+                if (ImGui::DragFloat("#timeIter", &timeIter, 0.0001f, 0, 1, "%.5f")) {
+                    scene->setTimeIterSec(timeIter);
+                }
+
+                ImGui::BeginCol("Velocity Iter");
+                int vIter = scene->getVelIter();
+                if (ImGui::DragInt("##viter", &vIter, 1, 1, 20)) {
+                    scene->setVelIter(vIter);
+                }
+                ImGui::BeginCol("Body Iter");
+                int bIter = scene->getBodyIter();
+                if (ImGui::DragInt("##biter", &bIter, 1, 1, 20)) {
+                    scene->setBodyIter(bIter);
+                }
+
+                ImGui::BeginCol("Auto Clear Force");
+                bool clearForce = scene->getAutoClearForce();
+                if (ImGui::Checkbox("##cforce", &clearForce)) {
+                    scene->setAutoClearForce(clearForce);
+                }
+
+                ImGui::EndUIGroup();
             }
         }
-        ImGui::EndDialog(show);
+        ImGui::Separator();
+        if (ImGui::Button("Close##modal-1"))
+            show = false;
+        ImGui::PopStyleColor();
+        ImGui::EndPopup();
     }
 
     void drawEntity(Entity ent)
@@ -99,6 +135,6 @@ namespace Plutus
             openNew = false;
             });
 
-        if (showConfig) configScene(showConfig);
+        if (showConfig) configScene(showConfig, project->mScene);
     }
 } // namespace Plutus

@@ -3,16 +3,19 @@
 #include <box2d/box2d.h>
 #include <Utils/types.h>
 #include <Math/Vectors.h>
+#include <memory>
 
 
 namespace Plutus {
 
 	class PhysicSystem : public ISystem {
 	public:
-		PhysicSystem(Scene* scene, vec2f gravity = { 0.0f, -9.8f });
+		PhysicSystem(Scene* scene);
 
 		void init();
 		void update(float dt);
 		void destroy();
+	private:
+		b2World* mWorld;
 	};
 }

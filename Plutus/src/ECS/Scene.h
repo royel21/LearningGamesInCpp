@@ -4,8 +4,10 @@
 #include <string>
 #include <entt.hpp>
 #include <Utils/types.h>
+#include <Math/Vectors.h>
 
 class b2World;
+class vec2f;
 
 namespace Plutus
 {
@@ -86,18 +88,31 @@ namespace Plutus
 
         void clear() { mRegistry.clear(); }
 
-        void resetWorld();
-        b2World* getWorld() { return mWorld; }
-        void updateWorld();
+        vec2f getGravity() { return mGravity; }
+
+        void setGravity(const vec2f& g) { mGravity = g; }
+
+        float getTimeIterSec() { return mTimeStepInSec; }
+        void setTimeIterSec(float time) { mTimeStepInSec = time; }
+
+        int getVelIter() { return mVelIter; }
+        void setVelIter(int time) { mVelIter = time; }
+
+        int getBodyIter() { return mBodyIter; }
+        void setBodyIter(int time) { mBodyIter = time; }
+
+        bool getAutoClearForce() { return mAutoClearForce; }
+        void setAutoClearForce(bool val) { mAutoClearForce = val; }
 
     private:
         friend class Entity;
         friend class System;
-        int velocityIter = 3;
-        int bodyIter = 6;
-        float timeStepInMillis = 0.01667f;
-        b2World* mWorld;
+        float mTimeStepInSec = 0.01667f;
+        int mVelIter = 3;
+        int mBodyIter = 6;
+        bool mAutoClearForce = true;
         entt::registry mRegistry;
+        vec2f mGravity = { 0.0f, -9.8f };
     };
 
     /**********************Entity definitions***************/

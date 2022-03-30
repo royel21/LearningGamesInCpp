@@ -230,15 +230,15 @@ namespace Plutus
 
         for (auto& shape : mShapes) {
             switch (shape->type) {
-            case PBox: {
+            case BoxShape: {
                 mDebug->drawBox(*(Box2d*)shape);
                 break;
             }
-            case PLine: {
+            case EdgeShape: {
                 mDebug->drawLine(*(Line2d*)shape);
                 break;
             }
-            case PCircle: {
+            case CircleShape: {
                 mDebug->drawCircle(*(Circle2d*)shape);
                 break;
             }

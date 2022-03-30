@@ -37,9 +37,10 @@ namespace Plutus
         }
 
         mSysManager.setScene(Config::get().mProject->mTempScene.get());
-        mSysManager.AddSystem<Plutus::ScriptSystem>(&Render::get().mCamera);
-        mSysManager.AddSystem<Plutus::PhysicSystem>();
-        mSysManager.AddSystem<Plutus::AnimationSystem>();
+        mSysManager.AddSystem<ScriptSystem>(&Render::get().mCamera);
+        mSysManager.AddSystem<PhysicSystem>();
+        mSysManager.AddSystem<AnimationSystem>();
+        mSysManager.AddSystem<DebugSystem>(&Render::get().mCamera);
     }
 
 
@@ -169,7 +170,8 @@ namespace Plutus
 
     }
     void CenterPanel::update(float dt) {
-        mSysManager.update(dt);
+        if (Config::get().state == Running)
+            mSysManager.update(dt);
     }
     void CenterPanel::DrawCenterPanel()
     {

@@ -16,6 +16,8 @@ namespace Plutus
         if (anSys) anSys->init();
         auto renSys = getSystem<RenderSystem>();
         if (renSys) renSys->init();
+        auto debugSys = getSystem<DebugSystem>();
+        if (debugSys) debugSys->init();
     }
 
     void SystemManager::stop()
@@ -35,6 +37,8 @@ namespace Plutus
         if (anSys) anSys->update(dt);
         auto renSys = getSystem<RenderSystem>();
         if (renSys) renSys->update(dt);
+        auto debugSys = getSystem<DebugSystem>();
+        if (debugSys) debugSys->update(dt);
     }
 
     void SystemManager::cleanup()

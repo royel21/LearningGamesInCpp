@@ -43,6 +43,7 @@ namespace Plutus
                 ComponentMenuItem<TileMap>("TileMap");
                 ComponentMenuItem<Animation>("Animation");
                 ComponentMenuItem<Script>("Script");
+                ComponentMenuItem<RigidBody>("RigidBody");
 
                 ImGui::EndPopup();
             }
@@ -53,6 +54,7 @@ namespace Plutus
             if (mEnt.hasComponent<Animation>()) mAnimation.DrawAnimation(&mEnt);
             if (mEnt.hasComponent<TileMap>()) mTileMapPanel.DrawTileMapComponet();
             if (mEnt.hasComponent<Script>()) DrawScript();
+            if (mEnt.hasComponent<RigidBody>()) mRigidBodyTab.draw(&mEnt);
         }
         ImGui::End();
     }
@@ -73,10 +75,10 @@ namespace Plutus
                     trans->y = pos.y;
                 }
                 ImGui::BeginCol("Size");
-                vec2f size = { trans->h, trans->w };
+                vec2f size = { trans->w, trans->h };
                 if (ImGui::Draw2Float("Size##ent-size", size, 1, "W", "H")) {
-                    trans->h = (int)size.x;
-                    trans->w = (int)size.y;
+                    trans->w = (int)size.x;
+                    trans->h = (int)size.y;
                 }
                 ImGui::BeginCol("Rotation");
                 ImGui::DragFloat("#tran-r", &trans->r, 5, 0, 360, "%.0f");
@@ -158,18 +160,17 @@ namespace Plutus
             {
 
                 ImGui::Text("Scripts");
-                ImGui::SameLine();
-                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+                ImGui::Separator();
                 int selected = Utils::getIndex(files, script->mScript);
+
+                if (ImGui::TransparentButton(ICON_FA_TRASH "", true, { 1,0,0,1 }) && selected > -1) {
+                    script->destroy();
+                }
+
                 if (ImGui::ComboBox("##slist", files, selected))
                 {
                     script->setScript(files[selected]);
                 }
-                ImGui::SameLine();
-                if (ImGui::TransparentButton(ICON_FA_TRASH "", true, { 1,0,0,1 }) && selected > -1) {
-                    script->destroy();
-                }
-                ImGui::PopStyleVar();
             }
         }
     }

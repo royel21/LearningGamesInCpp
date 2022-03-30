@@ -105,7 +105,7 @@ namespace Plutus
 
         for (size_t i = 0; i < shapes.size(); i++) {
             auto shapeA = shapes[i];
-            if (shapeA->type & PCircle) {
+            if (shapeA->type & CircleShape) {
                 shapeA->pos.y -= 5;
             }
         }
@@ -113,15 +113,15 @@ namespace Plutus
         for (size_t i = 0; i < shapes.size(); i++) {
             MTV mtvA;
             auto shapeA = shapes[i];
-            bool isCircleA = shapeA->type & PCircle;
-            bool isBoxA = shapeA->type & PBox;
-            bool isLineA = shapeA->type & PLine;
+            bool isCircleA = shapeA->type & CircleShape;
+            bool isBoxA = shapeA->type == BoxShape;
+            bool isLineA = shapeA->type == EdgeShape;
 
             for (size_t x = i + 1; x < shapes.size(); x++) {
                 auto shapeB = shapes[x];
-                bool isCircleB = shapeB->type & PCircle;
-                bool isBoxB = shapeB->type & PBox;
-                bool isLineB = shapeB->type & PLine;
+                bool isCircleB = shapeB->type == CircleShape;
+                bool isBoxB = shapeB->type == BoxShape;
+                bool isLineB = shapeB->type == EdgeShape;
                 MTV mtv;
 
                 if (isCircleA && isLineB) {
@@ -168,15 +168,15 @@ namespace Plutus
     {
         for (auto shape : shapes) {
             switch (shape->type) {
-            case PBox: {
+            case BoxShape: {
                 mDebug->drawBox(*(Box2d*)shape);
                 break;
             }
-            case PLine: {
+            case EdgeShape: {
                 mDebug->drawLine(*(Line2d*)shape);
                 break;
             }
-            case PCircle: {
+            case CircleShape: {
                 mDebug->drawCircle(*(Circle2d*)shape);
                 break;
             }

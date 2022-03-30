@@ -19,16 +19,17 @@ namespace Plutus
     };
 
     struct Fixture {
-        ShapeType type;
+        int type;
 
         vec2f offset;
-        vec2f size;
-        float radius;
-        float friction = 0;
+        vec2f size = { 1,1 };
+        float radius = 1;
+        float friction = 0.3f;
         float density = 1.0f;
         float restitution = 0;
         bool isSensor = false;
-        Fixture(ShapeType _type, vec2f _offset, vec2f _size, float r, float f, float d, float res, bool _isSensor)
+        Fixture(int _type) : type(_type) {};
+        Fixture(int _type, vec2f _offset, vec2f _size, float r, float f, float d, float res, bool _isSensor)
             : type(_type), offset(_offset), size(_size), friction(f), radius(r), density(d), restitution(res), isSensor(_isSensor)
         {
 
@@ -37,7 +38,7 @@ namespace Plutus
 
     class RigidBody {
     public:
-        float mBullet = false;
+        bool mBullet = false;
         bool mFixedRotation = true;
         float linearDamping = 0;
         float gravityScale = 1;
@@ -45,7 +46,7 @@ namespace Plutus
         Entity mEnt;
         vec2f mOffset;
         b2Body* mBody;
-        BodyType mBodyType;
+        BodyType mBodyType = DynamicBody;
         std::vector<Fixture> mFixtures;
 
     public:

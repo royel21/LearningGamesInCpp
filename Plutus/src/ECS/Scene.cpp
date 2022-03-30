@@ -7,12 +7,10 @@ namespace Plutus
 {
     /*******************************     Scene    ************************/
     Scene::Scene() {
-        mWorld = new b2World({ 0, -9.8f });
     }
 
     Scene::~Scene()
     {
-        if (mWorld) delete mWorld;
         mRegistry.clear();
     }
 
@@ -56,14 +54,6 @@ namespace Plutus
         return { ent, this };
     }
 
-    void Scene::updateWorld() {
-        mWorld->Step(timeStepInMillis, velocityIter, bodyIter);
-    }
-
-    void Scene::resetWorld() {
-        delete mWorld;
-        mWorld = new b2World({ 0, -9.8f });
-    }
 
     void Scene::removeEntity(entt::entity ent)
     {
@@ -97,6 +87,7 @@ namespace Plutus
         CopyComponent<Animation>(source, dest);
         CopyComponent<TileMap>(source, dest);
         CopyComponent<Script>(source, dest);
+        CopyComponent<RigidBody>(source, dest);
     }
 
 } // namespace Plutus

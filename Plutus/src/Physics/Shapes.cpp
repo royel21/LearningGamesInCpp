@@ -6,19 +6,19 @@
 namespace Plutus
 {
     void Shape::update() {
-        if (type != PLine)
+        if (type != EdgeShape)
             pos = fromWorld(body->GetPosition());
     }
 
     Line2d::Line2d(float x1, float y1, float x2, float y2, float r) : end(x2, y2) {
         rotation = r;
         pos = { x1, y1 };
-        type = PLine;
+        type = EdgeShape;
     }
 
     Line2d::Line2d(const vec2f& _start, const vec2f& _end, float r) {
         rotation = r;
-        type = PLine;
+        type = EdgeShape;
         pos = _start;
         end = _end;
     }
@@ -45,7 +45,7 @@ namespace Plutus
 
     Box2d::Box2d(float x, float y, float w, float h, float r) : Shape(x, y), size(w, h)
     {
-        type = PBox;
+        type = BoxShape;
         rotation = r;
         half = { w * 0.5f, h * 0.5f };
 
@@ -54,7 +54,7 @@ namespace Plutus
 
     Box2d::Box2d(const vec2f& pos, const vec2f& _size, float r) : Shape(pos), size(_size)
     {
-        type = PBox;
+        type = BoxShape;
         rotation = r;
         half = size * 0.5f;
 
