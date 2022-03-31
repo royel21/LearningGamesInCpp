@@ -128,7 +128,7 @@ namespace Plutus
 
             auto winPos = ImGui::GetContentRegionAvail();
 
-            vec2f newSize(winPos.x, winPos.x / aspectRation);
+            vec2f newSize((int)winPos.x, int(winPos.x / aspectRation));
             if (newSize.y > winPos.y)
             {
                 newSize.y = winPos.y;
@@ -165,9 +165,11 @@ namespace Plutus
         }
         ImGui::PopStyleVar(1);
         ImGui::PopStyleColor(1);
-        SelectEntity();
 
+        if (Config::get().state != Running)
+            SelectEntity();
     }
+
     void CenterPanel::update(float dt) {
         if (Config::get().state == Running)
             mSysManager.update(dt);
@@ -189,6 +191,7 @@ namespace Plutus
                 DrawViewPort();
                 ImGui::EndTabItem();
             }
+
             if (Config::get().state == Editing && ImGui::BeginTabItem("Script Editor")) {
                 editor.Render("TextEditor");
                 isViewPort = false;

@@ -38,7 +38,7 @@ namespace Plutus
     void App::Draw() {
         mMainGui.Begin();
         mCentralPanel.DrawCenterPanel();
-        if (Config::get().state == Editing) {
+        if (Config::get().state != Running) {
             AssetsTab.drawAssets();
             DrawScenes();
             mCompPanel.DrawComponentsPanel();

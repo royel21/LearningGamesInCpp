@@ -28,7 +28,7 @@ inline void setBackgoundColor(float r, float g, float b, float a)
     create a texure with default format view OpenGL genTexture
     @param w width of the texture
     @param h height of the texture
-    @param buff image buffer of byte
+    @param buff image buffer type unsigned char
     @param intFormat internal format default to GL_RGB
     @param format format default to GL_RGB
     @param type defualt to GL_UNSIGNED_BYTE
@@ -36,8 +36,8 @@ inline void setBackgoundColor(float r, float g, float b, float a)
 */
 inline GLuint createTexture(int w, int h, unsigned char* buff, GLuint intFormat = GL_RGB,
     GLuint format = GL_RGB, GLint type = GL_UNSIGNED_BYTE,
-    GLint minFilter = GL_NEAREST,
-    GLint magFilter = GL_NEAREST) {
+    GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST)
+{
 
     GLuint id;
     glGenTextures(1, &id);

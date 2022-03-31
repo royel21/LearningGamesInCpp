@@ -101,8 +101,11 @@ namespace Plutus
 
             }
         }
-        mDebugRender->end();
-        mDebugRender->render();
+
+        if (view.size_hint()) {
+            mDebugRender->end();
+            mDebugRender->render();
+        }
     }
 
     void Render::prepare()

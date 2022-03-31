@@ -226,6 +226,8 @@ namespace Plutus
 		if (isDraw) {
 			mShader.enable();
 			mShader.setUniformMat4("camera", mCamera->getCameraMatrix());
+			// glEnable(GL_LINE_SMOOTH);
+			glEnable(GL_BLEND);
 			glLineWidth(lineWidth);
 			glBindVertexArray(mVao);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);

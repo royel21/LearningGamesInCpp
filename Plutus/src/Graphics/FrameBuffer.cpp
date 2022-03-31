@@ -18,24 +18,20 @@ namespace Plutus
         //bind the buffer for imediate use
         glBindFramebuffer(GL_FRAMEBUFFER, mFbId);
 
-        if (!isForPicking) {
+        if (isForPicking)
+        {
+            mTexId = createTexture(w, h, 0, GL_RGBA32F, GL_RGBA, GL_FLOAT);
+        }
+        else
+        {
             mTexId = createTexture(w, h, 0, GL_RGBA8, GL_RGBA);
             glBindTexture(GL_TEXTURE_2D, mTexId);
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            glGenerateMipmap(GL_TEXTURE_2D);
             // Create render buffer for store the depth info
             glGenRenderbuffers(1, &mRbufferId);
             glBindRenderbuffer(GL_RENDERBUFFER, mRbufferId);
             glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h); // use a single renderbuffer object for both a depth AND stencil buffer.
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mRbufferId);
-        }
-        else {
-            mTexId = createTexture(w, h, 0, GL_RGBA32F, GL_RGBA, GL_FLOAT);
         }
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexId, 0);
