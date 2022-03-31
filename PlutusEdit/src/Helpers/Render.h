@@ -32,6 +32,7 @@ namespace Plutus
 
     private:
         Render() = default;
+        void drawPhysicBodies();
         void prepare();
 
     private:

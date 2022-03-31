@@ -45,6 +45,8 @@ namespace Plutus
         mDebugRender->setCellSize({ 64,64 });
     }
 
+
+
     void Render::draw()
     {
         // auto start = Timer::millis();
@@ -61,8 +63,46 @@ namespace Plutus
         mSpriteBatch.end();
 
         mDebugRender->drawGrid();
+        drawPhysicBodies();
+
         mFrameBuffer.unBind();
-        // printf("time: %llu\n", Timer::millis() - start);
+    }
+
+    void Render::drawPhysicBodies()
+    {
+        auto view = mScene->getRegistry()->view<Transform, RigidBody>();
+        for (auto [e, trans, rbody] : view.each()) {
+
+            for (auto& fixture : rbody.mFixtures) {
+                auto pos = trans.getPosition();//fromWorld(rbody.mBody->GetPosition());
+
+                switch (fixture.type) {
+                case BoxShape: {
+                    vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
+                    if (mCamera.isBoxInView(rect, 200))
+                    {
+                        mDebugRender->drawBox(rect);
+                    }
+                    break;
+                }
+                case EdgeShape: {
+                    mDebugRender->drawLine(pos, fixture.size);
+                    break;
+                }
+                case CircleShape: {
+                    vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
+                    if (mCamera.isBoxInView(rect, 200))
+                    {
+                        mDebugRender->drawCircle(pos + fixture.offset, fixture.radius);
+                    }
+                    break;
+                }
+                }
+
+            }
+        }
+        mDebugRender->end();
+        mDebugRender->render();
     }
 
     void Render::prepare()

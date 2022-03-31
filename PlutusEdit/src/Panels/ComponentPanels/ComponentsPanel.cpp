@@ -112,7 +112,7 @@ namespace Plutus
                     sprite->mColor = color;
                 }
                 ImGui::BeginCol("Scale");
-                ImGui::DragFloat("##sc-spr", &mSpriteScale, 0.01f, 0.2f, 5, "%0.2");
+                ImGui::DragFloat("##sc-spr", &mSpriteScale, 0.01f, 0.2f, 5, "%0.2f");
                 ImGui::BeginCol("Use Coords");
                 ImGui::Checkbox("##spr-usecoords", &mUseCoords);
 

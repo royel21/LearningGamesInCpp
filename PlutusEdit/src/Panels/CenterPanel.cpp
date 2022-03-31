@@ -40,7 +40,6 @@ namespace Plutus
         mSysManager.AddSystem<ScriptSystem>(&Render::get().mCamera);
         mSysManager.AddSystem<PhysicSystem>();
         mSysManager.AddSystem<AnimationSystem>();
-        mSysManager.AddSystem<DebugSystem>(&Render::get().mCamera);
     }
 
 
@@ -173,6 +172,7 @@ namespace Plutus
         if (Config::get().state == Running)
             mSysManager.update(dt);
     }
+
     void CenterPanel::DrawCenterPanel()
     {
 

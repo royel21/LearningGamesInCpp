@@ -16,6 +16,6 @@ namespace Plutus {
 		void update(float dt);
 		void destroy();
 	private:
-		b2World* mWorld;
+		b2World* mWorld = nullptr;
 	};
 }
