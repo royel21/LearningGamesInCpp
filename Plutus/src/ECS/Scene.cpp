@@ -16,14 +16,12 @@ namespace Plutus
 
     const std::string Entity::getName()
     {
-        auto tag = getComponent<Tag>();
-        return tag->Name;
+        return getComponent<Tag>()->Name;
     }
 
     void Entity::setName(const std::string& name)
     {
-        auto tag = getComponent<Tag>();
-        tag->Name = name;
+        getComponent<Tag>()->Name = name;
     }
 
     Entity Scene::createEntity(const std::string& name)
@@ -76,18 +74,18 @@ namespace Plutus
 
     Entity Scene::CreateCopy(Entity& ent) {
         Entity newEnt = createEntity(ent.getName() + " copy");
-        CopyEntity(ent, newEnt);
+        CopyComponents<Transform, Sprite, Sprite, Animation, TileMap, Script, RigidBody>(ent, newEnt);
         return newEnt;
     }
 
     void CopyEntity(Entity& source, Entity& dest) {
 
-        CopyComponent<Transform>(source, dest);
-        CopyComponent<Sprite>(source, dest);
-        CopyComponent<Animation>(source, dest);
-        CopyComponent<TileMap>(source, dest);
-        CopyComponent<Script>(source, dest);
-        CopyComponent<RigidBody>(source, dest);
+        // CopyComponent<Transform, Sprite, Sprite, Animation, TileMap, Script, RigidBody>(source, dest);
+        // CopyComponent<Sprite>(source, dest);
+        // CopyComponent<Animation>(source, dest);
+        // CopyComponent<TileMap>(source, dest);
+        // CopyComponent<Script>(source, dest);
+        // CopyComponent<RigidBody>(source, dest);
     }
 
 } // namespace Plutus

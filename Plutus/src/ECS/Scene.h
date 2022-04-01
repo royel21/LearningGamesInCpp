@@ -152,5 +152,10 @@ namespace Plutus
         }
     }
 
+    template<typename ...Component>
+    void CopyComponents(Entity& ent1, Entity& ent2) {
+        (CopyComponent<Component>(ent1, ent2), ...);
+    }
+
     void CopyEntity(Entity& source, Entity& dest);
 } // namespace Plutus
