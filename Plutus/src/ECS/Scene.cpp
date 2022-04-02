@@ -72,20 +72,21 @@ namespace Plutus
             });
     }
 
+
     Entity Scene::CreateCopy(Entity& ent) {
         Entity newEnt = createEntity(ent.getName() + " copy");
-        CopyComponents<Transform, Sprite, Sprite, Animation, TileMap, Script, RigidBody>(ent, newEnt);
+        CopyEntity(ent, newEnt);
         return newEnt;
     }
 
     void CopyEntity(Entity& source, Entity& dest) {
 
-        // CopyComponent<Transform, Sprite, Sprite, Animation, TileMap, Script, RigidBody>(source, dest);
-        // CopyComponent<Sprite>(source, dest);
-        // CopyComponent<Animation>(source, dest);
-        // CopyComponent<TileMap>(source, dest);
-        // CopyComponent<Script>(source, dest);
-        // CopyComponent<RigidBody>(source, dest);
+        CopyComponent<Transform>(source, dest);
+        CopyComponent<Sprite>(source, dest);
+        CopyComponent<Animation>(source, dest);
+        CopyComponent<TileMap>(source, dest);
+        CopyComponent<Script>(source, dest);
+        CopyComponent<RigidBody>(source, dest);
     }
 
 } // namespace Plutus
