@@ -13,7 +13,6 @@ namespace Plutus
 
         auto view = mScene->getRegistry()->view<Transform, RigidBody>();
         auto size = view.size_hint();
-        printf("size: %i", size);
         for (auto [ent, trans, rbody] : view.each()) {
             Entity Ent = { ent, mScene };
 
