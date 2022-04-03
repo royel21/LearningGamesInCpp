@@ -3,91 +3,51 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(game CXX)
+project(game C CXX)
 
-if(CMAKE_SYSTEM_NAME STREQUAL Emscripten)
-  set(CMAKE_EXECUTABLE_SUFFIX ".html")
-endif()
-# Add source files
-file(GLOB_RECURSE SRC_FILES src/*.c src/*.cpp)
-	
-# Add header files
-file(GLOB_RECURSE HEADER_FILES src/*.h src/*.hpp)
+file(GLOB_RECURSE GAME_SRC Projects/game/*.h Projects/game/*.cpp)
 
-if(MSVC)
-  add_compile_options ("/DP_DEBUG;/DDEBUG;/D_WIN32")
-  SET( CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS}
-  "/NODEFAULTLIBS:LIBCMT" )
-  SET( CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS}
-  "/NODEFAULTLIBS:MSVCRT" )
-  SET( CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS}
-  "/NODEFAULTLIBS:MSVCPRTD" )
-else()
-  add_compile_options ("-DP_DEBUG;-DDEBUG")
-endif()
-
-set(LIB_DIR Plutus/libs)
-# add the path for the project to be able find the .h files
-include_directories(Plutus/src)
-include_directories(${LIB_DIR}/glad/include)
-include_directories(${LIB_DIR}/glm)
-include_directories(${LIB_DIR}/SDL/include)
-include_directories(${LIB_DIR}/freetype/include)
-include_directories(${LIB_DIR}/Entt)
-include_directories(${LIB_DIR}/sol3/include)
-include_directories(${LIB_DIR}/lua/src)
-include_directories(${LIB_DIR}/spdlog/include)
-include_directories(${LIB_DIR}/rapidjson/include)
-include_directories(${LIB_DIR}/box2d/include)
-include_directories(${LIB_DIR}/freetype/include)
-include_directories(${LIB_DIR}/stb)
-
-#add sub project
 add_subdirectory(Plutus)
 
-find_package(OpenGL REQUIRED)
+# Add Game Target
+add_executable(game ${GAME_SRC})
+target_link_libraries(game Plutus)
 
-add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES})
+# ------------------------Plutus Editor-----------------------------------#
+file(GLOB_RECURSE PE_SRC PlutusEdit/src/*.h PlutusEdit/src/*.cpp)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC Plutus)
+set(IMGUI_DIR Projects/PlutusEdit/libs/imgui/src)
 
-if(CMAKE_SYSTEM_NAME STREQUAL Emscripten)
-  target_link_options(${PROJECT_NAME} --shell-file webbuild/game.html)
-  target_link_options(${PROJECT_NAME} -o1)
-endif()
+file(GLOB_RECURSE IMGUI_SRC 
+    ${IMGUI_DIR}/*.c 
+    ${IMGUI_DIR}/*.cpp 
+    ${IMGUI_DIR}/*.h 
+    ${IMGUI_DIR}/*.hpp
+)
 
-if(CMAKE_SYSTEM_NAME STREQUAL Windows)
+# include Plutus Edit Headers
+include_directories(PlutusEdit/src)
+include_directories(${IMGUI_DIR})
 
-  # Add source files
-  file(GLOB_RECURSE BOX2D_SRC box2dtest/*.cpp box2dtest/*.h)
+# Add PlutusEdit Target
+add_executable("PlutusEdit" ${PE_SRC} ${IMGUI_SRC})
+target_link_libraries("PlutusEdit" PUBLIC Plutus)
+# ***************************End Plutus Editor********************************#
 
-  add_executable(box2dtest ${BOX2D_SRC})
-  target_link_libraries(box2dtest PUBLIC Plutus)
 
-  # Test Project
-  file(GLOB TEST_SRC Test/*.cpp Test/*.h)
+#**************Playground***********************************#
+# play ground
+file(GLOB_RECURSE P_Ground Projects/playground/*.h Projects/playground/*.cpp)
 
-  add_executable("Test" ${TEST_SRC})
-  target_link_libraries(Test PUBLIC Plutus)
+add_executable("playground" ${P_Ground})
+target_link_libraries("playground" PUBLIC Plutus)
 
-  include_directories(PlutusEdit/libs/imgui/src)
-  include_directories(Plutus/libs/glfw/include)
-  # Add source files
-  file(GLOB_RECURSE P_EDITOR PlutusEdit/src/*.h PlutusEdit/src/*.cpp)
+#***************TestingBox2d*************************
 
-  include_directories(PlutusEdit/src)
+file(GLOB TEST_SRC Projects/TestingBox2d/*.cpp Projects/TestingBox2d/*.h)
 
-  add_subdirectory(PlutusEdit/libs/imgui)
+add_executable(TestingBox2d ${TEST_SRC})
+target_link_libraries(TestingBox2d PUBLIC Plutus)
 
-  add_executable("PlutusEdit" ${P_EDITOR})
-  target_link_libraries("PlutusEdit" PUBLIC Plutus imgui)
-  
-  # play ground
-  file(GLOB_RECURSE P_Ground playground/*.h playground/*.cpp)
-
-  add_executable("playground" ${P_Ground})
-  target_link_libraries("playground" PUBLIC Plutus)
-
-  add_executable("SingleTest" test.cpp)
-
-endif()
+#*************Single Test**********************
+add_executable("SingleTest" Projects/SingleTest.cpp)

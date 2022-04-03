@@ -1,5 +1,6 @@
 #include "FileIO.h"
-#include "cstdio"
+#include <cstdio>
+#include <filesystem>
 
 #pragma warning(disable : 4996)
 
@@ -37,5 +38,10 @@ namespace Plutus
     {
         auto data = readFile(path, "rb");
         return data.size() ? std::string(reinterpret_cast<char*>(data.data()), data.size()) : "";
+    }
+
+    bool exists(const char* path)
+    {
+        return std::filesystem::exists(path);
     }
 }

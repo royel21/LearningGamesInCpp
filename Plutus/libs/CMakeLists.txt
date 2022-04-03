@@ -1,0 +1,8 @@
+add_subdirectory(box2d)
+add_subdirectory(freetype)
+add_subdirectory(glad)
+add_subdirectory(glfw)
+add_subdirectory(lua)
+add_subdirectory(rapidjson)
+add_subdirectory(sol3)
+add_subdirectory(stb)

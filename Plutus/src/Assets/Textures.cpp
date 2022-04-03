@@ -133,23 +133,24 @@ namespace Plutus
 
         int BPP;
         uint8_t* out = stbi_load(path.c_str(), &texture.width, &texture.height, &BPP, ch);
+        if (texture.width && texture.height) {
+            auto format = ch == 3 ? GL_RGB8 : GL_RGBA8;
+            auto type = ch == 3 ? GL_RGB : GL_RGBA;
 
-        auto format = ch == 3 ? GL_RGB8 : GL_RGBA8;
-        auto type = ch == 3 ? GL_RGB : GL_RGBA;
+            texture.id = createTexture(texture.width, texture.height, out, format, type, GL_UNSIGNED_BYTE, minFilter, magFilter);
 
-        texture.id = createTexture(texture.width, texture.height, out, format, type, GL_UNSIGNED_BYTE, minFilter, magFilter);
-
-        glGenerateMipmap(GL_TEXTURE_2D);
-        //unlink the texture
-        glBindTexture(GL_TEXTURE_2D, 0);
-        //delete the image buffer from memory
-        if (out)
-        {
-            stbi_image_free(out);
-        }
-        else
-        {
-            std::printf("stbi fail: %s - %s\n", stbi_failure_reason(), path.c_str());
+            glGenerateMipmap(GL_TEXTURE_2D);
+            //unlink the texture
+            glBindTexture(GL_TEXTURE_2D, 0);
+            //delete the image buffer from memory
+            if (out)
+            {
+                stbi_image_free(out);
+            }
+            else
+            {
+                std::printf("stbi fail: %s - %s\n", stbi_failure_reason(), path.c_str());
+            }
         }
         return texture;
     }

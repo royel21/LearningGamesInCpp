@@ -38,7 +38,6 @@ inline GLuint createTexture(int w, int h, unsigned char* buff, GLuint intFormat 
     GLuint format = GL_RGB, GLint type = GL_UNSIGNED_BYTE,
     GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST)
 {
-
     GLuint id;
     glGenTextures(1, &id);
     //link the image to a texture in the gpu texture array

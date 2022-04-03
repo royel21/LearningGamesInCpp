@@ -4,7 +4,8 @@ project(glad C CXX)
 
 file(GLOB_RECURSE GLAD_SRC src/*.c src/*.cpp)
 	
-# Add header files
-file(GLOB_RECURSE GLAD_SRC_INC include/*.h include/*.hpp)
+# # Add header files
+# file(GLOB_RECURSE GLAD_SRC_INC include/*.h include/*.hpp)
+include_directories(include)
 
 add_library(glad STATIC ${GLAD_SRC} ${GLAD_SRC_INC})

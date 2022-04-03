@@ -3,17 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "dependencies": {
-    "fs-extra": "^10.0.0",
-    "http-server": "^13.0.0"
-  },
   "scripts": {
-    "start": "http-server ./webbuild/release",
-    "lib": "cd Plutus/build&&emmake make",
-    "plutus": "cd Plutus/pbuild&&emmake make",
-    "game": "cd webbuild&&emmake make",
-    "clean-libs": "rm -rf Plutus/build/*.o",
-    "plutus-libs": "rm -rf Plutus/pbuild/*.o",
-    "physics": "http-server ./JS"
+    "start": "emrun web/release/index.html",
+    "lib": "cd web/build_libs&&emmake make",
+    "plutus": "cd web/build_plutus&&emmake make",
+    "minify scenes": "node minify.js",
+    "game": "cd web&&emmake make",
+    "clean-libs": "cd web/build_libs&&emmake make clean",
+    "plutus-libs": "cd web/build_plutus&&emmake make clean"
   }
 }

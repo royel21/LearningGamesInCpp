@@ -33,7 +33,6 @@ class B2_API b2PolygonShape : public b2Shape
 {
 public:
 	b2PolygonShape();
-
 	/// Implement b2Shape.
 	b2Shape* Clone(b2BlockAllocator* allocator) const override;
 
@@ -66,7 +65,7 @@ public:
 	/// @note because the polygon is solid, rays that start inside do not hit because the normal is
 	/// not defined.
 	bool RayCast(b2RayCastOutput* output, const b2RayCastInput& input,
-					const b2Transform& transform, int32 childIndex) const override;
+		const b2Transform& transform, int32 childIndex) const override;
 
 	/// @see b2Shape::ComputeAABB
 	void ComputeAABB(b2AABB* aabb, const b2Transform& transform, int32 childIndex) const override;
