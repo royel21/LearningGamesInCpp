@@ -20,6 +20,7 @@
 #include <Systems/Systems.h>
 
 #include <Assets/SoundEngine.h>
+#include <Log/Logger.h>
 
 GameScreen::GameScreen()
 {
@@ -74,7 +75,7 @@ void GameScreen::onEntry()
         pbody->addCircle({ 32, 24 }, 5, 1);
     }
 
-    printf("player init\n");
+    Logger::info("player init");
 
     auto ground = mScene->getEntityByName("Floor");
     if (ground) {
@@ -84,7 +85,7 @@ void GameScreen::onEntry()
         body->addBox({ 0, 0 }, { (float)trans->w, (float)trans->h });
     }
 
-    printf("ground init\n");
+    Logger::info("ground init");
     mSystemManager.start();
 }
 

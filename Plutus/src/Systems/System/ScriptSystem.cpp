@@ -39,7 +39,6 @@ namespace Plutus
         mGlobalLua.set("input", Input::get());
         mGlobalLua.set("scene", scene);
         mGlobalLua.set("SoundEngine", &SoundEngine);
-
         mGlobalLua.set("getMillis", &Timer::millis);
         /*****************************Register EntityManager**********************************************/
         auto scene_table = mGlobalLua.new_usertype<Scene>("Scene");
