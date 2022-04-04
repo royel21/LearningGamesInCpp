@@ -3,7 +3,7 @@
 
 #include <Core/Window.h>
 #include <Time/Limiter.h>
-#include <Graphics/Camera2d.h>
+#include <Graphics/Camera2D.h>
 #include <Systems/SystemManager.h>
 
 #include <ECS/Scene.h>

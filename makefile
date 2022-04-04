@@ -35,7 +35,7 @@ INCLUDE = -I${LIBS}/box2d/include \
 	--memory-init-file 0 -O3 \
 	-std=c++1z
 	
-OUTPUT_FLAG =  --shell-file web/game.html --preload-file ./assets -s WASM=1 -s ALLOW_MEMORY_GROWTH=1
+OUTPUT_FLAG =  --shell-file web/game.html --preload-file ./web/assets -s WASM=1 -s ALLOW_MEMORY_GROWTH=1
 
 CFLAGS = -s USE_WEBGL2=1 -s USE_GLFW=3 -lopenal -s WASM=1 -std=c++1z
 

@@ -5,11 +5,12 @@
   "license": "MIT",
   "scripts": {
     "start": "emrun web/release/index.html",
-    "lib": "cd web&&emmake make Libs",
+    "build game": "node checkassets.js&&emmake make",
     "plutus": "cd web&&emmake make Plutus",
+    "lib": "cd web&&emmake make Libs",
     "minify scenes": "node minify.js",
-    "build game": "emmake make",
-    "clean-libs": "cd web&&emmake make clean-lib",
-    "plutus-libs": "cd web&&emmake make clean-plutus"
+    "clean-libs": "node clean libs",
+    "plutus-libs": "node clean plutus",
+    "syncassets": "node checkassets.js"
   }
 }

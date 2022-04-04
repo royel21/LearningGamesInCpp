@@ -3,6 +3,11 @@
 #include <Input/Input.h>
 #include <Assets/AssetManager.h>
 
+#ifdef __EMSCRIPTEN__
+#include <functional>
+#include <emscripten.h>
+#endif
+
 namespace Plutus
 {
 #ifdef __EMSCRIPTEN__
@@ -43,7 +48,7 @@ namespace Plutus
             mLimiter.end();
 
             if (mScreenList.size()) swapScreen();
-        }
+        };
 #ifdef __EMSCRIPTEN__
         emscripten_set_main_loop(main_loop, 0, true);
 #endif

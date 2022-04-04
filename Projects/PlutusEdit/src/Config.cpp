@@ -13,7 +13,7 @@
 
 #include <Utils/Utils.h>
 #include <Assets/AssetManager.h>
-#include <Platforms/Windows/FileUtils.h>
+#include <Windows/FileUtils.h>
 
 
 namespace Plutus

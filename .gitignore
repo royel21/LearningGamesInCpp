@@ -6,6 +6,7 @@ node_modules/
 /assets/sounds/
 web/release/
 web/obj/
+web/assets/
 Plutus/libs/openal-soft/
 OpenAL32.dll
 out/**
