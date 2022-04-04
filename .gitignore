@@ -10,7 +10,6 @@ web/assets/
 Plutus/libs/openal-soft/
 OpenAL32.dll
 out/**
-.vs
 
 #files
 *.o

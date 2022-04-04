@@ -14,7 +14,8 @@ add_executable(game ${GAME_SRC})
 target_link_libraries(game Plutus)
 
 # ------------------------Plutus Editor-----------------------------------#
-file(GLOB_RECURSE PE_SRC PlutusEdit/src/*.h PlutusEdit/src/*.cpp)
+set(PE_DIR Projects/PlutusEdit/src)
+file(GLOB_RECURSE PE_SRC ${PE_DIR}/*.h ${PE_DIR}/*.cpp)
 
 set(IMGUI_DIR Projects/PlutusEdit/libs/imgui/src)
 
@@ -26,7 +27,7 @@ file(GLOB_RECURSE IMGUI_SRC
 )
 
 # include Plutus Edit Headers
-include_directories(PlutusEdit/src)
+include_directories(${PE_DIR})
 include_directories(${IMGUI_DIR})
 
 # Add PlutusEdit Target

@@ -11,6 +11,7 @@
     "minify scenes": "node minify.js",
     "clean-libs": "node clean libs",
     "plutus-libs": "node clean plutus",
+    "all": "node clean",
     "syncassets": "node checkassets.js"
   }
 }

@@ -1,7 +1,7 @@
 const fs = require("fs-extra");
 const path = require("path");
 
-const toClean = process.argv[2];
+const toClean = process.argv[2] || "";
 
 const capitalize = (str) => {
   if (str[0]) {
@@ -11,14 +11,15 @@ const capitalize = (str) => {
   return "";
 };
 
-if (["libs", "plutus"].includes(toClean)) {
-  let pdir = "./web/obj/" + toClean;
-
+let pdir = "./web/obj/" + toClean;
+if (fs.existsSync(pdir)) {
   let files = fs.readdirSync(pdir);
 
   files.forEach((f) => {
-    fs.removeSync(path.join(pdir, f));
-    console.log(pdir, f);
+    if (f.split(".").length > 1) {
+      fs.removeSync(path.join(pdir, f));
+      console.log(pdir, f);
+    }
   });
 
   let PlutusO = `./web/obj/${capitalize(toClean)}.o`;
