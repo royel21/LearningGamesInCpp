@@ -1,38 +1,27 @@
-#ifndef _LOGGER_H
-#define _LOGGER_H
+#pragma once
+#include <iostream>
 
-#include <memory>
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
+#define Print std::printf
 
-namespace Plutus
-{
+std::string getFmt(const char* level, const char* fmt);
+int valid(const char* str, int c);
 
-	class Logger
-	{
-	public:
-		static void Init();
+struct Logger {
+    template<class... Args>
+    static void error(const char* fmt, Args... args) {
+        if (!valid(fmt, sizeof...(Args))) return;
+        Print(getFmt("91m[ERROR]", fmt).c_str(), args...);
+    }
 
-		inline static std::shared_ptr<spdlog::logger> &GetCoreLogger() { return s_CoreLogger; }
-		inline static std::shared_ptr<spdlog::logger> &GetClientLogger() { return s_ClientLogger; }
+    template<class... Args>
+    static void warn(const char* fmt, Args... args) {
+        if (!valid(fmt, sizeof...(Args))) return;
+        Print(getFmt("96m[WARN]", fmt).c_str(), args...);
+    }
 
-	private:
-		static std::shared_ptr<spdlog::logger> s_CoreLogger;
-		static std::shared_ptr<spdlog::logger> s_ClientLogger;
-	};
-
-} // namespace Plutus
-
-#define LOG_CORE_T(...) ::Plutus::Logger::GetCoreLogger()->trace(__VA_ARGS__)
-#define LOG_CORE_E(...) ::Plutus::Logger::GetCoreLogger()->error(__VA_ARGS__)
-#define LOG_CORE_I(...) ::Plutus::Logger::GetCoreLogger()->info(__VA_ARGS__)
-#define LOG_CORE_W(...) ::Plutus::Logger::GetCoreLogger()->warn(__VA_ARGS__)
-#define LOG_CORE_F(...) ::Plutus::Logger::GetCoreLogger()->fatal(__VA_ARGS__)
-
-#define LOG_T(...) ::Plutus::Logger::GetClientLogger()->trace(__VA_ARGS__)
-#define LOG_E(...) ::Plutus::Logger::GetClientLogger()->error(__VA_ARGS__)
-#define LOG_I(...) ::Plutus::Logger::GetClientLogger()->info(__VA_ARGS__)
-#define LOG_W(...) ::Plutus::Logger::GetClientLogger()->warn(__VA_ARGS__)
-#define LOG_F(...) ::Plutus::Logger::GetClientLogger()->fatal(__VA_ARGS__)
-
-#endif
+    template<class... Args>
+    static void info(const char* fmt, Args... args) {
+        if (!valid(fmt, sizeof...(Args))) return;
+        Print(getFmt("93m[INFO]", fmt).c_str(), args...);
+    }
+};

@@ -44,5 +44,4 @@ target_include_directories(Plutus
     PUBLIC libs/rapidjson/include
     PUBLIC libs/glfw/include
     PUBLIC libs/freetype/include
-    PUBLIC libs/spdlog/include
 )

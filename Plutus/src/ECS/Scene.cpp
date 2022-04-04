@@ -59,7 +59,7 @@ namespace Plutus
     }
 
     bool Scene::isValid(Entity ent) {
-        return mRegistry.valid(ent.mId);
+        return mRegistry.valid(ent);
     }
 
     void Scene::copyScene(Scene* scene) {

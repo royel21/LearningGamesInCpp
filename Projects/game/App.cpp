@@ -18,7 +18,6 @@ void App::onInit()
 void App::onReisze(int width, int height)
 {
     glViewport(0, 0, width, height);
-    printf("Resize\n");
 }
 
 void App::onExit()

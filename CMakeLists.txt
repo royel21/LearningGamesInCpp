@@ -52,3 +52,4 @@ target_link_libraries(TestingBox2d PUBLIC Plutus)
 
 #*************Single Test**********************
 add_executable("SingleTest" Projects/SingleTest.cpp)
+target_link_libraries(SingleTest PUBLIC Plutus)

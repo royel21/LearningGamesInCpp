@@ -1,20 +1,23 @@
 #include "Logger.h"
 
-namespace Plutus
-{
+#include <sstream>
 
-	std::shared_ptr<spdlog::logger> Logger::s_CoreLogger;
-	std::shared_ptr<spdlog::logger> Logger::s_ClientLogger;
+std::stringstream ss;
 
-	void Logger::Init()
-	{
+std::string getFmt(const char* level, const char* fmt) {
+    ss.str("");
+    ss << "\033[0;" << level << "-> \033[0m" << fmt << "\n";
+    return ss.str();
+}
 
-		spdlog::set_pattern("%^[%T] %n: %v%$");
+int valid(const char* str, int c) {
+    int count = 0;
+    while (*str++)
+        if (*str == '%') count++;
 
-		s_CoreLogger = spdlog::stdout_color_mt("Plutus");
-		s_CoreLogger->set_level(spdlog::level::trace);
-
-		s_ClientLogger = spdlog::stdout_color_mt("APP");
-		s_ClientLogger->set_level(spdlog::level::trace);
-	}
+    if (count > c) {
+        Print("\033[0;91mParams Error Args: %i Params: %i\n\033[0m", c, count);
+        return false;
+    }
+    return true;
 }
