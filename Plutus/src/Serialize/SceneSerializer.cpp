@@ -4,23 +4,39 @@
 
 #include <ECS/Scene.h>
 #include <ECS/Components.h>
-#include <Assets/AssetManager.h>
+#include <Assets/temp/Assets.h>
 
 namespace Plutus
 {
 
     void Textures_JSON(Serializer& ser)
     {
-        ser.StartArr("textures");
-        for (auto tile : AssetManager::get()->mTextures.mTileSets)
+        ser.StartArr("fonts");
+        for (auto tile : *AssetManager2::get()->getAssets<Font>())
         {
+            auto tex = static_cast<Font*>(tile.second);
             ser.StartObj();
             {
                 ser.addString("id", tile.first);
-                ser.addString("path", tile.second.path);
-                ser.addInt("columns", tile.second.columns);
-                ser.addInt("width", tile.second.tileWidth);
-                ser.addInt("height", tile.second.tileHeight);
+                ser.addInt("type", tex->mType);
+                ser.addString("path", tex->mPath);
+            }
+            ser.EndObj();
+        }
+        ser.EndArr();
+
+        ser.StartArr("textures");
+        for (auto tile : *AssetManager2::get()->getAssets<Texture2>())
+        {
+            auto tex = static_cast<Texture2*>(tile.second);
+            ser.StartObj();
+            {
+                ser.addString("id", tile.first);
+                ser.addInt("type", tex->mType);
+                ser.addString("path", tex->mPath);
+                ser.addInt("columns", tex->mColumns);
+                ser.addInt("width", tex->mTileWidth);
+                ser.addInt("height", tex->mTileHeight);
             }
             ser.EndObj();
         }

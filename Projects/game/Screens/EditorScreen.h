@@ -8,7 +8,7 @@
 #include <Graphics/SpriteBatch2D.h>
 #include <Graphics/DebugRenderer.h>
 
-#include <Assets/AssetManager.h>
+#include <Assets/temp/Assets.h>
 
 class EditorScreen : public Plutus::IGameScreen
 {
@@ -31,7 +31,7 @@ public:
     void onScreenResize(int w, int h) override;
 
 private:
-    Plutus::AssetManager* mAssets;
+    Plutus::AssetManager2* mAssets;
     Plutus::DebugRender* mDebug;
     Plutus::FrameBuffer mFB;
 

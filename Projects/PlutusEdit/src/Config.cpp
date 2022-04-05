@@ -12,7 +12,7 @@
 #include <Serialize/SceneSerializer.h>
 
 #include <Utils/Utils.h>
-#include <Assets/AssetManager.h>
+#include <Assets/temp/AssetManager.h>
 #include <Platforms/Windows/FileUtils.h>
 
 
@@ -37,7 +37,7 @@ namespace Plutus
 
                 mEnt = {};
                 mScene->clear();
-                AssetManager::get()->clearData();
+                AssetManager2::get()->destroy();
             }
         }
     }
@@ -50,7 +50,7 @@ namespace Plutus
             auto newScene = "assets/scenes/" + name;
             mEnt = {};
             mScene->clear();
-            AssetManager::get()->clearData();
+            AssetManager2::get()->destroy();
             if (SceneLoader::loadFromJson(newScene.c_str(), mScene.get())) {
                 mScenes[name] = newScene;
                 mOpenScene = name;
@@ -66,7 +66,7 @@ namespace Plutus
 
             mEnt = {};
             mScene->clear();
-            AssetManager::get()->clearData();
+            AssetManager2::get()->destroy();
             if (SceneLoader::loadFromJson(path.c_str(), mScene.get())) {
                 found->second = path;
                 std::replace(found->second.begin(), found->second.end(), '\\', '/');

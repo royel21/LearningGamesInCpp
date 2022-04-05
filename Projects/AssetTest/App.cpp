@@ -18,6 +18,8 @@ namespace Plutus
         manager->addAsset<Font>("Arial", "assets/fonts/arial.ttf", 64);
         manager->addAsset<Sound>("BG", "assets/sounds/XYZ2.ogg");
 
+        // Logger::info(typeid(sound).name());
+
         setBackgoundColor(1, 0.9f, 0.4f);
     }
 

@@ -10,7 +10,6 @@ namespace Plutus
 
     struct Asset
     {
-    public:
         std::string mPath;
         int mType;
 

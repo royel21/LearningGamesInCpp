@@ -1,6 +1,6 @@
 #include "TileMapComponent.h"
 #include <algorithm>
-#include <Assets/AssetManager.h>
+#include <Assets/temp/Assets.h>
 
 namespace Plutus
 {
@@ -30,9 +30,10 @@ namespace Plutus
         }
     }
 
-    Texture* TileMapComponent::getTexture(int id) {
+    Texture2* TileMapComponent::getTexture(int id) {
         auto it = mTextures.find(id);
-        return  AssetManager::get()->mTextures.getTexture(it != mTextures.end() ? it->second : "");
+        auto texId = it != mTextures.end() ? it->second : "";
+        return  AssetManager2::get()->getAsset<Texture2>(texId);
     }
 
     void TileMapComponent::addTile(Tile& tile)

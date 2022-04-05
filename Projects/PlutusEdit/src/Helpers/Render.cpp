@@ -5,7 +5,7 @@
 #include <ECS/Components.h>
 #include <Graphics/DebugRenderer.h>
 
-#include <Assets/AssetManager.h>
+#include <Assets/temp/Assets.h>
 
 #include <Time/Timer.h>
 
@@ -142,7 +142,7 @@ namespace Plutus
                     {
                         auto tex = tilemap.getTexture(tile.texture);
                         if (tex) {
-                            mRenderables[i++] = { tex->texId, rect, tex->getUV(tile.texcoord),
+                            mRenderables[i++] = { tex->mTexId, rect, tex->getUV(tile.texcoord),
                                 { tile.color }, tile.rotate, tile.flipX, tile.flipY, (int)entt::to_integral(ent), tilemap.mLayer, false };
                         }
                     }
@@ -156,7 +156,7 @@ namespace Plutus
             auto rect = trans.getRect();
             if (mCamera.isBoxInView(rect, 200))
             {
-                auto texId = AssetManager::get()->getTexId(sprite.mTextureId);
+                auto texId = AssetManager2::get()->getAsset<Texture2>(sprite.mTextureId)->mTexId;
                 mRenderables[i++] = { texId, rect, sprite.mUVCoord, sprite.mColor,
                     trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
             }

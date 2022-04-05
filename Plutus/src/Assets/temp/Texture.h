@@ -34,8 +34,9 @@ namespace Plutus
 
         void destroy() override;
 
-    private:
         void calculateUV();
+
+    private:
         void loadTexture(GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
 
     public:

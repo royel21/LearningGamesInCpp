@@ -7,7 +7,7 @@
 
 namespace Plutus
 {
-    struct Texture;
+    struct Texture2;
     struct TileMapComponent;
 
     struct Tile
@@ -66,7 +66,7 @@ namespace Plutus
         void addTexture(int id, const std::string& texture);
         void removeTexture(int index);
 
-        Texture* getTexture(int id);
+        Texture2* getTexture(int id);
 
         void addTile(Tile& tile);
         Tile* getTile(const vec2i& mCoords);

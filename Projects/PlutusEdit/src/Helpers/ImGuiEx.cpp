@@ -121,7 +121,7 @@ namespace ImGui {
         return isSelected;
     }
 
-    bool Texture(Plutus::Texture* tileset, float scale, std::vector<Plutus::vec3i>& selected)
+    bool Texture(Plutus::Texture2* tileset, float scale, std::vector<Plutus::vec3i>& selected)
     {
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
         ImGui::BeginChild("##texture-map", { 0,0 }, true, ImGuiWindowFlags_HorizontalScrollbar);
@@ -132,22 +132,22 @@ namespace ImGui {
 
         ImVec2 cvPos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
         ImVec2 cv_destStart(cvPos.x, cvPos.y);
-        const int w = tileset->texWidth;
-        const int h = tileset->texHeight;
+        const int w = tileset->mWidth;
+        const int h = tileset->mHeight;
 
         ImVec2 cvDestEnd(cvPos.x + w * scale, cvPos.y + h * scale);
-        ImGui::Image((void*)tileset->texId, ImVec2(w * scale, h * scale));
+        ImGui::Image((void*)tileset->mTexId, ImVec2(w * scale, h * scale));
         {
             auto color = IM_COL32(255, 255, 255, 100);
-            if (tileset->texId)
+            if (tileset->mTexId)
             {
                 drawList->AddRect(cvPos, cvDestEnd, color);
             }
 
-            if (tileset->tileWidth && tileset->tileHeight)
+            if (tileset->mTileWidth && tileset->mTileHeight)
             {
-                float tileWidth = tileset->tileWidth * scale;
-                float tileHeight = tileset->tileHeight * scale;
+                float tileWidth = tileset->mTileWidth * scale;
+                float tileHeight = tileset->mTileHeight * scale;
 
                 float textureHeight = h * scale;
                 float textureWidth = w * scale;
@@ -379,11 +379,11 @@ namespace ImGui {
         return false;
     }
 
-    void DrawTexCoords(Plutus::Texture* tileset, Plutus::vec4f& coords) {
+    void DrawTexCoords(Plutus::Texture2* tileset, Plutus::vec4f& coords) {
         auto mInput = Plutus::Input::get();
-        const int w = tileset->texWidth;
-        const int h = tileset->texHeight;
-        uint32_t id = tileset->texId;
+        const int w = tileset->mWidth;
+        const int h = tileset->mHeight;
+        uint32_t id = tileset->mTexId;
 
         static float scale = 1;
         static ImVector<ImVec2> points;
@@ -491,7 +491,7 @@ namespace ImGui {
     }
 
 
-    bool DrawTexture(Plutus::Texture* texture, int winWidth, int winHeight, float scale, std::vector<Plutus::vec3i>* selected, bool onlyOne)
+    bool DrawTexture(Plutus::Texture2* texture, int winWidth, int winHeight, float scale, std::vector<Plutus::vec3i>* selected, bool onlyOne)
     {
         if (texture != nullptr) {
             ImGui::BeginChild("##texture-map", { (float)winWidth, (float)winHeight }, false, ImGuiWindowFlags_HorizontalScrollbar);
@@ -501,23 +501,23 @@ namespace ImGui {
 
             ImVec2 cvPos = ImGui::GetCursorScreenPos();
             ImVec2 cv_destStart(cvPos.x, cvPos.y);
-            const int w = texture->texWidth;
-            const int h = texture->texHeight;
+            const int w = texture->mWidth;
+            const int h = texture->mHeight;
 
             ImVec2 cvDestEnd(cvPos.x + w * scale, cvPos.y + h * scale);
-            ImGui::Image((void*)texture->texId, ImVec2(w * scale, h * scale));
+            ImGui::Image((void*)texture->mTexId, ImVec2(w * scale, h * scale));
             {
                 if (selected) {
                     auto color = IM_COL32(255, 255, 255, 100);
-                    if (texture->texId)
+                    if (texture->mTexId)
                     {
                         drawList->AddRect(cvPos, cvDestEnd, color);
                     }
 
-                    if (texture->tileWidth && texture->tileHeight)
+                    if (texture->mTileWidth && texture->mTileHeight)
                     {
-                        float tilWidth = texture->tileWidth * scale;
-                        float tilHeight = texture->tileHeight * scale;
+                        float tilWidth = texture->mTileWidth * scale;
+                        float tilHeight = texture->mTileHeight * scale;
 
                         float textureHeight = h * scale;
                         float textureWidth = w * scale;

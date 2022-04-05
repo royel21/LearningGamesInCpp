@@ -3,7 +3,7 @@
 #include <ECS/Scene.h>
 #include <ECS/Components.h>
 
-#include <Assets/AssetManager.h>
+#include <Assets/temp/Assets.h>
 
 #include <Serialize/Serialize.h>
 #include <rapidjson/document.h>
@@ -94,7 +94,7 @@ namespace Plutus
                     int columns = tex["columns"].GetInt();
                     int tilewidth = tex["width"].GetInt();
                     int tileheight = tex["height"].GetInt();
-                    AssetManager::get()->mTextures.addTexture(id, path, columns, tilewidth, tileheight);
+                    AssetManager2::get()->addAsset<Texture2>(id, path, columns, tilewidth, tileheight);
                 }
             }
 

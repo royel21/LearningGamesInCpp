@@ -5,7 +5,7 @@
 #include <filesystem>
 
 #include <Utils/FileIO.h>
-#include <Assets/AssetManager.h>
+#include <Assets/temp/Assets.h>
 
 #include "../Helpers/ImGuiEx.h"
 #include "../Helpers/IconsFontAwesome5.h"
@@ -87,7 +87,7 @@ namespace Plutus
     void AssetsTab::drawAssets()
     {
         if (ImGui::Begin("Assets")) {
-            auto mAsset = AssetManager::get();
+            auto mAsset = AssetManager2::get();
             if (std::filesystem::exists("./assets/")) {
                 if (ImGui::BeginTabBar("##TabBar"))
                 {
@@ -107,10 +107,11 @@ namespace Plutus
                         drawFilter();
                         if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
                             int id = 0;
-                            drawTreeNode("Fonts", mAsset->mFonts, id);
-                            drawTreeNode("Textures", mAsset->mTextures, id);
-                            drawTreeNode("Sounds", SoundEngine, id);
-                            drawTreeNode("Scenes", Config::get().mProjects[Config::get().OpenProject], id);
+
+                            drawTreeNode("Fonts", mAsset->getAssets<Font>(), id);
+                            drawTreeNode("Textures", mAsset->getAssets<Texture2>(), id);
+                            drawTreeNode("Sounds", mAsset->getAssets<Sound>(), id);
+                            // drawTreeNode("Scenes", Config::get().mProjects[Config::get().OpenProject], id);
                             ImGui::EndChild();
                         }
                         ImGui::EndTabItem();
@@ -168,9 +169,7 @@ namespace Plutus
         ImGui::Text(assetType.id.c_str());
         ImGui::Separator();
         if (assetType.type.compare("Textures") == 0) {
-            auto& textures = AssetManager::get()->mTextures;
-
-            auto texture = AssetManager::get()->mTextures.getTexture(assetType.id);
+            auto texture = AssetManager2::get()->getAsset<Texture2>(assetType.id);
             showTexure(*texture);
         }
 
@@ -257,13 +256,9 @@ namespace Plutus
             ImGui::Separator();
 
             if (substr.compare("textures") == 0 && imgTypes[ex]) {
-                auto& textures = AssetManager::get()->mTextures;
 
-                if (texture.texWidth == 0) {
-                    auto glTexture = textures.createGLTexure(selectedDir, texfilter.filter, texfilter.filter);
-                    texture.texId = glTexture.id;
-                    texture.texWidth = glTexture.width;
-                    texture.texHeight = glTexture.height;
+                if (texture.mTexId == 0) {
+                    texture = Texture2(selectedDir, texture.mColumns, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
                 }
                 type = 1;
                 showTexure(texture, true);
@@ -287,10 +282,10 @@ namespace Plutus
             {
                 switch (type) {
                 case 1:
-                    AssetManager::get()->mTextures.addTexture(name, selectedDir, texture.columns, texture.tileWidth, texture.tileHeight, texfilter.filter, texfilter.filter);
+                    AssetManager2::get()->addAsset<Texture2>(name, selectedDir, texture.mColumns, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
                     break;
                 case 2:
-                    AssetManager::get()->mFonts.addFont(name, selectedDir, fontSize);
+                    AssetManager2::get()->addAsset<Font>(name, selectedDir, fontSize);
                     break;
                 case 3:
                     SoundEngine.add(name, selectedDir, 0);
@@ -304,10 +299,10 @@ namespace Plutus
                 selectedDir = "";
                 memset(name, 0, 128);
                 fontSize = 20;
-                if (texture.texWidth) {
-                    glDeleteTextures(1, &texture.texId);
+                if (texture.mWidth) {
+                    glDeleteTextures(1, &texture.mTexId);
                 }
-                texture = {};
+                texture = Texture2("");
                 if (aEvent) {
                     delete aEvent;
                     aEvent = nullptr;
@@ -317,18 +312,18 @@ namespace Plutus
 
     }
 
-    void AssetsTab::showTexure(Texture& texture, bool newTex) {
+    void AssetsTab::showTexure(Texture2& texture, bool newTex) {
 
         static float scale = 1.0f;
         if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingStretchProp)) {
             ImGui::BeginCol("Columns");
-            if (ImGui::InputInt("##Columns", &texture.columns)) texture.calculateUV();
+            if (ImGui::InputInt("##Columns", &texture.mColumns)) texture.calculateUV();
 
             ImGui::BeginCol("Tile Width");
-            if (ImGui::InputInt("##Tile Width", &texture.tileWidth))  texture.calculateUV();
+            if (ImGui::InputInt("##Tile Width", &texture.mTileWidth))  texture.calculateUV();
 
             ImGui::BeginCol("Tile Height");
-            if (ImGui::InputInt("##Tile Height", &texture.tileHeight)) texture.calculateUV();
+            if (ImGui::InputInt("##Tile Height", &texture.mTileHeight)) texture.calculateUV();
             if (newTex) {
                 ImGui::BeginCol("Filters");
                 if (ImGui::BeginCombo("##Filters", texfilter.Name))
@@ -338,9 +333,9 @@ namespace Plutus
                         if (ImGui::Selectable(filters[i].Name, is_selected)) {
                             texfilter = filters[i];
 
-                            if (texture.texWidth) {
-                                texture.texWidth = 0;
-                                glDeleteTextures(1, &texture.texId);
+                            if (texture.mWidth) {
+                                texture.mWidth = 0;
+                                glDeleteTextures(1, &texture.mTexId);
                             }
 
                             if (is_selected)

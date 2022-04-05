@@ -8,7 +8,7 @@
 #include <ECS/Components/TileMapComponent.h>
 #include <ECS/Components/TransformComponent.h>
 
-#include <Assets/AssetManager.h>
+#include <Assets/temp/Assets.h>
 
 namespace Plutus
 {
@@ -56,7 +56,7 @@ namespace Plutus
                         auto tex = tilemap.getTexture(tile.texture);
                         if (tex) {
                             mRenderables[i++] = {
-                                tex->texId, // Texure Id
+                                tex->mTexId, // Texure Id
                                 rect, // Desct Rectangle
                                 tex->getUV(tile.texcoord), // Texure Coords UV
                                 { tile.color }, // Color
@@ -78,7 +78,7 @@ namespace Plutus
             auto rect = trans.getRect();
             if (mCamera->isBoxInView(rect, 200))
             {
-                auto texId = AssetManager::get()->getTexId(sprite.mTextureId);
+                auto texId = AssetManager2::get()->getAsset<Texture2>(sprite.mTextureId)->mTexId;
                 mRenderables[i++] = { texId, rect, sprite.mUVCoord, sprite.mColor,
                     trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
             }

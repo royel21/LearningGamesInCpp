@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
-#include <Assets/Textures.h>
+#include <Assets/temp/Texture.h>
 
 #define umap std::unordered_map
 #define boolmap umap<std::string, bool>
@@ -35,7 +35,7 @@ namespace Plutus
         template<typename T>
         void drawTreeNode(std::string name, T& assets, int& id);
         void addSound2Scene();
-        void showTexure(Texture& texture, bool newTex = false);
+        void showTexure(Texture2& texture, bool newTex = false);
         void viewAssets(bool& show);
         void drawFilter();
 
@@ -46,7 +46,7 @@ namespace Plutus
         std::string assetId;
         boolmap nodes;
         boolmap nodes2;
-        Texture texture;
+        Texture2 texture;
         EnumFilter texfilter = { GL_NEAREST, "Nearest" };
         AssetType assetType;
         std::string filter;

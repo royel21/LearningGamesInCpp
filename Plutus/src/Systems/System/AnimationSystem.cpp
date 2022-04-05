@@ -4,7 +4,7 @@
 #include <ECS/Components/SpriteComponent.h> 
 #include <ECS/Components/AnimationComponent.h>
 
-#include <Assets/AssetManager.h>
+#include <Assets/temp/Assets.h>
 
 namespace Plutus
 {
@@ -18,7 +18,7 @@ namespace Plutus
 
             if (seq && seq->mFrames.size()) {
                 sprite.mTextureId = seq->mTexId;
-                sprite.mUVCoord = AssetManager::get()->getTexCoords(seq->mTexId, seq->mFrames[0]);
+                sprite.mUVCoord = AssetManager2::get()->getAsset<Texture2>(seq->mTexId)->getUV(seq->mFrames[0]);
             }
         }
     }
@@ -46,7 +46,7 @@ namespace Plutus
                 }
 
                 sprite.mTextureId = seq->mTexId;
-                sprite.mUVCoord = AssetManager::get()->getTexCoords(seq->mTexId, frames[seq->mFrame]);
+                sprite.mUVCoord = AssetManager2::get()->getAsset<Texture2>(seq->mTexId)->getUV(seq->mFrames[0]);
             }
         }
     }

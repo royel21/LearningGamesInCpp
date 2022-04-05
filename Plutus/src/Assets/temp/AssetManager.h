@@ -67,7 +67,6 @@ namespace Plutus
 
         void destroy();
 
-
     private:
         AssetManager2() = default;
         umap<const std::type_info*, umap<std::string, Asset*>> mAssets;

@@ -1,7 +1,7 @@
 #include "Core.h"
 
 #include <Input/Input.h>
-#include <Assets/AssetManager.h>
+#include <Assets/temp/AssetManager.h>
 
 #ifdef __EMSCRIPTEN__
 #include <functional>
@@ -54,7 +54,7 @@ namespace Plutus
 #endif
         Exit();
 
-        AssetManager::get()->clearData();
+        AssetManager2::get()->destroy();
     }
 
     void Core::swapScreen() {

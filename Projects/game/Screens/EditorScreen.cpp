@@ -26,13 +26,13 @@ int EditorScreen::getPrevScreentIndex() const
 
 void EditorScreen::build()
 {
-    mAssets = Plutus::AssetManager::get();
-    mAssets->mTextures.addTexture("player2", "assets/textures/zombie.png");
-    mAssets->mTextures.addTexture("bats", "assets/textures/monster/bat.png", 3, 32, 32);
+    mAssets = Plutus::AssetManager2::get();
+    mAssets->addAsset<Plutus::Texture2>("player2", "assets/textures/zombie.png");
+    mAssets->addAsset<Plutus::Texture2>("bats", "assets/textures/monster/bat.png", 3, 32, 32);
 
-    mAssets->mFonts.addFont("arial", "./assets/fonts/arial.ttf", 32);
-    mAssets->mFonts.addFont("OpenSansBold", "./assets/fonts/OpenSans-Bold.ttf", 32);
-    mAssets->mFonts.addFont("Zoika", "./assets/fonts/Zoika.ttf", 32);
+    mAssets->addAsset<Plutus::Font>("arial", "./assets/fonts/arial.ttf", 32);
+    mAssets->addAsset<Plutus::Font>("OpenSansBold", "./assets/fonts/OpenSans-Bold.ttf", 32);
+    mAssets->addAsset<Plutus::Font>("Zoika", "./assets/fonts/Zoika.ttf", 32);
 
     mRender.init();
     mShader.init(GLSL::vertexShader, GLSL::fragShader);
@@ -94,20 +94,17 @@ void EditorScreen::draw()
     int h = mEngine->getHeight();
 
     std::vector<Plutus::Renderable> renderables;
-    mAssets->mFonts.createRenderable(renderables, "arial", "hello world_Royel _=+/&^%$#ñÑá - Arial", 32.0f, 175.0f, 1.0f, { 255, 255, 255, 255 });
-    mAssets->mFonts.createRenderable(renderables, "OpenSansBold", "hello world_Royel _=+/&^%$#ñÑá - OpenSans", 32.0f, 120.0f, 1.0f, { 255, 255, 255, 255 });
-    mAssets->mFonts.createRenderable(renderables, "Zoika", "hello world_Royel _=+/&^%$# Zoika", 32.0f, 65.0f, 1.0f, { 255, 255, 255, 255 });
 
-    mRender.submit(renderables);
+    mRender.submit("arial", "hello world_Royel _=+/&^%$#ñÑá - Arial", 32.0f, 175.0f);
+    mRender.submit("OpenSansBold", "hello world_Royel _=+/&^%$#ñÑá - OpenSans", 32.0f, 120.0f);
+    mRender.submit("Zoika", "hello world_Royel _=+/&^%$# Zoika", 32.0f, 65.0f);
 
-    mRender.begin();
-    mRender.draw(Plutus::BATCH_TEXT);
-    mRender.end();
+    mRender.finish(Plutus::BATCH_TEXT);
 
     std::vector<Plutus::Renderable> renderables2;
-    renderables2.push_back({ mAssets->mTextures.getTexture("player2")->texId, { 50, h - 100, 64, 64 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 0, 0, false });
-    renderables2.push_back({ mAssets->mTextures.getTexture("bats")->texId, { 180, h - 280, 96, 96 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 99, 0, false });
-    renderables2.push_back({ Plutus::AssetManager::get()->mTextures.getTexture("bats")->texId, { 180, 220, 64, 64 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 30, 0, false });
+    renderables2.push_back({ mAssets->getAsset<Plutus::Texture2>("player2")->mTexId, { 50, h - 100, 64, 64 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 0, 0, false });
+    renderables2.push_back({ mAssets->getAsset<Plutus::Texture2>("bats")->mTexId, { 180, h - 280, 96, 96 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 99, 0, false });
+    renderables2.push_back({ mAssets->getAsset<Plutus::Texture2>("bats")->mTexId, { 180, 220, 64, 64 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 30, 0, false });
     mRender.submit(renderables2);
 
     mRender.begin();

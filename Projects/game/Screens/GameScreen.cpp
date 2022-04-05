@@ -8,7 +8,6 @@
 
 #include <ECS/Components.h>
 
-#include <Assets/AssetManager.h>
 #include <Serialize/SceneLoader.h>
 #include <Graphics/GLSL.h>
 
