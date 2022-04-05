@@ -1,6 +1,11 @@
 #include "FileIO.h"
 #include <cstdio>
-#include <filesystem>
+
+#ifdef WIN32
+#include <io.h>
+#define F_OK 0
+#define access _access
+#endif
 
 #pragma warning(disable : 4996)
 
@@ -42,6 +47,6 @@ namespace Plutus
 
     bool exists(const char* path)
     {
-        return std::filesystem::exists(path);
+        return access(path, F_OK) == 0;
     }
 }

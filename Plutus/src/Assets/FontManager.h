@@ -14,8 +14,6 @@ using u32 = unsigned int;
 
 namespace Plutus
 {
-	class Shader;
-	class Window;
 	struct CharData
 	{
 		float ax; // advance x distance for the next letter

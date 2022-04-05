@@ -37,13 +37,13 @@ namespace Plutus
 		if (mIbo)
 			glDeleteBuffers(1, &mVao);
 
-		mShader.dispose();
+		mShader.destroy();
 	}
 
 	void DebugRender::init(Camera2D* _camera)
 	{
 		mCamera = _camera;
-		mShader.CreateProgWithShader(GLSL::debug_vertshader, GLSL::debug_fragshader);
+		mShader.init(GLSL::debug_vertshader, GLSL::debug_fragshader);
 		mShader.setAtribute("vertexPosition");
 		mShader.setAtribute("vertexColor");
 

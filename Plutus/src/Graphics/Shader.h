@@ -29,16 +29,16 @@ namespace Plutus
 		Shader() = default;
 		~Shader();
 		/*Create a shader program
-			@param vsPath path to a vertex shader file or string with the data
-			@param fsPath path to a vertex fragment shaer file or string with the data
+			@param verShader path to a vertex shader file or string with the data
+			@param fragShader path to a vertex fragment shaer file or string with the data
 		*/
-		bool CreateProgWithShader(std::string vsPath, std::string fsPath);
+		bool init(const std::string& verShader = "", const std::string& fragShader = "");
 		// Enable this shader program
 		void enable();
 		// Disable this shader program
 		void disable();
 		// Destroy this shader program
-		void dispose();
+		void destroy();
 
 		uint32_t getUniform(std::string uName);
 		// Return the shader program ID

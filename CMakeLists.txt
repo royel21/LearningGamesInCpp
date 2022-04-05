@@ -51,6 +51,10 @@ add_executable(TestingBox2d ${TEST_SRC})
 target_link_libraries(TestingBox2d PUBLIC Plutus)
 
 #*************Single Test**********************
-file(GLOB_RECURSE AM Projects/AssetManager/*.h Projects/AssetManager/*.cpp)
-add_executable("SingleTest" Projects/SingleTest.cpp ${AM})
-target_link_libraries(SingleTest PUBLIC Plutus)
+add_executable("SingleTest" Projects/SingleTest.cpp)
+
+
+#*************Asset Test**********************
+file(GLOB_RECURSE AssetTest Projects/AssetTest/*.h Projects/AssetTest/*.cpp)
+add_executable("AssetTest" ${AssetTest})
+target_link_libraries(AssetTest PUBLIC Plutus)

@@ -14,7 +14,7 @@ namespace Plutus
 {
     RenderSystem::RenderSystem(Scene* scene, Camera2D* camera) : ISystem(scene, camera)
     {
-        mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
+        mShader.init(GLSL::vertexShader, GLSL::fragShader);
         mRenderer.init();
         mRenderer.setShader(&mShader);
         mRenderer.setCamera(camera);
@@ -22,7 +22,7 @@ namespace Plutus
 
     RenderSystem::~RenderSystem()
     {
-        mShader.dispose();
+        mShader.destroy();
     }
 
     void RenderSystem::update(float dt)
@@ -89,9 +89,7 @@ namespace Plutus
         // std::sort(mRenderables.begin(), mRenderables.end());
         mRenderer.submit(mRenderables);
 
-        mRenderer.begin();
-        mRenderer.draw();
-        mRenderer.end();
+        mRenderer.finish();
     }
 
     void RenderSystem::destroy()

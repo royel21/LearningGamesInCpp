@@ -35,7 +35,7 @@ void EditorScreen::build()
     mAssets->mFonts.addFont("Zoika", "./assets/fonts/Zoika.ttf", 32);
 
     mRender.init();
-    mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
+    mShader.init(GLSL::vertexShader, GLSL::fragShader);
 
     const int w = mEngine->getWidth();
     const int h = mEngine->getHeight();
@@ -91,7 +91,6 @@ void EditorScreen::update(float dt)
 
 void EditorScreen::draw()
 {
-    setBackgoundColor(0, 0, 0, 1);
     int h = mEngine->getHeight();
 
     std::vector<Plutus::Renderable> renderables;
@@ -114,6 +113,7 @@ void EditorScreen::draw()
     mRender.begin();
 
     mFB.bind();
+    setBackgoundColor(1, 0.5f, 0.4f);
     mRender.draw(Plutus::BATCH_PICKING);
     mFB.unBind();
 

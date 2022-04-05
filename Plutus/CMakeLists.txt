@@ -1,6 +1,6 @@
 
 # Add source files
-file(GLOB ASSETS src/Assets/*.h src/Assets/*.cpp)
+file(GLOB_RECURSE ASSETS src/Assets/*.h src/Assets/*.cpp)
 file(GLOB CORE src/Core/*.h src/Core/*.cpp)
 file(GLOB ECS src/ECS/*.h src/ECS/*.cpp src/ECS/Components/*.h src/ECS/Components/*.cpp)
 file(GLOB GRAPHICS src/Graphics/*.h src/Graphics/*.cpp)

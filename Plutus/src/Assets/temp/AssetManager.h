@@ -15,21 +15,26 @@ namespace Plutus
         static AssetManager2* get();
 
         template <typename T, typename... TArgs>
-        T* add(AssetType type, const std::string& id, TArgs &&... args)
+        T* addAsset(const std::string& id, TArgs &&... args)
         {
-            if (mAssets.find(id) == mAsset.end()) {
+            if (!hasAsset(id)) {
                 T* asset = new T(std::forward<TArgs>(args)...);
-                asset.type = type;
                 mAssets[id] = asset;
                 return asset;
             }
-            return get<T>(id);
+            return getAsset<T>(id);
         }
 
         template<typename T>
-        T* get(std::string id) { return nullptr; }
+        T* getAsset(const std::string& id) {
+            return hasAsset(id) ? static_cast<T*>(mAssets[id]) : nullptr;
+        }
 
-        void remove(std::string id) {}
+        bool hasAsset(const std::string id) { return mAssets.find(id) != mAssets.end(); }
+
+        void removeAsset(std::string id) {}
+
+        void destroy();
 
 
     private:

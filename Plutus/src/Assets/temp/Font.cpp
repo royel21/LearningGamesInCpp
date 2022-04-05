@@ -1,0 +1,92 @@
+#include "Font.h"
+
+#include <Log/Logger.h>
+
+#include <Graphics/GLheaders.h>
+#include <Utils/FileIO.h>
+// FreeType
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+constexpr int BITMAPSIZE = 500;
+
+namespace Plutus
+{
+    Font::Font(const char* path, unsigned int fontSize)
+    {
+        mPath = path;
+        mType = AssetFont;
+
+        FT_Library ft;
+        // All functions return a value different than 0 whenever an error occurred
+        if (FT_Init_FreeType(&ft)) {
+            Logger::error("ERROR::FREETYPE: Could not init FreeType Library");
+            return;
+        }
+
+        auto buffer = readFile(path);
+        // Load font as face
+        FT_Face face;
+        if (FT_New_Memory_Face(ft, buffer.data(), (long)buffer.size(), 0, &face)) {
+            Logger::error("ERROR::FREETYPE: Failed to load font");
+            return;
+        }
+        //Set font height in pixel
+        FT_Set_Pixel_Sizes(face, 0, fontSize);
+
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+        glGenTextures(1, &mTexId);
+        glBindTexture(GL_TEXTURE_2D, mTexId);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, BITMAPSIZE, BITMAPSIZE, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
+
+        int x = 0;
+        int y = 0;
+
+        auto g = face->glyph;
+        for (int i = 32; i < 128; i++) {
+            if (FT_Load_Char(face, i, FT_LOAD_RENDER))
+                continue;
+
+            if (x + g->bitmap.width > BITMAPSIZE) {
+                y += fontSize;
+                x = 0;
+            }
+
+            if (g->bitmap.rows && g->bitmap.width) {
+                glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, g->bitmap.width, g->bitmap.rows, GL_RED, GL_UNSIGNED_BYTE, g->bitmap.buffer);
+            }
+
+            ch[i].ax = static_cast<float>(g->advance.x >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+            ch[i].ay = static_cast<float>(g->advance.y >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+            ch[i].bw = static_cast<float>(g->bitmap.width);
+            ch[i].bh = static_cast<float>(g->bitmap.rows);
+            ch[i].bl = static_cast<float>(g->bitmap_left);
+            ch[i].bt = static_cast<float>(g->bitmap_top);
+            ch[i].uv = {
+                x / (float)BITMAPSIZE,
+                y / (float)BITMAPSIZE,
+                (x + g->bitmap.width) / (float)BITMAPSIZE,
+                (y + g->bitmap.rows) / (float)BITMAPSIZE
+            };
+
+            x += g->bitmap.width;
+        }
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        FT_Done_Face(face);
+        FT_Done_FreeType(ft);
+        buffer.clear();
+    }
+
+    void Font::destroy()
+    {
+        glDeleteTextures(1, &mTexId);
+    }
+}

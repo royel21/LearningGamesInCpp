@@ -122,7 +122,7 @@ namespace Plutus
 
     void App::Setup()
     {
-        mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
+        mShader.init(GLSL::vertexShader, GLSL::fragShader);
         mBatch.init();
         mBatch.setCamera(&mCamera);
         mBatch.setShader(&mShader);

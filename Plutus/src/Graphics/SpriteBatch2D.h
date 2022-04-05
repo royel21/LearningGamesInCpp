@@ -47,7 +47,7 @@ namespace Plutus
 		GLuint mIndexCount = 0;
 		GLuint mVertexCount = 0;
 		//Array of 4 Vertix per Single Object
-		std::vector<Vertex> vertices;
+		std::vector<Vertex> bufferVertices;
 		//Index Buffer Array Object
 		IndexBuffer* mIBO = nullptr;
 		// Camera with the screen coordinate where we are drawing
@@ -82,9 +82,19 @@ namespace Plutus
 			@param flipY optional flip the image from Y coordinate
 		*/
 		void submitOne(GLuint texture, const vec4f& rect, vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
+
+		void submit(const std::string& fontId, const std::string& text, float x, float y, float scale = 1, ColorRGBA8 color = {});
+
 		void draw(BatchType type = BATCH_NONE);
 		//Flush the Vertex buffer to the screen
 		void end();
+
+		//draw to the screen
+		inline void finish(BatchType type = BATCH_NONE) {
+			begin();
+			draw(type);
+			end();
+		}
 
 	private:
 		void submit(GLuint texture, const vec4f& rect, vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
@@ -92,6 +102,13 @@ namespace Plutus
 			Create a render Batch for this texture
 		*/
 		inline void createBatch(GLuint texture);
+
+		inline void resize(int count) {
+			auto size = count * 4 + mVertexCount;
+			if (size > bufferVertices.size()) {
+				bufferVertices.resize(size);
+			}
+		}
 	};
 
 } // namespace Plutus

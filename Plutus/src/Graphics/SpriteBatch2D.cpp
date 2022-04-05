@@ -14,6 +14,9 @@
 #include "Shader.h"
 
 #include "GraphicsUtil.h"
+#include <Math/PMath.h>
+#include <Assets/temp/AssetManager.h>
+#include <Assets/temp/Font.h>
 
 #define RENDERER_MAX_SPRITES 60000
 #define RENDERER_VERTEX_SIZE sizeof(Vertex)
@@ -26,7 +29,6 @@
 #define SHADER_COLOR_INDEX 2
 #define SHADER_ENTITYID_INDEX 3
 
-#include <Math/PMath.h>
 
 namespace Plutus
 {
@@ -78,12 +80,9 @@ namespace Plutus
 
 		mIBO = new IndexBuffer(indices, RENDERER_INDICES_SIZE);
 		delete[] indices;
-	}
 
-	void SpriteBatch2D::submitOne(GLuint texture, const vec4f& rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {
-		vertices.clear();
-		vertices.resize(4);
-		submit(texture, rect, uv, c, r, flipX, flipX, entId);
+		mRenderBatches.clear();
+		bufferVertices.clear();
 	}
 
 	void SpriteBatch2D::submit(GLuint texture, const vec4f& rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
@@ -120,28 +119,43 @@ namespace Plutus
 			rotate(br, center, r);
 		}
 
-		vertices[mVertexCount + 0] = { bl.x, bl.y, uv.x, uv.w, c, id };
-		vertices[mVertexCount + 1] = { tl.x, tl.y, uv.x, uv.y, c, id };
-		vertices[mVertexCount + 2] = { tr.x, tr.y, uv.z, uv.y, c, id };
-		vertices[mVertexCount + 3] = { br.x, br.y, uv.z, uv.w, c, id };
+		bufferVertices[mVertexCount + 0] = { bl.x, bl.y, uv.x, uv.w, c, id };
+		bufferVertices[mVertexCount + 1] = { tl.x, tl.y, uv.x, uv.y, c, id };
+		bufferVertices[mVertexCount + 2] = { tr.x, tr.y, uv.z, uv.y, c, id };
+		bufferVertices[mVertexCount + 3] = { br.x, br.y, uv.z, uv.w, c, id };
 
 		mVertexCount += 4;
 	}
 
+	void SpriteBatch2D::submitOne(GLuint texture, const vec4f& rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {
+		resize(4);
+		submit(texture, rect, uv, c, r, flipX, flipX, entId);
+	}
+
 	void SpriteBatch2D::submit(const std::vector<Renderable>& renderables)
 	{
-		//Resize to hold all the vertice needed
-		auto size = renderables.size();
-
-		size = (size ? size * 4 : 4) + mVertexCount;
-
-		if (size > vertices.size()) {
-			vertices.resize(size);
-		}
-
+		resize(renderables.size());
 		for (auto r : renderables)
 		{
 			submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY, r.entId);
+		}
+	}
+
+
+	void SpriteBatch2D::submit(const std::string& fontId, const std::string& text, float x, float y, float scale, ColorRGBA8 color) {
+		auto font = AssetManager2::get()->getAsset<Font>(fontId);
+		if (font != nullptr) {
+			resize(text.size());
+
+			for (auto i : text) {
+				auto& ch = font->ch[i];
+				GLfloat xpos = x + ch.bl * scale;
+				GLfloat ypos = y - (ch.bh - ch.bt) * scale; // shift the letter down for Top-Left origin camera
+
+				// Advance cursors for next glyph (note that advance is number of 1/64 pixels)
+				x += ch.ax * scale;
+				submit(font->mTexId, { xpos, ypos, ch.bw * scale, ch.bh * scale }, ch.uv, color);
+			}
 		}
 	}
 
@@ -154,7 +168,7 @@ namespace Plutus
 		glClearDepthf(1.0f);
 
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-		glBufferData(GL_ARRAY_BUFFER, mVertexCount * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, mVertexCount * sizeof(Vertex), bufferVertices.data(), GL_DYNAMIC_DRAW);
 
 		mIBO->bind();
 		glBindVertexArray(mVAO);
@@ -185,6 +199,7 @@ namespace Plutus
 		mVertexCount = 0;
 		mIndexCount = 0;
 	}
+
 
 	inline void SpriteBatch2D::createBatch(GLuint texture)
 	{

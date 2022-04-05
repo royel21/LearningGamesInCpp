@@ -15,11 +15,11 @@
 
 inline void enableBlendMode()
 {
-    glEnable(GL_CULL_FACE | GL_BLEND);
+    glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-inline void setBackgoundColor(float r, float g, float b, float a)
+inline void setBackgoundColor(float r = 1, float g = 1, float b = 1, float a = 1)
 {
     glClearColor(r, g, b, a);
 }

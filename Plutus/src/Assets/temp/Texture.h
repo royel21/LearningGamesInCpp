@@ -28,7 +28,6 @@ namespace Plutus
         void loadTexture(GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
 
     public:
-        std::string mPath;
         int mColumns = 0;
         int mTileWidth = 0;
         int mTileHeight = 0;

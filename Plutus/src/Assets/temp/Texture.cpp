@@ -10,6 +10,7 @@ namespace Plutus
 {
     Texture2::Texture2(const std::string& path, int c, int w, int h, GLint minFilter, GLint magFilter)
     {
+        mType = AssetTexture;
         mPath = path;
 
         mColumns = c;
@@ -54,10 +55,10 @@ namespace Plutus
 
     void Texture2::loadTexture(GLint minFilter, GLint magFilter)
     {
-        int ch = Utils::getExtension(path).compare("png") == 0 ? 4 : 3;
+        int ch = Utils::getExtension(mPath).compare("png") == 0 ? 4 : 3;
 
         int BPP;
-        uint8_t* out = stbi_load(path.c_str(), &mWidth, &mHeight, &BPP, ch);
+        uint8_t* out = stbi_load(mPath.c_str(), &mWidth, &mHeight, &BPP, ch);
         if (mWidth && mHeight) {
             auto format = ch == 3 ? GL_RGB8 : GL_RGBA8;
             auto gltype = ch == 3 ? GL_RGB : GL_RGBA;
@@ -74,7 +75,7 @@ namespace Plutus
             }
             else
             {
-                std::printf("stbi fail: %s - %s\n", stbi_failure_reason(), path.c_str());
+                std::printf("stbi fail: %s - %s\n", stbi_failure_reason(), mPath.c_str());
             }
         }
     }

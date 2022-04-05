@@ -5,22 +5,30 @@
 #include <vector>
 #include <cstdio>
 
+#include <Utils/FileIO.h>
+#include <Log/Logger.h>
+
+#include "GLSL.h"
+
 namespace Plutus
 {
 	Shader::~Shader()
 	{
-		dispose();
+		destroy();
 	}
 
-	bool Shader::CreateProgWithShader(std::string vertPath, std::string fragPath)
+	bool Shader::init(const std::string& verData, const std::string& fragData)
 	{
+		auto vsdata = verData.empty() ? GLSL::vertexShader : verData;
+		auto fsdata = fragData.empty() ? GLSL::fragShader : fragData;
+
 		mProgId = glCreateProgram();
 
 		GLuint vertId = glCreateShader(GL_VERTEX_SHADER);
 		GLuint fragId = glCreateShader(GL_FRAGMENT_SHADER);
 
-		compileShader(vertId, vertPath);
-		compileShader(fragId, fragPath);
+		compileShader(vertId, vsdata);
+		compileShader(fragId, fsdata);
 
 		if (compileError)
 		{
@@ -28,37 +36,34 @@ namespace Plutus
 			return false;
 		}
 
-		if (!vertId && !fragId)
+
+		int result = vertId && fragId;
+
+		if (result)
 		{
+			//attach the shader to the program
+			glAttachShader(mProgId, vertId);
+			glAttachShader(mProgId, fragId);
+			//link the programs
+			glLinkProgram(mProgId);
 
-			return false;
+			glGetProgramiv(mProgId, GL_LINK_STATUS, &result);
+			if (result == GL_FALSE)
+			{
+				int InfogLenght;
+				glGetProgramiv(mProgId, GL_INFO_LOG_LENGTH, &InfogLenght);
+				std::vector<char> ProgramErrorMessage(InfogLenght + 1);
+				glGetProgramInfoLog(mProgId, InfogLenght, NULL, &ProgramErrorMessage[0]);
+				Logger::error("ProgError: %s\n", &ProgramErrorMessage[0]);
+			}
+
+			glDetachShader(mProgId, vertId);
+			glDetachShader(mProgId, fragId);
 		}
-
-		//attach the shader to the program
-		glAttachShader(mProgId, vertId);
-		glAttachShader(mProgId, fragId);
-		//link the programs
-		glLinkProgram(mProgId);
-
-		int result;
-
-		glGetProgramiv(mProgId, GL_LINK_STATUS, &result);
-		if (result == GL_FALSE)
-		{
-			int InfogLenght;
-			glGetProgramiv(mProgId, GL_INFO_LOG_LENGTH, &InfogLenght);
-			std::vector<char> ProgramErrorMessage(InfogLenght + 1);
-			glGetProgramInfoLog(mProgId, InfogLenght, NULL, &ProgramErrorMessage[0]);
-			std::printf("ProgError: %s\n", &ProgramErrorMessage[0]);
-			return false;
-		}
-
-		glDetachShader(mProgId, vertId);
-		glDetachShader(mProgId, fragId);
 
 		glDeleteShader(vertId);
 		glDeleteShader(fragId);
-		return true;
+		return result;
 	}
 
 	void Shader::enable()
@@ -81,7 +86,7 @@ namespace Plutus
 		}
 	}
 
-	void Shader::dispose()
+	void Shader::destroy()
 	{
 		if (mProgId)
 			glDeleteProgram(mProgId);
@@ -140,26 +145,11 @@ namespace Plutus
 
 	void Shader::compileShader(uint32_t id, std::string shaderPath)
 	{
-		std::ifstream vertexFile(shaderPath);
-		char const* vertSource = nullptr;
+		bool isShader = shaderPath.find("void main") != -1;
 
-		if (vertexFile.fail())
-		{
-			vertSource = shaderPath.c_str();
-		}
-		else
-		{
-			std::string fileContent;
-			std::string line;
+		std::string data = isShader ? shaderPath : readFileAsString(shaderPath.c_str());
 
-			while (std::getline(vertexFile, line))
-			{
-				fileContent += line + "\n";
-			}
-
-			vertexFile.close();
-			vertSource = fileContent.c_str();
-		}
+		char const* vertSource = data.c_str();
 
 		glShaderSource(id, 1, &vertSource, nullptr);
 		glCompileShader(id);
@@ -189,13 +179,14 @@ namespace Plutus
 			// Exit with failure.
 			glDeleteShader(id); // Don't leak the shader.
 
-			std::printf("Error: %s\n", &(errorLog[0]));
-			std::printf("Fail  to compile %s\n", shader.c_str());
+			Logger::error("Error: %s\n", &(errorLog[0]));
+			Logger::error("Fail  to compile %s\n", shader.c_str());
 			return false;
 		}
 
 		return true;
 	}
+
 	void Shader::cleanUp(GLuint vertId, GLuint fragId)
 	{
 		glDeleteShader(vertId);

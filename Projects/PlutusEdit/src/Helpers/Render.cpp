@@ -18,7 +18,7 @@ namespace Plutus
     }
 
     Render::~Render() {
-        mShader.dispose();
+        mShader.destroy();
     }
 
     void Render::Init()
@@ -31,7 +31,7 @@ namespace Plutus
         mCamera.setPosition(config.vpPos);
         mCamera.setScale(config.vpZoom);
 
-        mShader.CreateProgWithShader(GLSL::vertexShader, GLSL::fragShader);
+        mShader.init(GLSL::vertexShader, GLSL::fragShader);
 
         mSpriteBatch.init();
         mSpriteBatch.setShader(&mShader);
