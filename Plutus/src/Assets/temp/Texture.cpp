@@ -64,8 +64,6 @@ namespace Plutus
             auto gltype = ch == 3 ? GL_RGB : GL_RGBA;
 
             mTexId = createTexture(mWidth, mHeight, out, format, gltype, GL_UNSIGNED_BYTE, minFilter, magFilter);
-
-            glGenerateMipmap(GL_TEXTURE_2D);
             //unlink the texture
             glBindTexture(GL_TEXTURE_2D, 0);
             //delete the image buffer from memory

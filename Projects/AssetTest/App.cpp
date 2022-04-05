@@ -1,7 +1,5 @@
 #include "App.h"
-#include <Assets/temp/AssetManager.h>
-#include <Assets/temp/Texture.h>
-#include <Assets/temp/Font.h>
+#include <Assets/temp/Assets.h>
 
 #include <Log/Logger.h>
 
@@ -18,15 +16,16 @@ namespace Plutus
         manager->addAsset<Texture2>("Link", "assets/textures/player1.png");
         manager->addAsset<Font>("Zoika", "assets/fonts/Zoika.ttf", 64);
         manager->addAsset<Font>("Arial", "assets/fonts/arial.ttf", 64);
+        manager->addAsset<Sound>("BG", "assets/sounds/XYZ2.ogg");
 
-        setBackgoundColor(1, 0.5f, 0.4f);
+        setBackgoundColor(1, 0.9f, 0.4f);
     }
 
     void App::Draw() {
         auto tex = AssetManager2::get()->getAsset<Texture2>("Link");
 
-        mRenderer.submitOne(tex->mTexId, { mWidth / 2, mHeight / 2, 64, 64 }, tex->getUV(0));
-        mRenderer.submitOne(tex->mTexId, { 32, 32, 128, 128 }, tex->getUV(0));
+        mRenderer.submit(tex->mTexId, { mWidth / 2, mHeight / 2, 64, 64 }, tex->getUV(0));
+        mRenderer.submit(tex->mTexId, { 32, 32, 128, 128 }, tex->getUV(0));
         mRenderer.finish();
 
         mRenderer.submit("Zoika", "Testing Font", 0, mHeight - 64.0f);

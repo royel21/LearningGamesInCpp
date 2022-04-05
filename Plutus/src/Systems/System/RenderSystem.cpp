@@ -4,9 +4,9 @@
 #include <Graphics/Camera2D.h>
 
 #include <ECS/Scene.h>
-#include <ECS/Components/Sprite.h>
-#include <ECS/Components/TileMap.h>
-#include <ECS/Components/Transform.h>
+#include <ECS/Components/SpriteComponent.h>
+#include <ECS/Components/TileMapComponent.h>
+#include <ECS/Components/TransformComponent.h>
 
 #include <Assets/AssetManager.h>
 
@@ -29,8 +29,8 @@ namespace Plutus
     {
         // auto start = Timer::millis();
 
-        auto viewMap = mScene->getRegistry()->view<TileMap>();
-        auto view = mScene->getRegistry()->view<Transform, Sprite>();
+        auto viewMap = mScene->getRegistry()->view<TileMapComponent>();
+        auto view = mScene->getRegistry()->view<TransformComponent, SpriteComponent>();
 
         /******************Resize temp buffer************************/
         auto size = view.size_hint();

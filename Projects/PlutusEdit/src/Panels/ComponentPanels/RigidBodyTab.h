@@ -3,7 +3,7 @@
 namespace Plutus
 {
     class Entity;
-    class RigidBody;
+    class RigidBodyComponent;
 
     class RigidBodyTab
     {
@@ -12,6 +12,6 @@ namespace Plutus
         void draw(Entity* ent);
 
     private:
-        RigidBody* mRigidBody;
+        RigidBodyComponent* mRigidBody;
     };
 } // namespace Plutus

@@ -2,11 +2,9 @@
 #include <string>
 #include <unordered_map>
 
-#ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <AL/al.h>
 #include <AL/alc.h>
-#endif
 
 namespace Plutus
 {
@@ -25,18 +23,12 @@ namespace Plutus
 
     using AudioMap = std::unordered_map<std::string, AudioEvent>;
 
-    enum SoundType
-    {
-        MUSIC,
-        EFFECT
-    };
-
     class AudioEngine
     {
     public:
         static AudioEngine& get();
         ~AudioEngine();
-        bool add(const std::string& id, std::string path, SoundType type);
+        bool add(const std::string& id, std::string path, int type);
         bool remove(const std::string& id);
 
         bool play(const std::string& id, bool loop = false);

@@ -247,7 +247,7 @@ namespace Plutus
 
         // mDebug->drawBox(Box2d(capsule.x, capsule.y, capsule.w, capsule.h));
         vec4f rect = { capsule.position, capsule.size };
-        mBatch.submitOne(texture->texId, rect, texture->getUV(0));
+        mBatch.submit(texture->texId, rect, texture->getUV(0));
         mBatch.begin();
         mBatch.draw();
         mBatch.end();

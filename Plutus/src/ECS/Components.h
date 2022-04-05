@@ -1,11 +1,11 @@
 
 #pragma once
 
-#include "./Components/Tag.h"
-#include "./Components/Transform.h"
-#include "./Components/Sprite.h"
-#include "./Components/TileMap.h"
-#include "./Components/Velocity.h"
-#include "./Components/Animation.h"
-#include "./Components/Script.h"
-#include "./Components/RigidBody.h"
+#include "./Components/TagComponent.h"
+#include "./Components/TransformComponent.h"
+#include "./Components/SpriteComponent.h"
+#include "./Components/TileMapComponent.h"
+#include "./Components/VelocityComponent.h"
+#include "./Components/AnimationComponent.h"
+#include "./Components/ScriptComponent.h"
+#include "./Components/RigidBodyComponent.h"

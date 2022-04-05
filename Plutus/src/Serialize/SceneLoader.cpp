@@ -15,7 +15,7 @@ namespace Plutus
 {
     void loadAnimation(Entity& ent, const rapidjson::Value::Object& value)
     {
-        auto anim = ent.addComponent<Animation>();
+        auto anim = ent.addComponent<AnimationComponent>();
         if (value.HasMember("sequences")) {
             auto arr = value["sequences"].GetArray();
 
@@ -39,7 +39,7 @@ namespace Plutus
         int w = value["tilewidth"].GetInt();
         int h = value["tileheight"].GetInt();
         int layer = value["layer"].GetInt();
-        auto tmap = ent.addComponent<TileMap>(w, h, layer);
+        auto tmap = ent.addComponent<TileMapComponent>(w, h, layer);
 
         for (auto& obj : value["textures"].GetArray())
         {
@@ -123,12 +123,12 @@ namespace Plutus
                             float r = component["r"].GetFloat();
                             int layer = component["l"].GetInt();
                             bool sortY = component["sy"].GetBool();
-                            entity.addComponent<Transform>(x, y, w, h, r, layer, sortY);
+                            entity.addComponent<TransformComponent>(x, y, w, h, r, layer, sortY);
                             continue;
                         }
                         if (compType == "Sprite")
                         {
-                            auto spr = entity.addComponent<Sprite>(component["tex"].GetString());
+                            auto spr = entity.addComponent<SpriteComponent>(component["tex"].GetString());
                             spr->mFlipX = component["fx"].GetInt();
                             spr->mFlipY = component["fy"].GetInt();
                             spr->mColor = component["c"].GetInt();
@@ -148,7 +148,7 @@ namespace Plutus
                         }
                         if (compType == "Script")
                         {
-                            auto script = entity.addComponent<Script>(component["script"].GetString());
+                            auto script = entity.addComponent<ScriptComponent>(component["script"].GetString());
                         }
                     }
                 }

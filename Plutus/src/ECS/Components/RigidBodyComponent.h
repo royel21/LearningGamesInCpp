@@ -36,7 +36,7 @@ namespace Plutus
         }
     };
 
-    class RigidBody {
+    class RigidBodyComponent {
     public:
         bool mBullet = false;
         bool mFixedRotation = true;
@@ -50,8 +50,8 @@ namespace Plutus
         std::vector<Fixture> mFixtures;
 
     public:
-        RigidBody() = default;
-        RigidBody(Entity ent, BodyType type, const vec2f& _offset = { 0,0 }, float liDamping = 0, float gScale = 1, float isFixedRotation = true, bool isBullet = false);
+        RigidBodyComponent() = default;
+        RigidBodyComponent(Entity ent, BodyType type, const vec2f& _offset = { 0,0 }, float liDamping = 0, float gScale = 1, float isFixedRotation = true, bool isBullet = false);
 
         void init();
         void addEdge(vec2f offset, vec2f size, float friction = 0.3f, float density = 1.0f, float restitution = 0, bool isSensor = false);

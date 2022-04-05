@@ -23,10 +23,10 @@ namespace Plutus
         Sequence(const std::string& texId, Frames frames, int _seqTime = 100);
     };
 
-    class Animation
+    class AnimationComponent
     {
     public:
-        Animation() = default;
+        AnimationComponent() = default;
         void addSequence(const std::string& id, const Sequence& seq);
         void addSeq(const std::string& id, Frames frames, int frameTime, bool isDefault = false);
 

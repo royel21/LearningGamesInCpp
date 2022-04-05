@@ -1,4 +1,4 @@
-#include "Animation.h"
+#include "AnimationComponent.h"
 
 namespace Plutus
 {
@@ -9,13 +9,13 @@ namespace Plutus
         mSeqTime = _seqTime / 1000.0f;
     }
 
-    void Animation::addSequence(const std::string& id, const Sequence& seq)
+    void AnimationComponent::addSequence(const std::string& id, const Sequence& seq)
     {
         if (!id.empty())
             mSequences[id] = seq;
     }
 
-    void Animation::addSeq(const std::string& id, Frames frames, int frameTime, bool isDefault)
+    void AnimationComponent::addSeq(const std::string& id, Frames frames, int frameTime, bool isDefault)
     {
         if (!id.empty()) {
             mSequences[id] = { tempSprite, frames, frameTime };
@@ -25,12 +25,12 @@ namespace Plutus
         }
     }
 
-    void Animation::setTexture(const std::string& texId)
+    void AnimationComponent::setTexture(const std::string& texId)
     {
         tempSprite = texId;
     }
 
-    void Animation::swapSeq(const std::string& oldid, const std::string& newid) {
+    void AnimationComponent::swapSeq(const std::string& oldid, const std::string& newid) {
         if (oldid == newid) return;
 
         auto it = mSequences.find(oldid);
@@ -40,14 +40,14 @@ namespace Plutus
         }
     }
 
-    void Animation::play(const std::string& id)
+    void AnimationComponent::play(const std::string& id)
     {
         if (currentSeq != id && !loop) {
             currentSeq = id;
         }
     }
 
-    Sequence* Animation::getCurrentSeq()
+    Sequence* AnimationComponent::getCurrentSeq()
     {
         auto it = mSequences.find(currentSeq);
         if (it != mSequences.end()) {

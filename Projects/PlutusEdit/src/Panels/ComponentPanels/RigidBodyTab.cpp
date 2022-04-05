@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <algorithm>
 
-#include <ECS/Components/RigidBody.h>
+#include <ECS/Components/RigidBodyComponent.h>
 
 namespace Plutus
 {
@@ -39,8 +39,8 @@ namespace Plutus
 
     void RigidBodyTab::draw(Entity* ent)
     {
-        mRigidBody = ent->getComponent<RigidBody>();
-        if (CollapseComponent<RigidBody>("RigidBody##tilemap-comp", 5)) {
+        mRigidBody = ent->getComponent<RigidBodyComponent>();
+        if (CollapseComponent<RigidBodyComponent>("RigidBody##tilemap-comp", 5)) {
             if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
                 ImGui::BeginCol("Is Bullet");
                 ImGui::Checkbox("##isbullet", &mRigidBody->mBullet);

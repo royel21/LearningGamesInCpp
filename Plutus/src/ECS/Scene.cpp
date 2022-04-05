@@ -81,12 +81,12 @@ namespace Plutus
 
     void CopyEntity(Entity& source, Entity& dest) {
 
-        CopyComponent<Transform>(source, dest);
-        CopyComponent<Sprite>(source, dest);
-        CopyComponent<Animation>(source, dest);
-        CopyComponent<TileMap>(source, dest);
-        CopyComponent<Script>(source, dest);
-        CopyComponent<RigidBody>(source, dest);
+        CopyComponent<TransformComponent>(source, dest);
+        CopyComponent<SpriteComponent>(source, dest);
+        CopyComponent<AnimationComponent>(source, dest);
+        CopyComponent<TileMapComponent>(source, dest);
+        CopyComponent<ScriptComponent>(source, dest);
+        CopyComponent<RigidBodyComponent>(source, dest);
     }
 
 } // namespace Plutus

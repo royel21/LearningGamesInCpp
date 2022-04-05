@@ -13,7 +13,7 @@
 #include "../Helpers/ImGuiEx.h"
 #include "../Helpers/IconsFontAwesome5.h"
 
-#include "ECS/Components/Transform.h"
+#include "ECS/Components/TransformComponent.h"
 
 #include <Systems/Systems.h>
 
@@ -95,8 +95,8 @@ namespace Plutus
 
             if (ent) {
                 project->mEnt = ent;
-                if (ent.hasComponent<Plutus::Transform>()) {
-                    auto pos = ent.getComponent<Transform>()->getPosition();
+                if (ent.hasComponent<TransformComponent>()) {
+                    auto pos = ent.getComponent<TransformComponent>()->getPosition();
                     mEntLastPos = { pos.x, pos.y };
                 }
             }
@@ -104,8 +104,8 @@ namespace Plutus
 
         if (Input::get()->onKeyDown("MouseLeft") && Config::get().mProject->mScene->isValid(ent))
         {
-            if (ent.hasComponent<Transform>()) {
-                auto trans = ent.getComponent<Transform>();
+            if (ent.hasComponent<TransformComponent>()) {
+                auto trans = ent.getComponent<TransformComponent>();
                 vec2f result = Config::get().mMouseCoords - mMouseLastCoords;
                 result /= render.mCamera.getScale();
 

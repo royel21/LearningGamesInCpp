@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <imgui.h>
-#include <ECS/Components/TileMap.h>
+#include <ECS/Components/TileMapComponent.h>
 
 #include <Math/Vectors.h>
 #include <Input/Input.h>
@@ -30,11 +30,11 @@ namespace Plutus
 
     void TileMapPanel::DrawTileMapComponet()
     {
-        if (CollapseComponent<TileMap>("TileMap##tilemap-comp", 5))
+        if (CollapseComponent<TileMapComponent>("TileMap##tilemap-comp", 5))
         {
             static bool addTexture = false;
             mIsOpen = true;
-            mTileMap = Config::get().mProject->mEnt.getComponent<TileMap>();
+            mTileMap = Config::get().mProject->mEnt.getComponent<TileMapComponent>();
             ImGui::BeginUIGroup();
             {
                 ImGui::BeginCol("Tile Width");

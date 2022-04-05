@@ -1,6 +1,7 @@
 #include "AudioEngine.h"
 
 #include "AudioEvent.h"
+#include <Log/Logger.h>
 
 namespace Plutus
 {
@@ -31,15 +32,18 @@ namespace Plutus
 			mXAuido2->StopEngine();
 			mXAuido2->Release();
 		}
-		if (has_COINIT)
+		if (has_COINIT) {
 			CoUninitialize();
+		}
 	}
 	bool AudioEngine::Init()
 	{
 		if (has_COINIT)
 		{
-			if (FAILED(CoInitializeEx(NULL, COINIT_MULTITHREADED)))
+			if (FAILED(CoInitializeEx(NULL, COINIT_MULTITHREADED))) {
+				Logger::error("Sound Engine Fail to init CoInitializeEx");
 				return 0;
+			}
 		}
 
 		HRESULT hr = S_OK;
@@ -47,12 +51,14 @@ namespace Plutus
 		hr = XAudio2Create(&mXAuido2);
 		if (FAILED(hr))
 		{
+			Logger::error("Sound Engine Fail to Create Xaudio");
 			return false;
 		}
 
 		hr = mXAuido2->CreateMasteringVoice(&mMasterVoice);
 		if (FAILED(hr))
 		{
+			Logger::error("Sound Engine Fail to CreateMasteringVoice");
 			return false;
 		}
 
@@ -68,46 +74,38 @@ namespace Plutus
 		return true;
 	}
 
-	AudioEvent* AudioEngine::createEvent(const std::string& name, const std::string& path, SoundType type) {
+	AudioEvent* AudioEngine::createEvent(const std::string& name, const std::string& path, int type) {
 		auto event = new AudioEvent(name, path);
 
 		if (!event->mAudioData.size()) return nullptr;
 
 		HRESULT hr = S_OK;
-		if (type == MUSIC)
-		{
-			hr = mXAuido2->CreateSourceVoice(
-				&event->mSourceVoice,
-				&event->mWaveFormat.Format,
-				0, XAUDIO2_DEFAULT_FREQ_RATIO,
-				nullptr,
-				&mSoundsSendList,
-				NULL);
-		}
-		else
-		{
-			hr = mXAuido2->CreateSourceVoice(
-				&event->mSourceVoice,
-				&event->mWaveFormat.Format,
-				0, XAUDIO2_DEFAULT_FREQ_RATIO,
-				nullptr,
-				&mMusicSendList,
-				NULL);
-		}
 
-		if (FAILED(hr)) return nullptr;
+		hr = mXAuido2->CreateSourceVoice(
+			&event->mSourceVoice,
+			&event->mWaveFormat.Format,
+			0, XAUDIO2_DEFAULT_FREQ_RATIO,
+			nullptr,
+			type ? &mMusicSendList : &mSoundsSendList,
+			NULL);
+
+		if (FAILED(hr)) {
+
+			Logger::error("Sound Engine Fail to Create Audio Event");
+			return nullptr;
+		}
 
 		return event;
 	}
-	bool AudioEngine::add(const std::string& name, std::string path, SoundType type)
+	bool AudioEngine::add(const std::string& name, std::string path, int type)
 	{
 
-		if (!mXAuido2 || !mMasterVoice || mSounds.find(name) != mSounds.end())
-			return false;
-		auto event = createEvent(name, path, type);
-		if (event) {
-			mSounds[name] = event;
-			return true;
+		if (mXAuido2 || mMasterVoice || mSounds.find(name) == mSounds.end()) {
+			auto event = createEvent(name, path, type);
+			if (event) {
+				mSounds[name] = event;
+				return true;
+			}
 		}
 		return false;
 	}

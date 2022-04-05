@@ -6,15 +6,15 @@
 
 namespace Plutus
 {
-    class Script
+    class ScriptComponent
     {
     public:
         std::string mScript;
 
     public:
-        Script() = default;
-        Script(const Script& script);
-        Script(const std::string& script);
+        ScriptComponent() = default;
+        ScriptComponent(const ScriptComponent& script);
+        ScriptComponent(const std::string& script);
 
         void setScript(const std::string& script);
 

@@ -3,11 +3,11 @@
 
 namespace Plutus
 {
-    struct Velocity
+    struct VelocityComponent
     {
         vec2f mVelocity;
-        Velocity() = default;
-        Velocity(float x, float y) : mVelocity(x, y) {};
+        VelocityComponent() = default;
+        VelocityComponent(float x, float y) : mVelocity(x, y) {};
 
         void setVel(float x, float y) { mVelocity = { x, y }; }
     };

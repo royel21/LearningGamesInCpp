@@ -9,9 +9,11 @@ namespace Plutus
 	}
 
 	void AssetManager2::destroy() {
-		for (auto& a : mAssets) {
-			a.second->destroy();
-			delete a.second;
+		for (auto& repo : mAssets) {
+			for (auto& a : repo.second) {
+				a.second->destroy();
+				delete a.second;
+			}
 		}
 		mAssets.clear();
 	}

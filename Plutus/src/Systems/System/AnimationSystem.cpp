@@ -1,15 +1,15 @@
 #include "AnimationSystem.h"
 
 #include <ECS/Scene.h>
-#include <ECS/Components/Sprite.h> 
-#include <ECS/Components/Animation.h>
+#include <ECS/Components/SpriteComponent.h> 
+#include <ECS/Components/AnimationComponent.h>
 
 #include <Assets/AssetManager.h>
 
 namespace Plutus
 {
     void AnimationSystem::init() {
-        auto view = mScene->getRegistry()->view<Sprite, Animation>();
+        auto view = mScene->getRegistry()->view<SpriteComponent, AnimationComponent>();
         for (auto ent : view)
         {
             auto [sprite, animation] = view.get(ent);
@@ -25,7 +25,7 @@ namespace Plutus
 
     void AnimationSystem::update(float dt)
     {
-        auto view = mScene->getRegistry()->view<Sprite, Animation>();
+        auto view = mScene->getRegistry()->view<SpriteComponent, AnimationComponent>();
         for (auto ent : view)
         {
             auto [sprite, animation] = view.get(ent);

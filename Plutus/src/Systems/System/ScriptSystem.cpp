@@ -56,29 +56,29 @@ namespace Plutus
         input["onKeyPressed"] = &Input::onKeyPressed;
 
         /*****************************Register Transform**********************************************/
-        auto transform = mGlobalLua.new_usertype<Transform>("Transform");
-        transform["x"] = &Transform::x;
-        transform["y"] = &Transform::y;
-        transform["w"] = &Transform::w;
-        transform["h"] = &Transform::h;
-        transform["rotation"] = &Transform::r;
+        auto transform = mGlobalLua.new_usertype<TransformComponent>("Transform");
+        transform["x"] = &TransformComponent::x;
+        transform["y"] = &TransformComponent::y;
+        transform["w"] = &TransformComponent::w;
+        transform["h"] = &TransformComponent::h;
+        transform["rotation"] = &TransformComponent::r;
 
         /*****************************Register Tilemap and Tile**********************************************/
-        auto tileMap = mGlobalLua.new_usertype<TileMap>("TileMap");
-        tileMap["tiles"] = &TileMap::mTiles;
+        auto tileMap = mGlobalLua.new_usertype<TileMapComponent>("TileMap");
+        tileMap["tiles"] = &TileMapComponent::mTiles;
 
         auto tile = mGlobalLua.new_usertype<Tile>("Tile");
         tile["x"] = &Tile::x;
         tile["y"] = &Tile::y;
 
         /*****************************Register Animation**********************************************/
-        auto animate = mGlobalLua.new_usertype<Animation>("Animation");
-        animate["play"] = &Animation::play;
-        animate["setLoop"] = &Animation::setLoop;
-        animate["loop"] = &Animation::loop;
-        animate["addSeq"] = &Animation::addSeq;
-        animate["addSeq2"] = &Animation::addSequence;
-        animate["setTexture"] = &Animation::setTexture;
+        auto animate = mGlobalLua.new_usertype<AnimationComponent>("Animation");
+        animate["play"] = &AnimationComponent::play;
+        animate["setLoop"] = &AnimationComponent::setLoop;
+        animate["loop"] = &AnimationComponent::loop;
+        animate["addSeq"] = &AnimationComponent::addSeq;
+        animate["addSeq2"] = &AnimationComponent::addSequence;
+        animate["setTexture"] = &AnimationComponent::setTexture;
 
         /*******************************************Register Animation Sequence**********************************************/
         auto sequence = mGlobalLua.new_usertype<Sequence>("Sequence",
@@ -91,28 +91,28 @@ namespace Plutus
 
         /*****************************Register Entity**********************************************/
         auto entity = mGlobalLua.new_usertype<Entity>("Entity");
-        entity["getTransform"] = &Entity::getComponent<Transform>;
-        entity["getTileMap"] = &Entity::getComponent<TileMap>;
-        entity["getAnimate"] = &Entity::getComponent<Animation>;
-        entity["getSprite"] = &Entity::getComponent<Sprite>;
-        entity["getRigidBody"] = &Entity::getComponent<RigidBody>;
-        entity["getVelocity"] = &Entity::getComponent<Velocity>;
+        entity["getTransform"] = &Entity::getComponent<TransformComponent>;
+        entity["getTileMap"] = &Entity::getComponent<TileMapComponent>;
+        entity["getAnimate"] = &Entity::getComponent<AnimationComponent>;
+        entity["getSprite"] = &Entity::getComponent<SpriteComponent>;
+        entity["getRigidBody"] = &Entity::getComponent<RigidBodyComponent>;
+        entity["getVelocity"] = &Entity::getComponent<VelocityComponent>;
 
         /*****************************Register Velocity**********************************************/
-        auto rigidBody = mGlobalLua.new_usertype<RigidBody>("RigidBody");
-        rigidBody["applyImpulse"] = &RigidBody::ApplyImpulse;
-        rigidBody["applyForce"] = &RigidBody::ApplyForce;
-        rigidBody["setVelocity"] = &RigidBody::setVelocity;
+        auto rigidBody = mGlobalLua.new_usertype<RigidBodyComponent>("RigidBody");
+        rigidBody["applyImpulse"] = &RigidBodyComponent::ApplyImpulse;
+        rigidBody["applyForce"] = &RigidBodyComponent::ApplyForce;
+        rigidBody["setVelocity"] = &RigidBodyComponent::setVelocity;
         /*****************************Register Velocity**********************************************/
-        auto velocity = mGlobalLua.new_usertype<Velocity>("Velocity");
+        auto velocity = mGlobalLua.new_usertype<VelocityComponent>("Velocity");
 
-        velocity["velocity"] = &Velocity::mVelocity;
-        velocity["setVel"] = &Velocity::setVel;
+        velocity["velocity"] = &VelocityComponent::mVelocity;
+        velocity["setVel"] = &VelocityComponent::setVel;
     }
 
     void ScriptSystem::init()
     {
-        auto view = mScene->getRegistry()->view<Script>();
+        auto view = mScene->getRegistry()->view<ScriptComponent>();
 
         for (auto [ent, script] : view.each()) {
             script.init(mGlobalLua, { ent, mScene });
@@ -121,7 +121,7 @@ namespace Plutus
 
     void ScriptSystem::update(float dt)
     {
-        auto view = mScene->getRegistry()->view<Script>();
+        auto view = mScene->getRegistry()->view<ScriptComponent>();
 
         for (auto [ent, script] : view.each()) {
             script.update(dt);
@@ -129,7 +129,7 @@ namespace Plutus
     }
 
     void ScriptSystem::destroy() {
-        auto view = mScene->getRegistry()->view<Script>();
+        auto view = mScene->getRegistry()->view<ScriptComponent>();
 
         for (auto [ent, script] : view.each()) {
             script.destroy();

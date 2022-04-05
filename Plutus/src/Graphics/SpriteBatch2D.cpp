@@ -4,9 +4,9 @@
 #include <algorithm>
 #include <iostream>
 
-#include "ECS/Components/Transform.h"
-#include "ECS/Components/Sprite.h"
-#include "ECS/Components/TileMap.h"
+#include "ECS/Components/TransformComponent.h"
+#include "ECS/Components/SpriteComponent.h"
+#include "ECS/Components/TileMapComponent.h"
 #include <Utils/Utils.h>
 
 #include "IndexBuffer.h"
@@ -85,7 +85,7 @@ namespace Plutus
 		bufferVertices.clear();
 	}
 
-	void SpriteBatch2D::submit(GLuint texture, const vec4f& rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
+	void SpriteBatch2D::createVertices(GLuint texture, const vec4f& rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
 	{
 		// Check if is it inside the view port
 		float id = static_cast<float>(entId);
@@ -127,9 +127,9 @@ namespace Plutus
 		mVertexCount += 4;
 	}
 
-	void SpriteBatch2D::submitOne(GLuint texture, const vec4f& rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {
+	void SpriteBatch2D::submit(GLuint texture, const vec4f& rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {
 		resize(4);
-		submit(texture, rect, uv, c, r, flipX, flipX, entId);
+		createVertices(texture, rect, uv, c, r, flipX, flipX, entId);
 	}
 
 	void SpriteBatch2D::submit(const std::vector<Renderable>& renderables)
@@ -137,7 +137,7 @@ namespace Plutus
 		resize(renderables.size());
 		for (auto r : renderables)
 		{
-			submit(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY, r.entId);
+			createVertices(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY, r.entId);
 		}
 	}
 
@@ -154,7 +154,7 @@ namespace Plutus
 
 				// Advance cursors for next glyph (note that advance is number of 1/64 pixels)
 				x += ch.ax * scale;
-				submit(font->mTexId, { xpos, ypos, ch.bw * scale, ch.bh * scale }, ch.uv, color);
+				createVertices(font->mTexId, { xpos, ypos, ch.bw * scale, ch.bh * scale }, ch.uv, color);
 			}
 		}
 	}

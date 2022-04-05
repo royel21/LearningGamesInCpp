@@ -12,9 +12,9 @@ namespace Plutus
 {
     void AnimationTab::DrawAnimation(Entity* ent)
     {
-        mAnimation = ent->getComponent<Animation>();
+        mAnimation = ent->getComponent<AnimationComponent>();
         mTestures = &AssetManager::get()->mTextures;
-        if (CollapseComponent<Animation>("Animation##tilemap-comp", 4))
+        if (CollapseComponent<AnimationComponent>("Animation##tilemap-comp", 4))
         {
             auto& sequences = mAnimation->mSequences;
             auto it = sequences.begin();

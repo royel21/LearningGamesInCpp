@@ -11,7 +11,7 @@ namespace Plutus
         mWorld = new b2World({ gravity.x, gravity.y });
         mWorld->SetAutoClearForces(mScene->getAutoClearForce());
 
-        auto view = mScene->getRegistry()->view<Transform, RigidBody>();
+        auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
         auto size = view.size_hint();
         for (auto [ent, trans, rbody] : view.each()) {
             Entity Ent = { ent, mScene };
@@ -77,7 +77,7 @@ namespace Plutus
         mWorld->SetAutoClearForces(mScene->getAutoClearForce());
         mWorld->Step(mScene->getTimeIterSec(), mScene->getVelIter(), mScene->getBodyIter());
 
-        auto view = mScene->getRegistry()->view<Transform, RigidBody>();
+        auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
         for (auto [ent, trans, rbody] : view.each()) {
             if (rbody.mBodyType == DynamicBody || rbody.mBodyType == KinematicBody) {
                 auto pos = fromWorld(rbody.mBody->GetPosition());

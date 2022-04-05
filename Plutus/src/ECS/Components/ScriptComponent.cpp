@@ -1,19 +1,19 @@
-#include "Script.h"
+#include "ScriptComponent.h"
 
 namespace Plutus
 {
-    Script::Script(const std::string& script) {
+    ScriptComponent::ScriptComponent(const std::string& script) {
         mScript = script;
     }
-    Script::Script(const Script& script) {
+    ScriptComponent::ScriptComponent(const ScriptComponent& script) {
         mScript = script.mScript;
     }
 
-    void Script::setScript(const std::string& script) {
+    void ScriptComponent::setScript(const std::string& script) {
         mScript = script;
     }
 
-    void Script::init(sol::state& lua, Entity ent)
+    void ScriptComponent::init(sol::state& lua, Entity ent)
     {
         mEnv = sol::environment(lua, sol::create, lua.globals());
 
@@ -25,7 +25,7 @@ namespace Plutus
         }
     }
 
-    void Script::destroy() {
+    void ScriptComponent::destroy() {
         mEnv = sol::environment();
         mScript = "";
     }

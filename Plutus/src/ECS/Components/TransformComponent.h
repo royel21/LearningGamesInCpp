@@ -3,7 +3,7 @@
 
 namespace Plutus
 {
-    class Transform
+    class TransformComponent
     {
     public:
         float x;
@@ -15,7 +15,7 @@ namespace Plutus
         bool sortY = false;
 
     public:
-        Transform() = default;
+        TransformComponent() = default;
         /*
             Transform Component
             @param x position X
@@ -24,12 +24,10 @@ namespace Plutus
             @param h Height
             @param r Rotation
         */
-        Transform(float _x, float _y, int _w, int _h, float _r = 0, int _layer = 0, bool sY = false)
-            : x(_x), y(_y), w(_w), h(_h), r(-_r), layer(_layer), sortY(sY)
-        {
-        }
+        TransformComponent(float _x, float _y, int _w, int _h, float _r = 0, int _layer = 0, bool sY = false)
+            : x(_x), y(_y), w(_w), h(_h), r(-_r), layer(_layer), sortY(sY) { }
 
-        bool operator < (Transform& tran) const {
+        bool operator < (TransformComponent& tran) const {
             if (sortY && tran.sortY) {
                 return std::tie(layer, y) < std::tie(tran.layer, tran.y);
             }

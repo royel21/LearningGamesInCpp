@@ -70,7 +70,7 @@ namespace Plutus
 
 		void submit(const std::vector<Renderable>& renderables);
 
-		void submit(vec4f rect, float r) { submit(0, rect, DEF_UV, {}, r); }
+		void submit(vec4f rect, float r) { createVertices(0, rect, DEF_UV, {}, r); }
 		/*
 			Submit a single Object to draw in the screen
 			@param texture Texture image from where to draw
@@ -81,7 +81,7 @@ namespace Plutus
 			@param flipX optional flip the image from X coordinate
 			@param flipY optional flip the image from Y coordinate
 		*/
-		void submitOne(GLuint texture, const vec4f& rect, vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
+		void submit(GLuint texture, const vec4f& rect, vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
 
 		void submit(const std::string& fontId, const std::string& text, float x, float y, float scale = 1, ColorRGBA8 color = {});
 
@@ -97,7 +97,7 @@ namespace Plutus
 		}
 
 	private:
-		void submit(GLuint texture, const vec4f& rect, vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
+		void createVertices(GLuint texture, const vec4f& rect, vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
 		/*
 			Create a render Batch for this texture
 		*/

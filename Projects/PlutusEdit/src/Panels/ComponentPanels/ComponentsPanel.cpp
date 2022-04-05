@@ -38,32 +38,32 @@ namespace Plutus
                 ImGui::Text("Componets");
                 ImGui::Separator();
 
-                ComponentMenuItem<Transform>("Transform");
-                ComponentMenuItem<Sprite>("Sprite");
-                ComponentMenuItem<TileMap>("TileMap");
-                ComponentMenuItem<Animation>("Animation");
-                ComponentMenuItem<Script>("Script");
-                ComponentMenuItem<RigidBody>("RigidBody");
+                ComponentMenuItem<TransformComponent>("Transform");
+                ComponentMenuItem<SpriteComponent>("Sprite");
+                ComponentMenuItem<TileMapComponent>("TileMap");
+                ComponentMenuItem<AnimationComponent>("Animation");
+                ComponentMenuItem<ScriptComponent>("Script");
+                ComponentMenuItem<RigidBodyComponent>("RigidBody");
 
                 ImGui::EndPopup();
             }
 
             ImGui::Separator();
-            if (mEnt.hasComponent<Transform>()) DrawTransform();
-            if (mEnt.hasComponent<Sprite>()) DrawSprite();
-            if (mEnt.hasComponent<Animation>()) mAnimation.DrawAnimation(&mEnt);
-            if (mEnt.hasComponent<TileMap>()) mTileMapPanel.DrawTileMapComponet();
-            if (mEnt.hasComponent<Script>()) DrawScript();
-            if (mEnt.hasComponent<RigidBody>()) mRigidBodyTab.draw(&mEnt);
+            if (mEnt.hasComponent<TransformComponent>()) DrawTransform();
+            if (mEnt.hasComponent<SpriteComponent>()) DrawSprite();
+            if (mEnt.hasComponent<AnimationComponent>()) mAnimation.DrawAnimation(&mEnt);
+            if (mEnt.hasComponent<TileMapComponent>()) mTileMapPanel.DrawTileMapComponet();
+            if (mEnt.hasComponent<ScriptComponent>()) DrawScript();
+            if (mEnt.hasComponent<RigidBodyComponent>()) mRigidBodyTab.draw(&mEnt);
         }
         ImGui::End();
     }
 
     /***********************************Transform Comopnent********************************************************/
     void ComponentPanel::DrawTransform() {
-        if (CollapseComponent<Transform>("Transform##comp-comp", 1))
+        if (CollapseComponent<TransformComponent>("Transform##comp-comp", 1))
         {
-            auto trans = mEnt.getComponent<Transform>();
+            auto trans = mEnt.getComponent<TransformComponent>();
             float position[] = { trans->x, trans->y };
 
             if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
@@ -94,10 +94,10 @@ namespace Plutus
     }
     /***********************************Sprite Comopnent********************************************************/
     void ComponentPanel::DrawSprite() {
-        if (CollapseComponent<Sprite>("Sprite##sprite-comp", 3))
+        if (CollapseComponent<SpriteComponent>("Sprite##sprite-comp", 3))
         {
             if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
-                auto sprite = mEnt.getComponent<Sprite>();
+                auto sprite = mEnt.getComponent<SpriteComponent>();
                 auto& textures = AssetManager::get()->mTextures.mTileSets;
 
                 auto color = sprite->mColor;
@@ -152,9 +152,9 @@ namespace Plutus
 
     /***********************************Script Comopnent********************************************************/
     void ComponentPanel::DrawScript() {
-        if (CollapseComponent<Script>("Script##script-comp", 5))
+        if (CollapseComponent<ScriptComponent>("Script##script-comp", 5))
         {
-            auto script = mEnt.getComponent<Script>();
+            auto script = mEnt.getComponent<ScriptComponent>();
             auto files = Utils::listFiles("assets/script", ".lua");
             if (files.size())
             {

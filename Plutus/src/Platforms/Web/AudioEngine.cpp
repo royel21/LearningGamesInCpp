@@ -58,7 +58,8 @@ namespace Plutus
         }
         return  true;
     }
-    bool AudioEngine::add(const std::string& id, std::string path, SoundType type) {
+
+    bool AudioEngine::add(const std::string& id, std::string path, int type) {
 
         std::vector<u8> data;
         WaveFormatEx waveformat;
@@ -157,7 +158,6 @@ namespace Plutus
             alDeleteBuffers(1, &event.second.buffer);
         }
         mSounds.clear();
-
     }
 
     AudioEngine& SoundEngine = AudioEngine::get();

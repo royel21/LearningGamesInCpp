@@ -65,9 +65,9 @@ void GameScreen::onEntry()
     Plutus::SceneLoader::loadFromJson("assets/scenes/Physics.json", mScene.get());
     Player = mScene->getEntityByName("Player2");
     if (Player) {
-        Player.addComponent<Plutus::Velocity>();
+        Player.addComponent<Plutus::VelocityComponent>();
 
-        auto pbody = Player.addComponent<Plutus::RigidBody>(Player, Plutus::DynamicBody);
+        auto pbody = Player.addComponent<Plutus::RigidBodyComponent>(Player, Plutus::DynamicBody);
         pbody->linearDamping = 0;
         pbody->gravityScale = 0;
 
@@ -79,8 +79,8 @@ void GameScreen::onEntry()
 
     auto ground = mScene->getEntityByName("Floor");
     if (ground) {
-        auto body = ground.addComponent<Plutus::RigidBody>(ground, Plutus::StaticBody);
-        auto trans = ground.getComponent<Plutus::Transform>();
+        auto body = ground.addComponent<Plutus::RigidBodyComponent>(ground, Plutus::StaticBody);
+        auto trans = ground.getComponent<Plutus::TransformComponent>();
 
         body->addBox({ 0, 0 }, { (float)trans->w, (float)trans->h });
     }
@@ -127,7 +127,7 @@ void GameScreen::update(float dt)
         }
     }
     else {
-        auto trans = Player.getComponent<Plutus::Transform>();
+        auto trans = Player.getComponent<Plutus::TransformComponent>();
 
         auto tpos = Plutus::vec2f(round(trans->x), round(trans->y));
 
@@ -147,7 +147,7 @@ void GameScreen::update(float dt)
     mWorldCamera.update();
     mSystemManager.update(dt);
 
-    auto rbody = Player.getComponent<Plutus::RigidBody>();
+    auto rbody = Player.getComponent<Plutus::RigidBodyComponent>();
     auto vel = rbody->mBody->GetLinearVelocity();
     // printf("vel: %0.3f %0.3f\n", vel.x, vel.y);
 

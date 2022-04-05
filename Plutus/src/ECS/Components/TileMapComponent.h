@@ -8,7 +8,7 @@
 namespace Plutus
 {
     struct Texture;
-    struct TileMap;
+    struct TileMapComponent;
 
     struct Tile
     {
@@ -20,7 +20,7 @@ namespace Plutus
         unsigned int color;
         int texcoord = 0;
         int texture = 0;
-        TileMap* parent;
+        TileMapComponent* parent;
         Tile() = default;
         Tile(int _x, int _y, int _texcoord, unsigned int _texture, bool fx = false, bool fy = false, float _rotate = 0, unsigned int _color = 0xffffffff)
         {
@@ -34,7 +34,7 @@ namespace Plutus
             color = _color;
         }
 
-        void setParent(TileMap* _parent) {
+        void setParent(TileMapComponent* _parent) {
             parent = _parent;
         }
 
@@ -51,7 +51,7 @@ namespace Plutus
         }
     };
 
-    struct TileMap
+    struct TileMapComponent
     {
         int mTileWidth;
         int mTileHeight;
@@ -59,9 +59,9 @@ namespace Plutus
         std::vector<Tile> mTiles;
         std::unordered_map<int, std::string> mTextures;
 
-        TileMap() = default;
+        TileMapComponent() = default;
         // TileMap(const TileMap& tilemap);
-        TileMap(int tileWidth, int tileHeight, int _layer = 0) : mTileWidth(tileWidth), mTileHeight(tileHeight) {}
+        TileMapComponent(int tileWidth, int tileHeight, int _layer = 0) : mTileWidth(tileWidth), mTileHeight(tileHeight) {}
 
         void addTexture(int id, const std::string& texture);
         void removeTexture(int index);

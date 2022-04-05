@@ -33,7 +33,7 @@ namespace Plutus {
 
 		friend class AudioEngine;
 	public:
-		AudioEvent(std::string name, std::string filePath);
+		AudioEvent(const std::string& id, const std::string& filePath);
 
 		~AudioEvent();
 

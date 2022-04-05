@@ -9,7 +9,7 @@ namespace Plutus
 {
 
     struct Tile;
-    struct TileMap;
+    struct TileMapComponent;
 
     class TileMapPanel : public InputListener
     {
@@ -31,7 +31,7 @@ namespace Plutus
         bool mIsOpen = false;
         int mCurrentTexture = 0;
         bool mShowAddModal = false;
-        TileMap* mTileMap = nullptr;
+        TileMapComponent* mTileMap = nullptr;
         Tile* mCurrentTile = nullptr;
         std::vector<vec3i> mTempTiles;
     };

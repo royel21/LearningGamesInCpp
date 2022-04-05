@@ -102,7 +102,7 @@ namespace Plutus
     void  FontManager::createRenderable(std::vector<Renderable>& renderables,
         const std::string& text, float x, float y, float scale, ColorRGBA8 color)
     {
-        auto font = mFonts[mCurrentFont];
+        auto& font = mFonts[mCurrentFont];
         for (auto i : text) {
             auto& ch = font.ch[i];
             GLfloat xpos = x + ch.bl * scale;

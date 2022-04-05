@@ -70,7 +70,7 @@ namespace Plutus
 
     void Render::drawPhysicBodies()
     {
-        auto view = mScene->getRegistry()->view<Transform, RigidBody>();
+        auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
         for (auto [e, trans, rbody] : view.each()) {
 
             for (auto& fixture : rbody.mFixtures) {
@@ -110,8 +110,8 @@ namespace Plutus
 
     void Render::prepare()
     {
-        auto viewMap = mScene->getRegistry()->view<TileMap>();
-        auto view = mScene->getRegistry()->view<Transform, Sprite>();
+        auto viewMap = mScene->getRegistry()->view<TileMapComponent>();
+        auto view = mScene->getRegistry()->view<TransformComponent, SpriteComponent>();
 
         /******************Resize temp buffer************************/
         auto size = view.size_hint();

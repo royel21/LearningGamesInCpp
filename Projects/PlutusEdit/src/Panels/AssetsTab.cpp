@@ -277,7 +277,7 @@ namespace Plutus
             if (substr.compare("sounds") == 0 && soundsTypes[ex]) {
                 type = 3;
                 if (!aEvent) {
-                    aEvent = SoundEngine.createEvent("temp", selectedDir, EFFECT);
+                    aEvent = SoundEngine.createEvent("temp", selectedDir, 0);
                 }
                 audioPlay(aEvent, Utils::getFileName(selectedDir).c_str());
             }
@@ -293,7 +293,7 @@ namespace Plutus
                     AssetManager::get()->mFonts.addFont(name, selectedDir, fontSize);
                     break;
                 case 3:
-                    SoundEngine.add(name, selectedDir, EFFECT);
+                    SoundEngine.add(name, selectedDir, 0);
                     break;
                 }
                 show = false;

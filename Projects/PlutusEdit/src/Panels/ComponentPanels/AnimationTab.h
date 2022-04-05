@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <ECS/Components/Animation.h>
+#include <ECS/Components/AnimationComponent.h>
 
 namespace Plutus
 {
@@ -20,7 +20,7 @@ namespace Plutus
     private:
         void SeqWindow();
     private:
-        Animation* mAnimation;
+        AnimationComponent* mAnimation;
         Textures* mTestures;
         std::string mCurSeq;
         std::string mCurTex;

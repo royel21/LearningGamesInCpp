@@ -28,7 +28,7 @@ namespace Plutus
     }
 
 
-    void Animate_JSON(Serializer& ser, const Animation* anim)
+    void Animate_JSON(Serializer& ser, const AnimationComponent* anim)
     {
         ser.StartObj();
         {
@@ -59,7 +59,7 @@ namespace Plutus
         ser.EndObj();
     }
 
-    void TileMap_json(Serializer& ser, const TileMap* tilemap)
+    void TileMap_json(Serializer& ser, const TileMapComponent* tilemap)
     {
         ser.StartObj();
         {
@@ -119,9 +119,9 @@ namespace Plutus
 
             ser.StartArr("components");
             {
-                if (ent.hasComponent<Transform>())
+                if (ent.hasComponent<TransformComponent>())
                 {
-                    auto trans = ent.getComponent<Transform>();
+                    auto trans = ent.getComponent<TransformComponent>();
                     ser.StartObj();
                     {
                         ser.addString("name", "Transform");
@@ -135,9 +135,9 @@ namespace Plutus
                     }
                     ser.EndObj();
                 }
-                if (ent.hasComponent<Sprite>())
+                if (ent.hasComponent<SpriteComponent>())
                 {
-                    auto sprite = ent.getComponent<Sprite>();
+                    auto sprite = ent.getComponent<SpriteComponent>();
                     ser.StartObj();
                     {
                         ser.addString("name", "Sprite");
@@ -156,13 +156,13 @@ namespace Plutus
                     }
                     ser.EndObj();
                 }
-                if (ent.hasComponent<Animation>())
+                if (ent.hasComponent<AnimationComponent>())
                 {
-                    Animate_JSON(ser, ent.getComponent<Animation>());
+                    Animate_JSON(ser, ent.getComponent<AnimationComponent>());
                 }
-                if (ent.hasComponent<Script>())
+                if (ent.hasComponent<ScriptComponent>())
                 {
-                    auto script = ent.getComponent<Script>();
+                    auto script = ent.getComponent<ScriptComponent>();
                     ser.StartObj();
                     {
                         ser.addString("name", "Script");
@@ -170,9 +170,9 @@ namespace Plutus
                     }
                     ser.EndObj();
                 }
-                if (ent.hasComponent<TileMap>())
+                if (ent.hasComponent<TileMapComponent>())
                 {
-                    TileMap_json(ser, ent.getComponent<TileMap>());
+                    TileMap_json(ser, ent.getComponent<TileMapComponent>());
                 }
             }
             ser.EndArr();

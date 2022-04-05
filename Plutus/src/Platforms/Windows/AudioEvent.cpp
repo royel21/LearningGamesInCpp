@@ -4,9 +4,9 @@
 namespace Plutus
 {
 
-	AudioEvent::AudioEvent(std::string name, std::string filePath) : mSourceVoice(nullptr)
+	AudioEvent::AudioEvent(const std::string& id, const std::string& filePath) : mSourceVoice(nullptr)
 	{
-		mName = name;
+		mName = id;
 		mPath = filePath;
 		mAudioData.clear();
 

@@ -18,7 +18,7 @@ namespace Plutus
 
     void DebugSystem::update(float dt)
     {
-        auto view = mScene->getRegistry()->view<Transform, RigidBody>();
+        auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
         for (auto [e, trans, rbody] : view.each()) {
 
             for (auto& fixture : rbody.mFixtures) {
