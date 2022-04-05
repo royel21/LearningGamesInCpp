@@ -18,7 +18,13 @@ namespace Plutus
 
         vec4f uv; // x offset of glyph in texture coordinates
     };
-
+    /*
+        Font Struct Replesenting a single font
+        Constructor Params
+        @param FontId Asset Id
+        @param FontPath Path in asset folder
+        @param FontSize
+    */
     struct Font : public Asset
     {
         unsigned int mTexId;

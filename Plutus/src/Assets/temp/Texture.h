@@ -9,6 +9,17 @@
 
 namespace Plutus
 {
+    /*
+     *   Texture Replesenting a single Texture or a Spritesheet
+     *
+     *   @param TextureID Asset Id
+     *   @param Path Path in asset folder
+     *   @param TileCount default = 0
+     *   @param TileWith default = 0
+     *   @param TileHeight default = 0
+     *   @param minFilter Minify Filter default = GL_NEAREST
+     *   @param magFilter Magnify Filter default = GL_NEAREST
+    */
     struct Texture2 : Asset
     {
     public:
