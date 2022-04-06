@@ -14,5 +14,9 @@ namespace Plutus
         void destroy();
     private:
         sol::state mGlobalLua;
+
+        void registerAssets();
+        void registerEntity();
+        void registerComponents();
     };
 } // namespace Plutus

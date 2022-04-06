@@ -19,7 +19,7 @@ namespace Plutus
         c ? calculateUV() : uvs.push_back({ 0, 0, 1, 1 });
     }
 
-    vec4f Texture2::getUV(float column, float row, float w, float h)
+    vec4f Texture2::getUVs(float column, float row, float w, float h)
     {
         float xw = column * mTileWidth;
         float yh = row * mTileHeight;

@@ -12,7 +12,9 @@ namespace Plutus
     class Serializer
     {
     public:
-        Serializer() : sb(), writer(sb) {}
+        Serializer() : sb(), writer(sb) {
+            writer.SetMaxDecimalPlaces(4);
+        }
         Writer<StringBuffer>* getWriter() { return &writer; }
         const char* getString() { return sb.GetString(); };
 

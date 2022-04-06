@@ -16,8 +16,8 @@ namespace Plutus
         manager->addAsset<Texture2>("Link", "assets/textures/player1.png");
         manager->addAsset<Font>("Zoika", "assets/fonts/Zoika.ttf", 64);
         manager->addAsset<Font>("Arial", "assets/fonts/arial.ttf", 64);
-        manager->addAsset<Sound>("BG", "assets/sounds/XYZ2.ogg");
-
+        auto sound = manager->addAsset<Sound>("BG", "assets/sounds/shotgun.wav");
+        sound->play();
         // Logger::info(typeid(sound).name());
 
         setBackgoundColor(1, 0.9f, 0.4f);

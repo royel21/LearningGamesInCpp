@@ -10,6 +10,8 @@ local stand = {
     down = "stand-down"
 }
 
+local sound = assetManager:addSound("bg", "assets/sounds/shots/rifle.wav", 0)
+
 local direction = "right";
 local state = ""
 
@@ -47,6 +49,11 @@ function update(dt)
         curAnime = stand[direction]
         anim:play(curAnime)
         vel = {x = 0, y = 0}
+    end
+
+    if (input:onKeyPressed("X")) then
+        sound:play(false)
+        print("play sound")
     end
 
     if state ~= "attacking" and state ~= "jumping" then

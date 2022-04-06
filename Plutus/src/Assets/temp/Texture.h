@@ -26,16 +26,21 @@ namespace Plutus
         Texture2() = default;
         Texture2(const std::string& path, int c = 0, int w = 0, int h = 0, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
 
-        inline vec4f getUV(int uvIndex)
+        inline vec4f getUVs(int uvIndex)
         {
             return uvs.size() && uvIndex < (int)uvs.size() ? uvs[uvIndex] : vec4f(0, 0, 1, 1);
         }
 
-        vec4f getUV(float column, float row, float w, float h);
+        vec4f getUVs(float column, float row, float w, float h);
 
         void destroy() override;
 
         void calculateUV();
+
+        template<typename ...TArgs>
+        vec4f getUV(TArgs &&... args) {
+            return getUVs(std::forward<TArgs>(args)...);
+        }
 
     private:
         void loadTexture(GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
