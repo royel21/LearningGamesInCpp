@@ -23,8 +23,8 @@ namespace Plutus
             body.position = pos;
             body.bullet = rbody.mBullet;
             body.fixedRotation = rbody.mFixedRotation;
-            body.linearDamping = rbody.linearDamping;
-            body.gravityScale = rbody.gravityScale;
+            body.linearDamping = rbody.mLinearDamping;
+            body.gravityScale = rbody.mGravityScale;
 
             rbody.mBody = mWorld->CreateBody(&body);
 

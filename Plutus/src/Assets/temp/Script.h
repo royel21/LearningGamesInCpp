@@ -6,7 +6,7 @@ namespace Plutus
     class Script : public Asset
     {
     public:
-        Script();
+        Script(std::string& path) { mPath = path; }
         void destroy() override {}
     };
 } // namespace Plutus

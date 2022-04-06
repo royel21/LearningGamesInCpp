@@ -11,7 +11,6 @@ namespace Plutus
     struct Asset
     {
         std::string mPath;
-        int mType;
 
         virtual void destroy() = 0;
     };

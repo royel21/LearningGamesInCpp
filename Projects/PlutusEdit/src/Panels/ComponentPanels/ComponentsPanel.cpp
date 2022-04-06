@@ -8,7 +8,7 @@
 
 #include "ComponentUtil.h"
 
-#include <Assets/AssetManager.h>
+#include <Assets/temp/Assets.h>
 
 namespace Plutus
 {
@@ -98,12 +98,12 @@ namespace Plutus
         {
             if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
                 auto sprite = mEnt.getComponent<SpriteComponent>();
-                auto& textures = AssetManager::get()->mTextures.mTileSets;
+                auto& textures = AssetManager2::get()->getAssets<Texture2>();
 
                 auto color = sprite->mColor;
                 std::string selected = sprite->mTextureId;
                 ImGui::BeginCol("TileSheet");
-                if (ImGui::ComboBox<Texture>("#TileSheet", textures, selected)) {
+                if (ImGui::ComboBox("#TileSheet", textures, selected)) {
                     sprite->mTextureId = selected;
                 }
                 ImGui::BeginCol("Color");
@@ -116,15 +116,18 @@ namespace Plutus
                 ImGui::BeginCol("Use Coords");
                 ImGui::Checkbox("##spr-usecoords", &mUseCoords);
 
-                bool found = textures.find(selected) != textures.end();
-                if (found) {
+                auto found = textures.find(selected);
+
+                if (found != textures.end()) {
+                    auto& texture = *static_cast<Texture2*>(found->second);
+
                     if (!mUseCoords) {
-                        int max = (int)textures[selected].uvs.size();
+                        int max = (int)texture.uvs.size();
                         if (max) {
                             ImGui::BeginCol("UV");
                             if (ImGui::InputInt("#spr-uv", &uvIndex)) {
                                 uvIndex = CHECKLIMIT(uvIndex, 0, max - 1);
-                                sprite->mUVCoord = AssetManager::get()->getTexCoords(selected, uvIndex);
+                                sprite->mUVCoord = texture.getUV(uvIndex);
                             }
                         }
                     }
@@ -132,17 +135,16 @@ namespace Plutus
                         ImGui::BeginCol("Coords");
                         ImGui::DragFloat4("#spr-uv", &sprite->mUVCoord.x, 0.001f);
                     }
-                }
-                ImGui::EndUIGroup();
-                ImGui::Separator();
-                if (found) {
-                    auto& texture = textures[selected];
+
+                    ImGui::EndUIGroup();
+                    ImGui::Separator();
+
                     if (mUseCoords) {
                         ImGui::DrawTexCoords(&texture, sprite->mUVCoord);
                     }
                     else {
                         if (ImGui::DrawTextureOne(&texture, uvIndex)) {
-                            sprite->mUVCoord = AssetManager::get()->getTexCoords(selected, uvIndex);
+                            sprite->mUVCoord = texture.getUV(uvIndex);
                         }
                     }
                 }

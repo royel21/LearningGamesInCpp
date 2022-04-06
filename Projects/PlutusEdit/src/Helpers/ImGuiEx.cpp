@@ -481,7 +481,7 @@ namespace ImGui {
         ImGui::EndChild();
     }
 
-    bool DrawTextureOne(Plutus::Texture* texture, int& selected) {
+    bool DrawTextureOne(Plutus::Texture2* texture, int& selected) {
         std::vector<Plutus::vec3i> selecteds;
         if (DrawTexture(texture, 0, 200, 1.0f, &selecteds, true)) {
             selected = selecteds[0].z;

@@ -12,6 +12,8 @@
 
 #include <stdio.h>
 
+#include <Assets/temp/Assets.h> 
+
 #define MODE_PLACE 0
 #define MODE_EDIT 1
 #define MODE_REMOVE 2
@@ -219,15 +221,15 @@ namespace Plutus
             int x = ((int)gridCoords.x * w) + (tile.x * w);
             int y = ((int)gridCoords.y * h) - (tile.y * h);
             if (tex)
-                renderables[i++] = { tex->texId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation, false, false, -1, 99, false };
+                renderables[i++] = { tex->mTexId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation, false, false, -1, 99, false };
         }
     }
 
     void TileMapPanel::AddTexureDialog(bool& show) {
         if (show) {
             static float scale = 1;
-            auto textures = AssetManager::get()->mTextures.getItems();
-            static std::string current = textures.begin()->second.name;
+            auto& textures = AssetManager2::get()->getAssets<Texture2>();
+            static std::string current = textures.begin()->first;
             int index = (int)mTileMap->mTextures.size();
 
             ImGui::BeginDialog("Texture Modal");
@@ -239,8 +241,8 @@ namespace Plutus
                 ImGui::DragFloat("##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
                 ImGui::EndUIGroup();
             }
-
-            ImGui::DrawTexture(&textures[current], 400, 350, scale);
+            auto texture = static_cast<Texture2*>(textures[current]);
+            ImGui::DrawTexture(texture, 400, 350, scale);
             ImGui::Separator();
             if (ImGui::Button("Add Texture##mt-modal"))
             {

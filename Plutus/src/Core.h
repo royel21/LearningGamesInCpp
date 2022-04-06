@@ -1,17 +1,13 @@
 #pragma once
 #include "IScreen.h"
 
+#include <string>
+#include <unordered_map>
+
 #include <Core/Window.h>
 #include <Time/Limiter.h>
 #include <Graphics/Camera2D.h>
-#include <Systems/SystemManager.h>
 
-#include <ECS/Scene.h>
-
-#include <unordered_map>
-
-#include <string>
-#include <memory>
 
 namespace Plutus
 {

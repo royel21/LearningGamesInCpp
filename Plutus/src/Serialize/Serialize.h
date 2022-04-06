@@ -26,6 +26,8 @@ namespace Plutus
         void addFloat(const std::string& id, float data);
         void addBool(const std::string& id, bool data);
 
+        void add2Float(const std::string& id, const vec2f& v);
+
         void StartObj(const std::string& id);
 
         void StartObj();

@@ -23,6 +23,7 @@ namespace Plutus
     struct Texture2 : Asset
     {
     public:
+        Texture2() = default;
         Texture2(const std::string& path, int c = 0, int w = 0, int h = 0, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
 
         inline vec4f getUV(int uvIndex)

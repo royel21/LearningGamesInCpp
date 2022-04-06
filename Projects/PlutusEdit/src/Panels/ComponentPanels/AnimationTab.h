@@ -10,7 +10,6 @@ namespace Plutus
     };
 
     class Entity;
-    class Textures;
 
     class AnimationTab
     {
@@ -21,7 +20,6 @@ namespace Plutus
         void SeqWindow();
     private:
         AnimationComponent* mAnimation;
-        Textures* mTestures;
         std::string mCurSeq;
         std::string mCurTex;
         std::string mNewSeqId;

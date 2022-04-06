@@ -12,31 +12,44 @@ namespace Plutus
     void Textures_JSON(Serializer& ser)
     {
         ser.StartArr("fonts");
-        for (auto tile : *AssetManager2::get()->getAssets<Font>())
+        for (auto& tile : AssetManager2::get()->getAssets<Font>())
         {
             auto tex = static_cast<Font*>(tile.second);
             ser.StartObj();
             {
                 ser.addString("id", tile.first);
-                ser.addInt("type", tex->mType);
                 ser.addString("path", tex->mPath);
+                ser.addInt("size", tex->mSize);
             }
             ser.EndObj();
         }
         ser.EndArr();
 
         ser.StartArr("textures");
-        for (auto tile : *AssetManager2::get()->getAssets<Texture2>())
+        for (auto& tile : AssetManager2::get()->getAssets<Texture2>())
         {
             auto tex = static_cast<Texture2*>(tile.second);
             ser.StartObj();
             {
                 ser.addString("id", tile.first);
-                ser.addInt("type", tex->mType);
                 ser.addString("path", tex->mPath);
                 ser.addInt("columns", tex->mColumns);
                 ser.addInt("width", tex->mTileWidth);
                 ser.addInt("height", tex->mTileHeight);
+            }
+            ser.EndObj();
+        }
+        ser.EndArr();
+
+        ser.StartArr("sounds");
+        for (auto& asset : AssetManager2::get()->getAssets<Sound>())
+        {
+            auto sound = static_cast<Sound*>(asset.second);
+            ser.StartObj();
+            {
+                ser.addString("id", asset.first);
+                ser.addString("path", sound->mPath);
+                ser.addInt("type", sound->mType);
             }
             ser.EndObj();
         }
@@ -119,6 +132,39 @@ namespace Plutus
         ser.EndObj();
     }
 
+    void RigidBody_json(Serializer& ser, const RigidBodyComponent* rbody) {
+        ser.StartObj();
+        {
+            ser.addString("name", "RigidBody");
+            ser.addInt("b", rbody->mBullet);
+            ser.addInt("f", rbody->mFixedRotation);
+            ser.addFloat("l", rbody->mLinearDamping);
+            ser.addFloat("gs", rbody->mGravityScale);
+            ser.addInt("bt", rbody->mBodyType);
+            ser.add2Float("o", rbody->mOffset);
+            ser.StartArr("fixs");
+            {
+                for (auto& fix : rbody->mFixtures)
+                {
+                    ser.StartObj();
+                    {
+                        ser.addInt("type", fix.type);
+                        ser.add2Float("offset", fix.offset);
+                        ser.add2Float("size", fix.size);
+                        ser.addFloat("radiu", fix.radius);
+                        ser.addFloat("frict", fix.friction);
+                        ser.addFloat("dens", fix.density);
+                        ser.addFloat("restit", fix.restitution);
+                        ser.addInt("sensor", fix.isSensor);
+                    }
+                    ser.EndObj();
+                }
+            }
+            ser.EndArr();
+        }
+        ser.EndObj();
+    }
+
     std::string SceneSerializer(Scene* scene)
     {
         Serializer ser;
@@ -137,6 +183,10 @@ namespace Plutus
             {
                 if (ent.hasComponent<TransformComponent>())
                 {
+                    if (ent.hasComponent<AnimationComponent>())
+                    {
+                        Animate_JSON(ser, ent.getComponent<AnimationComponent>());
+                    }
                     auto trans = ent.getComponent<TransformComponent>();
                     ser.StartObj();
                     {
@@ -172,10 +222,6 @@ namespace Plutus
                     }
                     ser.EndObj();
                 }
-                if (ent.hasComponent<AnimationComponent>())
-                {
-                    Animate_JSON(ser, ent.getComponent<AnimationComponent>());
-                }
                 if (ent.hasComponent<ScriptComponent>())
                 {
                     auto script = ent.getComponent<ScriptComponent>();
@@ -185,6 +231,9 @@ namespace Plutus
                         ser.addString("script", script->mScript);
                     }
                     ser.EndObj();
+                }
+                if (ent.hasComponent<RigidBodyComponent>()) {
+                    RigidBody_json(ser, ent.getComponent<RigidBodyComponent>());
                 }
                 if (ent.hasComponent<TileMapComponent>())
                 {

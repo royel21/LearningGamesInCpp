@@ -4,16 +4,15 @@
 
 #include <ECS/Scene.h>
 
-#include <Assets/AssetManager.h>
-
 #include "ComponentUtil.h"
+#include <Assets/temp/Assets.h>
 
 namespace Plutus
 {
     void AnimationTab::DrawAnimation(Entity* ent)
     {
         mAnimation = ent->getComponent<AnimationComponent>();
-        mTestures = &AssetManager::get()->mTextures;
+        auto& mTextures = AssetManager2::get()->getAssets<Texture2>();
         if (CollapseComponent<AnimationComponent>("Animation##tilemap-comp", 4))
         {
             auto& sequences = mAnimation->mSequences;
@@ -27,8 +26,8 @@ namespace Plutus
                 showSeqWindow = true;
                 mNewSeqId = "";
                 mMode = NEW;
-                if (mTestures->mTileSets.size())
-                    mCurTex = mTestures->mTileSets.begin()->first;
+                if (mTextures.size())
+                    mCurTex = mTextures.begin()->first;
             }
             if (sequences.size() && !mCurSeq.empty()) {
                 if (ImGui::TransparentButton(ICON_FA_EDIT "##edit-seq", true)) {
@@ -59,6 +58,7 @@ namespace Plutus
 
     void AnimationTab::SeqWindow() {
         if (showSeqWindow) {
+            auto& mTextures = AssetManager2::get()->getAssets<Texture2>();
             auto found = mAnimation->mSequences.find(mCurSeq);
             auto& seq = mMode ? found->second : newSeq;
 
@@ -73,7 +73,7 @@ namespace Plutus
                     ImGui::BeginCol("Time", 300);
                     ImGui::InputFloat("##seq-time", &seq.mSeqTime, 0.001f);
                     ImGui::BeginCol("Texure", 300);
-                    ImGui::ComboBox("##tex-seq", mTestures->mTileSets, seq.mTexId);
+                    ImGui::ComboBox("##tex-seq", mTextures, seq.mTexId);
                     ImGui::EndUIGroup();
                 }
 
@@ -83,17 +83,17 @@ namespace Plutus
 
                 auto curPos = ImGui::GetWindowSize();
                 if (!seq.mTexId.empty()) {
-                    auto& tex = mTestures->mTileSets[seq.mTexId];
+                    auto tex = static_cast<Texture2*>(mTextures[seq.mTexId]);
                     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 1, 2 });
                     if (ImGui::BeginChild("##tex-img", { curPos.x, 217 })) {
-                        for (size_t i = 0; i < tex.uvs.size(); i++) {
+                        for (size_t i = 0; i < tex->uvs.size(); i++) {
 
                             ImGui::PushID((int)i);
                             if (i % 6 != 0)
                                 ImGui::SameLine();
 
-                            auto uv = tex.uvs[i];
-                            if (ImGui::ImageButton((ImTextureID)tex.texId, { 64, 64 }, { uv.x, uv.y }, { uv.z, uv.w })) {
+                            auto uv = tex->uvs[i];
+                            if (ImGui::ImageButton((ImTextureID)tex->mTexId, { 64, 64 }, { uv.x, uv.y }, { uv.z, uv.w })) {
                                 seq.mFrames.push_back((int)i);
                             }
                             ImGui::PopID();
@@ -111,8 +111,8 @@ namespace Plutus
                             if (i % 6 != 0)
                                 ImGui::SameLine();
 
-                            auto uv = tex.uvs[frame];
-                            if (ImGui::ImageButton((ImTextureID)tex.texId, { 64, 64 }, { uv.x, uv.y }, { uv.z, uv.w })) {
+                            auto uv = tex->uvs[frame];
+                            if (ImGui::ImageButton((ImTextureID)tex->mTexId, { 64, 64 }, { uv.x, uv.y }, { uv.z, uv.w })) {
                                 index2RM = (int)i;
                             }
                             ImGui::PopID();
@@ -154,8 +154,8 @@ namespace Plutus
                             seq.mFrame = ++seq.mFrame % seq.mFrames.size();
                             time = 0;
                         }
-                        auto uv = tex.getUV(seq.mFrames[seq.mFrame]);
-                        ImGui::Image((ImTextureID)tex.texId, { width, height }, { uv.x, uv.y }, { uv.z, uv.w });
+                        auto uv = tex->getUV(seq.mFrames[seq.mFrame]);
+                        ImGui::Image((ImTextureID)tex->mTexId, { width, height }, { uv.x, uv.y }, { uv.z, uv.w });
                     }
                 }
 

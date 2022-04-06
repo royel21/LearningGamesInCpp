@@ -10,7 +10,6 @@ namespace Plutus
 {
     Texture2::Texture2(const std::string& path, int c, int w, int h, GLint minFilter, GLint magFilter)
     {
-        mType = AssetTexture;
         mPath = path;
 
         mColumns = c;

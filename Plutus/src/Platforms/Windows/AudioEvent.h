@@ -6,9 +6,9 @@
 
 namespace Plutus {
 	enum AudioState {
-		Playing = 1,
-		Paused,
-		Stopped
+		AudioPlaying = 1,
+		AudioPaused,
+		AudioStopped
 	};
 
 	class AudioEngine;
@@ -17,7 +17,7 @@ namespace Plutus {
 	private:
 		std::string mName;
 		std::string mPath;
-		AudioState state = Stopped;
+		AudioState state = AudioStopped;
 		//Audio Type
 		int type;
 		// the length of the wave

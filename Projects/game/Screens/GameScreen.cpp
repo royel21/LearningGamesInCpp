@@ -67,8 +67,8 @@ void GameScreen::onEntry()
         Player.addComponent<Plutus::VelocityComponent>();
 
         auto pbody = Player.addComponent<Plutus::RigidBodyComponent>(Player, Plutus::DynamicBody);
-        pbody->linearDamping = 0;
-        pbody->gravityScale = 0;
+        pbody->mLinearDamping = 0;
+        pbody->mGravityScale = 0;
 
         pbody->addBox({ 24, 18 }, { 12, 24 }, 1);
         pbody->addCircle({ 32, 24 }, 5, 1);

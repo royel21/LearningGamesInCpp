@@ -20,13 +20,10 @@ namespace Plutus
         template <typename T, typename... TArgs>
         T* addAsset(const std::string& id, TArgs &&... args)
         {
-            if (!hasAsset<T>(id)) {
-                T* asset = new T(std::forward<TArgs>(args)...);
-                auto& repo = mAssets[&typeid(T)];
-                repo[id] = asset;
-                return asset;
-            }
-            return getAsset<T>(id);
+            T* asset = new T(std::forward<TArgs>(args)...);
+            auto& repo = mAssets[&typeid(T)];
+            repo[id] = asset;
+            return asset;
         }
 
         template<typename T>
@@ -36,33 +33,26 @@ namespace Plutus
 
         template<typename T>
         bool hasAsset(const std::string id) {
-            auto& repo = mAssets.find(&typeid(T));
-            if (repo != mAssets.end()) {
-                return repo->second.find(id) != repo->second.end();
-            }
-            return false;
+            auto& repo = mAssets[&typeid(T)];
+            return repo.find(id) != repo.end();
         }
 
         template<typename T>
         void removeAsset(std::string id) {
-            auto& repo = mAssets.find(&typeid(T));
+            auto& repo = mAssets[&typeid(T)];
             if (repo != mAssets.end()) {
-                auto it = repo->second.find(id);
-                if (it != repo->second.end()) {
+                auto it = repo.find(id);
+                if (it != repo.end()) {
                     it->second->destroy();
                     delete it->second;
-                    repo->second.erase(it);
+                    repo.erase(it);
                 }
             }
         }
 
         template<typename T>
-        umap<std::string, Asset*>* getAssets() {
-            auto repo = mAssets.find(&typeid(T));
-            if (repo != mAssets.end()) {
-                return &repo->second;
-            }
-            return nullptr;
+        umap<std::string, Asset*>& getAssets() {
+            return mAssets[&typeid(T)];
         }
 
         void destroy();

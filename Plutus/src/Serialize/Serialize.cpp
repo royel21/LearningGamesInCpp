@@ -53,6 +53,16 @@ namespace Plutus
         writer.Bool(data);
     }
 
+    void Serializer::add2Float(const std::string& id, const vec2f& v)
+    {
+        StartArr(id);
+        {
+            writer.Double(v.x);
+            writer.Double(v.y);
+        }
+        EndArr();
+    }
+
     void Serializer::StartObj(const std::string& id)
     {
         writer.String(id.c_str());

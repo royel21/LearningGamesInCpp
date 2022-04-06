@@ -120,6 +120,7 @@ namespace Plutus
 			mSounds.erase(name);
 		}
 	}
+
 	bool AudioEngine::play(const std::string& id, bool loop) {
 		auto it = mSounds.find(id);
 		if (it != mSounds.end())

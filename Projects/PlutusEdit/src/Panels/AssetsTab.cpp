@@ -4,13 +4,12 @@
 #include <imgui.h>
 #include <filesystem>
 
+#include <Utils/Utils.h>
 #include <Utils/FileIO.h>
 #include <Assets/temp/Assets.h>
 
 #include "../Helpers/ImGuiEx.h"
 #include "../Helpers/IconsFontAwesome5.h"
-#include <Assets/SoundEngine.h>
-#include <Utils/FileIO.h>
 
 #include "../Config.h"
 
@@ -66,13 +65,13 @@ namespace Plutus
         return icon + " " + name;
     }
 
-    void audioPlay(AudioEvent* event, const char* name) {
-        bool state = event->getState() != 1;
+    void audioPlay(Sound* sound, const std::string& name) {
+        bool state = sound->getState() != 1;
         if (ImGui::TransparentButton(state ? ICON_FA_PLAY : ICON_FA_STOP, true, { 0,0,1,1 })) {
-            state ? SoundEngine.playEvent(event) : SoundEngine.stopEvent(event);
+            state ? sound->play() : sound->stop();
         }
         ImGui::SameLine();
-        ImGui::Text(name);
+        ImGui::Text(name.c_str());
     }
 
     void AssetsTab::drawFilter()
@@ -107,11 +106,9 @@ namespace Plutus
                         drawFilter();
                         if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
                             int id = 0;
-
-                            drawTreeNode("Fonts", mAsset->getAssets<Font>(), id);
-                            drawTreeNode("Textures", mAsset->getAssets<Texture2>(), id);
-                            drawTreeNode("Sounds", mAsset->getAssets<Sound>(), id);
-                            // drawTreeNode("Scenes", Config::get().mProjects[Config::get().OpenProject], id);
+                            drawTreeNode<Font>("Fonts", id);
+                            drawTreeNode<Texture2>("Textures", id);
+                            drawTreeNode<Sound>("Sounds", id);
                             ImGui::EndChild();
                         }
                         ImGui::EndTabItem();
@@ -127,15 +124,17 @@ namespace Plutus
     }
 
     template<typename T>
-    void AssetsTab::drawTreeNode(std::string name, T& assets, int& id)
+    void AssetsTab::drawTreeNode(const std::string& name, int& id)
     {
+
         ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_SpanAvailWidth;
         nodes2[name] = ImGui::TreeNodeEx((void*)(intptr_t)id++, flags, getIcon(nodes2, name).c_str());
         std::string assetId = "";
         if (nodes2[name]) {
+            auto assets = AssetManager2::get()->getAssets<T>();
             static bool show;
             flags |= TreeNodeLeaf_NoPushOpen;
-            for (auto asset : assets.getItems()) {
+            for (auto asset : assets) {
 
                 if (!filter.empty() && name.find(filter) == std::string::npos) continue;
 
@@ -155,19 +154,21 @@ namespace Plutus
                     ImGui::EndPopup();
                 }
             }
-            ImGui::TreePop();
             if (!assetId.empty()) {
-                assets.remove(assetId);
+                assets.erase(assetId);
             }
 
             if (show) viewAssets(show);
+            ImGui::TreePop();
         }
+
     }
 
     void AssetsTab::viewAssets(bool& show) {
         ImGui::BeginDialog("Asset Modal");
         ImGui::Text(assetType.id.c_str());
         ImGui::Separator();
+        auto sound = AssetManager2::get()->getAsset<Sound>(assetType.id);
         if (assetType.type.compare("Textures") == 0) {
             auto texture = AssetManager2::get()->getAsset<Texture2>(assetType.id);
             showTexure(*texture);
@@ -177,13 +178,15 @@ namespace Plutus
         }
 
         if (assetType.type.compare("Sounds") == 0) {
-            auto audioItems = SoundEngine.getItems();
+            audioPlay(sound, assetType.id);
 
-            audioPlay(audioItems[assetType.id], assetType.id.c_str());
         }
 
         ImGui::Separator();
         ImGui::EndDialog(show);
+        if (!show) {
+            if (sound && sound->getState() == 1) sound->stop();
+        }
     }
 
     void AssetsTab::drawDiskAssets(std::string path)
@@ -271,10 +274,10 @@ namespace Plutus
 
             if (substr.compare("sounds") == 0 && soundsTypes[ex]) {
                 type = 3;
-                if (!aEvent) {
-                    aEvent = SoundEngine.createEvent("temp", selectedDir, 0);
+                if (mSound.mPath.empty()) {
+                    mSound.init(selectedDir);
                 }
-                audioPlay(aEvent, Utils::getFileName(selectedDir).c_str());
+                audioPlay(&mSound, assetType.id);
             }
 
             ImGui::Separator();
@@ -288,7 +291,7 @@ namespace Plutus
                     AssetManager2::get()->addAsset<Font>(name, selectedDir, fontSize);
                     break;
                 case 3:
-                    SoundEngine.add(name, selectedDir, 0);
+                    AssetManager2::get()->addAsset<Sound>(name, selectedDir, 0);
                     break;
                 }
                 show = false;
@@ -303,10 +306,7 @@ namespace Plutus
                     glDeleteTextures(1, &texture.mTexId);
                 }
                 texture = Texture2("");
-                if (aEvent) {
-                    delete aEvent;
-                    aEvent = nullptr;
-                }
+                mSound.destroy();
             }
         }
 

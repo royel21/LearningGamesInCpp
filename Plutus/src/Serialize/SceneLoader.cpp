@@ -82,6 +82,20 @@ namespace Plutus
         bool success = false;
         rapidjson::Document doc;
         if (doc.Parse(jsonData.c_str()).HasParseError() == false) {
+
+            if (doc.HasMember("fonts") && doc["fonts"].IsArray())
+            {
+                auto sounds = doc["fonts"].GetArray();
+                for (uint32_t i = 0; i < sounds.Size(); i++)
+                {
+                    auto tex = sounds[i].GetJsonObject();
+                    auto id = tex["id"].GetString();
+                    auto path = tex["path"].GetString();
+                    int size = tex["size"].GetInt();
+                    AssetManager2::get()->addAsset<Font>(id, path, size);
+                }
+            }
+
             //Load All Textures
             if (doc.HasMember("textures") && doc["textures"].IsArray())
             {
@@ -95,6 +109,19 @@ namespace Plutus
                     int tilewidth = tex["width"].GetInt();
                     int tileheight = tex["height"].GetInt();
                     AssetManager2::get()->addAsset<Texture2>(id, path, columns, tilewidth, tileheight);
+                }
+            }
+
+            if (doc.HasMember("sounds") && doc["sounds"].IsArray())
+            {
+                auto sounds = doc["sounds"].GetArray();
+                for (uint32_t i = 0; i < sounds.Size(); i++)
+                {
+                    auto tex = sounds[i].GetJsonObject();
+                    auto id = tex["id"].GetString();
+                    auto path = tex["path"].GetString();
+                    int type = tex["type"].GetInt();
+                    AssetManager2::get()->addAsset<Sound>(id, path, type);
                 }
             }
 
@@ -149,6 +176,33 @@ namespace Plutus
                         if (compType == "Script")
                         {
                             auto script = entity.addComponent<ScriptComponent>(component["script"].GetString());
+                        }
+                        if (compType == "RigidBody") {
+                            auto rbody = entity.addComponent<RigidBodyComponent>();
+
+                            rbody->mBullet = component["b"].GetInt();
+                            rbody->mFixedRotation = component["f"].GetInt();
+                            rbody->mLinearDamping = component["l"].GetFloat();
+                            rbody->mGravityScale = component["gs"].GetFloat();
+                            rbody->mBodyType = (BodyType)component["bt"].GetInt();
+                            auto offset = component["o"].GetArray();
+                            rbody->mOffset = { offset[0].GetFloat(), offset[1].GetFloat() };
+
+                            for (auto& val : component["fixs"].GetArray()) {
+                                rbody->mFixtures.push_back({ val["type"].GetInt() });
+                                auto& fix = rbody->mFixtures.front();
+
+                                auto off = val["offset"].GetArray();
+                                fix.offset = { off[0].GetFloat(), off[1].GetFloat() };
+                                auto size = val["size"].GetArray();
+                                fix.size = { size[0].GetFloat(), size[1].GetFloat() };
+
+                                fix.radius = val["radiu"].GetFloat();
+                                fix.friction = val["frict"].GetFloat();
+                                fix.density = val["dens"].GetFloat();
+                                fix.restitution = val["restit"].GetFloat();
+                                fix.isSensor = val["sensor"].GetInt();
+                            }
                         }
                     }
                 }

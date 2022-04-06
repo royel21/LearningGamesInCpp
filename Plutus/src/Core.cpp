@@ -2,6 +2,7 @@
 
 #include <Input/Input.h>
 #include <Assets/temp/AssetManager.h>
+#include <Graphics/GLheaders.h>
 
 #ifdef __EMSCRIPTEN__
 #include <functional>
@@ -38,8 +39,8 @@ namespace Plutus
         while (mWindow.isFinish() && !mExit)
         {
 #endif
-            float dt = mLimiter.start();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            float dt = mLimiter.start();
             mCamera.update();
             Update(dt);
             Draw();
@@ -55,7 +56,7 @@ namespace Plutus
         Exit();
 
         AssetManager2::get()->destroy();
-    }
+        }
 
     void Core::swapScreen() {
         if (!mNextScreen.empty()) {
@@ -71,4 +72,4 @@ namespace Plutus
     void Core::setNextScreen(const std::string & screenId) {
         mNextScreen = screenId;
     }
-} // namespace Plutus
+    } // namespace Plutus

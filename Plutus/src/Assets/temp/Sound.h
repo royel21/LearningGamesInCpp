@@ -6,17 +6,22 @@ namespace Plutus
     constexpr int EFFECT = 0;
     constexpr int MUSIC = 0;
 
-    class Sound : public Asset
+    struct Sound : public Asset
     {
-    public:
+        int mType = EFFECT;
+
+        Sound() = default;
         Sound(const std::string& path, int type = EFFECT);
 
         ~Sound() { destroy(); }
-
+        void init(const std::string& path, int type = EFFECT);
         void play(bool loop = false);
         void pause();
         void stop();
 
+        int getState();
+
         void destroy() override;
+
     };
 } // namespace Plutus

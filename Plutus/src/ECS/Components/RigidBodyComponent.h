@@ -38,10 +38,10 @@ namespace Plutus
 
     class RigidBodyComponent {
     public:
-        bool mBullet = false;
-        bool mFixedRotation = true;
-        float linearDamping = 0;
-        float gravityScale = 1;
+        bool  mBullet = false;
+        bool  mFixedRotation = true;
+        float mLinearDamping = 0;
+        float mGravityScale = 1;
 
         Entity mEnt;
         vec2f mOffset;

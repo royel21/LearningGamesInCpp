@@ -42,14 +42,14 @@ namespace Plutus
 		if (FAILED(hr)) return false;
 		// start the source voice
 		mSourceVoice->Start();
-		state = Playing;
+		state = AudioPlaying;
 		return true;
 	}
 
 	bool AudioEvent::pause()
 	{
 		mSourceVoice->Stop();
-		state = Paused;
+		state = AudioPaused;
 		return false;
 	}
 
@@ -59,7 +59,7 @@ namespace Plutus
 		mSourceVoice->Stop();
 		mSourceVoice->FlushSourceBuffers();
 		mSourceVoice->SubmitSourceBuffer(&mAudioBuffer);
-		state = Stopped;
+		state = AudioStopped;
 		return true;
 	}
 
@@ -67,6 +67,6 @@ namespace Plutus
 		XAUDIO2_VOICE_STATE aState;
 		mSourceVoice->GetState(&aState);
 
-		return aState.BuffersQueued && state == Playing ? Playing : Stopped;
+		return aState.BuffersQueued && state == AudioPlaying ? AudioPlaying : AudioStopped;
 	}
 } // namespace Plutus

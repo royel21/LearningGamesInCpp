@@ -48,9 +48,9 @@ namespace Plutus
                 ImGui::Checkbox("##fixrotate", &mRigidBody->mFixedRotation);
 
                 ImGui::BeginCol("Linear Damping");
-                ImGui::DragFloat("#l-damping", &mRigidBody->linearDamping, 1, 0, 30, "%.2f");
+                ImGui::DragFloat("#l-damping", &mRigidBody->mLinearDamping, 1, 0, 30, "%.2f");
                 ImGui::BeginCol("Gravity Scale");
-                ImGui::DragFloat("#g-scale", &mRigidBody->gravityScale, 1, 0, 30, "%.2f");
+                ImGui::DragFloat("#g-scale", &mRigidBody->mGravityScale, 1, 0, 30, "%.2f");
 
                 auto found = std::find_if(rigidBodyTypes.begin(), rigidBodyTypes.end(),
                     [=](auto&& rbtype)-> bool { return rbtype.second == mRigidBody->mBodyType;});

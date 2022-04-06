@@ -3,7 +3,7 @@
 namespace Plutus
 {
     RigidBodyComponent::RigidBodyComponent(Entity ent, BodyType type, const vec2f& offset, float liDamping, float gScale, float isFixedRotation, bool isBullet) :
-        mEnt(ent), mBodyType(type), mOffset(offset), linearDamping(liDamping), gravityScale(gScale), mFixedRotation(isFixedRotation), mBullet(isBullet) {
+        mEnt(ent), mBodyType(type), mOffset(offset), mLinearDamping(liDamping), mGravityScale(gScale), mFixedRotation(isFixedRotation), mBullet(isBullet) {
     }
 
     void RigidBodyComponent::addEdge(vec2f offset, vec2f size, float friction, float density, float restitution, bool isSensor) {

@@ -9,7 +9,7 @@
 
 #include <Time/Timer.h>
 #include <Graphics/GLSL.h>
-#include <Assets/AssetManager.h>
+#include <Assets/temp/Assets.h>
 
 namespace Plutus
 {
@@ -126,7 +126,7 @@ namespace Plutus
         mBatch.init();
         mBatch.setCamera(&mCamera);
         mBatch.setShader(&mShader);
-        texture = AssetManager::get()->mTextures.addTexture("player", "assets/textures/Player.png", 60, 64, 64);
+        texture = AssetManager2::get()->addAsset<Texture2>("player", "assets/textures/Player.png", 60, 64, 64);
 
         mDebug = DebugRender::get();
         mDebug->init(&mCamera);
@@ -247,7 +247,7 @@ namespace Plutus
 
         // mDebug->drawBox(Box2d(capsule.x, capsule.y, capsule.w, capsule.h));
         vec4f rect = { capsule.position, capsule.size };
-        mBatch.submit(texture->texId, rect, texture->getUV(0));
+        mBatch.submit(texture->mTexId, rect, texture->getUV(0));
         mBatch.begin();
         mBatch.draw();
         mBatch.end();
