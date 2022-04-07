@@ -4,13 +4,13 @@
 
 std::stringstream ss;
 
-std::string getFmt(const char* level, const char* fmt) {
+std::string Logger::getFmt(const char* level, const char* fmt) {
     ss.str("");
-    ss << "\033[0;" << level << "-> \033[0m" << fmt << "\n";
+    ss << "\033[0;" << level << " " << fmt << "\033[0m\n";
     return ss.str();
 }
 
-int valid(const char* str, int c) {
+int Logger::valid(const char* str, int c) {
     int count = 0;
     while (*str++)
         if (*str == '%') count++;

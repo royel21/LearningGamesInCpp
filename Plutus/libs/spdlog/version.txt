@@ -1,0 +1,2 @@
+Version 1.10.0
+link:    https://github.com/gabime/spdlog

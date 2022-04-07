@@ -92,7 +92,9 @@
         "numeric": "cpp",
         "shared_mutex": "cpp",
         "valarray": "cpp",
-        "strstream": "cpp"
+        "strstream": "cpp",
+        "span": "cpp",
+        "*.rh": "cpp"
     },
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}"

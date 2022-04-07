@@ -20,9 +20,9 @@ namespace Plutus
 		mMouseWheel = 0;
 		mMouseMove = false;
 		//Loop through keymap and copy it to prevKeyMap.
-		for (auto& key : mKeyMap)
+		for (auto& [key, value] : mKeyMap)
 		{
-			mPrevKeyMap[key.first] = key.second;
+			mPrevKeyMap[key] = value;
 		}
 	}
 	//Register key state

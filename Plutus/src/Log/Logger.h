@@ -3,8 +3,6 @@
 
 #define Print std::printf
 
-std::string getFmt(const char* level, const char* fmt);
-int valid(const char* str, int c);
 
 struct Logger {
     template<class... Args>
@@ -24,4 +22,9 @@ struct Logger {
         if (!valid(fmt, sizeof...(Args))) return;
         Print(getFmt("93m[INFO]", fmt).c_str(), args...);
     }
+
+    private:
+        static int valid(const char* str, int c);
+
+        static std::string getFmt(const char* level, const char* fmt);
 };
