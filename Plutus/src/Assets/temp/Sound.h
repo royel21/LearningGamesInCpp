@@ -13,7 +13,9 @@ namespace Plutus
         Sound() = default;
         Sound(const std::string& path, int type = EFFECT);
 
-        ~Sound() { destroy(); }
+        ~Sound() {
+            destroy();
+        }
         void init(const std::string& path, int type = EFFECT);
         void play(bool loop = false);
         void pause();

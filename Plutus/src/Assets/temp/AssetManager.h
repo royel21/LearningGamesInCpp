@@ -40,13 +40,12 @@ namespace Plutus
         template<typename T>
         void removeAsset(std::string id) {
             auto& repo = mAssets[&typeid(T)];
-            if (repo != mAssets.end()) {
-                auto it = repo.find(id);
-                if (it != repo.end()) {
-                    it->second->destroy();
-                    delete it->second;
-                    repo.erase(it);
-                }
+
+            auto it = repo.find(id);
+            if (it != repo.end()) {
+                it->second->destroy();
+                delete it->second;
+                repo.erase(it);
             }
         }
 

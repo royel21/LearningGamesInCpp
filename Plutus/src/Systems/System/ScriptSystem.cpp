@@ -85,8 +85,8 @@ namespace Plutus
             "addSound", sol::overload(
                 &AssetManager2::addAsset<Sound, std::string>,
                 &AssetManager2::addAsset<Sound, std::string, int>
-            )
-            );
+            ));
+        assetManager_table["removeSound"] = &AssetManager2::removeAsset<Sound>;
 
         /**************************Register Sound Asset*************************************************/
         auto sound_table = mGlobalLua.new_usertype<Sound>("Sound",
@@ -94,6 +94,7 @@ namespace Plutus
             Sound(const std::string&),
             Sound(const std::string&, int)>()
             );
+
         sound_table["play"] = &Sound::play;
         sound_table["pause"] = &Sound::pause;
         sound_table["stop"] = &Sound::stop;

@@ -13,8 +13,11 @@ namespace Plutus
 
     public:
         ScriptComponent() = default;
-        ScriptComponent(const ScriptComponent& script);
         ScriptComponent(const std::string& script);
+        ScriptComponent(const ScriptComponent& script);
+        ~ScriptComponent() {
+            destroy();
+        }
 
         void setScript(const std::string& script);
 

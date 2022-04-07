@@ -26,6 +26,9 @@ namespace Plutus
     }
 
     void ScriptComponent::destroy() {
+        if (mEnv["destroy"] != sol::nil) {
+            mEnv["destroy"]();
+        }
         mEnv = sol::environment();
         mScript = "";
     }

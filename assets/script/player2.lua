@@ -10,7 +10,7 @@ local stand = {
     down = "stand-down"
 }
 
-local sound = assetManager:addSound("bg", "assets/sounds/shots/rifle.wav", 0)
+local sound = assetManager:addSound("bg", "assets/sounds/shotgun.wav")
 
 local direction = "right";
 local state = ""
@@ -21,6 +21,8 @@ function init()
 
     print("player2 init")
 end
+
+function destroy() assetManager:removeSound("bg") end
 
 local vel = {x = 0, y = 0}
 
@@ -51,10 +53,10 @@ function update(dt)
         vel = {x = 0, y = 0}
     end
 
-    if (input:onKeyPressed("X")) then
-        sound:play(false)
-        print("play sound")
-    end
+   -- if (input:onKeyDown("X")) then
+       -- sound:play(false)
+     --   print("play sound")
+    -- end
 
     if state ~= "attacking" and state ~= "jumping" then
         -- Move Up - Down
@@ -100,4 +102,5 @@ function update(dt)
         state = "     "
     end
 end
+
 
