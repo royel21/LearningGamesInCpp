@@ -15,8 +15,8 @@ $(call makedir, web/obj/game)
 
 # # ----------------------Recursive Function ----------------------------------------
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
-
-getSRC = $(filter %$(patsubst %.o,/%.cpp, $(notdir $1)), $2)
+getSRC = $(filter %$(patsubst %.o,/%.$(strip $3), $(notdir $1)), $2)
+# --------------------------End Helper Funtions------------------------
 
 LIBS = Plutus/libs
 PLUTUS_SRC = Plutus/src
@@ -32,10 +32,9 @@ INCLUDE = -I${LIBS}/box2d/include \
 	-I${LIBS}/stb \
 	-I${PLUTUS_SRC} \
 	-I./src \
-	--memory-init-file 0 -O3 \
-	-std=c++1z
+	-std=c++1z -O3
 	
-OUTPUT_FLAG =  --shell-file web/game.html --preload-file ./web/assets -s WASM=1 -s ALLOW_MEMORY_GROWTH=1
+OUTPUT_FLAG =  --shell-file web/game.html --preload-file ./assets -s WASM=1 -s ALLOW_MEMORY_GROWTH=1
 
 CFLAGS = -s USE_WEBGL2=1 -s USE_GLFW=3 -lopenal -s WASM=1 -std=c++1z
 
@@ -48,7 +47,7 @@ output:  $(ENGINE_OBJ) $(GAME_OBJ)
 	emcc ${ENGINE_OBJ} ${GAME_OBJ} -o web/release/index.html ${CFLAGS} ${INCLUDE} ${OUTPUT_FLAG}
 
 $(GAME_OBJ): ${SRC}
-	emcc -c $(call getSRC, $@, ${SRC}) -o $@ ${INCLUDE}
+	emcc -c $(call getSRC, $@, ${SRC}, cpp) -o $@ ${INCLUDE}
 
 $(ENGINE_OBJ): 
 	cd web&&emmake make

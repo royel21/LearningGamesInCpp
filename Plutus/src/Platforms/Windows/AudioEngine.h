@@ -45,6 +45,8 @@ namespace Plutus
 		bool pause(const std::string& name);
 		bool stop(const std::string& name);
 
+		int getState(const std::string& id);
+
 		void cleanUp();
 		AudioEvent* createEvent(const std::string& name, const std::string& path, int type);
 		AudioMap& getItems() { return mSounds; }

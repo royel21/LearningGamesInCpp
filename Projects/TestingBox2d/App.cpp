@@ -9,7 +9,7 @@
 
 #include <Time/Timer.h>
 #include <Graphics/GLSL.h>
-#include <Assets/temp/Assets.h>
+#include <Assets//Assets.h>
 
 namespace Plutus
 {
@@ -126,7 +126,7 @@ namespace Plutus
         mBatch.init();
         mBatch.setCamera(&mCamera);
         mBatch.setShader(&mShader);
-        texture = AssetManager2::get()->addAsset<Texture2>("player", "assets/textures/Player.png", 60, 64, 64);
+        texture = AssetManager2::get()->addAsset<Texture>("player", "assets/textures/Player.png", 60, 64, 64);
 
         mDebug = DebugRender::get();
         mDebug->init(&mCamera);

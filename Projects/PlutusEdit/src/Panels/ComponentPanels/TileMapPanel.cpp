@@ -12,7 +12,7 @@
 
 #include <stdio.h>
 
-#include <Assets/temp/Assets.h> 
+#include <Assets//Assets.h> 
 
 #define MODE_PLACE 0
 #define MODE_EDIT 1
@@ -228,7 +228,7 @@ namespace Plutus
     void TileMapPanel::AddTexureDialog(bool& show) {
         if (show) {
             static float scale = 1;
-            auto& textures = AssetManager2::get()->getAssets<Texture2>();
+            auto& textures = AssetManager2::get()->getAssets<Texture>();
             static std::string current = textures.begin()->first;
             int index = (int)mTileMap->mTextures.size();
 
@@ -241,7 +241,7 @@ namespace Plutus
                 ImGui::DragFloat("##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
                 ImGui::EndUIGroup();
             }
-            auto texture = static_cast<Texture2*>(textures[current]);
+            auto texture = static_cast<Texture*>(textures[current]);
             ImGui::DrawTexture(texture, 400, 350, scale);
             ImGui::Separator();
             if (ImGui::Button("Add Texture##mt-modal"))

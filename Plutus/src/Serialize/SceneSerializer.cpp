@@ -4,7 +4,7 @@
 
 #include <ECS/Scene.h>
 #include <ECS/Components.h>
-#include <Assets/temp/Assets.h>
+#include <Assets//Assets.h>
 
 namespace Plutus
 {
@@ -26,9 +26,9 @@ namespace Plutus
         ser.EndArr();
 
         ser.StartArr("textures");
-        for (auto& tile : AssetManager2::get()->getAssets<Texture2>())
+        for (auto& tile : AssetManager2::get()->getAssets<Texture>())
         {
-            auto tex = static_cast<Texture2*>(tile.second);
+            auto tex = static_cast<Texture*>(tile.second);
             ser.StartObj();
             {
                 ser.addString("id", tile.first);

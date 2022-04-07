@@ -18,7 +18,6 @@
 #include <Utils/Utils.h>
 #include <Systems/Systems.h>
 
-#include <Assets/SoundEngine.h>
 #include <Log/Logger.h>
 
 GameScreen::GameScreen()
@@ -163,12 +162,10 @@ void GameScreen::onScreenResize(int w, int h)
 
 void GameScreen::onExit()
 {
-    Plutus::SoundEngine.stop("bg-sound");
     mSystemManager.stop();
     mScene->clear();
 }
 
 void GameScreen::destroy()
 {
-    Plutus::SoundEngine.cleanUp();
 }

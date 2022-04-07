@@ -29,6 +29,7 @@ CFLAGS =  -I${LIBS}/Entt \
 	-I${LIBS}/glm \
 	-std=c++1z
 
+
 SRC_Assets =  $(call rwildcard, ${PLUTUS}/Assets, *.cpp) 
 SRC_Assets += $(call rwildcard, ${PLUTUS}/Core, *.cpp)
 SRC_Assets += $(call rwildcard, ${PLUTUS}/ECS, *.cpp)
@@ -42,6 +43,8 @@ SRC_Assets += $(call rwildcard, ${PLUTUS}/Utils, *.cpp)
 SRC_Assets += $(call rwildcard, ${PLUTUS}/Platforms/Web, *.cpp)
 SRC_Assets += $(call rwildcard, ${PLUTUS}/Math, *.cpp)
 SRC_Assets += $(call rwildcard, ${PLUTUS}/Serialize, *.cpp)
+SRC_Assets += $(call rwildcard, ${PLUTUS}/Log, *.cpp)
+SRC_Assets += ${PLUTUS}/Core.cpp
 
 PLUTUS_OBJS =  $(patsubst %.cpp,${PLUTUS_OBJ_DIR}/%.o, $(notdir ${SRC_Assets}))
 

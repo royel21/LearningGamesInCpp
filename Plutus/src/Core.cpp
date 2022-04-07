@@ -1,7 +1,7 @@
 #include "Core.h"
 
 #include <Input/Input.h>
-#include <Assets/temp/AssetManager.h>
+#include <Assets//AssetManager.h>
 #include <Graphics/GLheaders.h>
 
 #ifdef __EMSCRIPTEN__
@@ -12,8 +12,8 @@
 namespace Plutus
 {
 #ifdef __EMSCRIPTEN__
-    std::function<void()> loop;
-    void main_loop() { loop(); }
+    std::function<void()> loop2;
+    void main_loop2() { loop2(); }
 #endif
 
     Core::Core(const char* name, int width, int height) : mName(name), mWidth(width), mHeight(height) {
@@ -33,7 +33,7 @@ namespace Plutus
     void Core::Run() {
         init();
 #ifdef __EMSCRIPTEN__
-        loop = [&]
+        loop2 = [&]
         {
 #else
         while (mWindow.isFinish() && !mExit)
@@ -51,12 +51,12 @@ namespace Plutus
             if (mScreenList.size()) swapScreen();
         };
 #ifdef __EMSCRIPTEN__
-        emscripten_set_main_loop(main_loop, 0, true);
+        emscripten_set_main_loop(main_loop2, 0, true);
 #endif
         Exit();
 
         AssetManager2::get()->destroy();
-        }
+    }
 
     void Core::swapScreen() {
         if (!mNextScreen.empty()) {
@@ -72,4 +72,4 @@ namespace Plutus
     void Core::setNextScreen(const std::string & screenId) {
         mNextScreen = screenId;
     }
-    } // namespace Plutus
+} // namespace Plutus

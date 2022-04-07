@@ -1,5 +1,5 @@
 #include "ParticleBatch.h"
-#include <Assets/Textures.h>
+#include <Assets//Texture.h>
 #include "Graphics/SpriteBatch2D.h"
 namespace Plutus
 {
@@ -18,7 +18,7 @@ namespace Plutus
 
 	void ParticleBatch::init(
 		int maxParticles, float dr,
-		GLTexture* texture,
+		Texture* texture,
 		std::function<void(Particle2D&, float)> updatefunc /* = defaultParticleUpdate*/)
 	{
 		m_texture = texture;
@@ -48,7 +48,7 @@ namespace Plutus
 			auto& p = m_particles[i];
 			if (p.m_life > 0.0f)
 			{
-				sp->submitOne(m_texture->id, { p.m_position.x, p.m_position.y, p.m_width, p.m_width }, uv, p.m_color);
+				sp->submit(m_texture->mTexId, { p.m_position.x, p.m_position.y, p.m_width, p.m_width }, uv, p.m_color);
 			}
 		}
 	}

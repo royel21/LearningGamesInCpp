@@ -12,7 +12,7 @@
 namespace Plutus
 {
     class DebugRender;
-    struct Texture2;
+    struct Texture;
 
     class App : public Core
     {
@@ -32,7 +32,7 @@ namespace Plutus
         int32_t velIter = 6;
         int32_t posIter = 2;
         DebugRender* mDebug;
-        Texture2* texture;
+        Texture* texture;
         Shader mShader;
         SpriteBatch2D mBatch;
         std::unique_ptr<b2World> mWorld;

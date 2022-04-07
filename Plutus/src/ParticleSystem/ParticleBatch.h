@@ -8,7 +8,7 @@
 
 namespace Plutus
 {
-	struct GLTexture;
+	struct Texture;
 	class SpriteBatch2D;
 
 	struct Particle2D
@@ -31,7 +31,7 @@ namespace Plutus
 		float m_decayRate;
 		int m_maxParticles;
 		int m_lastParticle;
-		GLTexture* m_texture = nullptr;
+		Texture* m_texture = nullptr;
 		Particle2D* m_particles;
 		std::function<void(Particle2D&, float)> m_updatefunc;
 
@@ -42,7 +42,7 @@ namespace Plutus
 		void init(
 			int maxParticles,
 			float dr,
-			GLTexture* tx,
+			Texture* tx,
 			std::function<void(Particle2D&, float)> updatefunc = defaultParticleUpdate);
 
 		void update(float deltaTime);

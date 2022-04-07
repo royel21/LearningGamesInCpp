@@ -8,6 +8,8 @@ const project = fs.readJSONSync("assets/scenes/Physics.json");
 const copyFile = (file) => {
   try {
     let dir = path.dirname(file);
+
+    dir = path.join("web/", path.normalize(dir));
     if (!fs.existsSync(dir)) {
       fs.mkdirsSync(dir);
     }
@@ -20,16 +22,14 @@ const copyFile = (file) => {
   }
 };
 
-if (project.textures) {
-  for (const file of project.textures) {
-    copyFile(file.path);
-  }
-}
-
-if (project.entities) {
-  for (const ent of project.entities) {
-    for (const comp of ent.components || []) {
-      if (comp.name === "Script") copyFile(comp.script);
+for (const items in project) {
+  for (const item of project[items]) {
+    if (items === "entities") {
+      for (const comp of item.components || []) {
+        if (comp.name === "Script") copyFile(comp.script);
+      }
+    } else if (item.path) {
+      copyFile(item.path);
     }
   }
 }

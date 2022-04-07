@@ -8,7 +8,7 @@
 #include <Graphics/SpriteBatch2D.h>
 #include <Graphics/DebugRenderer.h>
 
-#include <Assets/temp/Assets.h>
+#include <Assets//Assets.h>
 
 class EditorScreen : public Plutus::IGameScreen
 {

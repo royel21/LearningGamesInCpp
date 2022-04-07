@@ -1,45 +1,63 @@
-#ifndef _ASSETMANAGER_H
-#define _ASSETMANAGER_H
-
-#include <unordered_map>
+#pragma once
 #include <string>
 #include <vector>
+#include <typeinfo>
+#include <unordered_map>
 
-#include "Textures.h"
-#include "FontManager.h"
+#include "Asset.h"
+
+#define umap std::unordered_map
 
 namespace Plutus
 {
-	class AssetManager
-	{
-	public:
-		Textures mTextures;
-		FontManager mFonts;
+    class AssetManager2
+    {
+    public:
+        ~AssetManager2() = default;
 
-	public:
-		static AssetManager* get();
+        static AssetManager2* get();
 
-		~AssetManager();
-		void clearData();
+        template <typename T, typename... TArgs>
+        T* addAsset(const std::string& id, TArgs &&... args)
+        {
+            T* asset = new T(std::forward<TArgs>(args)...);
+            auto& repo = mAssets[&typeid(T)];
+            repo[id] = asset;
+            return asset;
+        }
 
-		GLuint getTexId(const std::string& id)
-		{
-			return mTextures.getTextureId(id);
-		}
+        template<typename T>
+        T* getAsset(const std::string& id) {
+            return hasAsset<T>(id) ? static_cast<T*>(mAssets[&typeid(T)][id]) : nullptr;
+        }
 
-		vec4f getTexCoords(const std::string& id, int index)
-		{
-			return mTextures.getTextureUV(id, index);
-		}
+        template<typename T>
+        bool hasAsset(const std::string id) {
+            auto& repo = mAssets[&typeid(T)];
+            return repo.find(id) != repo.end();
+        }
 
-		vec4f getTexCoords(const std::string& id, vec4f coords)
-		{
-			return mTextures.getTexture(id)->getUV(coords.x, coords.y, coords.z, coords.w);
-		}
+        template<typename T>
+        void removeAsset(std::string id) {
+            auto& repo = mAssets[&typeid(T)];
 
-	private:
-		AssetManager();
-	};
+            auto it = repo.find(id);
+            if (it != repo.end()) {
+                it->second->destroy();
+                delete it->second;
+                repo.erase(it);
+            }
+        }
+
+        template<typename T>
+        umap<std::string, Asset*>& getAssets() {
+            return mAssets[&typeid(T)];
+        }
+
+        void destroy();
+
+    private:
+        AssetManager2() = default;
+        umap<const std::type_info*, umap<std::string, Asset*>> mAssets;
+    };
 } // namespace Plutus
-
-#endif

@@ -34,6 +34,7 @@ namespace Plutus
         bool play(const std::string& id, bool loop = false);
         bool pause(const std::string& id);
         bool stop(const std::string& id);
+        int getState(const std::string& id);
 
         AudioMap& getItems() { return mSounds; }
 

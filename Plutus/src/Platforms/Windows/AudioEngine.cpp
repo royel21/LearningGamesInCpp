@@ -174,6 +174,14 @@ namespace Plutus
 		return false;
 	}
 
+	int AudioEngine::getState(const std::string& id)
+	{
+		auto it = mSounds.find(id);
+		if (it != mSounds.end())
+			return it->second->getState();
+		return -1;
+	}
+
 	void AudioEngine::cleanUp()
 	{
 		for (auto& itr : mSounds)

@@ -6,7 +6,7 @@
 
 #include <Utils/Utils.h>
 #include <Utils/FileIO.h>
-#include <Assets/temp/Assets.h>
+#include <Assets//Assets.h>
 
 #include "../Helpers/ImGuiEx.h"
 #include "../Helpers/IconsFontAwesome5.h"
@@ -107,7 +107,7 @@ namespace Plutus
                         if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
                             int id = 0;
                             drawTreeNode<Font>("Fonts", id);
-                            drawTreeNode<Texture2>("Textures", id);
+                            drawTreeNode<Texture>("Textures", id);
                             drawTreeNode<Sound>("Sounds", id);
                             ImGui::EndChild();
                         }
@@ -170,7 +170,7 @@ namespace Plutus
         ImGui::Separator();
         auto sound = AssetManager2::get()->getAsset<Sound>(assetType.id);
         if (assetType.type.compare("Textures") == 0) {
-            auto texture = AssetManager2::get()->getAsset<Texture2>(assetType.id);
+            auto texture = AssetManager2::get()->getAsset<Texture>(assetType.id);
             showTexure(*texture);
         }
 
@@ -261,7 +261,7 @@ namespace Plutus
             if (substr.compare("textures") == 0 && imgTypes[ex]) {
 
                 if (texture.mTexId == 0) {
-                    texture = Texture2(selectedDir, texture.mColumns, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
+                    texture = Texture(selectedDir, texture.mColumns, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
                 }
                 type = 1;
                 showTexure(texture, true);
@@ -285,7 +285,7 @@ namespace Plutus
             {
                 switch (type) {
                 case 1:
-                    AssetManager2::get()->addAsset<Texture2>(name, selectedDir, texture.mColumns, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
+                    AssetManager2::get()->addAsset<Texture>(name, selectedDir, texture.mColumns, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
                     break;
                 case 2:
                     AssetManager2::get()->addAsset<Font>(name, selectedDir, fontSize);
@@ -305,14 +305,14 @@ namespace Plutus
                 if (texture.mWidth) {
                     glDeleteTextures(1, &texture.mTexId);
                 }
-                texture = Texture2("");
+                texture = Texture("");
                 mSound.destroy();
             }
         }
 
     }
 
-    void AssetsTab::showTexure(Texture2& texture, bool newTex) {
+    void AssetsTab::showTexure(Texture& texture, bool newTex) {
 
         static float scale = 1.0f;
         if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingStretchProp)) {

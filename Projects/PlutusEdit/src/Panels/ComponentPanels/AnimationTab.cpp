@@ -5,14 +5,14 @@
 #include <ECS/Scene.h>
 
 #include "ComponentUtil.h"
-#include <Assets/temp/Assets.h>
+#include <Assets//Assets.h>
 
 namespace Plutus
 {
     void AnimationTab::DrawAnimation(Entity* ent)
     {
         mAnimation = ent->getComponent<AnimationComponent>();
-        auto& mTextures = AssetManager2::get()->getAssets<Texture2>();
+        auto& mTextures = AssetManager2::get()->getAssets<Texture>();
         if (CollapseComponent<AnimationComponent>("Animation##tilemap-comp", 4))
         {
             auto& sequences = mAnimation->mSequences;
@@ -58,7 +58,7 @@ namespace Plutus
 
     void AnimationTab::SeqWindow() {
         if (showSeqWindow) {
-            auto& mTextures = AssetManager2::get()->getAssets<Texture2>();
+            auto& mTextures = AssetManager2::get()->getAssets<Texture>();
             auto found = mAnimation->mSequences.find(mCurSeq);
             auto& seq = mMode ? found->second : newSeq;
 
@@ -83,7 +83,7 @@ namespace Plutus
 
                 auto curPos = ImGui::GetWindowSize();
                 if (!seq.mTexId.empty()) {
-                    auto tex = static_cast<Texture2*>(mTextures[seq.mTexId]);
+                    auto tex = static_cast<Texture*>(mTextures[seq.mTexId]);
                     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 1, 2 });
                     if (ImGui::BeginChild("##tex-img", { curPos.x, 217 })) {
                         for (size_t i = 0; i < tex->uvs.size(); i++) {

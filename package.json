@@ -6,7 +6,7 @@
   "scripts": {
     "start": "emrun web/release/index.html",
     "build game": "node checkassets.js&&emmake make",
-    "plutus": "cd web&&emmake make Plutus",
+    "plutus": "emmake make web/obj/Plutus.o",
     "lib": "cd web&&emmake make Libs",
     "minify scenes": "node minify.js",
     "clean-libs": "node clean libs",

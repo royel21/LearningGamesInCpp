@@ -27,8 +27,8 @@ int EditorScreen::getPrevScreentIndex() const
 void EditorScreen::build()
 {
     mAssets = Plutus::AssetManager2::get();
-    mAssets->addAsset<Plutus::Texture2>("player2", "assets/textures/zombie.png");
-    mAssets->addAsset<Plutus::Texture2>("bats", "assets/textures/monster/bat.png", 3, 32, 32);
+    mAssets->addAsset<Plutus::Texture>("player2", "assets/textures/zombie.png");
+    mAssets->addAsset<Plutus::Texture>("bats", "assets/textures/monster/bat.png", 3, 32, 32);
 
     mAssets->addAsset<Plutus::Font>("arial", "./assets/fonts/arial.ttf", 32);
     mAssets->addAsset<Plutus::Font>("OpenSansBold", "./assets/fonts/OpenSans-Bold.ttf", 32);
@@ -102,9 +102,9 @@ void EditorScreen::draw()
     mRender.finish(Plutus::BATCH_TEXT);
 
     std::vector<Plutus::Renderable> renderables2;
-    renderables2.push_back({ mAssets->getAsset<Plutus::Texture2>("player2")->mTexId, { 50, h - 100, 64, 64 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 0, 0, false });
-    renderables2.push_back({ mAssets->getAsset<Plutus::Texture2>("bats")->mTexId, { 180, h - 280, 96, 96 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 99, 0, false });
-    renderables2.push_back({ mAssets->getAsset<Plutus::Texture2>("bats")->mTexId, { 180, 220, 64, 64 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 30, 0, false });
+    renderables2.push_back({ mAssets->getAsset<Plutus::Texture>("player2")->mTexId, { 50, h - 100, 64, 64 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 0, 0, false });
+    renderables2.push_back({ mAssets->getAsset<Plutus::Texture>("bats")->mTexId, { 180, h - 280, 96, 96 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 99, 0, false });
+    renderables2.push_back({ mAssets->getAsset<Plutus::Texture>("bats")->mTexId, { 180, 220, 64, 64 }, { 0, 0, 1, 1 }, { 255, 255, 255, 255 }, 0, false, false, 30, 0, false });
     mRender.submit(renderables2);
 
     mRender.begin();

@@ -11,7 +11,7 @@
 
 #include <Math/Vectors.h>
 
-#include <Assets/temp/Texture.h>
+#include <Assets//Texture.h>
 
 #define IM_F4_2_I32COLOR(color) static_cast<int>(color[3] * 255) << 24 | \
                                 static_cast<int>(color[2] * 255) << 16 | \
@@ -133,11 +133,11 @@ namespace ImGui
 
     bool InputString(const char* label, std::string& text);
 
-    bool Texture(Plutus::Texture2* tileset, float scale, std::vector<Plutus::vec3i>& selected);
+    bool Texture(Plutus::Texture* tileset, float scale, std::vector<Plutus::vec3i>& selected);
 
-    bool DrawTextureOne(Plutus::Texture2* tileset, int& selected);
+    bool DrawTextureOne(Plutus::Texture* tileset, int& selected);
 
-    bool DrawTexture(Plutus::Texture2* tileset, int winWidth = 0, int winHeight = 0, float scale = 1.0f, std::vector<Plutus::vec3i>* selected = nullptr, bool onlyOne = false);
+    bool DrawTexture(Plutus::Texture* tileset, int winWidth = 0, int winHeight = 0, float scale = 1.0f, std::vector<Plutus::vec3i>* selected = nullptr, bool onlyOne = false);
 
-    void DrawTexCoords(Plutus::Texture2* tileset, Plutus::vec4f& coords);
+    void DrawTexCoords(Plutus::Texture* tileset, Plutus::vec4f& coords);
 } // namespace ImGui

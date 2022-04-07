@@ -9,7 +9,7 @@
 #include <Graphics/Camera2D.h>
 #include <Graphics/GLheaders.h>
 
-#include <Assets/temp/Assets.h>
+#include <Assets//Assets.h>
 
 namespace Plutus
 {
@@ -102,12 +102,12 @@ namespace Plutus
         sound_table["type"] = &Sound::mType;
 
         /**************************Register Texture Asset*************************************************/
-        auto texture_table = mGlobalLua.new_usertype<Texture2>("Texture",
-            sol::constructors<Texture2(const std::string&),
-            Texture2(const std::string&, int, int, int),
-            Texture2(const std::string&, int, int, int, GLint, GLint)>()
+        auto texture_table = mGlobalLua.new_usertype<Texture>("Texture",
+            sol::constructors<Texture(const std::string&),
+            Texture(const std::string&, int, int, int),
+            Texture(const std::string&, int, int, int, GLint, GLint)>()
             );
-        texture_table["getUV"] = sol::overload(&Texture2::getUV<int>, &Texture2::getUV<float, float, float, float>);
+        texture_table["getUV"] = sol::overload(&Texture::getUV<int>, &Texture::getUV<float, float, float, float>);
 
     }
 

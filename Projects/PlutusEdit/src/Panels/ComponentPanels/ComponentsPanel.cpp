@@ -8,7 +8,7 @@
 
 #include "ComponentUtil.h"
 
-#include <Assets/temp/Assets.h>
+#include <Assets//Assets.h>
 
 namespace Plutus
 {
@@ -98,7 +98,7 @@ namespace Plutus
         {
             if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
                 auto sprite = mEnt.getComponent<SpriteComponent>();
-                auto& textures = AssetManager2::get()->getAssets<Texture2>();
+                auto& textures = AssetManager2::get()->getAssets<Texture>();
 
                 auto color = sprite->mColor;
                 std::string selected = sprite->mTextureId;
@@ -119,7 +119,7 @@ namespace Plutus
                 auto found = textures.find(selected);
 
                 if (found != textures.end()) {
-                    auto& texture = *static_cast<Texture2*>(found->second);
+                    auto& texture = *static_cast<Texture*>(found->second);
 
                     if (!mUseCoords) {
                         int max = (int)texture.uvs.size();

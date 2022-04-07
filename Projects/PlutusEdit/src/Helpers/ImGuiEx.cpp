@@ -121,7 +121,7 @@ namespace ImGui {
         return isSelected;
     }
 
-    bool Texture(Plutus::Texture2* tileset, float scale, std::vector<Plutus::vec3i>& selected)
+    bool Texture(Plutus::Texture* tileset, float scale, std::vector<Plutus::vec3i>& selected)
     {
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
         ImGui::BeginChild("##texture-map", { 0,0 }, true, ImGuiWindowFlags_HorizontalScrollbar);
@@ -379,7 +379,7 @@ namespace ImGui {
         return false;
     }
 
-    void DrawTexCoords(Plutus::Texture2* tileset, Plutus::vec4f& coords) {
+    void DrawTexCoords(Plutus::Texture* tileset, Plutus::vec4f& coords) {
         auto mInput = Plutus::Input::get();
         const int w = tileset->mWidth;
         const int h = tileset->mHeight;
@@ -481,7 +481,7 @@ namespace ImGui {
         ImGui::EndChild();
     }
 
-    bool DrawTextureOne(Plutus::Texture2* texture, int& selected) {
+    bool DrawTextureOne(Plutus::Texture* texture, int& selected) {
         std::vector<Plutus::vec3i> selecteds;
         if (DrawTexture(texture, 0, 200, 1.0f, &selecteds, true)) {
             selected = selecteds[0].z;
@@ -491,7 +491,7 @@ namespace ImGui {
     }
 
 
-    bool DrawTexture(Plutus::Texture2* texture, int winWidth, int winHeight, float scale, std::vector<Plutus::vec3i>* selected, bool onlyOne)
+    bool DrawTexture(Plutus::Texture* texture, int winWidth, int winHeight, float scale, std::vector<Plutus::vec3i>* selected, bool onlyOne)
     {
         if (texture != nullptr) {
             ImGui::BeginChild("##texture-map", { (float)winWidth, (float)winHeight }, false, ImGuiWindowFlags_HorizontalScrollbar);

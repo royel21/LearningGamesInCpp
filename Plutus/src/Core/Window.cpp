@@ -3,6 +3,8 @@
 
 #pragma warning(disable: 4005)
 
+#include <Graphics/GLheaders.h>
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #define GL_GLEXT_PROTOTYPES
@@ -13,12 +15,12 @@ extern "C"
 {
 #include <windows.h>
 }
-#include "Graphics/GLHeaders.h"
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #pragma comment(lib, "winmm.lib")
 #endif
+
 
 
 #include <Input/Input.h>
