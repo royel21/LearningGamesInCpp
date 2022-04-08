@@ -2,7 +2,6 @@
 #define __FRAMEBUFFER_H__
 
 #include <Math/Vectors.h>
-#include <Utils/types.h>
 
 namespace Plutus
 {
@@ -36,18 +35,18 @@ namespace Plutus
 
         void setDirty() { isDirty = true; };
 
-        u32 getTextureId() const { return mTexId; }
+        unsigned int getTextureId() const { return mTexId; }
 
         void setColor(vec4f bgColor) { mBGColor = { bgColor.x,bgColor.y,bgColor.z,bgColor.w }; }
 
         void cleanUp();
     private:
         //Framebuffer Id
-        u32 mFbId = 0;
+        unsigned int mFbId = 0;
         //texture Id
-        u32 mTexId = 0;
+        unsigned int mTexId = 0;
         //renderbuffer Id
-        u32 mRbufferId = 0;
+        unsigned int mRbufferId = 0;
         bool isDirty = false;
         vec2i mSize;
 

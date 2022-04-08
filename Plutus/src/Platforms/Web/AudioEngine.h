@@ -17,7 +17,7 @@ namespace Plutus
         uint32_t source;
         uint32_t buffer;
         uint32_t numberOfSamples;
-        uint32_t duration;
+        uint32_t duration = 0;
         int state = 0;
     };
 

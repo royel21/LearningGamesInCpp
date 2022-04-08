@@ -3,7 +3,6 @@
 
 #include <string>
 #include <entt.hpp>
-#include <Utils/types.h>
 #include <Math/Vectors.h>
 
 class b2World;

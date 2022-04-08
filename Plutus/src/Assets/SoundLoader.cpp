@@ -6,7 +6,7 @@
 
 namespace Plutus
 {
-	bool SoundLoader::loadSoundFile(const std::string& filePath, void* wfx, std::vector<u8>* buffer)
+	bool SoundLoader::loadSoundFile(const std::string& filePath, void* wfx, std::vector<uint8_t>* buffer)
 	{
 		unsigned long buffSize = 0;
 		unsigned long offset = 0;
@@ -20,7 +20,7 @@ namespace Plutus
 			if (result)
 			{
 
-				u8* pDataBuffer = new u8[buffSize];
+				uint8_t* pDataBuffer = new uint8_t[buffSize];
 				readChunkToBuffer(filePath, pDataBuffer, buffSize, offset);
 				//buffer->reserve(buffSize);
 				result = false;
@@ -116,7 +116,7 @@ namespace Plutus
 		return result;
 	}
 
-	bool SoundLoader::readOgg(std::string filePath, void* wfx, std::vector<u8>* buffer)
+	bool SoundLoader::readOgg(std::string filePath, void* wfx, std::vector<uint8_t>* buffer)
 	{
 		int error;
 		stb_vorbis* _file = stb_vorbis_open_filename(filePath.c_str(), &error, NULL);

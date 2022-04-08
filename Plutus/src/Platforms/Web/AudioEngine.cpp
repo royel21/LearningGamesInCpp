@@ -5,7 +5,7 @@
 
 namespace Plutus
 {
-    u32 getALFormat(u16 channels, u16 bitsPerSample) {
+    unsigned int getALFormat(unsigned short channels, unsigned short bitsPerSample) {
         if (channels == 1 && bitsPerSample == 8)
             return AL_FORMAT_MONO8;
         else if (channels == 1 && bitsPerSample == 16)
@@ -129,7 +129,7 @@ namespace Plutus
 
     bool AudioEngine::add(const std::string& id, std::string path, int type) {
 
-        std::vector<u8> data;
+        std::vector<unsigned char> data;
         WaveFormatEx waveformat;
 
         if (SoundLoader::loadSoundFile(path, &waveformat, &data)) {
