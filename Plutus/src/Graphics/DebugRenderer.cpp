@@ -89,20 +89,8 @@ namespace Plutus
 		mIndices.clear();
 		mVertexs.clear();
 	}
-	/***************************** Shapes **********************************************/
-	void DebugRender::drawBox(Box2d& b, const ColorRGBA8& color)
-	{
-		// drawBox(vec4f(b.pos.x, b.pos.y, b.size.x, b.size.y), b.rotation, color);
-		uint32_t i = (uint32_t)mVertexs.size();
-		mVertexs.resize(mVertexs.size() + 4);
-		auto vertices = b.getVertices();
 
-		int index = 0;
-		for (uint32_t j = i; j < i + 4; j++) {
-			mVertexs[j].position = vertices[index++];
-			mVertexs[j].color = color;
-		}
-
+	void DebugRender::addIndices(int i) {
 		mIndices.reserve(mIndices.size() + 8);
 
 		mIndices.push_back(i);
@@ -117,28 +105,21 @@ namespace Plutus
 		mIndices.push_back(i + 3);
 		mIndices.push_back(i);
 	}
-
-	void DebugRender::drawLine(Line2d& line, const ColorRGBA8& color)
+	/***************************** Shapes **********************************************/
+	void DebugRender::drawBox(Box2d& b, const ColorRGBA8& color)
 	{
-		// drawLine({ l.pos.x, l.pos.y }, { l.end.x, l.end.y }, l.rotation, color);
-
+		// drawBox(vec4f(b.pos.x, b.pos.y, b.size.x, b.size.y), b.rotation, color);
 		uint32_t i = (uint32_t)mVertexs.size();
-		mVertexs.resize(mVertexs.size() + 2);
+		mVertexs.resize(mVertexs.size() + 4);
+		auto vertices = b.getVertices();
 
-		auto vertices = line.getVertices();
+		int index = 0;
+		for (uint32_t j = i; j < i + 4; j++) {
+			mVertexs[j].position = vertices[index++];
+			mVertexs[j].color = color;
+		}
 
-		mVertexs[i].position = vertices[0];
-		mVertexs[i].color = color;
-		mVertexs[i + 1].position = vertices[1];
-		mVertexs[i + 1].color = color;
-
-		mIndices.push_back(i);
-		mIndices.push_back(i + 1);
-	}
-
-	void DebugRender::drawCircle(Circle2d& c, const ColorRGBA8& color)
-	{
-		drawCircle({ c.pos.x, c.pos.y }, c.radius, color);
+		addIndices(i);
 	}
 	/*******************************************************************************************************/
 
@@ -155,6 +136,7 @@ namespace Plutus
 		mIndices.push_back(i);
 		mIndices.push_back(i + 1);
 	}
+
 	void DebugRender::drawBox(const vec4f& rect, float angle, const ColorRGBA8& color)
 	{
 		uint32_t i = (uint32_t)mVertexs.size();
@@ -183,19 +165,7 @@ namespace Plutus
 		mVertexs[i + 2] = { tr, color };
 		mVertexs[i + 3] = { br, color };
 
-		mIndices.reserve(mIndices.size() + 8);
-
-		mIndices.push_back(i);
-		mIndices.push_back(i + 1);
-
-		mIndices.push_back(i + 1);
-		mIndices.push_back(i + 2);
-
-		mIndices.push_back(i + 2);
-		mIndices.push_back(i + 3);
-
-		mIndices.push_back(i + 3);
-		mIndices.push_back(i);
+		addIndices(i);
 	}
 
 	void DebugRender::drawCircle(const vec2f& center, float radius, const ColorRGBA8& color)
@@ -296,15 +266,6 @@ namespace Plutus
 		int x = (int)floor(cmpos.x / mCellSize.x);
 		int y = (int)floor(cmpos.y / mCellSize.y);
 
-		return { x, y };
-	}
-
-	vec2i DebugRender::getSquareCoords(vec2f mousePos, const vec2f& size)
-	{
-		vec2f cmpos = mCamera->convertScreenToWold(mousePos);
-
-		int x = (int)floor(cmpos.x / mCellSize.x) * mCellSize.x;
-		int y = (int)floor(cmpos.y / mCellSize.y) * mCellSize.y;
 		return { x, y };
 	}
 

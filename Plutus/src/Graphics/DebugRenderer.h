@@ -45,21 +45,30 @@ namespace Plutus
 		void drawBox(const vec4f& destRect, float angle = 0, const ColorRGBA8& color = {});
 		void drawCircle(const vec2f& center, float radius, const ColorRGBA8& color = {});
 
-		void drawBox(Box2d& c, const ColorRGBA8& color = {});
-		void drawLine(Line2d& c, const ColorRGBA8& color = {});
-		void drawCircle(Circle2d& c, const ColorRGBA8& color = {});
+		void drawBox(Box2d& box, const ColorRGBA8& color = {});
+
+		inline void drawLine(Line2d& line, const ColorRGBA8& color = {}) {
+			auto vertices = line.getVertices();
+			drawLine(vertices[0], vertices[1], 0, color);
+		}
+
+		inline void drawCircle(Circle2d& c, const ColorRGBA8& color = {}) {
+			drawCircle({ c.pos.x, c.pos.y }, c.radius, color);
+		}
 
 		vec2i getCellSize() { return mCellSize; };
 
 		inline void resizeBuffer(unsigned int size) { mVertexs.reserve(size); }
 
 		vec2i getSquareCoords(vec2f mousePos);
-		vec2i getSquareCoords(vec2f mousePos, const vec2f& size);
 
 		void setShouldDraw(bool shouldDraw) { isDraw = shouldDraw; }
 		bool getShouldDraw() { return isDraw; }
 
 		void setColor(ColorRGBA8 color) { mGridColor = color; }
+
+	private:
+		void addIndices(int index);
 
 	private:
 		vec2i mCellSize;
