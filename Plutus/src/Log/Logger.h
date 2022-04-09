@@ -4,11 +4,13 @@
 #define Print std::printf
 
 
+constexpr int BUFFSIZE = 512;
+
 struct Logger {
     template<class... Args>
     static void error(const char* fmt, Args... args) {
         auto format = getFmt("91m", "[ERROR]", fmt);
-        std::vector<char> zc(255);
+        std::vector<char> zc(BUFFSIZE);
         int err = std::snprintf(zc.data(), zc.size(), format.c_str(), args...);
         std::cout << zc.data();
     }
@@ -16,7 +18,7 @@ struct Logger {
     template<class... Args>
     static void warn(const char* fmt, Args... args) {
         auto format = getFmt("96m", "[WARN]", fmt);
-        std::vector<char> zc(255);
+        std::vector<char> zc(BUFFSIZE);
         int err = std::snprintf(zc.data(), zc.size(), format.c_str(), args...);
         std::cout << zc.data();
     }
@@ -24,7 +26,7 @@ struct Logger {
     template<class... Args>
     static void info(const char* fmt, Args... args) {
         auto format = getFmt("93m", "[INFO]", fmt);
-        std::vector<char> zc(255);
+        std::vector<char> zc(BUFFSIZE);
         int err = std::snprintf(zc.data(), zc.size(), format.c_str(), args...);
         std::cout << zc.data();
     }
