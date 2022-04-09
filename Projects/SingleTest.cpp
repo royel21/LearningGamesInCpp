@@ -1,12 +1,14 @@
-#pragma once
-// #include <Time/Timer.h>
 
-int main(int argc, char** argv) {
+#include <ctime>
+#include <iostream>
+// #include <iomanip>
 
-    // auto start = Plutus::Timer::micros();
-    // Logger::error("Some Error %s %i", "testing", 2);
+// demonstration of use
+int main() {
 
-    // printf("time: %llu", Plutus::Timer::micros() - start);
-
+    // std::time_t t = std::time(nullptr);
+    // std::cerr
+    //     << std::put_time(std::localtime(&t), "%T")
+    //     << std::endl;
     return 0;
 }

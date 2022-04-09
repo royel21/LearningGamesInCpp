@@ -6,7 +6,7 @@
 
 #include <Utils/Utils.h>
 #include <Utils/FileIO.h>
-#include <Assets//Assets.h>
+#include <Assets/Assets.h>
 
 #include "../Helpers/ImGuiEx.h"
 #include "../Helpers/IconsFontAwesome5.h"

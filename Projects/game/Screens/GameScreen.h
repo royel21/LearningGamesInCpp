@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Utils/types.h>
 #include <Core/IGameScreen.h>
 #include <Graphics/Camera2D.h>
 #include <Systems/SystemManager.h>
 #include <ECS/Scene.h>
+#include <Utils/Pointer.h>
 
 class GameScreen : public Plutus::IGameScreen
 {

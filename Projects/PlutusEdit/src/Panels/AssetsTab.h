@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
-#include <Assets//Assets.h>
+#include <Assets/Assets.h>
 
 #define umap std::unordered_map
 #define boolmap umap<std::string, bool>

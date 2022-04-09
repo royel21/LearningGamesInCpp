@@ -4,7 +4,7 @@
 #include <ECS/Components/SpriteComponent.h> 
 #include <ECS/Components/AnimationComponent.h>
 
-#include <Assets//Assets.h>
+#include <Assets/Assets.h>
 
 namespace Plutus
 {

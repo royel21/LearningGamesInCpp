@@ -9,7 +9,7 @@
 #include <Graphics/Camera2D.h>
 #include <Graphics/GLheaders.h>
 
-#include <Assets//Assets.h>
+#include <Assets/Assets.h>
 
 namespace Plutus
 {

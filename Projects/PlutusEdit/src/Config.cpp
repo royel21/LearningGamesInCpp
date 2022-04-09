@@ -12,7 +12,7 @@
 #include <Serialize/SceneSerializer.h>
 
 #include <Utils/Utils.h>
-#include <Assets//AssetManager.h>
+#include <Assets/AssetManager.h>
 #include <Platforms/Windows/FileUtils.h>
 
 

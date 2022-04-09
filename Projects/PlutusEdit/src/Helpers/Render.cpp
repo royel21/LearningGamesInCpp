@@ -5,7 +5,7 @@
 #include <ECS/Components.h>
 #include <Graphics/DebugRenderer.h>
 
-#include <Assets//Assets.h>
+#include <Assets/Assets.h>
 
 #include <Time/Timer.h>
 

@@ -12,7 +12,7 @@
 
 #include <stdio.h>
 
-#include <Assets//Assets.h> 
+#include <Assets/Assets.h> 
 
 #define MODE_PLACE 0
 #define MODE_EDIT 1

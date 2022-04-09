@@ -6,12 +6,12 @@
 #include <unordered_map>
 
 #include <entt.hpp>
-#include <Utils/types.h>
+#include <Utils/Pointer.h>
 #include <ECS/Scene.h>
 
 #include <Math/Vectors.h>
 
-#include <Assets//Texture.h>
+#include <Assets/Texture.h>
 
 #define IM_F4_2_I32COLOR(color) static_cast<int>(color[3] * 255) << 24 | \
                                 static_cast<int>(color[2] * 255) << 16 | \

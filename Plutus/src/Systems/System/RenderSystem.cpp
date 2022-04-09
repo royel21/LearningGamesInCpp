@@ -8,7 +8,7 @@
 #include <ECS/Components/TileMapComponent.h>
 #include <ECS/Components/TransformComponent.h>
 
-#include <Assets//Assets.h>
+#include <Assets/Assets.h>
 
 namespace Plutus
 {

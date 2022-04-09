@@ -9,7 +9,7 @@
 
 #include <Time/Timer.h>
 #include <Graphics/GLSL.h>
-#include <Assets//Assets.h>
+#include <Assets/Assets.h>
 
 namespace Plutus
 {

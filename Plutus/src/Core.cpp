@@ -1,7 +1,7 @@
 #include "Core.h"
 
 #include <Input/Input.h>
-#include <Assets//AssetManager.h>
+#include <Assets/AssetManager.h>
 #include <Graphics/GLheaders.h>
 
 #ifdef __EMSCRIPTEN__

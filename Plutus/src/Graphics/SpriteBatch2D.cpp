@@ -15,7 +15,7 @@
 
 #include "GraphicsUtil.h"
 #include <Math/PMath.h>
-#include <Assets//Assets.h>
+#include <Assets/Assets.h>
 
 #define RENDERER_MAX_SPRITES 60000
 #define RENDERER_VERTEX_SIZE sizeof(Vertex)

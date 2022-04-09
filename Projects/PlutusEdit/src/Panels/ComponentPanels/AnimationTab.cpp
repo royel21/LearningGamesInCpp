@@ -5,7 +5,7 @@
 #include <ECS/Scene.h>
 
 #include "ComponentUtil.h"
-#include <Assets//Assets.h>
+#include <Assets/Assets.h>
 
 namespace Plutus
 {
