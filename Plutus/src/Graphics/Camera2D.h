@@ -38,11 +38,7 @@ namespace Plutus
 		}
 		//set camera position and shedule a update
 		//@param newPosition glm vec2 position
-		void setPosition(const vec2f& newPosition)
-		{
-			mCamPos = newPosition;
-			mNeedsMatrixUpdate = true;
-		}
+		inline void setPosition(const vec2f& pos) { setPosition(pos.x, pos.y); }
 		/*
 			change the camera to a new with and height
 			@param w Width of the camera in pixel
@@ -69,7 +65,6 @@ namespace Plutus
 		vec2f getViewPortSize() { return vec2f(mScreenWidth, mScreenHeight); }
 		//Getters
 		vec2f getPosition() { return mCamPos; }
-		vec2f getPosition2() { return { mCamPos.x, mCamPos.y }; }
 		// return the 4x4 camera matrix
 		glm::mat4 getCameraMatrix() { return mCameraMatrix; }
 		//Convert screen coordination to camera coordination and return it
