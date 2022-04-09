@@ -6,11 +6,11 @@
   "scripts": {
     "start": "emrun web/release/index.html",
     "build game": "node build",
-    "minify scenes": "node minify.js",
     "plutus-game": "node build clean-game",
     "clean-libs": "node build clean-libs",
     "plutus-libs": "node build clean-plutus",
     "all": "node build clean",
-    "syncassets": "node checkassets.js"
+    "minify scenes": "node scripts/minify.js",
+    "copy-assets": "node scripts/copy-assets.js Physics.json"
   }
 }
