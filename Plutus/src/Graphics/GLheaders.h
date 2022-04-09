@@ -45,6 +45,9 @@ inline GLuint createTexture(int w, int h, unsigned char* buff, GLuint intFormat 
     //flag to render the image
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     //Load the image to the memory of the gpu
     glTexImage2D(GL_TEXTURE_2D, 0, intFormat, w, h, 0, format, type, buff);
     return id;
