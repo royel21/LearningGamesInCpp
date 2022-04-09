@@ -6,7 +6,7 @@
 #include <ECS/Scene.h>
 #include <Math/Vectors.h>
 
-#include <Utils/types.h>
+#include <Utils/Pointer.h>
 
 namespace Plutus
 {
