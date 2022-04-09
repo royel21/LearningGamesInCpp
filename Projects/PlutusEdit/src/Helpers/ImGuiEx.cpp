@@ -421,12 +421,12 @@ namespace ImGui {
                 static bool mDown;
                 drawList->AddRectFilledMultiColor(cvPos, cvDestEnd, color1, color2, color3, color2);
 
-                auto color = IM_COL32(255, 255, 255, 100);
                 if (id)
                 {
                     drawList->AddImage((void*)id, cvPos, cvDestEnd);
-                    drawList->AddRect(cvPos, cvDestEnd, color);
+                    drawList->AddRect(cvPos, cvDestEnd, IM_COL32(255, 255, 255, 100));
                 }
+
                 if (ImGui::IsItemHovered())
                 {
                     ImVec2 mpos_in_canvas = ImVec2(ImGui::GetIO().MousePos.x - cvPos.x, ImGui::GetIO().MousePos.y - cvPos.y);
