@@ -2,6 +2,8 @@
 
 namespace Plutus
 {
+    struct vec2i;
+
     struct vec2f
     {
         float x = 0;
@@ -10,6 +12,7 @@ namespace Plutus
         vec2f(float val) : x(val), y(val) {}
         vec2f(float _x, float _y) : x(_x), y(_y) {}
         vec2f(int _x, int _y) : x((float)_x), y((float)_y) {}
+        vec2f(const vec2i& v);
 
         float length();
         float invLength();
@@ -61,6 +64,30 @@ namespace Plutus
         vec2i() : x(0), y(0) {};
         vec2i(int _x, int _y) : x(_x), y(_y) {};
         vec2i(float _x, float _y) : x((int)_x), y((int)_y) {};
+        vec2i(const vec2f& v);
+
+        vec2i operator+(const vec2i& v) const;
+        vec2i operator-(const vec2i& v) const;
+
+        vec2i operator+(int v) const;
+        vec2i operator-(int v) const;
+        vec2i operator*(int v) const;
+        vec2i operator/(int v) const;
+        vec2i operator-();
+
+
+        vec2i& operator*=(int n);
+        vec2i& operator/=(int n);
+        vec2i& operator+=(const vec2i& v);
+        vec2i& operator-=(const vec2i& v);
+
+        bool operator==(const vec2i& v) const;
+        bool operator!=(const vec2i& v) const;
+
+        bool operator< (const vec2i& v) const;
+        bool operator> (const vec2i& v) const;
+        bool operator<= (const vec2i& v) const;
+        bool operator>= (const vec2i& v) const;
     };
 
     struct vec3i {
@@ -71,6 +98,7 @@ namespace Plutus
         vec3i() : x(0), y(0), z(0) {};
         vec3i(int _x, int _y, int _z) : x(_x), y(_y), z(_z) {};
         vec3i(float _x, float _y, float _z) : x((int)_x), y((int)_y), z((int)_z) {};
+        vec3i(const vec3f& v) : x((int)v.x), y((int)v.y), z((int)v.z) {};
     };
 
     struct vec4f
