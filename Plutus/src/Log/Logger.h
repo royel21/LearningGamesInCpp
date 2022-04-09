@@ -7,24 +7,28 @@
 struct Logger {
     template<class... Args>
     static void error(const char* fmt, Args... args) {
-        if (!valid(fmt, sizeof...(Args))) return;
-        Print(getFmt("91m[ERROR]", fmt).c_str(), args...);
+        auto format = getFmt("91m", "[ERROR]", fmt);
+        std::vector<char> zc(255);
+        int err = std::snprintf(zc.data(), zc.size(), format.c_str(), args...);
+        std::cout << zc.data();
     }
 
     template<class... Args>
     static void warn(const char* fmt, Args... args) {
-        if (!valid(fmt, sizeof...(Args))) return;
-        Print(getFmt("96m[WARN]", fmt).c_str(), args...);
+        auto format = getFmt("96m", "[WARN]", fmt);
+        std::vector<char> zc(255);
+        int err = std::snprintf(zc.data(), zc.size(), format.c_str(), args...);
+        std::cout << zc.data();
     }
 
     template<class... Args>
     static void info(const char* fmt, Args... args) {
-        if (!valid(fmt, sizeof...(Args))) return;
-        Print(getFmt("93m[INFO]", fmt).c_str(), args...);
+        auto format = getFmt("93m", "[INFO]", fmt);
+        std::vector<char> zc(255);
+        int err = std::snprintf(zc.data(), zc.size(), format.c_str(), args...);
+        std::cout << zc.data();
     }
 
-    private:
-        static int valid(const char* str, int c);
-
-        static std::string getFmt(const char* level, const char* fmt);
+private:
+    static std::string getFmt(const char* color, const char* level, const std::string& fmt);
 };
