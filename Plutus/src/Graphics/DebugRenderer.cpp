@@ -259,10 +259,10 @@ namespace Plutus
 			int sizeX = static_cast<int>((scaleScreen.x) / tw) + 2;
 			int sizeY = static_cast<int>((scaleScreen.y) / th) + 2;
 
-			float x = floor(screenStart.x / tw);
-			float y = floor(screenStart.y / th);
+			float initalX = floor(screenStart.x / tw);
+			float initalY = floor(screenStart.y / th);
 
-			vec2f cPos(x * tw, y * th);
+			vec2f cPos(initalX * tw, initalY * th);
 
 			for (int x = 0; x <= sizeX; x++)
 			{
