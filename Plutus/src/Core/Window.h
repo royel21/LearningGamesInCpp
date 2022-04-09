@@ -1,11 +1,17 @@
 #pragma once
 
+#include <functional>
+
 struct GLFWwindow;
 
 namespace Plutus
 {
     class Window
     {
+    public:
+        std::function<void(const char*)> onFileDrop = nullptr;
+        std::function<void(int, int)> onResize = nullptr;
+
     public:
         Window() = default;
         Window(const char* name, int width, int height, GLFWwindow* parent = nullptr);
@@ -16,8 +22,6 @@ namespace Plutus
         bool isFinish();
         // swap backgound buffer with current buffer and pollevent
         void update();
-        void setResizeVP(bool state);
-        void resizeVP(int width, int height);
         // tell glfw we want to close the window
         void close();
 

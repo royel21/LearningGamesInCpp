@@ -95,16 +95,17 @@ namespace Plutus
             });
         //Item Dropped to the window
         glfwSetDropCallback(mWindow, [](GLFWwindow* window, int count, const char** paths) {
-            for (int i = 0; i < count; i++)
-                if (Input::get()->onFileDrop != nullptr)
-                    Input::get()->onFileDrop(paths[i]);
+            auto win = (Window*)glfwGetWindowUserPointer(window);
+            if (win->onFileDrop != nullptr) {
+                for (int i = 0; i < count; i++)
+                    win->onFileDrop(paths[i]);
+            }
             });
         // Window Reisze Event
         glfwSetFramebufferSizeCallback(mWindow, [](GLFWwindow* window, int width, int height) {
             auto win = (Window*)glfwGetWindowUserPointer(window);
-            win->resizeVP(width, height);
-            if (Input::get()->onResize) {
-                Input::get()->onResize(width, height);
+            if (win->onResize) {
+                win->onResize(width, height);
             }
             });
         //Enable alpha blend
@@ -137,12 +138,6 @@ namespace Plutus
     {
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
-    }
-
-    void Window::resizeVP(int width, int height) {
-        if (mAutoResizeVP) {
-            glViewport(0, 0, width, height);
-        }
     }
 
     void Window::close()
