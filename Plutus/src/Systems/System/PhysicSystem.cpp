@@ -12,7 +12,6 @@ namespace Plutus
         mWorld->SetAutoClearForces(mScene->getAutoClearForce());
 
         auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
-        auto size = view.size_hint();
         for (auto [ent, trans, rbody] : view.each()) {
             Entity Ent = { ent, mScene };
 
@@ -74,7 +73,6 @@ namespace Plutus
     }
 
     void PhysicSystem::update(float dt) {
-        mWorld->SetAutoClearForces(mScene->getAutoClearForce());
         mWorld->Step(mScene->getTimeIterSec(), mScene->getVelIter(), mScene->getBodyIter());
 
         auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
