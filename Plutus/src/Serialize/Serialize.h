@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <Math/Vectors.h>
 
+#define JSONVVALUE rapidjson::GenericObject<false, rapidjson::Value>
+
 namespace Plutus
 {
     using namespace rapidjson;
@@ -30,9 +32,7 @@ namespace Plutus
 
         void add2Float(const std::string& id, const vec2f& v);
 
-        void StartObj(const std::string& id);
-
-        void StartObj();
+        void StartObj(const std::string& id = "");
         void EndObj();
 
         void StartArr(const std::string& id);
@@ -43,13 +43,10 @@ namespace Plutus
         Writer<StringBuffer> writer;
     };
 
-    struct PJson {
-        bool isLoaded = false;
-        rapidjson::Document doc;
+    struct JsonHelper {
+        JSONVVALUE* value;
 
-        PJson() = default;
-        PJson(const char* path);
-        bool load(const char* path);
+        JsonHelper() = default;
 
         int getInt(const char* key, int def = 0);
         float getFloat(const char* key, float def = 0);

@@ -137,11 +137,13 @@ namespace Plutus
         {
             ser.addString("name", "RigidBody");
             ser.addInt("b", rbody->mBullet);
-            ser.addInt("f", rbody->mFixedRotation);
-            ser.addFloat("l", rbody->mLinearDamping);
+            ser.addInt("fr", rbody->mFixedRotation);
+            ser.addFloat("ld", rbody->mLinearDamping);
             ser.addFloat("gs", rbody->mGravityScale);
             ser.addInt("bt", rbody->mBodyType);
             ser.add2Float("o", rbody->mOffset);
+            ser.add2Float("maxv", rbody->mMaxVel);
+
             ser.StartArr("fixs");
             {
                 for (auto& fix : rbody->mFixtures)

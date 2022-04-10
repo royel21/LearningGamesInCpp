@@ -79,8 +79,10 @@ namespace Plutus
 
     bool SceneLoader::loadFromString(const std::string& jsonData, Scene* scene)
     {
+        JsonHelper jhelper;
         bool success = false;
         rapidjson::Document doc;
+
         if (doc.Parse(jsonData.c_str()).HasParseError() == false) {
 
             if (doc.HasMember("fonts") && doc["fonts"].IsArray())
@@ -179,29 +181,28 @@ namespace Plutus
                         }
                         if (compType == "RigidBody") {
                             auto rbody = entity.addComponent<RigidBodyComponent>();
+                            jhelper.value = &component;
 
-                            rbody->mBullet = component["b"].GetInt();
-                            rbody->mFixedRotation = component["f"].GetInt();
-                            rbody->mLinearDamping = component["l"].GetFloat();
-                            rbody->mGravityScale = component["gs"].GetFloat();
-                            rbody->mBodyType = (BodyType)component["bt"].GetInt();
-                            auto offset = component["o"].GetArray();
-                            rbody->mOffset = { offset[0].GetFloat(), offset[1].GetFloat() };
+                            rbody->mBullet = jhelper.getInt("b");
+                            rbody->mFixedRotation = jhelper.getInt("fr");
+                            rbody->mLinearDamping = jhelper.getFloat("ld");
+                            rbody->mGravityScale = jhelper.getFloat("gs");
+                            rbody->mBodyType = (BodyType)jhelper.getInt("bt");
+                            rbody->mOffset = jhelper.getFloat2("o");
+                            rbody->mMaxVel = jhelper.getFloat2("maxv");
 
                             for (auto& val : component["fixs"].GetArray()) {
-                                rbody->mFixtures.push_back({ val["type"].GetInt() });
-                                auto& fix = rbody->mFixtures.front();
+                                jhelper.value = &val.GetJsonObject();
 
-                                auto off = val["offset"].GetArray();
-                                fix.offset = { off[0].GetFloat(), off[1].GetFloat() };
-                                auto size = val["size"].GetArray();
-                                fix.size = { size[0].GetFloat(), size[1].GetFloat() };
+                                auto& fix = rbody->addFixture(jhelper.getInt("type"));
 
-                                fix.radius = val["radiu"].GetFloat();
-                                fix.friction = val["frict"].GetFloat();
-                                fix.density = val["dens"].GetFloat();
-                                fix.restitution = val["restit"].GetFloat();
-                                fix.isSensor = val["sensor"].GetInt();
+                                fix.offset = jhelper.getFloat2("offset");
+                                fix.size = jhelper.getFloat2("size");
+                                fix.radius = jhelper.getFloat("radiu");
+                                fix.friction = jhelper.getFloat("frict");
+                                fix.density = jhelper.getFloat("dens");
+                                fix.restitution = jhelper.getFloat("restit");
+                                fix.isSensor = jhelper.getInt("sensor");
                             }
                         }
                     }

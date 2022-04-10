@@ -65,12 +65,8 @@ namespace Plutus
 
     void Serializer::StartObj(const std::string& id)
     {
-        writer.String(id.c_str());
-        writer.StartObject();
-    }
-
-    void Serializer::StartObj()
-    {
+        if (!id.empty())
+            writer.String(id.c_str());
         writer.StartObject();
     }
 
@@ -90,47 +86,42 @@ namespace Plutus
         writer.EndArray();
     }
     /********************************************************************/
-    PJson::PJson(const char* path) {
-        isLoaded = load(path);
+
+/********************************************************************/
+
+    int JsonHelper::getInt(const char* key, int def) {
+        return value->HasMember(key) ? (*value)[key].GetInt() : def;
     }
 
-    bool PJson::load(const char* path)
+    float JsonHelper::getFloat(const char* key, float def)
     {
-        return isLoaded = loadJsonFromFile(path, doc);
+        return value->HasMember(key) ? (*value)[key].GetFloat() : def;
     }
 
-    int PJson::getInt(const char* key, int def) {
-        return doc.HasMember(key) ? doc[key].GetInt() : def;
+    bool JsonHelper::getBool(const char* key, bool def)
+    {
+        return value->HasMember(key) ? (*value)[key].GetBool() : def;
     }
 
-    float PJson::getFloat(const char* key, float def)
+    std::string JsonHelper::getString(const char* key, const char* def)
     {
-        return doc.HasMember(key) ? doc[key].GetFloat() : def;
+        return value->HasMember(key) ? (*value)[key].GetString() : def;
     }
 
-    bool PJson::getBool(const char* key, bool def)
+    Plutus::vec2f JsonHelper::getFloat2(const char* key, Plutus::vec2f def)
     {
-        return doc.HasMember(key) ? doc[key].GetBool() : def;
-    }
-
-    std::string PJson::getString(const char* key, const char* def)
-    {
-        return doc.HasMember(key) ? doc[key].GetString() : def;
-    }
-    vec2f PJson::getFloat2(const char* key, vec2f def)
-    {
-        vec2f f2 = def;
-        if (doc.HasMember(key)) {
-            auto arr = doc[key].GetArray();
+        Plutus::vec2f f2 = def;
+        if (value->HasMember(key)) {
+            auto arr = (*value)[key].GetArray();
             f2 = { arr[0].GetFloat(), arr[1].GetFloat() };
         }
         return f2;
     }
-    vec4f PJson::getFloat4(const char* key, vec4f def)
+    Plutus::vec4f JsonHelper::getFloat4(const char* key, Plutus::vec4f def)
     {
-        vec4f f4 = def;
-        if (doc.HasMember(key)) {
-            auto arr = doc[key].GetArray();
+        Plutus::vec4f f4 = def;
+        if (value->HasMember(key)) {
+            auto arr = (*value)[key].GetArray();
             f4 = { arr[0].GetFloat(), arr[1].GetFloat(), arr[2].GetFloat(), arr[3].GetFloat() };
         }
         return f4;
