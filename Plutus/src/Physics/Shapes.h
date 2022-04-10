@@ -38,6 +38,7 @@ namespace Plutus
     }
 
     inline b2Vec2 tobVec2(const vec2f& vec) { return { vec.x, vec.y }; }
+    inline vec2f toVec2f(const b2Vec2& vec) { return { vec.x, vec.y }; }
 
     struct Shape {
         vec2f pos;

@@ -1,5 +1,6 @@
 #include "Shapes.h"
 #include <box2d/b2_body.h>
+#include <box2d/b2_math.h>
 
 #include <Math/PMath.h>
 
