@@ -9,12 +9,17 @@ namespace Plutus
 
     const std::string Entity::getName()
     {
-        return getComponent<Tag>()->Name;
+        return isValid() ? mScene->mRegistry.get<Tag>(mId).Name : "";
+    }
+
+    bool Entity::isValid() {
+        return mId != entt::null && mScene->mRegistry.valid(mId);
     }
 
     void Entity::setName(const std::string& name)
     {
-        getComponent<Tag>()->Name = name;
+        if (isValid())
+            mScene->mRegistry.get<Tag>(mId).Name = name;
     }
 
     Entity Scene::createEntity(const std::string& name)

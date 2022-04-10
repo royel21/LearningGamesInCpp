@@ -28,8 +28,8 @@ namespace Plutus
 
         const std::string getName();
         void setName(const std::string& name);
-
-        operator bool() const { return mId != entt::null && mScene->isValid(this); }
+        bool isValid();
+        operator bool() const { return mId != entt::null; }
         operator entt::entity() const { return mId; }
         operator uint32_t() const { return (uint32_t)mId; }
 
