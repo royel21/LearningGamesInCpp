@@ -11,6 +11,18 @@
 
 namespace Plutus
 {
+    /**
+     * Base Class for create an app
+     * @param mWidth
+     * @param mHeight
+     * @param mCamera
+     * @param Setup virtual void Setup called once when the app is starting
+     * @param Update virtual void Uptade(float) called every frame
+     * @param Draw virtual void Draw called every frame
+     * @param Exit virtual void Exit called when the app is being destroyed use for cleanup
+     * @param Resize virtual void Resize(int, int) called when the app is resizing
+     * @param Dropfile virtual void Dropfile(const char*) called a file is dropped in the app
+     */
     class Core
     {
     private:
@@ -46,7 +58,10 @@ namespace Plutus
         virtual void Draw() {};
         //Called before the window exit, should be overrided.
         virtual void Exit() { };
+        //Called whenever window resize
         virtual void Resize(int width, int height) {}
+        //Called whenever window resize
+        virtual void Dropfile(const char* file) {}
         // FPS on micro seconds 0.016 millis by default. 
         float getFPS() { return mLimiter.getFPS(); }
         //Set the fps of the game loop.
@@ -56,7 +71,6 @@ namespace Plutus
 
         void setNextScreen(const std::string& screenId);
 
-        void setAutoResizeViewPort(bool state) { mWindow.setResizeVP(state); }
     private:
         void init();
         void swapScreen();

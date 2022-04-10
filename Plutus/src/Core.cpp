@@ -27,6 +27,17 @@ namespace Plutus
     void Core::init() {
         mWindow.init(mName.c_str(), mWidth, mHeight);
         mCamera.init(mWidth, mHeight);
+
+        mWindow.onResize = [&](int w, int h) {
+            mWidth = w;
+            mHeight = h;
+            Resize(w, h);
+        };
+
+        mWindow.onFileDrop = [&](const char* file) {
+            Dropfile(file);
+        };
+
         Setup();
     }
 
