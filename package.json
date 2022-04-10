@@ -6,7 +6,7 @@
   "scripts": {
     "start": "emrun web/release/index.html",
     "build game": "node build",
-    "plutus-game": "node build clean-game",
+    "clean-game": "node build clean-game",
     "clean-libs": "node build clean-libs",
     "plutus-libs": "node build clean-plutus",
     "all": "node build clean",
