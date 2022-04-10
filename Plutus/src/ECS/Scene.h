@@ -29,7 +29,7 @@ namespace Plutus
         const std::string getName();
         void setName(const std::string& name);
 
-        operator bool() const { return mId != entt::null; }
+        operator bool() const { return mId != entt::null && mScene->isValid(this); }
         operator entt::entity() const { return mId; }
         operator uint32_t() const { return (uint32_t)mId; }
 
@@ -70,8 +70,8 @@ namespace Plutus
     class Scene
     {
     public:
-        Scene();
-        ~Scene();
+        Scene() = default;
+        ~Scene() { mRegistry.clear(); }
 
         Entity createEntity(const std::string& name);
 
@@ -80,8 +80,8 @@ namespace Plutus
         Entity getEntityByName(const std::string name);
 
         void copyScene(Scene* scene);
-        void removeEntity(entt::entity ent);
-        bool isValid(Entity ent);
+        inline void removeEntity(entt::entity ent) { mRegistry.destroy(ent); }
+        inline bool isValid(Entity ent) { return mRegistry.valid(ent); }
 
         entt::registry* getRegistry() { return &mRegistry; }
 

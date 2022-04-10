@@ -6,13 +6,6 @@
 namespace Plutus
 {
     /*******************************     Scene    ************************/
-    Scene::Scene() {
-    }
-
-    Scene::~Scene()
-    {
-        mRegistry.clear();
-    }
 
     const std::string Entity::getName()
     {
@@ -50,16 +43,6 @@ namespace Plutus
         }
 
         return { ent, this };
-    }
-
-
-    void Scene::removeEntity(entt::entity ent)
-    {
-        mRegistry.destroy(ent);
-    }
-
-    bool Scene::isValid(Entity ent) {
-        return mRegistry.valid(ent);
     }
 
     void Scene::copyScene(Scene* scene) {
