@@ -34,7 +34,7 @@ namespace Plutus
                     break;
                 }
                 case EdgeShape: {
-                    mDebug->drawLine(pos, fixture.size);
+                    mDebug->drawLine(pos + fixture.offset, fixture.size + fixture.offset);
                     break;
                 }
                 case CircleShape: {

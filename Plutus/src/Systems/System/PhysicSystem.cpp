@@ -52,8 +52,8 @@ namespace Plutus
                 }
                 case EdgeShape: {
                     b2EdgeShape edgeShape;
-                    auto bsize = toWorld(fixture.size);
-                    edgeShape.SetTwoSided(pos, bsize);
+                    auto bsize = toWorld({ fixture.size.x + offset.x, fixture.size.y + offset.y });
+                    edgeShape.SetTwoSided({ offset.x + pos.x, offset.y + pos.y }, bsize);
 
                     fixDef.shape = &edgeShape;
                     rbody.mBody->CreateFixture(&fixDef);
@@ -80,14 +80,14 @@ namespace Plutus
         auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
         for (auto [ent, trans, rbody] : view.each()) {
             if (rbody.mBodyType == DynamicBody || rbody.mBodyType == KinematicBody) {
+
                 auto pos = fromWorld(rbody.mBody->GetPosition());
                 trans.x = pos.x;
                 trans.y = pos.y;
+                rbody.speedLimit();
             }
         }
     }
-
-
 
     void PhysicSystem::destroy() {
         if (mWorld != nullptr) delete mWorld;
