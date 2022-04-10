@@ -13,7 +13,7 @@ namespace Plutus
     {
         mAnimation = ent->getComponent<AnimationComponent>();
         auto& mTextures = AssetManager2::get()->getAssets<Texture>();
-        if (CollapseComponent<AnimationComponent>("Animation##tilemap-comp", 4))
+        if (CollapseComponent<AnimationComponent>("Animation##tilemap-comp", 3))
         {
             auto& sequences = mAnimation->mSequences;
             auto it = sequences.begin();
@@ -98,8 +98,8 @@ namespace Plutus
                             }
                             ImGui::PopID();
                         }
-                        ImGui::EndChild();
                     }
+                    ImGui::EndChild();
                     ImGui::Separator();
                     ImGui::Text("Frames");
                     ImGui::Separator();
@@ -122,8 +122,8 @@ namespace Plutus
                             seq.mFrames.erase(seq.mFrames.begin() + index2RM);
                             seq.mFrame = 0;
                         }
-                        ImGui::EndChild();
                     }
+                    ImGui::EndChild();
                     ImGui::PopStyleVar();
 
                     ImGui::Separator();

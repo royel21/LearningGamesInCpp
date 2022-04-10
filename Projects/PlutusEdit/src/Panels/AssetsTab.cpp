@@ -96,8 +96,8 @@ namespace Plutus
                         drawFilter();
                         if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
                             drawDiskAssets("./assets/");
-                            ImGui::EndChild();
                         }
+                        ImGui::EndChild();
                         ImGui::EndTabItem();
                     }
 
@@ -109,16 +109,16 @@ namespace Plutus
                             drawTreeNode<Font>("Fonts", id);
                             drawTreeNode<Texture>("Textures", id);
                             drawTreeNode<Sound>("Sounds", id);
-                            ImGui::EndChild();
                         }
+                        ImGui::EndChild();
                         ImGui::EndTabItem();
                     }
                     ImGui::EndTabBar();
                 }
 
             }
-            ImGui::End();
         }
+        ImGui::End();
 
         processFile();
     }

@@ -47,6 +47,14 @@ namespace Plutus
 
 namespace ImGui
 {
+    //Text Row default width = 30%
+    inline void Row(const char* text, float textWidth = 0) {
+        if (textWidth == 0) {
+            textWidth = ImGui::GetContentRegionAvailWidth() * 0.3f;
+        }
+        ImGui::Text(text);
+        ImGui::SameLine(textWidth);
+    }
 
     inline int checkLimit(int& v, int min, int max) {
         return v < min ? 0 : v > max ? max - 1 : v;

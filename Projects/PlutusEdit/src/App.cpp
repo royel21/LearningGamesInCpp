@@ -27,6 +27,7 @@ namespace Plutus
         Render::get().Init();
         mMainGui.Init();
         Render::get().setScene(Config::get().mProject->mScene.get());
+        mCentralPanel.init();
     }
 
     void App::Update(float dt) {
@@ -37,7 +38,7 @@ namespace Plutus
 
     void App::Draw() {
         mMainGui.Begin();
-        mCentralPanel.DrawCenterPanel();
+        mCentralPanel.drawCenterPanel();
         if (Config::get().state != Running) {
             AssetsTab.drawAssets();
             DrawScenes();

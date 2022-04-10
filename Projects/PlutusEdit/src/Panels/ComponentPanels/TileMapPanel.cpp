@@ -32,7 +32,7 @@ namespace Plutus
 
     void TileMapPanel::DrawTileMapComponet()
     {
-        if (CollapseComponent<TileMapComponent>("TileMap##tilemap-comp", 5))
+        if (CollapseComponent<TileMapComponent>("TileMap##tilemap-comp", 4))
         {
             static bool addTexture = false;
             mIsOpen = true;
@@ -40,11 +40,11 @@ namespace Plutus
             ImGui::BeginUIGroup();
             {
                 ImGui::BeginCol("Tile Width");
-                ImGui::InputInt("#tm-w", &mTileMap->mTileWidth);
+                ImGui::InputInt("##tm-w", &mTileMap->mTileWidth);
                 ImGui::BeginCol("Tile Heigth");
-                ImGui::InputInt("#tm-h", &mTileMap->mTileHeight);
+                ImGui::InputInt("##tm-h", &mTileMap->mTileHeight);
                 ImGui::BeginCol("Layer");
-                ImGui::InputInt("#tm-l", &mTileMap->mLayer);
+                ImGui::InputInt("##tm-l", &mTileMap->mLayer);
             }
             ImGui::EndUIGroup();
             ImGui::Separator();
@@ -90,7 +90,7 @@ namespace Plutus
                     ImGui::BeginUIGroup();
                     {
                         ImGui::BeginCol("Rotation");
-                        if (ImGui::InputFloat("#tm-r", &mRotation, 45.0f, 90.0f, "%0.0f")) {
+                        if (ImGui::InputFloat("##tm-r", &mRotation, 45.0f, 90.0f, "%0.0f")) {
                             mRotation = LIMIT(mRotation, 0.0f, 360.0f);
                         }
                         ImGui::BeginCol("Scale");

@@ -40,29 +40,28 @@ namespace Plutus
     void RigidBodyTab::draw(Entity* ent)
     {
         mRigidBody = ent->getComponent<RigidBodyComponent>();
-        if (CollapseComponent<RigidBodyComponent>("RigidBody##tilemap-comp", 5)) {
-            if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
-                ImGui::BeginCol("Is Bullet");
-                ImGui::Checkbox("##isbullet", &mRigidBody->mBullet);
-                ImGui::BeginCol("Fixed Rotation");
-                ImGui::Checkbox("##fixrotate", &mRigidBody->mFixedRotation);
+        if (CollapseComponent<RigidBodyComponent>("RigidBody##tilemap-comp", 6)) {
+            float textWidth = ImGui::GetContentRegionAvailWidth() * (mTextRowWidth + 0.15f);
 
-                ImGui::BeginCol("Linear Damping");
-                ImGui::DragFloat("#l-damping", &mRigidBody->mLinearDamping, 1, 0, 30, "%.2f");
-                ImGui::BeginCol("Gravity Scale");
-                ImGui::DragFloat("#g-scale", &mRigidBody->mGravityScale, 1, 0, 30, "%.2f");
+            ImGui::Row("Is Bullet", textWidth);
+            ImGui::Checkbox("##isbullet", &mRigidBody->mBullet);
+            ImGui::Row("Fixed Rotation", textWidth);
+            ImGui::Checkbox("##fixrotate", &mRigidBody->mFixedRotation);
 
-                auto found = std::find_if(rigidBodyTypes.begin(), rigidBodyTypes.end(),
-                    [=](auto&& rbtype)-> bool { return rbtype.second == mRigidBody->mBodyType;});
+            ImGui::Row("Linear Damping", textWidth);
+            ImGui::DragFloat("##l-damping", &mRigidBody->mLinearDamping, 1, 0, 30, "%.2f");
+            ImGui::Row("Gravity Scale", textWidth);
+            ImGui::DragFloat("##g-scale", &mRigidBody->mGravityScale, 1, 0, 30, "%.2f");
 
-                auto current = found->first;
-                ImGui::BeginCol("Body Type");
-                if (ImGui::ComboBox("", rigidBodyTypes, current)) {
-                    mRigidBody->mBodyType = rigidBodyTypes[current];
-                }
+            auto found = std::find_if(rigidBodyTypes.begin(), rigidBodyTypes.end(),
+                [=](auto&& rbtype)-> bool { return rbtype.second == mRigidBody->mBodyType;});
 
-                ImGui::EndUIGroup();
+            auto current = found->first;
+            ImGui::Row("Body Type", textWidth);
+            if (ImGui::ComboBox("", rigidBodyTypes, current)) {
+                mRigidBody->mBodyType = rigidBodyTypes[current];
             }
+
             ImGui::Separator();
             if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE " Add Fixture##cp")) {
                 ImGui::OpenPopup("AddFixture");
@@ -85,11 +84,14 @@ namespace Plutus
             }
             int id = 0;
             int removeId = -1;
-            for (auto& fix : mRigidBody->mFixtures) {
-                if (drawFixture(fix, id++)) {
-                    removeId = id - 1;
+            if (ImGui::BeginChild("fixture-list", { 0, 0 }, false, ImGuiWindowFlags_HorizontalScrollbar)) {
+                for (auto& fix : mRigidBody->mFixtures) {
+                    if (drawFixture(fix, id++)) {
+                        removeId = id - 1;
+                    }
                 }
             }
+            ImGui::EndChild();
 
             if (removeId > -1) {
                 mRigidBody->mFixtures.erase(mRigidBody->mFixtures.begin() + removeId);
@@ -97,38 +99,33 @@ namespace Plutus
         }
     }
 
-    bool drawFixture(Fixture& fix, int index) {
+    bool RigidBodyTab::drawFixture(Fixture& fix, int index) {
         auto name = fixturesType[fix.type] + "##id-" + std::to_string(index);
         bool remove = false;
         if (CollapseTab(name.c_str(), index, remove)) {
-            ImGui::BeginChild(name.c_str(), { 0, 0 }, false, ImGuiWindowFlags_HorizontalScrollbar);
-            if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
+            float textWidth = ImGui::GetContentRegionAvailWidth() * mTextRowWidth;
+            ImGui::Row("Offset", textWidth);
+            ImGui::Draw2Float("##fix-offset", fix.offset);
 
-                ImGui::BeginCol("Offset");
-                ImGui::Draw2Float("##fix-offset", fix.offset);
-
-                if (fix.type == CircleShape) {
-                    ImGui::BeginCol("Radius");
-                    ImGui::DragFloat("##fix-radius", &fix.radius, 1, 0.01f, 2000, "%0.2f");
-                }
-                else {
-                    ImGui::BeginCol("Size");
-                    ImGui::Draw2Float("##fix-size", fix.size, 1, "W", "H");
-                }
-
-                ImGui::BeginCol("friction");
-                ImGui::DragFloat("##fix-friction", &fix.friction, 0.01f, 0.01f, 5, "%0.2f");
-                ImGui::BeginCol("density");
-                ImGui::DragFloat("##fix-density", &fix.density, 1, 0, 10, "%0.0f");
-                ImGui::BeginCol("restitution");
-                ImGui::DragFloat("##fix-restitution", &fix.restitution, 0.00f, 0.01f, 1, "%0.2f");
-                ImGui::BeginCol("isSensor");
-                ImGui::Checkbox("Is Sensor", &fix.isSensor);
+            if (fix.type == CircleShape) {
+                ImGui::Row("Radius", textWidth);
+                ImGui::DragFloat("##fix-radius", &fix.radius, 1, 0.01f, 2000, "%0.2f");
+            }
+            else {
+                ImGui::Row("Size", textWidth);
+                ImGui::Draw2Float("##fix-size", fix.size, 1, "W", "H");
             }
 
-            ImGui::EndUIGroup();
-            ImGui::EndChild();
+            ImGui::Row("friction", textWidth);
+            ImGui::DragFloat("##fix-friction", &fix.friction, 0.01f, 0.01f, 5, "%0.2f");
+            ImGui::Row("density", textWidth);
+            ImGui::DragFloat("##fix-density", &fix.density, 1, 0, 10, "%0.0f");
+            ImGui::Row("restitution", textWidth);
+            ImGui::DragFloat("##fix-restitution", &fix.restitution, 0.00f, 0.01f, 1, "%0.2f");
+            ImGui::Row("isSensor", textWidth);
+            ImGui::Checkbox("Is Sensor", &fix.isSensor);
         }
+
         return remove;
     }
 }

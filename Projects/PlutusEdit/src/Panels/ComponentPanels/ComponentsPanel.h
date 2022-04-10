@@ -25,5 +25,6 @@ namespace Plutus
         int uvIndex = 0;
         bool mUseCoords = false;
         float mSpriteScale = 1.0f;
+        float mTextColumnWidth = 0.30f;
     };
 } // namespace Plutus

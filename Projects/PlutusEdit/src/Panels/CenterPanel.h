@@ -8,14 +8,15 @@ namespace Plutus
 {
     class CenterPanel {
     public:
-        CenterPanel();
-        void DrawCenterPanel();
+        CenterPanel() = default;
+        void init();
+        void drawCenterPanel();
         void update(float dt);
 
     private:
-        void DrawViewPort();
+        void drawViewPort();
         void CameraControl();
-        void SelectEntity();
+        void selectEntity();
 
     private:
         vec2f mMouseLastCoords;
