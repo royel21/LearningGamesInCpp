@@ -1,5 +1,4 @@
 #include "Config.h"
-#include <Input/Input.h>
 #include <rapidjson/document.h>
 
 #include <math.h>
@@ -18,69 +17,19 @@
 
 namespace Plutus
 {
-    Project::Project()
+
+    void Config::Init()
     {
-        mScene = CreateRef<Scene>();
-        mTempScene = CreateRef<Scene>();
-    }
-
-    void Project::Create(const std::string& name)
-    {
-        auto nName = name + ".json";
-        auto found = Config::get().mProject->mScenes.find(name);
-
-        if (found == mScenes.end()) {
-            auto newScene = "assets/scenes/" + name;
-            if (Utils::createFile(newScene.c_str(), "{}")) {
-                mScenes[nName] = newScene;
-                mOpenScene = nName;
-
-                mEnt = {};
-                mScene->clear();
-                AssetManager2::get()->destroy();
+        if (!isLoaded) {
+            if (!std::filesystem::exists("assets"))
+            {
+                std::filesystem::create_directories("assets/textures");
+                std::filesystem::create_directories("assets/audios");
+                std::filesystem::create_directories("assets/fonts");
             }
+            isLoaded = true;
         }
-    }
 
-    void Project::add(const std::string& path)
-    {
-        auto name = Utils::getFileName(path);
-        auto found = mScenes.find(name);
-        if (found == mScenes.end()) {
-            auto newScene = "assets/scenes/" + name;
-            mEnt = {};
-            mScene->clear();
-            AssetManager2::get()->destroy();
-            if (SceneLoader::loadFromJson(newScene.c_str(), mScene.get())) {
-                mScenes[name] = newScene;
-                mOpenScene = name;
-            }
-        }
-    }
-
-    void Project::Load(const std::string& path)
-    {
-        auto name = Utils::getFileName(path);
-        auto found = mScenes.find(name);
-        if (found != mScenes.end()) {
-
-            mEnt = {};
-            mScene->clear();
-            AssetManager2::get()->destroy();
-            if (SceneLoader::loadFromJson(path.c_str(), mScene.get())) {
-                found->second = path;
-                std::replace(found->second.begin(), found->second.end(), '\\', '/');
-                mOpenScene = name;
-            }
-        }
-    }
-
-    void Project::Save()
-    {
-        std::string json = Plutus::SceneSerializer(mScene.get());
-        auto found = mScenes.find(mOpenScene);
-        if (found != mScenes.end())
-            toJsonFile(found->second, json.c_str());
     }
 
     void Config::CreateProj(const char* name)
@@ -98,26 +47,6 @@ namespace Plutus
         save();
     }
 
-    void Config::Init()
-    {
-        if (!isLoaded) {
-            load();
-            Input::get()->onResize = [&](int w, int h) {
-                winWidth = w;
-                winHeight = h;
-            };
-
-            if (!std::filesystem::exists("assets"))
-            {
-                std::filesystem::create_directories("assets/textures");
-                std::filesystem::create_directories("assets/audios");
-                std::filesystem::create_directories("assets/fonts");
-            }
-            isLoaded = true;
-        }
-
-    }
-
     void Config::RenameProj(const std::string& oldname, const std::string newName) {
         mProjects[newName] = mProjects[oldname];
         mProjects.erase(oldname);
@@ -129,26 +58,35 @@ namespace Plutus
 
     void Config::LoadProject(const std::string& name) {
         if (name.empty()) {
+            load();
             if (mProject && mProject->mScenes.size())
                 mProject->Load(mProject->mScenes[mProject->mOpenScene]);
         }
         else {
+            mProjects[name] = Project();
             mProject = &mProjects[name];
         }
 
     }
 
     void Config::load() {
-        PJson json("Config.json");
-        if (json.isLoaded) {
-            winWidth = json.getInt("win-width", 1280);
-            winHeight = json.getInt("win-height", 768);
-            OpenProject = json.getString("open-project");
-            vpZoom = json.getFloat("vp-zoom", 1);
-            vpPos = json.getFloat2("vp-pos");
-            vpColor = json.getFloat4("vp-color", { 1,1,1,1 });
+        rapidjson::Document doc;
 
-            for (auto& obj : json.doc["projects"].GetArray()) {
+        bool isLoaded = loadJsonFromFile("Config.json", doc);
+
+        if (isLoaded) {
+            JsonHelper jhelper;
+            jhelper.value = &doc.GetJsonObject();
+
+            winWidth = jhelper.getInt("win-width", 1280);
+            winHeight = jhelper.getInt("win-height", 768);
+            OpenProject = jhelper.getString("open-project");
+            vpZoom = jhelper.getFloat("vp-zoom", 1);
+            vpPos = jhelper.getFloat2("vp-pos");
+            vpColor = jhelper.getFloat4("vp-color", { 1,1,1,1 });
+
+            for (auto& obj : doc["projects"].GetArray()) {
+
                 auto& p = mProjects[obj["name"].GetString()];
                 p.mOpenScene = obj["open-scene"].GetString();
                 p.vpWidth = obj["width"].GetInt();
@@ -221,5 +159,70 @@ namespace Plutus
         ser.EndObj();
 
         saveJsonToFile("config.json", ser.getString());
+    }
+
+    Project::Project()
+    {
+        mScene = CreateRef<Scene>();
+        mTempScene = CreateRef<Scene>();
+    }
+
+    void Project::Create(const std::string& name)
+    {
+        auto nName = name + ".json";
+        auto found = Config::get().mProject->mScenes.find(name);
+
+        if (found == mScenes.end()) {
+            auto newScene = "assets/scenes/" + name;
+            if (Utils::createFile(newScene.c_str(), "{}")) {
+                mScenes[nName] = newScene;
+                mOpenScene = nName;
+
+                mEnt = {};
+                mScene->clear();
+                AssetManager2::get()->destroy();
+            }
+        }
+    }
+
+    void Project::add(const std::string& path)
+    {
+        auto name = Utils::getFileName(path);
+        auto found = mScenes.find(name);
+        if (found == mScenes.end()) {
+            auto newScene = "assets/scenes/" + name;
+            mEnt = {};
+            mScene->clear();
+            AssetManager2::get()->destroy();
+            if (SceneLoader::loadFromJson(newScene.c_str(), mScene.get())) {
+                mScenes[name] = newScene;
+                mOpenScene = name;
+            }
+        }
+    }
+
+    void Project::Load(const std::string& path)
+    {
+        auto name = Utils::getFileName(path);
+        auto found = mScenes.find(name);
+        if (found != mScenes.end()) {
+
+            mEnt = {};
+            mScene->clear();
+            AssetManager2::get()->destroy();
+            if (SceneLoader::loadFromJson(path.c_str(), mScene.get())) {
+                found->second = path;
+                std::replace(found->second.begin(), found->second.end(), '\\', '/');
+                mOpenScene = name;
+            }
+        }
+    }
+
+    void Project::Save()
+    {
+        std::string json = Plutus::SceneSerializer(mScene.get());
+        auto found = mScenes.find(mOpenScene);
+        if (found != mScenes.end())
+            toJsonFile(found->second, json.c_str());
     }
 } // namespace Plutus
