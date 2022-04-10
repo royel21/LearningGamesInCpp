@@ -1,10 +1,11 @@
 #pragma once
 #include <iostream>
+#include <vector>
 
 #define Print std::printf
 
 
-constexpr int BUFFSIZE = 512;
+#define BUFFSIZE 512
 
 struct Logger {
     template<class... Args>
