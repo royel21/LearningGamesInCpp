@@ -106,17 +106,16 @@ namespace Plutus
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-        ImGui::Begin("DockSpace Demo", &isOpen, window_flags);
-        ImGui::PopStyleVar();
+        if (ImGui::Begin("DockSpace Demo", &isOpen, window_flags)) {
+            ImGui::PopStyleVar();
 
 
-        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+            ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+            //Draw Menu
+            MenuGui(dockspace_flags);
 
-
-        //Draw Menu
-        MenuGui(dockspace_flags);
-
+        }
         ImGui::End();
     }
 

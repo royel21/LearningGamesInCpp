@@ -1,6 +1,7 @@
 #include "PhysicSystem.h"
 #include <ECS/Scene.h>
 #include <ECS/Components.h>
+#include <Log/Logger.h>
 
 namespace Plutus
 {
@@ -36,6 +37,7 @@ namespace Plutus
                 fixDef.density = fixture.density;
                 fixDef.friction = fixture.friction;
                 fixDef.restitution = fixture.restitution;
+                fixDef.isSensor = fixture.isSensor;
 
                 switch (fixture.type) {
                 case BoxShape: {
@@ -75,7 +77,7 @@ namespace Plutus
 
     void PhysicSystem::update(float dt) {
         mWorld->SetAutoClearForces(mScene->getAutoClearForce());
-        mWorld->Step(mScene->getTimeIterSec(), mScene->getVelIter(), mScene->getBodyIter());
+        mWorld->Step(mScene->getTimeIterSec(), mScene->getVelIter(), mScene->getPositionIter());
 
         auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
         for (auto [ent, trans, rbody] : view.each()) {
@@ -84,6 +86,7 @@ namespace Plutus
                 auto pos = fromWorld(rbody.mBody->GetPosition());
                 trans.x = pos.x;
                 trans.y = pos.y;
+                Logger::info("Pos: %0.5f, %0.5f", pos.x, pos.y);
                 rbody.speedLimit();
             }
         }

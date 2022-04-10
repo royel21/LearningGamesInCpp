@@ -25,36 +25,37 @@ namespace Plutus
 
     void ComponentPanel::DrawComponentsPanel()
     {
-        ImGui::Begin("##ComPanel");
-        mEnt = Config::get().mProject->mEnt;
-        if (Config::get().mProject->mScene->isValid(mEnt)) {
-            ImGui::InputString("Name##c-tag", mEnt.getComponent<Tag>()->Name);
-            if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE " Add Component##cp")) {
-                ImGui::OpenPopup("AddComponent");
-            }
+        if (ImGui::Begin("##ComPanel")) {
+            mEnt = Config::get().mProject->mEnt;
+            if (Config::get().mProject->mScene->isValid(mEnt)) {
+                ImGui::InputString("Name##c-tag", mEnt.getComponent<Tag>()->Name);
+                if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE " Add Component##cp")) {
+                    ImGui::OpenPopup("AddComponent");
+                }
 
-            if (ImGui::BeginPopup("AddComponent"))
-            {
-                ImGui::Text("Componets");
+                if (ImGui::BeginPopup("AddComponent"))
+                {
+                    ImGui::Text("Componets");
+                    ImGui::Separator();
+
+                    ComponentMenuItem<TransformComponent>("Transform");
+                    ComponentMenuItem<SpriteComponent>("Sprite");
+                    ComponentMenuItem<TileMapComponent>("TileMap");
+                    ComponentMenuItem<AnimationComponent>("Animation");
+                    ComponentMenuItem<ScriptComponent>("Script");
+                    ComponentMenuItem<RigidBodyComponent>("RigidBody");
+
+                    ImGui::EndPopup();
+                }
+
                 ImGui::Separator();
-
-                ComponentMenuItem<TransformComponent>("Transform");
-                ComponentMenuItem<SpriteComponent>("Sprite");
-                ComponentMenuItem<TileMapComponent>("TileMap");
-                ComponentMenuItem<AnimationComponent>("Animation");
-                ComponentMenuItem<ScriptComponent>("Script");
-                ComponentMenuItem<RigidBodyComponent>("RigidBody");
-
-                ImGui::EndPopup();
+                if (mEnt.hasComponent<TransformComponent>()) DrawTransform();
+                if (mEnt.hasComponent<SpriteComponent>()) DrawSprite();
+                if (mEnt.hasComponent<AnimationComponent>()) mAnimation.DrawAnimation(&mEnt);
+                if (mEnt.hasComponent<TileMapComponent>()) mTileMapPanel.DrawTileMapComponet();
+                if (mEnt.hasComponent<ScriptComponent>()) DrawScript();
+                if (mEnt.hasComponent<RigidBodyComponent>()) mRigidBodyTab.draw(&mEnt);
             }
-
-            ImGui::Separator();
-            if (mEnt.hasComponent<TransformComponent>()) DrawTransform();
-            if (mEnt.hasComponent<SpriteComponent>()) DrawSprite();
-            if (mEnt.hasComponent<AnimationComponent>()) mAnimation.DrawAnimation(&mEnt);
-            if (mEnt.hasComponent<TileMapComponent>()) mTileMapPanel.DrawTileMapComponet();
-            if (mEnt.hasComponent<ScriptComponent>()) DrawScript();
-            if (mEnt.hasComponent<RigidBodyComponent>()) mRigidBodyTab.draw(&mEnt);
         }
         ImGui::End();
     }
@@ -66,86 +67,82 @@ namespace Plutus
             auto trans = mEnt.getComponent<TransformComponent>();
             float position[] = { trans->x, trans->y };
 
-            if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
-
-                ImGui::BeginCol("Position");
-                vec2f pos = { trans->x, trans->y };
-                if (ImGui::Draw2Float("Position##ent-pos", pos)) {
-                    trans->x = pos.x;
-                    trans->y = pos.y;
-                }
-                ImGui::BeginCol("Size");
-                vec2f size = { trans->w, trans->h };
-                if (ImGui::Draw2Float("Size##ent-size", size, 1, "W", "H")) {
-                    trans->w = (int)size.x;
-                    trans->h = (int)size.y;
-                }
-                ImGui::BeginCol("Rotation");
-                ImGui::DragFloat("#tran-r", &trans->r, 5, 0, 360, "%.0f");
-
-                ImGui::BeginCol("Layer");
-                ImGui::InputInt("#trans-Layer", &trans->layer, 1);
-
-                ImGui::BeginCol("Sort Y");
-                ImGui::Checkbox("##trans-sortY", &trans->sortY);
-                ImGui::EndUIGroup();
+            float textWidth = ImGui::GetContentRegionAvailWidth() * mTextColumnWidth;
+            ImGui::Row("Position", textWidth);
+            vec2f pos = { trans->x, trans->y };
+            if (ImGui::Draw2Float("Position##ent-pos", pos)) {
+                trans->x = pos.x;
+                trans->y = pos.y;
             }
+            ImGui::Row("Size");
+            vec2f size = { trans->w, trans->h };
+            if (ImGui::Draw2Float("Size##ent-size", size, 1, "W", "H")) {
+                trans->w = (int)size.x;
+                trans->h = (int)size.y;
+            }
+            ImGui::Row("Rotation", textWidth);
+            ImGui::DragFloat("##tran-r", &trans->r, 5, 0, 360, "%.0f");
+
+            ImGui::Row("Layer", textWidth);
+            ImGui::InputInt("##trans-Layer", &trans->layer, 1);
+
+            ImGui::Row("Sort Y");
+            ImGui::Checkbox("##trans-sortY", &trans->sortY);
         }
     }
     /***********************************Sprite Comopnent********************************************************/
     void ComponentPanel::DrawSprite() {
-        if (CollapseComponent<SpriteComponent>("Sprite##sprite-comp", 3))
+        if (CollapseComponent<SpriteComponent>("Sprite##sprite-comp", 2))
         {
-            if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
-                auto sprite = mEnt.getComponent<SpriteComponent>();
-                auto& textures = AssetManager2::get()->getAssets<Texture>();
+            float textWidth = ImGui::GetContentRegionAvailWidth() * (mTextColumnWidth + 0.01f);
 
-                auto color = sprite->mColor;
-                std::string selected = sprite->mTextureId;
-                ImGui::BeginCol("TileSheet");
-                if (ImGui::ComboBox("#TileSheet", textures, selected)) {
-                    sprite->mTextureId = selected;
-                }
-                ImGui::BeginCol("Color");
-                if (ImGui::ColorInt("##spr-Color", color))
-                {
-                    sprite->mColor = color;
-                }
-                ImGui::BeginCol("Scale");
-                ImGui::DragFloat("##sc-spr", &mSpriteScale, 0.01f, 0.2f, 5, "%0.2f");
-                ImGui::BeginCol("Use Coords");
-                ImGui::Checkbox("##spr-usecoords", &mUseCoords);
+            auto sprite = mEnt.getComponent<SpriteComponent>();
+            auto& textures = AssetManager2::get()->getAssets<Texture>();
 
-                auto found = textures.find(selected);
+            auto color = sprite->mColor;
+            std::string selected = sprite->mTextureId;
+            ImGui::Row("TileSheet", textWidth);
+            if (ImGui::ComboBox("##TileSheet", textures, selected)) {
+                sprite->mTextureId = selected;
+            }
+            ImGui::Row("Color", textWidth);
+            if (ImGui::ColorInt("##spr-Color", color))
+            {
+                sprite->mColor = color;
+            }
+            ImGui::Row("Scale", textWidth);
+            ImGui::DragFloat("##sc-spr", &mSpriteScale, 0.01f, 0.2f, 5, "%0.2f");
+            ImGui::Row("Use Coords", textWidth);
+            ImGui::Checkbox("##spr-usecoords", &mUseCoords);
 
-                if (found != textures.end()) {
-                    auto& texture = *static_cast<Texture*>(found->second);
+            auto found = textures.find(selected);
 
-                    if (!mUseCoords) {
-                        int max = (int)texture.uvs.size();
-                        if (max) {
-                            ImGui::BeginCol("UV");
-                            if (ImGui::InputInt("#spr-uv", &uvIndex)) {
-                                uvIndex = CHECKLIMIT(uvIndex, 0, max - 1);
-                                sprite->mUVCoord = texture.getUV(uvIndex);
-                            }
-                        }
-                    }
-                    else {
-                        ImGui::BeginCol("Coords");
-                        ImGui::DragFloat4("#spr-uv", &sprite->mUVCoord.x, 0.001f);
-                    }
+            if (found != textures.end()) {
+                auto& texture = *static_cast<Texture*>(found->second);
 
-                    ImGui::EndUIGroup();
-                    ImGui::Separator();
-
-                    if (mUseCoords) {
-                        ImGui::DrawTexCoords(&texture, sprite->mUVCoord);
-                    }
-                    else {
-                        if (ImGui::DrawTextureOne(&texture, uvIndex)) {
+                if (!mUseCoords) {
+                    int max = (int)texture.uvs.size();
+                    if (max) {
+                        ImGui::Row("UV", textWidth);
+                        if (ImGui::InputInt("##spr-uv", &uvIndex)) {
+                            uvIndex = CHECKLIMIT(uvIndex, 0, max - 1);
                             sprite->mUVCoord = texture.getUV(uvIndex);
                         }
+                    }
+                }
+                else {
+                    ImGui::Row("Coords", textWidth);
+                    ImGui::DragFloat4("##spr-uv", &sprite->mUVCoord.x, 0.001f);
+                }
+
+                ImGui::Separator();
+
+                if (mUseCoords) {
+                    ImGui::DrawTexCoords(&texture, sprite->mUVCoord);
+                }
+                else {
+                    if (ImGui::DrawTextureOne(&texture, uvIndex)) {
+                        sprite->mUVCoord = texture.getUV(uvIndex);
                     }
                 }
             }

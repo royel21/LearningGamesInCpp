@@ -23,7 +23,7 @@
 
 namespace Plutus
 {
-    CenterPanel::CenterPanel()
+    void CenterPanel::init()
     {
         auto lang = TextEditor::LanguageDefinition::Lua();
         editor.SetPalette(TextEditor::GetDarkPalette());
@@ -81,7 +81,7 @@ namespace Plutus
         }
     }
 
-    void CenterPanel::SelectEntity()
+    void CenterPanel::selectEntity()
     {
         auto project = Config::get().mProject;
         static Entity ent;
@@ -115,7 +115,7 @@ namespace Plutus
         }
     }
 
-    void CenterPanel::DrawViewPort() {
+    void CenterPanel::drawViewPort() {
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImVec4 WHITE = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -161,13 +161,13 @@ namespace Plutus
             ImGui::Text("FPS: %0.2f", ImGui::GetIO().Framerate);
             ImGui::PopStyleColor();
 
-            ImGui::EndChild();
         }
+        ImGui::EndChild();
         ImGui::PopStyleVar(1);
         ImGui::PopStyleColor(1);
 
         if (Config::get().state != Running)
-            SelectEntity();
+            selectEntity();
     }
 
     void CenterPanel::update(float dt) {
@@ -175,7 +175,7 @@ namespace Plutus
             mSysManager.update(dt);
     }
 
-    void CenterPanel::DrawCenterPanel()
+    void CenterPanel::drawCenterPanel()
     {
 
         auto& project = Config::get().mProject;
@@ -183,69 +183,70 @@ namespace Plutus
         ImGuiWindowClass window_class;
         window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
         ImGui::SetNextWindowClass(&window_class);
-        ImGui::Begin("Viewport Window");
-        bool isViewPort = true;
-        ImGui::BeginTabBar("center-tabbar");
-        {
-            if (ImGui::BeginTabItem("ViewPort")) {
-                DrawViewPort();
-                ImGui::EndTabItem();
-            }
-
-            if (Config::get().state == Editing && ImGui::BeginTabItem("Script Editor")) {
-                editor.Render("TextEditor");
-                isViewPort = false;
-                ImGui::EndTabItem();
-            }
-
-        }
-        ImGui::EndTabBar();
-
-        ImGui::SameLine();
-        ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f);
-        ImGui::SetCursorPosY(4);
-        if (isViewPort) {
-            static bool drawGrid = DebugRender::get()->getShouldDraw();
-            bool isRunning = Config::get().state == Running;
-
-            if (ImGui::TransparentButton(isRunning ? ICON_FA_STOP : ICON_FA_PLAY)) {
-                if (isRunning) {
-                    Render::get().setScene(project->mScene.get());
-                    Config::get().state = Editing;
-                    project->mTempScene->clear();
-                    mSysManager.stop();
-
-                    DebugRender::get()->setShouldDraw(drawGrid);
+        if (ImGui::Begin("Viewport Window")) {
+            bool isViewPort = true;
+            ImGui::BeginTabBar("center-tabbar");
+            {
+                if (ImGui::BeginTabItem("ViewPort")) {
+                    drawViewPort();
+                    ImGui::EndTabItem();
                 }
-                else {
-                    project->mTempScene.get()->copyScene(project->mScene.get());
-                    Render::get().setScene(project->mTempScene.get());
-                    Config::get().state = Running;
-                    mSysManager.start();
 
-                    drawGrid = DebugRender::get()->getShouldDraw();
-                    DebugRender::get()->setShouldDraw(false);
+                if (Config::get().state == Editing && ImGui::BeginTabItem("Script Editor")) {
+                    editor.Render("TextEditor");
+                    isViewPort = false;
+                    ImGui::EndTabItem();
                 }
-            }
-            ImGui::SameLine();
-            ImGui::TransparentButton(ICON_FA_COG);
-        }
-        else {
-            ImGui::TransparentButton(ICON_FA_FILE " New");
-            ImGui::SameLine();
-            if (ImGui::TransparentButton(ICON_FA_SAVE " Save")) {
-                Utils::saveFile(currentScript.c_str(), editor.GetText().c_str());
-            }
-            ImGui::SameLine();
-            ImGui::PushItemWidth(200);
-            int selected = Utils::getIndex(scripts, currentScript);
-            if (ImGui::ComboBox("##scr-list", scripts, selected)) {
-                currentScript = scripts[selected];
-                editor.SetText(readFileAsString(currentScript.c_str()));
-            }
-            ImGui::PopItemWidth();
-        }
 
+            }
+            ImGui::EndTabBar();
+
+            ImGui::SameLine();
+            ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f);
+            ImGui::SetCursorPosY(4);
+            if (isViewPort) {
+                static bool drawGrid = DebugRender::get()->getShouldDraw();
+                bool isRunning = Config::get().state == Running;
+
+                if (ImGui::TransparentButton(isRunning ? ICON_FA_STOP : ICON_FA_PLAY)) {
+                    if (isRunning) {
+                        Render::get().setScene(project->mScene.get());
+                        Config::get().state = Editing;
+                        project->mTempScene->clear();
+                        mSysManager.stop();
+
+                        DebugRender::get()->setShouldDraw(drawGrid);
+                    }
+                    else {
+                        project->mTempScene.get()->copyScene(project->mScene.get());
+                        Render::get().setScene(project->mTempScene.get());
+                        Config::get().state = Running;
+                        mSysManager.start();
+
+                        drawGrid = DebugRender::get()->getShouldDraw();
+                        DebugRender::get()->setShouldDraw(false);
+                    }
+                }
+                ImGui::SameLine();
+                ImGui::TransparentButton(ICON_FA_COG);
+            }
+            else {
+                ImGui::TransparentButton(ICON_FA_FILE " New");
+                ImGui::SameLine();
+                if (ImGui::TransparentButton(ICON_FA_SAVE " Save")) {
+                    Utils::saveFile(currentScript.c_str(), editor.GetText().c_str());
+                }
+                ImGui::SameLine();
+                ImGui::PushItemWidth(200);
+                int selected = Utils::getIndex(scripts, currentScript);
+                if (ImGui::ComboBox("##scr-list", scripts, selected)) {
+                    currentScript = scripts[selected];
+                    editor.SetText(readFileAsString(currentScript.c_str()));
+                }
+                ImGui::PopItemWidth();
+            }
+
+        }
         ImGui::End();
     }
 }

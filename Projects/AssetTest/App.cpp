@@ -7,6 +7,7 @@
 #include <Time/Timer.h>
 
 #include <unordered_map>
+#include <Graphics/DebugRenderer.h>
 
 namespace Plutus
 {
@@ -17,6 +18,8 @@ namespace Plutus
         mRenderer.setCamera(&mCamera);
 
         auto manager = AssetManager2::get();
+        mDebug = DebugRender::get();
+        mDebug->init(&mCamera);
 
         manager->addAsset<Texture>("Link", "assets/textures/player1.png");
         manager->addAsset<Font>("Zoika", "assets/fonts/Zoika.ttf", 64);
@@ -47,17 +50,35 @@ namespace Plutus
         Logger::info("time: %llu", Timer::micros() - start);
 
     }
+    void App::Update(float) {
+        mCamera.update();
+    }
 
     void App::Draw() {
         auto tex = AssetManager2::get()->getAsset<Texture>("Link");
-
-        mRenderer.submit(tex->mTexId, { mWidth / 2, mHeight / 2, 64, 64 }, tex->getUV(0));
-        mRenderer.submit(tex->mTexId, { 32, 32, 128, 128 }, tex->getUV(0));
+        vec4f rect1 = { (mWidth / 2) - 32, (mHeight / 2) - 32, 64, 64 };
+        vec4f rect2 = { 32, 32, 128, 128 };
+        mRenderer.submit(tex->mTexId, rect1, tex->getUV(0));
+        mRenderer.submit(tex->mTexId, rect2, tex->getUV(0));
         mRenderer.finish();
 
-        mRenderer.submit("Zoika", "Testing Font", 0, mHeight - 64.0f);
-        mRenderer.submit("Arial", "Testing Font", 0, mHeight - 128.0f);
+        mRenderer.submit("Zoika", "Testing Font", 0, 256.0f);
+        mRenderer.submit("Arial", "Testing Font", 0, 192.0f);
         mRenderer.finish(BATCH_TEXT);
+
+
+        mDebug->drawGrid();
+        mDebug->drawBox(rect1);
+        mDebug->drawBox(rect2);
+
+        mDebug->drawCircle({ Circle2d{100, 150, 50} });
+        mDebug->end();
+        mDebug->render(2);
+    }
+
+    void App::Resize(int w, int h) {
+        glViewport(0, 0, w, h);
+        mCamera.setWindowSize({ w, h });
     }
 
     void App::Exit() {

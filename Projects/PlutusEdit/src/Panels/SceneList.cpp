@@ -89,43 +89,46 @@ namespace Plutus
         auto project = Config::get().mProject;
         static bool openNew = false;
         static bool showConfig = false;
-        ImGui::Begin("Scene Editor");
-        if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE "##new-scene"))  openNew = true;
-        ImGui::SameLine();
-        if (ImGui::TransparentButton(ICON_FA_SAVE "##save-scene"))  project->Save();
-        ImGui::SameLine();
-        if (ImGui::TransparentButton(ICON_FA_COG "##config-scene")) showConfig = true;
-        ImGui::SameLine();
-        ImGui::Text("Scenes");
-        ImGui::Separator();
-        for (auto& sc : project->mScenes) {
-            bool isOpen = project->mOpenScene.compare(sc.first) == 0;
+        if (ImGui::Begin("Scene Editor"))
+        {
+            // ImGui::Push
+            ImGui::Text("Scenes");
+            ImGui::SameLine();
+            if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE "##new-scene"))  openNew = true;
+            ImGui::SameLine();
+            if (ImGui::TransparentButton(ICON_FA_SAVE "##save-scene"))  project->Save();
+            ImGui::SameLine();
+            if (ImGui::TransparentButton(ICON_FA_COG "##config-scene")) showConfig = true;
+            ImGui::Separator();
+            for (auto& sc : project->mScenes) {
+                bool isOpen = project->mOpenScene.compare(sc.first) == 0;
 
-            ImGui::SetNextItemOpen(isOpen);
+                ImGui::SetNextItemOpen(isOpen);
 
-            if (ImGui::TreeNode((ICON_FA_PHOTO_VIDEO " " + sc.first).c_str()))
-            {
-                //Load Scene only once
-                if (!isOpen) project->Load(sc.second.c_str());
-
-                // Right-click on scene
-                if (ImGui::BeginPopupContextItem())
+                if (ImGui::TreeNode((ICON_FA_PHOTO_VIDEO " " + sc.first).c_str()))
                 {
-                    if (ImGui::MenuItem("Create Entity")) {
-                        project->mEnt = project->mScene->createEntity("New Entity");
-                    }
-                    ImGui::EndPopup();
-                }
+                    //Load Scene only once
+                    if (!isOpen) project->Load(sc.second.c_str());
 
-                if (isOpen) {
-                    project->mScene->getRegistry()->each([&](auto entId)
-                        {
-                            Entity entity{ entId , project->mScene.get() };
-                            drawEntity(entity);
-                        });
+                    // Right-click on scene
+                    if (ImGui::BeginPopupContextItem())
+                    {
+                        if (ImGui::MenuItem("Create Entity")) {
+                            project->mEnt = project->mScene->createEntity("New Entity");
+                        }
+                        ImGui::EndPopup();
+                    }
+
+                    if (isOpen) {
+                        project->mScene->getRegistry()->each([&](auto entId)
+                            {
+                                Entity entity{ entId , project->mScene.get() };
+                                drawEntity(entity);
+                            });
+                    }
+                    project->mOpenScene = sc.first;
+                    ImGui::TreePop();
                 }
-                project->mOpenScene = sc.first;
-                ImGui::TreePop();
             }
         }
         ImGui::End();
