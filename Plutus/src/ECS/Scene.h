@@ -80,25 +80,28 @@ namespace Plutus
         Entity getEntityByName(const std::string name);
 
         void copyScene(Scene* scene);
+
         inline void removeEntity(entt::entity ent) { mRegistry.destroy(ent); }
+
         inline bool isValid(Entity ent) { return mRegistry.valid(ent); }
 
         entt::registry* getRegistry() { return &mRegistry; }
-
+        // remove all entity from scene
         void clear() { mRegistry.clear(); }
 
         vec2f getGravity() { return mGravity; }
-
-        void setGravity(const vec2f& g) { mGravity = g; }
-
-        float getTimeIterSec() { return mTimeStepInSec; }
-        void setTimeIterSec(float time) { mTimeStepInSec = time; }
-
+        // set gravity for box2d world 
+        void setGravity(const vec2f& g = { 0.0f, -9.8f }) { mGravity = g; }
+        // get timeiter in milis seconds
+        float getTimeIterSec() { return 1.0f / mTimeStepInSec; }
+        // set time iter in fps itetation for box2d world, default 60 = 0.01667ms
+        void setTimeIterSec(float fps = 60.0f) { mTimeStepInSec = fps; }
+        //set velocity itetation for box2d world
         int getVelIter() { return mVelIter; }
         void setVelIter(int time) { mVelIter = time; }
-
-        int getBodyIter() { return mBodyIter; }
-        void setBodyIter(int time) { mBodyIter = time; }
+        // set position itetation for box2d world
+        int getPositionIter() { return mPositionIter; }
+        void setPositionIter(int time) { mPositionIter = time; }
 
         bool getAutoClearForce() { return mAutoClearForce; }
         void setAutoClearForce(bool val) { mAutoClearForce = val; }
@@ -106,9 +109,9 @@ namespace Plutus
     private:
         friend class Entity;
         friend class System;
-        float mTimeStepInSec = 0.01667f;
-        int mVelIter = 3;
-        int mBodyIter = 6;
+        float mTimeStepInSec = 60.0f;
+        int mVelIter = 8;
+        int mPositionIter = 3;
         bool mAutoClearForce = true;
         entt::registry mRegistry;
         vec2f mGravity = { 0.0f, -9.8f };
@@ -131,7 +134,7 @@ namespace Plutus
     template <typename T>
     bool Entity::removeComponent()
     {
-        if (hasComponent<T>())
+        if (isValid() && hasComponent<T>())
         {
             mScene->mRegistry.remove<T>(mId);
         }
@@ -141,7 +144,7 @@ namespace Plutus
     template <typename T>
     bool Entity::hasComponent()
     {
-        return mScene->mRegistry.any_of<T>(mId);
+        return isValid() && mScene->mRegistry.any_of<T>(mId);
     }
 
     template<typename T>
