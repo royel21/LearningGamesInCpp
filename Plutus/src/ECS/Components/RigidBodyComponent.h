@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 
-#include <box2d/box2d.h>
 #include <Physics/Shapes.h>
 #include <Math/Vectors.h>
 #include "../Scene.h"
@@ -20,13 +19,19 @@ namespace Plutus
 
     struct Fixture {
         int type;
-
+        // default = 0, 0
         vec2f offset;
+        // default = 1, 1
         vec2f size = { 1,1 };
+        // default = 1
         float radius = 1;
+        // default = 0.3
         float friction = 0.3f;
+        // default = 1
         float density = 1.0f;
+        // default = 0
         float restitution = 0;
+        // default = false
         bool isSensor = false;
         Fixture(int _type) : type(_type) {};
         Fixture(int _type, vec2f _offset, vec2f _size, float r, float f, float d, float res, bool _isSensor)
