@@ -79,11 +79,19 @@ namespace Plutus
 
     bool SceneLoader::loadFromString(const std::string& jsonData, Scene* scene)
     {
-        JsonHelper jhelper;
         bool success = false;
         rapidjson::Document doc;
 
         if (doc.Parse(jsonData.c_str()).HasParseError() == false) {
+
+            JsonHelper jhelper;
+            jhelper.value = &doc.GetJsonObject();
+
+            scene->setGravity(jhelper.getFloat2("grv", { 0.0f, -9.8f }));
+            scene->setTimeIterSec(jhelper.getFloat("fps", 60));
+            scene->setVelIter(jhelper.getInt("vel-itel", 8));
+            scene->setPositionIter(jhelper.getInt("pos-itel", 3));
+            scene->setAutoClearForce(jhelper.getBool("cls-forc", true));
 
             if (doc.HasMember("fonts") && doc["fonts"].IsArray())
             {
