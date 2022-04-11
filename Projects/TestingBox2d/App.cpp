@@ -13,6 +13,16 @@
 
 namespace Plutus
 {
+    /*
+
+    b2_staticBody = 0,
+    b2_kinematicBody,
+    b2_dynamicBody
+    */
+    constexpr int StaticBody = 0;
+    constexpr int KinematicBody = 1;
+    constexpr int DynamicBody = 2;
+
     App::App(const char* name, int width, int height) : Core(name, width, height)
     {
     }
@@ -133,8 +143,10 @@ namespace Plutus
         mWorld = std::make_unique<b2World>(b2Vec2{ 0, -10.0f });
 
         createBox(15, 30, 64, 64, 2, 0.3f);
-        createBox(704, 384, 64, 64, 2);
-        createBox(910, 240, 350, 20);
+        createBox(704, 384, 64, 64, DynamicBody);
+        createBox(910, 240, 350, 20, StaticBody);
+
+        createBox(890, 230, 350, 20, StaticBody);
 
         createCapsule(mWorld.get());
 
@@ -162,10 +174,10 @@ namespace Plutus
         auto body = capsule.body;
         auto currentSpeed = body->GetLinearVelocity();
 
-        if (Input::get()->onKeyDown("J")) {
+        if (Input::get()->onKeyDown("Left")) {
             body->ApplyForceToCenter(b2Vec2(-force2, 0.0), true);
         }
-        else if (Input::get()->onKeyDown("L")) {
+        else if (Input::get()->onKeyDown("Right")) {
             body->ApplyForceToCenter(b2Vec2(force2, 0.0), true);
         }
         else {

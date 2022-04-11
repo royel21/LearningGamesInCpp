@@ -1,4 +1,4 @@
-local SPEED = 1.5
+local SPEED = 15
 local curAnime = "stand-r"
 
 local vel = 0;
@@ -18,6 +18,8 @@ local state = ""
 function init()
     local anim = Player2:getAnimate()
     if anim then anim:play(curAnime) end
+    local rbody = Player2:getRigidBody()
+    rbody:setMaxVelocity(1, 0)
 
     print("player2 init")
 end
@@ -28,7 +30,7 @@ local vel = {x = 0, y = 0}
 
 function move()
     local rbody = Player2:getRigidBody()
-    rbody:setVelocity(vel.x, vel.y)
+    rbody:applyForce(vel.x, vel.y)
 end
 
 function roll()
@@ -40,7 +42,7 @@ end
 
 function jump()
     local rbody = Player2:getRigidBody()
-    rbody:applyImpulse(0, 2)
+    rbody:applyImpulse(0, 7)
 end
 
 function update(dt)
@@ -53,9 +55,9 @@ function update(dt)
         vel = {x = 0, y = 0}
     end
 
-   -- if (input:onKeyDown("X")) then
-       -- sound:play(false)
-     --   print("play sound")
+    -- if (input:onKeyDown("X")) then
+    -- sound:play(false)
+    --   print("play sound")
     -- end
 
     if state ~= "attacking" and state ~= "jumping" then

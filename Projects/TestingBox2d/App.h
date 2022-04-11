@@ -28,9 +28,9 @@ namespace Plutus
         void createBox(float x, float y, float w, float h, int type = 0, float friction = 1);
         void createLine(float x1, float y1, float x2, float y2);
     private:
-        float timeStep = 1 / 60.0f;
-        int32_t velIter = 6;
-        int32_t posIter = 2;
+        float timeStep = 0.01667f;
+        int32_t velIter = 8;
+        int32_t posIter = 3;
         DebugRender* mDebug;
         Texture* texture;
         Shader mShader;
