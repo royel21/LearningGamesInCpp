@@ -75,7 +75,7 @@ namespace Plutus
     }
 
     void PhysicSystem::update(float dt) {
-        mWorld->Step(mScene->getTimeIterSec(), mScene->getVelIter(), mScene->getBodyIter());
+        mWorld->Step(mScene->getTimeIterSec(), mScene->getVelIter(), mScene->getPositionIter());
 
         auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
         for (auto [ent, trans, rbody] : view.each()) {
