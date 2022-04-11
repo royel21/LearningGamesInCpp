@@ -15,7 +15,7 @@ namespace Plutus
     {
 
     public:
-        SystemManager() = default;
+        SystemManager();
         ~SystemManager() { cleanup(); };
 
         void setScene(Scene* scene) { mScene = scene; }
@@ -29,13 +29,9 @@ namespace Plutus
         template <typename T, typename... TArgs>
         T* AddSystem(TArgs &&... args)
         {
-            if (!hasSystem<T>()) {
-                T* newSystem = new T(mScene, std::forward<TArgs>(args)...);
-
-                mSystems[&typeid(T)] = newSystem;
-                return newSystem;
-            }
-            return getSystem<T>();
+            T* newSystem = new T(mScene, std::forward<TArgs>(args)...);
+            mSystems[&typeid(T)] = newSystem;
+            return newSystem;
         }
 
         template <typename T>
