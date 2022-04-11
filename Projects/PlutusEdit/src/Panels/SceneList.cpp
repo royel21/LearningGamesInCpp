@@ -21,9 +21,9 @@ namespace Plutus
                     scene->setGravity(g);
                 }
 
-                ImGui::BeginCol("Time Step Millis");
-                float timeIter = scene->getTimeIterSec();
-                if (ImGui::DragFloat("#timeIter", &timeIter, 0.0001f, 0, 1, "%.5f")) {
+                ImGui::BeginCol("Time Step FPS");
+                float timeIter = 1 / scene->getTimeIterSec();
+                if (ImGui::DragFloat("##timeIter", &timeIter, 1, 10, 240, "%0.0f")) {
                     scene->setTimeIterSec(timeIter);
                 }
 
@@ -33,9 +33,9 @@ namespace Plutus
                     scene->setVelIter(vIter);
                 }
                 ImGui::BeginCol("Body Iter");
-                int bIter = scene->getBodyIter();
+                int bIter = scene->getPositionIter();
                 if (ImGui::DragInt("##biter", &bIter, 1, 1, 20)) {
-                    scene->setBodyIter(bIter);
+                    scene->setPositionIter(bIter);
                 }
 
                 ImGui::BeginCol("Auto Clear Force");
