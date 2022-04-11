@@ -1,12 +1,11 @@
 #include "DebugSystem.h"
 
+#include <box2d/box2d.h>
 
 #include <ECS/Scene.h>
 #include <ECS/Components.h>
 #include <Graphics/Camera2D.h>
 #include <Graphics/DebugRenderer.h>
-
-// #include <Graphi
 
 namespace Plutus
 {
