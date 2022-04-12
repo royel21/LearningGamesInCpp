@@ -10,12 +10,12 @@
 
 namespace Plutus
 {
-    class AssetManager2
+    class AssetManager
     {
     public:
-        ~AssetManager2() = default;
+        ~AssetManager() { destroy(); }
 
-        static AssetManager2* get();
+        static AssetManager* get();
 
         template <typename T, typename... TArgs>
         T* addAsset(const std::string& id, TArgs &&... args)
@@ -57,7 +57,7 @@ namespace Plutus
         void destroy();
 
     private:
-        AssetManager2() = default;
+        AssetManager() = default;
         umap<const std::type_info*, umap<std::string, Asset*>> mAssets;
     };
 } // namespace Plutus
