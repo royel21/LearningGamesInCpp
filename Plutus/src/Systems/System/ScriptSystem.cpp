@@ -11,6 +11,8 @@
 
 #include <Assets/Assets.h>
 
+#include <Math/Vectors.h>
+
 namespace Plutus
 {
     int my_exception_handler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description)
@@ -54,6 +56,10 @@ namespace Plutus
         auto input = mGlobalLua.new_usertype<Input>("Input");
         input["onKeyDown"] = &Input::onKeyDown;
         input["onKeyPressed"] = &Input::onKeyPressed;
+
+        auto lua_vec2 = mGlobalLua.new_usertype<vec2f>("vec2f", sol::constructors<vec2f(), vec2f(float, float), vec2f(int, int)>());
+        lua_vec2["x"] = &vec2f::x;
+        lua_vec2["y"] = &vec2f::y;
 
         registerAssets();
         registerEntity();

@@ -194,7 +194,7 @@ namespace Plutus
             mEnt = {};
             mScene->clear();
             AssetManager::get()->destroy();
-            if (SceneLoader::loadFromJson(newScene.c_str(), mScene.get())) {
+            if (SceneLoader::loadFromPath(newScene.c_str(), mScene.get())) {
                 mScenes[name] = newScene;
                 mOpenScene = name;
             }
@@ -210,7 +210,7 @@ namespace Plutus
             mEnt = {};
             mScene->clear();
             AssetManager::get()->destroy();
-            if (SceneLoader::loadFromJson(path.c_str(), mScene.get())) {
+            if (SceneLoader::loadFromPath(path.c_str(), mScene.get())) {
                 found->second = path;
                 std::replace(found->second.begin(), found->second.end(), '\\', '/');
                 mOpenScene = name;

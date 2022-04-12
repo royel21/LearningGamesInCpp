@@ -64,7 +64,7 @@ namespace Plutus
         }
     }
 
-    bool SceneLoader::loadFromJson(const char* path, Scene* scene)
+    bool SceneLoader::loadFromPath(const char* path, Scene* scene)
     {
         std::string ex = Utils::getExtension(path);
         if (ex == "json")
