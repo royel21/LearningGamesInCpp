@@ -40,7 +40,7 @@ namespace Plutus
         void calculateUV();
 
         template<typename ...TArgs>
-        vec4f getUV(TArgs &&... args) {
+        inline vec4f getUV(TArgs &&... args) {
             return getUVs(std::forward<TArgs>(args)...);
         }
 

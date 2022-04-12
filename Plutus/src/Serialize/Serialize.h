@@ -2,8 +2,12 @@
 
 #include <rapidjson/writer.h> // for stringify JSON
 #include <rapidjson/document.h>
+
+#include <string>
 #include <unordered_map>
+
 #include <Math/Vectors.h>
+
 
 #define JSONVVALUE rapidjson::GenericObject<false, rapidjson::Value>
 

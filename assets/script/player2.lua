@@ -1,7 +1,5 @@
-local SPEED = 15
+local SPEED = 10
 local curAnime = "stand-r"
-
-local vel = 0;
 
 local stand = {
     right = "stand-right",
@@ -19,7 +17,7 @@ function init()
     local anim = Player2:getAnimate()
     if anim then anim:play(curAnime) end
     local rbody = Player2:getRigidBody()
-    rbody:setMaxVelocity(1, 0)
+    rbody:setMaxVelocity(1)
 
     print("player2 init")
 end
@@ -104,5 +102,4 @@ function update(dt)
         state = "     "
     end
 end
-
 

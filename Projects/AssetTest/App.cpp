@@ -9,71 +9,94 @@
 #include <unordered_map>
 #include <Graphics/DebugRenderer.h>
 
+#include <ECS/Components.h>
+
+#include <Systems/Systems.h>
+
 namespace Plutus
 {
     void App::Setup() {
-        mShader.init();
-        mRenderer.init();
-        mRenderer.setShader(&mShader);
-        mRenderer.setCamera(&mCamera);
 
-        auto manager = AssetManager2::get();
-        mDebug = DebugRender::get();
-        mDebug->init(&mCamera);
+        mScene = CreateRef<Scene>();
 
-        manager->addAsset<Texture>("Link", "assets/textures/player1.png");
-        manager->addAsset<Font>("Zoika", "assets/fonts/Zoika.ttf", 64);
-        manager->addAsset<Font>("Arial", "assets/fonts/arial.ttf", 64);
-        auto sound = manager->addAsset<Sound>("BG", "assets/sounds/shotgun.wav");
-        // sound->play();
-        // Logger::info(typeid(sound).name());
+        mSystemManager.setScene(mScene.get());
+        mSystemManager.AddSystem<RenderSystem>(&mCamera);
+        mSystemManager.AddSystem<PhysicSystem>();
+        mSystemManager.AddSystem<ScriptSystem>(&mCamera);
 
-        setBackgoundColor(1, 0.9f, 0.4f);
+        mPlayer = mScene->createEntity("player");
+        if (mPlayer) {
 
-        auto start = Timer::micros();
-        // Plutus::Logger::error("Welcome to spdlog!");
-        // Plutus::Logger::info("Some error message with arg: {}", 1);
-        // Plutus::Logger::warn("Easy padding in numbers like {:08d}", 12);
-        // Plutus::Logger::error("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
-        // Plutus::Logger::info("Support for floats {:03.2f}", 1.23456);
-        // Plutus::Logger::warn("Positional args are {1} {0}..", "too", "supported");
-        // Plutus::Logger::error("{:<30}", "left aligned");
-        // Plutus::Logger::info("time: {}", Timer::micros() - start);
-        start = Timer::micros();
-        Logger::error("Welcome to spdlog!");
-        Logger::info("Some error message with arg: {}", 1);
-        Logger::warn("Easy padding in numbers like {:08d}", 12);
-        Logger::error("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
-        Logger::info("Support for floats {:03.2f}", 1.23456);
-        Logger::warn("Positional args are {1} {0}..", "too", "supported");
-        Logger::error("{:<30}", "left aligned");
-        Logger::info("time: %llu", Timer::micros() - start);
+            mPlayer.addComponent<TransformComponent>(10.0f, 50.0f, 64, 64);
+            mPlayer.addComponent<SpriteComponent>("");
+            mPlayer.addComponent<ScriptComponent>("assets/script/player.lua");
 
+            auto pbody = mPlayer.addComponent<RigidBodyComponent>(mPlayer, DynamicBody);
+            // pbody->mLinearDamping = 1;
+            // pbody->mGravityScale = 0;
+
+            pbody->addBox({ 0, 2 }, { 64, 62 });
+            pbody->setMaxVel(4);
+            // pbody->addCircle({ 32, 24 }, 5, 1);
+        }
+
+        auto ground = mScene->createEntity("ground");
+
+        if (ground) {
+            ground.addComponent<TransformComponent>(5.0f, 10.0f, 1280, 10);
+            ground.addComponent<SpriteComponent>("");
+
+            auto body = ground.addComponent<Plutus::RigidBodyComponent>(ground, Plutus::StaticBody);
+            body->addBox({ 0, 0 }, { 1280, 10 }, 0.8f);
+        }
+
+        auto ground2 = mScene->createEntity("ground2");
+
+        if (ground2) {
+            ground2.addComponent<TransformComponent>(200.0f, 60.0f, 200, 10);
+            ground2.addComponent<SpriteComponent>("");
+
+            auto body = ground2.addComponent<Plutus::RigidBodyComponent>(ground2, Plutus::StaticBody);
+            body->addBox({ 0, 0 }, { 200, 10 });
+        }
+
+        mSystemManager.init();
     }
-    void App::Update(float) {
+
+    float force = 0.2f;
+    float force2 = 10.0f;
+
+    void App::Update(float dt) {
         mCamera.update();
+
+        auto trans = mPlayer.getComponent<TransformComponent>();
+        if (trans) {
+            auto size = mCamera.getScaleScreen();
+            mCamera.setPosition(vec2f{ trans->x - size.x * 0.5f, trans->y - size.y * 0.15f });
+        }
+        // }
+        mSystemManager.update(dt);
+
     }
 
     void App::Draw() {
-        auto tex = AssetManager2::get()->getAsset<Texture>("Link");
-        vec4f rect1 = { (mWidth / 2) - 32, (mHeight / 2) - 32, 64, 64 };
-        vec4f rect2 = { 32, 32, 128, 128 };
-        mRenderer.submit(tex->mTexId, rect1, tex->getUV(0));
-        mRenderer.submit(tex->mTexId, rect2, tex->getUV(0));
-        mRenderer.finish();
 
-        mRenderer.submit("Zoika", "Testing Font", 0, 256.0f);
-        mRenderer.submit("Arial", "Testing Font", 0, 192.0f);
-        mRenderer.finish(BATCH_TEXT);
+        // mRenderer.submit(tex->mTexId, rect1, tex->getUV(0));
+        // mRenderer.submit(tex->mTexId, rect2, tex->getUV(0));
+        // mRenderer.finish();
+
+        // mRenderer.submit("Zoika", "Testing Font", 0, 256.0f);
+        // mRenderer.submit("Arial", "Testing Font", 0, 192.0f);
+        // mRenderer.finish(BATCH_TEXT);
 
 
-        mDebug->drawGrid();
-        mDebug->drawBox(rect1);
-        mDebug->drawBox(rect2);
+        // mDebug->drawGrid();
+        // mDebug->drawBox(rect1);
+        // mDebug->drawBox(rect2);
 
-        mDebug->drawCircle({ Circle2d{100, 150, 50} });
-        mDebug->end();
-        mDebug->render(2);
+        // mDebug->drawCircle({ Circle2d{100, 150, 50} });
+        // mDebug->end();
+        // mDebug->render(2);
     }
 
     void App::Resize(int w, int h) {
@@ -82,7 +105,7 @@ namespace Plutus
     }
 
     void App::Exit() {
-        AssetManager2::get()->destroy();
-        mShader.destroy();
+        mSystemManager.cleanup();
+        AssetManager::get()->destroy();
     }
 } // namespace Plutus

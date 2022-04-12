@@ -1,7 +1,10 @@
 #pragma once
 #include <Core.h>
-#include <Graphics/Shader.h>
-#include <Graphics/SpriteBatch2D.h>
+
+#include <ECS/Scene.h>
+#include <Utils/Pointer.h>
+#include <Systems/SystemManager.h>
+
 
 namespace Plutus
 {
@@ -21,8 +24,9 @@ namespace Plutus
 
         void Exit() override;
     private:
-        Shader mShader;
-        SpriteBatch2D mRenderer;
-        DebugRender* mDebug;
+        Ref<Scene> mScene;
+        Entity mPlayer;
+
+        SystemManager mSystemManager;
     };
 } // namespace Plutus

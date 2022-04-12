@@ -20,15 +20,15 @@ namespace Plutus
     }
 
     void RigidBodyComponent::ApplyForce(float x, float y) {
-        mBody->ApplyForceToCenter(toWorld({ x, y }), true);
+        mBody->ApplyForceToCenter({ x, y }, true);
     }
 
     void RigidBodyComponent::ApplyImpulse(float x, float y) {
-        mBody->ApplyLinearImpulseToCenter(toWorld({ x, y }), true);
+        mBody->ApplyLinearImpulseToCenter({ x, y }, true);
     }
 
     void RigidBodyComponent::setVelocity(float x, float y) {
-        mBody->SetLinearVelocity(b2Vec2(x, y));
+        mBody->SetLinearVelocity({ x, y });
     }
 
     vec2f RigidBodyComponent::getVelocity() {

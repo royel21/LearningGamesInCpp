@@ -41,6 +41,7 @@ namespace Plutus
         }
     };
 
+    //Entity ent, BodyType type, const vec2f& _offset = { 0,0 }, float liDamping = 0, float gScale = 1, float isFixedRotation = true, bool isBullet = false
     class RigidBodyComponent {
     public:
         bool  mBullet = false;
@@ -73,7 +74,7 @@ namespace Plutus
         void ApplyImpulse(float x, float y);
         void setVelocity(float x, float y);
         void speedLimit();
-        inline void setMaxVel(float x, float y) { mMaxVel = { x,y }; }
+        inline void setMaxVel(float x, float y = 0.0f) { mMaxVel = { x, y }; }
 
         vec2f getVelocity();
 

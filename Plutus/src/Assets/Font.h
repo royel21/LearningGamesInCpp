@@ -1,6 +1,6 @@
 #pragma once
-#include "Asset.h"
 
+#include "Asset.h"
 #include <Math/Vectors.h>
 
 namespace Plutus

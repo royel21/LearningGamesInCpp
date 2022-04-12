@@ -85,7 +85,8 @@ namespace Plutus
         if (doc.Parse(jsonData.c_str()).HasParseError() == false) {
 
             JsonHelper jhelper;
-            jhelper.value = &doc.GetJsonObject();
+            auto docObj = doc.GetJsonObject();
+            jhelper.value = &docObj;
 
             scene->setGravity(jhelper.getFloat2("grv", { 0.0f, -9.8f }));
             scene->setTimeIterSec(jhelper.getFloat("fps", 60));
@@ -102,7 +103,7 @@ namespace Plutus
                     auto id = tex["id"].GetString();
                     auto path = tex["path"].GetString();
                     int size = tex["size"].GetInt();
-                    AssetManager2::get()->addAsset<Font>(id, path, size);
+                    AssetManager::get()->addAsset<Font>(id, path, size);
                 }
             }
 
@@ -118,7 +119,7 @@ namespace Plutus
                     int columns = tex["columns"].GetInt();
                     int tilewidth = tex["width"].GetInt();
                     int tileheight = tex["height"].GetInt();
-                    AssetManager2::get()->addAsset<Texture>(id, path, columns, tilewidth, tileheight);
+                    AssetManager::get()->addAsset<Texture>(id, path, columns, tilewidth, tileheight);
                 }
             }
 
@@ -131,7 +132,7 @@ namespace Plutus
                     auto id = tex["id"].GetString();
                     auto path = tex["path"].GetString();
                     int type = tex["type"].GetInt();
-                    AssetManager2::get()->addAsset<Sound>(id, path, type);
+                    AssetManager::get()->addAsset<Sound>(id, path, type);
                 }
             }
 
@@ -200,7 +201,8 @@ namespace Plutus
                             rbody->mMaxVel = jhelper.getFloat2("maxv");
 
                             for (auto& val : component["fixs"].GetArray()) {
-                                jhelper.value = &val.GetJsonObject();
+                                auto obj = val.GetJsonObject();
+                                jhelper.value = &obj;
 
                                 auto& fix = rbody->addFixture(jhelper.getInt("type"));
 

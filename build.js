@@ -39,8 +39,9 @@ const buildAll = () => {
 
   const plutus = buildProject(config);
   //----------------------------------------------Project Game--------------------------------------------
-  config.name = "game";
-  config.src = [path.join("Projects", "game")];
+  const projectName = "AssetTest";
+  config.name = projectName;
+  config.src = [path.join("Projects", projectName)];
 
   const game = buildProject(config);
   //----------------------------------------------End Project Game--------------------------------------------
@@ -80,7 +81,7 @@ const options = {
   "clean-all": () => cleanProject(objDir),
   "clean-libs": () => cleanProject(objDir, "libs"),
   "clean-plutus": () => cleanProject(objDir, "plutus"),
-  "clean-game": () => cleanProject(objDir, "game"),
+  "clean-game": () => cleanProject(objDir, projectName),
 };
 
 if (!cmd) {
