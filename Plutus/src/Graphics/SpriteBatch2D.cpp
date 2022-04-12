@@ -91,37 +91,30 @@ namespace Plutus
 
 		createBatch(texture);
 
-		if (flipX || flipY) {
-			if (flipX)
-				std::swap(uv.x, uv.z);
+		if (flipX)
+			std::swap(uv.x, uv.z);
 
-			if (flipY)
-				std::swap(uv.y, uv.w);
-		}
+		if (flipY)
+			std::swap(uv.y, uv.w);
 
-		//bottom left
-		vec2f bl(rect.x, rect.y);
-		//top left
-		vec2f tl(rect.x, rect.y + rect.w);
-		//bottom right
-		vec2f tr(rect.x + rect.z, rect.y + rect.w);
-		//top right
-		vec2f br(rect.x + rect.z, rect.y);
+		mbottomLeft = { rect.x, rect.y };
+		mtopLeft = { rect.x, rect.y + rect.w };
+		mtopRight = { rect.x + rect.z, rect.y + rect.w };
+		mBottomRight = { rect.x + rect.z, rect.y };
 
 		if (r)
 		{
-			vec2f halfDim(rect.z * 0.5f, rect.w * 0.5f);
-			vec2f center = vec2f(rect.x, rect.y) + halfDim;
-			rotate(bl, center, r);
-			rotate(tl, center, r);
-			rotate(tr, center, r);
-			rotate(br, center, r);
+			vec2f center(rect.x + rect.z * 0.5f, rect.y + rect.w * 0.5f);
+			rotate(mbottomLeft, center, r);
+			rotate(mtopLeft, center, r);
+			rotate(mtopRight, center, r);
+			rotate(mBottomRight, center, r);
 		}
 
-		bufferVertices[mVertexCount + 0] = { bl.x, bl.y, uv.x, uv.w, c, id };
-		bufferVertices[mVertexCount + 1] = { tl.x, tl.y, uv.x, uv.y, c, id };
-		bufferVertices[mVertexCount + 2] = { tr.x, tr.y, uv.z, uv.y, c, id };
-		bufferVertices[mVertexCount + 3] = { br.x, br.y, uv.z, uv.w, c, id };
+		bufferVertices[mVertexCount + 0] = { mbottomLeft.x, mbottomLeft.y, uv.x, uv.w, c, id };
+		bufferVertices[mVertexCount + 1] = { mtopLeft.x, mtopLeft.y, uv.x, uv.y, c, id };
+		bufferVertices[mVertexCount + 2] = { mtopRight.x, mtopRight.y, uv.z, uv.y, c, id };
+		bufferVertices[mVertexCount + 3] = { mBottomRight.x, mBottomRight.y, uv.z, uv.w, c, id };
 
 		mVertexCount += 4;
 	}
