@@ -1,7 +1,6 @@
 #include "Core.h"
 
 #include <Input/Input.h>
-#include <Assets/AssetManager.h>
 #include <Graphics/GLheaders.h>
 
 #ifdef __EMSCRIPTEN__
@@ -65,8 +64,6 @@ namespace Plutus
         emscripten_set_main_loop(main_loop2, 0, true);
 #endif
         Exit();
-
-        AssetManager2::get()->destroy();
     }
 
     void Core::swapScreen() {
