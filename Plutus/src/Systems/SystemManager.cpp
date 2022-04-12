@@ -14,7 +14,7 @@ namespace Plutus
         mSystems[&typeid(DebugSystem)] = nullptr;
     }
 
-    void SystemManager::start()
+    void SystemManager::init()
     {
         for (auto& sys : mSystems) {
             if (sys.second)sys.second->init();

@@ -20,7 +20,7 @@ namespace Plutus
 
         void setScene(Scene* scene) { mScene = scene; }
 
-        void start();
+        void init();
         void stop();
 
         void update(float dt);

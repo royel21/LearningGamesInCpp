@@ -61,7 +61,7 @@ void GameScreen::build()
 void GameScreen::onEntry()
 {
     Plutus::SceneLoader::loadFromJson("assets/scenes/Physics.json", mScene.get());
-    mSystemManager.start();
+    mSystemManager.init();
 }
 
 void GameScreen::update(float dt)
