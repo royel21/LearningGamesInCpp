@@ -1,8 +1,4 @@
 #include "Texture.h"
-#include <iostream>
-#include <filesystem>
-#include <cstdio>
-#include <algorithm>
 #include <stb_image.h>
 #include <Utils/Utils.h>
 
