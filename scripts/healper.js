@@ -1,4 +1,5 @@
 const { execSync } = require("child_process");
+const crypto = require("crypto");
 
 const fs = require("fs-extra");
 const path = require("path");
@@ -15,7 +16,10 @@ const getArray = (d) => (d instanceof Array ? d : [d]);
 
 const getLastMod = (file) => {
   if (fs.existsSync(file)) {
-    return fs.statSync(h).mtime.getTime() - 2000;
+    return crypto
+      .createHash("md5")
+      .update(fs.readFileSync(file, { encoding: "utf-8" }))
+      .digest("hex");
   }
 
   return 0;
@@ -94,7 +98,7 @@ const checkHeaders = (files, headers, sources) => {
 const getChanges = (files, outdir) => {
   let changes = [];
   for (const file of files) {
-    let lastmod = fs.statSync(file).mtime.getTime() - 2000;
+    let lastmod = getLastMod(file);
 
     if (lastmod !== db.files[file] || !fs.existsSync(getObj(outdir, file))) {
       db.files[file] = lastmod;

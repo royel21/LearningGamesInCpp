@@ -1,7 +1,7 @@
 #include "AudioEngine.h"
 
 #include <vector>
-#include <Assets/SoundLoader.h>
+#include <Utils/SoundLoader.h>
 
 namespace Plutus
 {
