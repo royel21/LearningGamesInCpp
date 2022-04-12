@@ -5,7 +5,6 @@
 
 namespace Plutus
 {
-    PhysicSystem::PhysicSystem(Scene* scene) : ISystem(scene) { }
 
     void PhysicSystem::init() {
         auto gravity = mScene->getGravity();
@@ -84,7 +83,6 @@ namespace Plutus
                 auto pos = fromWorld(rbody.mBody->GetPosition());
                 trans.x = pos.x;
                 trans.y = pos.y;
-                Logger::info("Pos: %0.5f, %0.5f", pos.x, pos.y);
                 rbody.speedLimit();
             }
         }

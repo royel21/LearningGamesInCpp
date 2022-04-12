@@ -12,17 +12,11 @@
 
 namespace Plutus
 {
-    RenderSystem::RenderSystem(Scene* scene, Camera2D* camera) : ISystem(scene, camera)
-    {
+    void RenderSystem::init() {
         mShader.init(GLSL::vertexShader, GLSL::fragShader);
         mRenderer.init();
         mRenderer.setShader(&mShader);
-        mRenderer.setCamera(camera);
-    }
-
-    RenderSystem::~RenderSystem()
-    {
-        mShader.destroy();
+        mRenderer.setCamera(mCamera);
     }
 
     void RenderSystem::update(float dt)
@@ -78,8 +72,8 @@ namespace Plutus
             auto rect = trans.getRect();
             if (mCamera->isBoxInView(rect, 200))
             {
-                auto texId = AssetManager2::get()->getAsset<Texture>(sprite.mTextureId)->mTexId;
-                mRenderables[i++] = { texId, rect, sprite.mUVCoord, sprite.mColor,
+                auto tex = AssetManager::get()->getAsset<Texture>(sprite.mTextureId);
+                mRenderables[i++] = { tex ? tex->mTexId : 0, rect, sprite.mUVCoord, sprite.mColor,
                     trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
             }
 

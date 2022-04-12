@@ -9,10 +9,11 @@ namespace Plutus
     class RenderSystem : public ISystem
     {
     public:
-        RenderSystem(Scene* scene, Camera2D* camera);
-        ~RenderSystem();
-        void update(float dt);
-        void destroy();
+        RenderSystem(Scene* scene, Camera2D* camera) : ISystem(scene, camera) {}
+        ~RenderSystem() { destroy(); }
+        void init() override;
+        void update(float dt) override;
+        void destroy() override;
 
     private:
         Shader mShader;
