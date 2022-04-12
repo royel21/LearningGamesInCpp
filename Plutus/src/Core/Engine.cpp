@@ -1,7 +1,6 @@
 #include "Engine.h"
 #include "IGameScreen.h"
 
-#include <Assets/AssetManager.h>
 #include <Time/Timer.h>
 #include <chrono>
 #include <cstdio>
@@ -78,8 +77,7 @@ namespace Plutus
 		}
 
 		onExit();
-		AssetManager2::get()->destroy();
-		}
+	}
 
 	bool Engine::update(float dt)
 	{
@@ -139,4 +137,4 @@ namespace Plutus
 		return true;
 	}
 
-	} // namespace Plutus
+} // namespace Plutus
