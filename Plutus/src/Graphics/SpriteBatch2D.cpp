@@ -110,8 +110,7 @@ namespace Plutus
 
 		if (r)
 		{
-			vec2f halfDim(rect.z * 0.5f, rect.w * 0.5f);
-			vec2f center = vec2f(rect.x, rect.y) + halfDim;
+			vec2f center(rect.x + rect.z * 0.5f, rect.y + rect.w * 0.5f);
 			rotate(bl, center, r);
 			rotate(tl, center, r);
 			rotate(tr, center, r);

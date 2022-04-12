@@ -14,10 +14,7 @@ function update(dt)
 
     if input:onKeyPressed("X") then rbody:applyImpulse(0, 1.5) end
 
-    if vel.x ~= 0 then
-        rbody:applyForce(vel.x, vel.y)
-        print(vel.x, vel.y)
-    end
+    if vel.x ~= 0 then rbody:applyForce(vel.x, vel.y) end
 end
 
 function destroy() end
