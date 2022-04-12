@@ -105,10 +105,10 @@ namespace Plutus
 		if (r)
 		{
 			vec2f center(rect.x + rect.z * 0.5f, rect.y + rect.w * 0.5f);
-			rotate(mbottomLeft, center, r);
-			rotate(mtopLeft, center, r);
-			rotate(mtopRight, center, r);
-			rotate(mBottomRight, center, r);
+			rotate(bl, center, r);
+			rotate(tl, center, r);
+			rotate(tr, center, r);
+			rotate(br, center, r);
 		}
 
 		bufferVertices[mVertexCount + 0] = { mbottomLeft.x, mbottomLeft.y, uv.x, uv.w, c, id };
