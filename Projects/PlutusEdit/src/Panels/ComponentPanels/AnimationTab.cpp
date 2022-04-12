@@ -12,7 +12,7 @@ namespace Plutus
     void AnimationTab::DrawAnimation(Entity* ent)
     {
         mAnimation = ent->getComponent<AnimationComponent>();
-        auto& mTextures = AssetManager2::get()->getAssets<Texture>();
+        auto& mTextures = AssetManager::get()->getAssets<Texture>();
         if (CollapseComponent<AnimationComponent>("Animation##tilemap-comp", 3))
         {
             auto& sequences = mAnimation->mSequences;
@@ -58,7 +58,7 @@ namespace Plutus
 
     void AnimationTab::SeqWindow() {
         if (showSeqWindow) {
-            auto& mTextures = AssetManager2::get()->getAssets<Texture>();
+            auto& mTextures = AssetManager::get()->getAssets<Texture>();
             auto found = mAnimation->mSequences.find(mCurSeq);
             auto& seq = mMode ? found->second : newSeq;
 

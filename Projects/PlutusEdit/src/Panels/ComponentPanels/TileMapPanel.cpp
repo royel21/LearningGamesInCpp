@@ -228,7 +228,7 @@ namespace Plutus
     void TileMapPanel::AddTexureDialog(bool& show) {
         if (show) {
             static float scale = 1;
-            auto& textures = AssetManager2::get()->getAssets<Texture>();
+            auto& textures = AssetManager::get()->getAssets<Texture>();
             static std::string current = textures.begin()->first;
             int index = (int)mTileMap->mTextures.size();
 

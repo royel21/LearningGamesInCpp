@@ -97,7 +97,7 @@ namespace Plutus
             float textWidth = ImGui::GetContentRegionAvailWidth() * (mTextColumnWidth + 0.01f);
 
             auto sprite = mEnt.getComponent<SpriteComponent>();
-            auto& textures = AssetManager2::get()->getAssets<Texture>();
+            auto& textures = AssetManager::get()->getAssets<Texture>();
 
             auto color = sprite->mColor;
             std::string selected = sprite->mTextureId;

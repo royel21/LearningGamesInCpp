@@ -33,7 +33,7 @@ namespace Plutus
     Texture* TileMapComponent::getTexture(int id) {
         auto it = mTextures.find(id);
         auto texId = it != mTextures.end() ? it->second : "";
-        return  AssetManager2::get()->getAsset<Texture>(texId);
+        return  AssetManager::get()->getAsset<Texture>(texId);
     }
 
     void TileMapComponent::addTile(Tile& tile)

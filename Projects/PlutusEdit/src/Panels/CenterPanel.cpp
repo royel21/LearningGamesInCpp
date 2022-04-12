@@ -221,7 +221,7 @@ namespace Plutus
                         project->mTempScene.get()->copyScene(project->mScene.get());
                         Render::get().setScene(project->mTempScene.get());
                         Config::get().state = Running;
-                        mSysManager.start();
+                        mSysManager.init();
 
                         drawGrid = DebugRender::get()->getShouldDraw();
                         DebugRender::get()->setShouldDraw(false);

@@ -86,7 +86,7 @@ namespace Plutus
     void AssetsTab::drawAssets()
     {
         if (ImGui::Begin("Assets")) {
-            auto mAsset = AssetManager2::get();
+            auto mAsset = AssetManager::get();
             if (std::filesystem::exists("./assets/")) {
                 if (ImGui::BeginTabBar("##TabBar"))
                 {
@@ -131,7 +131,7 @@ namespace Plutus
         nodes2[name] = ImGui::TreeNodeEx((void*)(intptr_t)id++, flags, getIcon(nodes2, name).c_str());
         std::string assetId = "";
         if (nodes2[name]) {
-            auto assets = AssetManager2::get()->getAssets<T>();
+            auto assets = AssetManager::get()->getAssets<T>();
             static bool show;
             flags |= TreeNodeLeaf_NoPushOpen;
             for (auto asset : assets) {
@@ -168,9 +168,9 @@ namespace Plutus
         ImGui::BeginDialog("Asset Modal");
         ImGui::Text(assetType.id.c_str());
         ImGui::Separator();
-        auto sound = AssetManager2::get()->getAsset<Sound>(assetType.id);
+        auto sound = AssetManager::get()->getAsset<Sound>(assetType.id);
         if (assetType.type.compare("Textures") == 0) {
-            auto texture = AssetManager2::get()->getAsset<Texture>(assetType.id);
+            auto texture = AssetManager::get()->getAsset<Texture>(assetType.id);
             showTexure(*texture);
         }
 
@@ -285,13 +285,13 @@ namespace Plutus
             {
                 switch (type) {
                 case 1:
-                    AssetManager2::get()->addAsset<Texture>(name, selectedDir, texture.mColumns, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
+                    AssetManager::get()->addAsset<Texture>(name, selectedDir, texture.mColumns, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
                     break;
                 case 2:
-                    AssetManager2::get()->addAsset<Font>(name, selectedDir, fontSize);
+                    AssetManager::get()->addAsset<Font>(name, selectedDir, fontSize);
                     break;
                 case 3:
-                    AssetManager2::get()->addAsset<Sound>(name, selectedDir, 0);
+                    AssetManager::get()->addAsset<Sound>(name, selectedDir, 0);
                     break;
                 }
                 show = false;
@@ -335,7 +335,7 @@ namespace Plutus
 
                             if (texture.mWidth) {
                                 texture.mWidth = 0;
-                                glDeleteTextures(1, &texture.mTexId);
+                                texture.destroy();
                             }
 
                             if (is_selected)

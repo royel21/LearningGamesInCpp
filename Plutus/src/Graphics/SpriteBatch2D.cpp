@@ -142,7 +142,7 @@ namespace Plutus
 
 
 	void SpriteBatch2D::submit(const std::string& fontId, const std::string& text, float x, float y, float scale, ColorRGBA8 color) {
-		auto font = AssetManager2::get()->getAsset<Font>(fontId);
+		auto font = AssetManager::get()->getAsset<Font>(fontId);
 		if (font != nullptr) {
 			resize(text.size());
 

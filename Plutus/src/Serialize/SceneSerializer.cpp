@@ -12,7 +12,7 @@ namespace Plutus
     void Textures_JSON(Serializer& ser)
     {
         ser.StartArr("fonts");
-        for (auto& tile : AssetManager2::get()->getAssets<Font>())
+        for (auto& tile : AssetManager::get()->getAssets<Font>())
         {
             auto tex = static_cast<Font*>(tile.second);
             ser.StartObj();
@@ -26,7 +26,7 @@ namespace Plutus
         ser.EndArr();
 
         ser.StartArr("textures");
-        for (auto& tile : AssetManager2::get()->getAssets<Texture>())
+        for (auto& tile : AssetManager::get()->getAssets<Texture>())
         {
             auto tex = static_cast<Texture*>(tile.second);
             ser.StartObj();
@@ -42,7 +42,7 @@ namespace Plutus
         ser.EndArr();
 
         ser.StartArr("sounds");
-        for (auto& asset : AssetManager2::get()->getAssets<Sound>())
+        for (auto& asset : AssetManager::get()->getAssets<Sound>())
         {
             auto sound = static_cast<Sound*>(asset.second);
             ser.StartObj();

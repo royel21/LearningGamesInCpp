@@ -41,7 +41,7 @@ namespace Plutus
 
         mGlobalLua.set("input", Input::get());
         mGlobalLua.set("getMillis", &Timer::millis);
-        mGlobalLua.set("assetManager", AssetManager2::get());
+        mGlobalLua.set("assetManager", AssetManager::get());
 
         /*****************************Register EntityManager**********************************************/
         auto scene_table = mGlobalLua.new_usertype<Scene>("Scene");
@@ -81,12 +81,12 @@ namespace Plutus
     void ScriptSystem::registerAssets()
     {
         /*****************************Register AssetManager**********************************************/
-        auto assetManager_table = mGlobalLua.new_usertype<AssetManager2>("AssetManager",
+        auto assetManager_table = mGlobalLua.new_usertype<AssetManager>("AssetManager",
             "addSound", sol::overload(
-                &AssetManager2::addAsset<Sound, std::string>,
-                &AssetManager2::addAsset<Sound, std::string, int>
+                &AssetManager::addAsset<Sound, std::string>,
+                &AssetManager::addAsset<Sound, std::string, int>
             ));
-        assetManager_table["removeSound"] = &AssetManager2::removeAsset<Sound>;
+        assetManager_table["removeSound"] = &AssetManager::removeAsset<Sound>;
 
         /**************************Register Sound Asset*************************************************/
         auto sound_table = mGlobalLua.new_usertype<Sound>("Sound",

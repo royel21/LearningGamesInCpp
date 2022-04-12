@@ -31,7 +31,7 @@ public:
     void onScreenResize(int w, int h) override;
 
 private:
-    Plutus::AssetManager2* mAssets;
+    Plutus::AssetManager* mAssets;
     Plutus::DebugRender* mDebug;
     Plutus::FrameBuffer mFB;
 

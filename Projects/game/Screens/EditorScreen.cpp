@@ -26,7 +26,7 @@ int EditorScreen::getPrevScreentIndex() const
 
 void EditorScreen::build()
 {
-    mAssets = Plutus::AssetManager2::get();
+    mAssets = Plutus::AssetManager::get();
     mAssets->addAsset<Plutus::Texture>("player2", "assets/textures/zombie.png");
     mAssets->addAsset<Plutus::Texture>("bats", "assets/textures/monster/bat.png", 3, 32, 32);
 

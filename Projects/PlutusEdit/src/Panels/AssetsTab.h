@@ -11,7 +11,7 @@ namespace Plutus
     class Scene;
 
     struct EnumFilter {
-        GLuint filter;
+        GLint filter;
         char* Name;
     };
 

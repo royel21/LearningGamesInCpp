@@ -156,7 +156,7 @@ namespace Plutus
             auto rect = trans.getRect();
             if (mCamera.isBoxInView(rect, 200))
             {
-                auto texId = AssetManager2::get()->getAsset<Texture>(sprite.mTextureId)->mTexId;
+                auto texId = AssetManager::get()->getAsset<Texture>(sprite.mTextureId)->mTexId;
                 mRenderables[i++] = { texId, rect, sprite.mUVCoord, sprite.mColor,
                     trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
             }

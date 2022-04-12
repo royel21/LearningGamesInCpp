@@ -18,7 +18,7 @@ namespace Plutus
 
             if (seq && seq->mFrames.size()) {
                 sprite.mTextureId = seq->mTexId;
-                sprite.mUVCoord = AssetManager2::get()->getAsset<Texture>(seq->mTexId)->getUV(seq->mFrames[0]);
+                sprite.mUVCoord = AssetManager::get()->getAsset<Texture>(seq->mTexId)->getUV(seq->mFrames[0]);
             }
         }
     }
@@ -46,7 +46,7 @@ namespace Plutus
                 }
 
                 sprite.mTextureId = seq->mTexId;
-                sprite.mUVCoord = AssetManager2::get()->getAsset<Texture>(seq->mTexId)->getUV(seq->mFrames[seq->mFrame]);
+                sprite.mUVCoord = AssetManager::get()->getAsset<Texture>(seq->mTexId)->getUV(seq->mFrames[seq->mFrame]);
             }
         }
     }
