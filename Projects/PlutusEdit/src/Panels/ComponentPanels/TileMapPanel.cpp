@@ -37,16 +37,15 @@ namespace Plutus
             static bool addTexture = false;
             mIsOpen = true;
             mTileMap = Config::get().mProject->mEnt.getComponent<TileMapComponent>();
-            ImGui::BeginUIGroup();
-            {
-                ImGui::BeginCol("Tile Width");
-                ImGui::InputInt("##tm-w", &mTileMap->mTileWidth);
-                ImGui::BeginCol("Tile Heigth");
-                ImGui::InputInt("##tm-h", &mTileMap->mTileHeight);
-                ImGui::BeginCol("Layer");
-                ImGui::InputInt("##tm-l", &mTileMap->mLayer);
-            }
-            ImGui::EndUIGroup();
+
+            float textWidth = ImGui::GetContentRegionAvailWidth() * 0.35f;
+            ImGui::Row("Tile Width", textWidth);
+            ImGui::InputInt("##tm-w", &mTileMap->mTileWidth);
+            ImGui::Row("Tile Heigth", textWidth);
+            ImGui::InputInt("##tm-h", &mTileMap->mTileHeight);
+            ImGui::Row("Layer", textWidth);
+            ImGui::InputInt("##tm-l", &mTileMap->mLayer);
+
             ImGui::Separator();
             //Texture Combobox
             ImGui::Text("Textures");
@@ -86,17 +85,15 @@ namespace Plutus
                 ImGui::Separator();
                 if (mMode == MODE_PLACE)
                 {
+
                     static float scale = 1.0f;
-                    ImGui::BeginUIGroup();
-                    {
-                        ImGui::BeginCol("Rotation");
-                        if (ImGui::InputFloat("##tm-r", &mRotation, 45.0f, 90.0f, "%0.0f")) {
-                            mRotation = LIMIT(mRotation, 0.0f, 360.0f);
-                        }
-                        ImGui::BeginCol("Scale");
-                        ImGui::DragFloat("##sc-tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
+                    ImGui::Row("Rotation", textWidth);
+                    if (ImGui::InputFloat("##tm-r", &mRotation, 45.0f, 90.0f, "%0.0f")) {
+                        mRotation = LIMIT(mRotation, 0.0f, 360.0f);
                     }
-                    ImGui::EndUIGroup();
+
+                    ImGui::Row("Scale", textWidth);
+                    ImGui::DragFloat("##sc-tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
                     ImGui::DrawTexture(mTileMap->getTexture(mCurrentTexture), 0, 0, scale, &mTempTiles);
                 }
             }
@@ -105,38 +102,37 @@ namespace Plutus
             {
                 ImGui::Text("Tile Props");
                 ImGui::Separator();
-                if (ImGui::BeginUIGroup()) {
-                    ImGui::BeginCol("X");
+                {
+                    ImGui::Row("X", textWidth);
                     ImGui::InputInt("##ctile-x", &mCurrentTile->x, 1);
 
-                    ImGui::BeginCol("Y");
+                    ImGui::Row("Y", textWidth);
                     ImGui::InputInt("##ctile-y", &mCurrentTile->y, 1);
 
-                    ImGui::BeginCol("Rotation");
+                    ImGui::Row("Rotation", textWidth);
                     float rotation = mCurrentTile->rotate;
                     if (ImGui::InputFloat("##ctile-r", &rotation, 45.0f, 90.0f, "%0.0f"))
                     {
                         mCurrentTile->rotate = LIMIT(rotation, 0.0f, 360.0f);
                     }
 
-                    ImGui::BeginCol("Flip X");
+                    ImGui::Row("Flip X", textWidth);
                     ImGui::Checkbox("##cTile-flix", &mCurrentTile->flipX);
 
-                    ImGui::BeginCol("Flip Y");
+                    ImGui::Row("Flip Y", textWidth);
                     ImGui::Checkbox("##cTile-lipy", &mCurrentTile->flipY);
 
-                    ImGui::BeginCol("Texture");
+                    ImGui::Row("Texture", textWidth);
                     int texcoord = mCurrentTile->texcoord;
                     if (ImGui::InputInt("##ctile-texture", &texcoord, 1))
                     {
                         auto size = mTileMap->getTexture(mCurrentTile->texture)->uvs.size();
                         mCurrentTile->texcoord = LIMIT(texcoord, 0, (int)size - 1);
                     }
-                    ImGui::BeginCol("Textures");
+                    ImGui::Row("Textures", textWidth);
                     if (ImGui::ComboBox("##mttexture", mTileMap->mTextures, mCurrentTile->texture)) {
                         mCurrentTile->texcoord = 0;
                     }
-                    ImGui::EndUIGroup();
                 }
             }
             if (mMode == MODE_PLACE && Config::get().isHover) {

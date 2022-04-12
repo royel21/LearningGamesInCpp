@@ -14,6 +14,11 @@ namespace Plutus
         vec2f(int _x, int _y) : x((float)_x), y((float)_y) {}
         vec2f(const vec2i& v);
 
+        inline void set(float _x, float _y) {
+            x = _x;
+            y = _y;
+        }
+
         float length();
         float invLength();
         float lengthSqrt();

@@ -52,8 +52,10 @@ namespace Plutus
             if (Input::get()->onKeyPressed("F2"))
                 camera.setPosition(0, 0);
 
-            if (Input::get()->onKeyPressed("F3"))
+            if (Input::get()->onKeyPressed("F3")) {
                 camera.setScale(1);
+                Config::get().vpZoom = 1;
+            }
 
             if (Input::get()->onKeyPressed("MouseLeft"))
             {
@@ -76,6 +78,7 @@ namespace Plutus
                 {
                     auto newVal = camera.getScale() + (scroll > 0 ? 0.05f : -0.05f);
                     camera.setScale(CHECKLIMIT(newVal, 0.20f, 6));
+                    Config::get().vpZoom = camera.getScale();
                 }
             }
         }

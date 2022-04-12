@@ -1,4 +1,4 @@
-local SPEED = 10
+local SPEED = 1
 local curAnime = "stand-r"
 
 local stand = {
@@ -13,11 +13,13 @@ local sound = assetManager:addSound("bg", "assets/sounds/shotgun.wav")
 local direction = "right";
 local state = ""
 
+local rbody
+
 function init()
     local anim = Player2:getAnimate()
     if anim then anim:play(curAnime) end
-    local rbody = Player2:getRigidBody()
-    rbody:setMaxVelocity(1)
+    rbody = Player2:getRigidBody()
+    rbody:setMaxVelocity(1,1)
 
     print("player2 init")
 end
@@ -26,25 +28,20 @@ function destroy() assetManager:removeSound("bg") end
 
 local vel = {x = 0, y = 0}
 
-function move()
-    local rbody = Player2:getRigidBody()
-    rbody:applyForce(vel.x, vel.y)
-end
+function move() rbody:applyForce(vel.x, vel.y) end
 
 function roll()
-    local rbody = Player2:getRigidBody()
     vel.x = vel.x * 1.1;
     vel.y = vel.y * 1.1;
     rbody:applyForce(vel.x, vel.y)
 end
 
-function jump()
-    local rbody = Player2:getRigidBody()
-    rbody:applyImpulse(0, 7)
-end
+function jump() rbody:applyImpulse(0, 1.5) end
 
 function update(dt)
     local anim = Player2:getAnimate()
+    -- local v = rbody:getVelocity()
+    -- print(v.x)
 
     if not anim.loop then
         state = ""
@@ -102,4 +99,5 @@ function update(dt)
         state = "     "
     end
 end
+
 

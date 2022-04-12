@@ -17,6 +17,8 @@ namespace Plutus
 {
     void App::Setup() {
 
+        mCamera.init(1280, 720);
+        mCamera.setScale(2.0f);
         mScene = CreateRef<Scene>();
 
         mSystemManager.setScene(mScene.get());
@@ -27,7 +29,7 @@ namespace Plutus
         mPlayer = mScene->createEntity("player");
         if (mPlayer) {
 
-            mPlayer.addComponent<TransformComponent>(10.0f, 50.0f, 64, 64);
+            mPlayer.addComponent<TransformComponent>(10.0f, 50.0f, 32, 32);
             mPlayer.addComponent<SpriteComponent>("");
             mPlayer.addComponent<ScriptComponent>("assets/script/player.lua");
 
@@ -35,7 +37,7 @@ namespace Plutus
             // pbody->mLinearDamping = 1;
             // pbody->mGravityScale = 0;
 
-            pbody->addBox({ 0, 2 }, { 64, 62 });
+            pbody->addBox({ 0, 2 }, { 20, 20 });
             pbody->setMaxVel(4);
             // pbody->addCircle({ 32, 24 }, 5, 1);
         }
@@ -60,7 +62,18 @@ namespace Plutus
             body->addBox({ 0, 0 }, { 200, 10 });
         }
 
+        auto ground3 = mScene->createEntity("ground2");
+
+        if (ground3) {
+            ground3.addComponent<TransformComponent>(100.0f, 25.0f, 200, 10);
+            ground3.addComponent<SpriteComponent>("");
+
+            auto body = ground3.addComponent<Plutus::RigidBodyComponent>(ground3, Plutus::StaticBody);
+            body->addBox({ 0, 0 }, { 200, 10 });
+        }
+
         mSystemManager.init();
+
     }
 
     float force = 0.2f;
@@ -68,13 +81,39 @@ namespace Plutus
 
     void App::Update(float dt) {
         mCamera.update();
+        auto cPos = mCamera.getPosition();
 
-        auto trans = mPlayer.getComponent<TransformComponent>();
-        if (trans) {
-            auto size = mCamera.getScaleScreen();
-            mCamera.setPosition(vec2f{ trans->x - size.x * 0.5f, trans->y - size.y * 0.15f });
+        auto mInput = Input::get();
+
+        if (mInput->isCtrl) {
+
+
+            if (mInput->onKeyDown("Right")) {
+                cPos.x += 5;
+            }
+            if (mInput->onKeyDown("Left")) {
+                cPos.x -= 5;
+            }
+            if (mInput->onKeyDown("Up")) {
+                cPos.y += 5;
+            }
+            if (mInput->onKeyDown("Down")) {
+                cPos.y -= 5;
+            }
+            mCamera.setPosition(cPos);
         }
-        // }
+        else {
+            auto trans = mPlayer.getComponent<TransformComponent>();
+            if (trans) {
+                auto size = mCamera.getScaleScreen();
+                auto pos = trans->getPosition();
+                auto vec = vec2f{ pos.x - size.x * 0.7f, pos.y - size.y * 0.7f };
+
+                mCamera.setPosition(vec);
+            }
+        }
+
+
         mSystemManager.update(dt);
 
     }
