@@ -36,11 +36,11 @@ namespace Plutus
                                 camera.setScale(zoom);
                             }
                             ImGui::BeginCol("Position");
-                            if (ImGui::Draw2Float("#cpos", Config::get().vpPos))
+                            if (ImGui::Draw2Float("##cpos", Config::get().vpPos))
                                 camera.setPosition(Config::get().vpPos);
 
                             ImGui::BeginCol("BG Color");
-                            ImGui::ColorEdit4("#vp-color", &Config::get().vpColor.x);
+                            ImGui::ColorEdit4("##vp-color", &Config::get().vpColor.x);
                             ImGui::EndUIGroup();
                         }
 
@@ -59,7 +59,7 @@ namespace Plutus
                                 mDebugRender->setCellSize(cellSize);
                             static vec4f color = mDebugRender->getGridLineColor();
                             ImGui::BeginCol("Line Color");
-                            if (ImGui::ColorEdit3("###Grid-Color", &color.x))
+                            if (ImGui::ColorEdit3("##Grid-Color", &color.x))
                             {
                                 color.w = 1;
                                 mDebugRender->setColor({ color });
