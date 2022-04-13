@@ -77,6 +77,23 @@ namespace Plutus
         return false;
     }
 
+    void loadFixtures(PhysicBodyComponent* phyBody, const rapidjson::Value::Object& value, JsonHelper& jhelper) {
+        for (auto& val : value["fixtures"].GetArray()) {
+            auto obj = val.GetJsonObject();
+            jhelper.value = &obj;
+
+            auto& fix = phyBody->addFixture(jhelper.getInt("type"));
+
+            fix.offset = jhelper.getFloat2("offset");
+            fix.size = jhelper.getFloat2("size", { {1,1} });
+            fix.radius = jhelper.getFloat("radius", 0);
+            fix.friction = jhelper.getFloat("frict", 0.3f);
+            fix.density = jhelper.getFloat("dens", 1);
+            fix.restitution = jhelper.getFloat("restit", 0);
+            fix.isSensor = jhelper.getInt("sensor", false);
+        }
+    }
+
     bool SceneLoader::loadFromString(const std::string& jsonData, Scene* scene)
     {
         bool success = false;
@@ -189,31 +206,22 @@ namespace Plutus
                             auto script = entity.addComponent<ScriptComponent>(component["script"].GetString());
                         }
                         if (compType == "RigidBody") {
-                            auto rbody = entity.addComponent<RigidBodyComponent>();
                             jhelper.value = &component;
+                            auto rbody = entity.addComponent<RigidBodyComponent>(entity, (BodyType)jhelper.getInt("type"));
 
-                            rbody->mBullet = jhelper.getInt("b");
-                            rbody->mFixedRotation = jhelper.getInt("fr");
-                            rbody->mLinearDamping = jhelper.getFloat("ld");
-                            rbody->mGravityScale = jhelper.getFloat("gs");
-                            rbody->mBodyType = (BodyType)jhelper.getInt("bt");
-                            rbody->mOffset = jhelper.getFloat2("o");
-                            rbody->mMaxVel = jhelper.getFloat2("maxv");
+                            rbody->mBullet = jhelper.getInt("isbullet");
+                            rbody->mFixedRotation = jhelper.getInt("fixedRotation");
+                            rbody->mLinearDamping = jhelper.getFloat("linearDamp");
+                            rbody->mGravityScale = jhelper.getFloat("gravScale");
+                            rbody->mBodyType = (BodyType)jhelper.getInt("bodyType");
+                            rbody->mMaxVel = jhelper.getFloat2("max-vel");
 
-                            for (auto& val : component["fixs"].GetArray()) {
-                                auto obj = val.GetJsonObject();
-                                jhelper.value = &obj;
+                            loadFixtures(rbody, component, jhelper);
+                        }
 
-                                auto& fix = rbody->addFixture(jhelper.getInt("type"));
-
-                                fix.offset = jhelper.getFloat2("offset");
-                                fix.size = jhelper.getFloat2("size");
-                                fix.radius = jhelper.getFloat("radiu");
-                                fix.friction = jhelper.getFloat("frict");
-                                fix.density = jhelper.getFloat("dens");
-                                fix.restitution = jhelper.getFloat("restit");
-                                fix.isSensor = jhelper.getInt("sensor");
-                            }
+                        if (compType == "PhysicBody") {
+                            auto phybody = entity.addComponent<PhysicBodyComponent>(entity);
+                            loadFixtures(phybody, component, jhelper);
                         }
                     }
                 }

@@ -67,39 +67,46 @@ namespace Plutus
 
         mFrameBuffer.unBind();
     }
+    void Render::drawFixtures(PhysicBodyComponent* pbody, TransformComponent* trans) {
+        for (auto& fixture : pbody->mFixtures) {
+            auto pos = trans->getPosition();//fromWorld(rbody.mBody->GetPosition());
+
+            switch (fixture.type) {
+            case BoxShape: {
+                vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
+                if (mCamera.isBoxInView(rect, 200))
+                {
+                    mDebugRender->drawBox(rect);
+                }
+                break;
+            }
+            case EdgeShape: {
+                mDebugRender->drawLine(pos + fixture.offset, fixture.size + fixture.offset);
+                break;
+            }
+            case CircleShape: {
+                vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
+                if (mCamera.isBoxInView(rect, 200))
+                {
+                    mDebugRender->drawCircle(pos + fixture.offset, fixture.radius);
+                }
+                break;
+            }
+            }
+
+        }
+    }
 
     void Render::drawPhysicBodies()
     {
         auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
         for (auto [e, trans, rbody] : view.each()) {
+            drawFixtures(&rbody, &trans);
+        }
 
-            for (auto& fixture : rbody.mFixtures) {
-                auto pos = trans.getPosition();//fromWorld(rbody.mBody->GetPosition());
-
-                switch (fixture.type) {
-                case BoxShape: {
-                    vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
-                    if (mCamera.isBoxInView(rect, 200))
-                    {
-                        mDebugRender->drawBox(rect);
-                    }
-                    break;
-                }
-                case EdgeShape: {
-                    mDebugRender->drawLine(pos + fixture.offset, fixture.size + fixture.offset);
-                    break;
-                }
-                case CircleShape: {
-                    vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
-                    if (mCamera.isBoxInView(rect, 200))
-                    {
-                        mDebugRender->drawCircle(pos + fixture.offset, fixture.radius);
-                    }
-                    break;
-                }
-                }
-
-            }
+        auto view2 = mScene->getRegistry()->view<TransformComponent, PhysicBodyComponent>();
+        for (auto [e, trans, pbody] : view2.each()) {
+            drawFixtures(&pbody, &trans);
         }
 
         if (view.size_hint()) {

@@ -3,7 +3,7 @@
 namespace Plutus
 {
     class Entity;
-    class RigidBodyComponent;
+    struct RigidBodyComponent;
     struct Fixture;
 
     class RigidBodyTab
@@ -11,9 +11,6 @@ namespace Plutus
     public:
         RigidBodyTab();
         void draw(Entity* ent);
-
-    private:
-        bool drawFixture(Fixture& fix, int index);
 
     private:
         RigidBodyComponent* mRigidBody;

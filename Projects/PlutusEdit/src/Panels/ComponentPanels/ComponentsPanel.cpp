@@ -6,9 +6,11 @@
 #include <Math/Vectors.h>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "FixturesTabs.h"
 #include "ComponentUtil.h"
 
 #include <Assets/Assets.h>
+
 
 namespace Plutus
 {
@@ -43,7 +45,8 @@ namespace Plutus
                     ComponentMenuItem<TileMapComponent>("TileMap");
                     ComponentMenuItem<AnimationComponent>("Animation");
                     ComponentMenuItem<ScriptComponent>("Script");
-                    ComponentMenuItem<RigidBodyComponent>("RigidBody");
+                    ComponentMenuItem<RigidBodyComponent>("Rigid Body");
+                    ComponentMenuItem<PhysicBodyComponent>("Static Body");
 
                     ImGui::EndPopup();
                 }
@@ -55,6 +58,12 @@ namespace Plutus
                 if (mEnt.hasComponent<TileMapComponent>()) mTileMapPanel.DrawTileMapComponet();
                 if (mEnt.hasComponent<ScriptComponent>()) DrawScript();
                 if (mEnt.hasComponent<RigidBodyComponent>()) mRigidBodyTab.draw(&mEnt);
+                if (mEnt.hasComponent<PhysicBodyComponent>()) {
+                    auto  physicBody = mEnt.getComponent<PhysicBodyComponent>();
+                    if (CollapseComponent<PhysicBodyComponent>("Phyics Body##tilemap-comp", 7)) {
+                        drawFixtures(physicBody);
+                    }
+                }
             }
         }
         ImGui::End();

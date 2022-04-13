@@ -132,39 +132,34 @@ namespace Plutus
         ser.EndObj();
     }
 
-    void RigidBody_json(Serializer& ser, const RigidBodyComponent* rbody) {
-        ser.StartObj();
+    void addFixtures(Serializer& ser, const PhysicBodyComponent* body) {
+        ser.StartArr("fixtures");
         {
-            ser.addString("name", "RigidBody");
-            ser.addInt("b", rbody->mBullet);
-            ser.addInt("fr", rbody->mFixedRotation);
-            ser.addFloat("ld", rbody->mLinearDamping);
-            ser.addFloat("gs", rbody->mGravityScale);
-            ser.addInt("bt", rbody->mBodyType);
-            ser.add2Float("o", rbody->mOffset);
-            ser.add2Float("maxv", rbody->mMaxVel);
-
-            ser.StartArr("fixs");
+            for (auto& fix : body->mFixtures)
             {
-                for (auto& fix : rbody->mFixtures)
+                ser.StartObj();
                 {
-                    ser.StartObj();
-                    {
-                        ser.addInt("type", fix.type);
-                        ser.add2Float("offset", fix.offset);
+                    ser.addInt("type", fix.type);
+                    ser.add2Float("offset", fix.offset);
+
+                    if (fix.type != 1) {
                         ser.add2Float("size", fix.size);
-                        ser.addFloat("radiu", fix.radius);
-                        ser.addFloat("frict", fix.friction);
+                    }
+                    else {
+                        ser.addFloat("radius", fix.radius);
+                    }
+
+                    ser.addFloat("frict", fix.friction);
+                    if (fix.type > 0) {
                         ser.addFloat("dens", fix.density);
                         ser.addFloat("restit", fix.restitution);
-                        ser.addInt("sensor", fix.isSensor);
                     }
-                    ser.EndObj();
+                    ser.addInt("sensor", fix.isSensor);
                 }
+                ser.EndObj();
             }
-            ser.EndArr();
         }
-        ser.EndObj();
+        ser.EndArr();
     }
 
     std::string SceneSerializer(Scene* scene)
@@ -241,8 +236,34 @@ namespace Plutus
                     ser.EndObj();
                 }
                 if (ent.hasComponent<RigidBodyComponent>()) {
-                    RigidBody_json(ser, ent.getComponent<RigidBodyComponent>());
+                    auto rbody = ent.getComponent<RigidBodyComponent>();
+
+                    ser.StartObj();
+                    {
+                        ser.addString("name", "RigidBody");
+                        ser.addInt("isbullet", rbody->mBullet);
+                        ser.addInt("fixedRotation", rbody->mFixedRotation);
+                        ser.addFloat("linearDamp", rbody->mLinearDamping);
+                        ser.addFloat("gravScale", rbody->mGravityScale);
+                        ser.addInt("bodyType", rbody->mBodyType);
+                        ser.add2Float("max-vel", rbody->mMaxVel);
+                        addFixtures(ser, rbody);
+
+                    }
+                    ser.EndObj();
                 }
+
+                if (ent.hasComponent<PhysicBodyComponent>()) {
+                    auto pbody = ent.getComponent<PhysicBodyComponent>();
+                    ser.StartObj();
+                    {
+                        ser.addString("name", "PhysicBody");
+                        addFixtures(ser, pbody);
+
+                    }
+                    ser.EndObj();
+                }
+
                 if (ent.hasComponent<TileMapComponent>())
                 {
                     TileMap_json(ser, ent.getComponent<TileMapComponent>());

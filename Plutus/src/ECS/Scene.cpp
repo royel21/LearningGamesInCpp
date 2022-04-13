@@ -75,6 +75,7 @@ namespace Plutus
         CopyComponent<TileMapComponent>(source, dest);
         CopyComponent<ScriptComponent>(source, dest);
         CopyComponent<RigidBodyComponent>(source, dest);
+        CopyComponent<PhysicBodyComponent>(source, dest);
     }
 
 } // namespace Plutus

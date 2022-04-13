@@ -8,4 +8,5 @@
 #include "./Components/VelocityComponent.h"
 #include "./Components/AnimationComponent.h"
 #include "./Components/ScriptComponent.h"
+#include "./Components/PhysicBodyComponent.h"
 #include "./Components/RigidBodyComponent.h"

@@ -6,7 +6,6 @@
 #include <Math/Vectors.h>
 
 class b2World;
-class vec2f;
 
 namespace Plutus
 {

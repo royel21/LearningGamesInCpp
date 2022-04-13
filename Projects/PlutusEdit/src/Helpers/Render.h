@@ -11,6 +11,8 @@ namespace Plutus
 {
     class DebugRender;
     class Scene;
+    struct PhysicBodyComponent;
+    class TransformComponent;
 
     class Render
     {
@@ -31,9 +33,10 @@ namespace Plutus
         void setScene(Scene* scene) { mScene = scene; }
 
     private:
-        Render() = default;
-        void drawPhysicBodies();
+        Render() {};
         void prepare();
+        void drawFixtures(PhysicBodyComponent* pbody, TransformComponent* trans);
+        void drawPhysicBodies();
 
     private:
         Scene* mScene;

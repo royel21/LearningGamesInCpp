@@ -21,6 +21,7 @@ namespace Plutus
         AnimationTab mAnimation;
         TileMapPanel mTileMapPanel;
         RigidBodyTab mRigidBodyTab;
+        RigidBodyTab mPhysicBodyTab;
 
         int uvIndex = 0;
         bool mUseCoords = false;
