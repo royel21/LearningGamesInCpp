@@ -23,8 +23,11 @@ namespace Plutus
     constexpr int KinematicBody = 1;
     constexpr int DynamicBody = 2;
 
-    App::App(const char* name, int width, int height) : Core(name, width, height)
+    App::App(const char* name, int width, int height)
     {
+        mName = name;
+        mWidth = width;
+        mHeight = height;
     }
 
     App::~App()
@@ -130,7 +133,7 @@ namespace Plutus
         mShapes.push_back(line);
     }
 
-    void App::Setup()
+    void App::Init()
     {
         mShader.init(GLSL::vertexShader, GLSL::fragShader);
         mBatch.init();
@@ -159,6 +162,9 @@ namespace Plutus
         createLine(750, 150, 1050, 28);
 
         createLine(1050, 28, 1350, 100);
+
+
+        createLine(0, 200, 1350, 400);
     }
 
     uint64_t time = 0;

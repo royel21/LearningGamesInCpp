@@ -12,17 +12,18 @@ namespace Plutus
     class App : public Core
     {
     public:
-        App(const char* name, int width, int height) : Core(name, width, height) {}
+        App(const char* name, int width, int height);
 
-        void Setup() override;
+        void Init() override;
 
         void Update(float) override;
-
-        void Resize(int w, int h)override;
         //Called on the loop draw, should be overrided.
         void Draw() override;
 
+        void Resize(int w, int h)override;
+
         void Exit() override;
+
     private:
         Ref<Scene> mScene;
         Entity mPlayer;

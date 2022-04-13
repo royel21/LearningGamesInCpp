@@ -16,7 +16,7 @@ namespace Plutus
      * @param mWidth
      * @param mHeight
      * @param mCamera
-     * @param Setup virtual void Setup called once when the app is starting
+     * @param Init virtual void Init called once when the app is starting
      * @param Update virtual void Uptade(float) called every frame
      * @param Draw virtual void Draw called every frame
      * @param Exit virtual void Exit called when the app is being destroyed use for cleanup
@@ -46,12 +46,10 @@ namespace Plutus
 
     public:
         Core() = default;
-        Core(const char* name, int width, int height);
-        ~Core();
         //Run the game loop, only return when the app exit.
         void Run();
         //Called after the window creation. 
-        virtual void Setup() {};
+        virtual void Init() {};
         //Called on the loop update, should be overrided.
         virtual void Update(float dt) {};
         //Called on the loop draw, should be overrided.

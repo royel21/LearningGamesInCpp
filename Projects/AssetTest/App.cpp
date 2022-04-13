@@ -13,9 +13,17 @@
 
 #include <Systems/Systems.h>
 
+#include <Serialize/SceneSerializer.h>
+
 namespace Plutus
 {
-    void App::Setup() {
+    App::App(const char* name, int w, int h) {
+        mName = name;
+        mWidth = w;
+        mHeight = h;
+    }
+
+    void App::Init() {
 
         mCamera.init(1280, 720);
         mCamera.setScale(2.0f);
@@ -33,7 +41,7 @@ namespace Plutus
             mPlayer.addComponent<SpriteComponent>("");
             mPlayer.addComponent<ScriptComponent>("assets/script/player.lua");
 
-            auto pbody = mPlayer.addComponent<RigidBodyComponent>(mPlayer, DynamicBody);
+            auto pbody = mPlayer.addComponent<RigidBodyComponent>(mPlayer);
             // pbody->mLinearDamping = 1;
             // pbody->mGravityScale = 0;
 
@@ -48,7 +56,7 @@ namespace Plutus
             ground.addComponent<TransformComponent>(5.0f, 10.0f, 1280, 10);
             ground.addComponent<SpriteComponent>("");
 
-            auto body = ground.addComponent<Plutus::RigidBodyComponent>(ground, Plutus::StaticBody);
+            auto body = ground.addComponent<Plutus::PhysicBodyComponent>(ground);
             body->addBox({ 0, 0 }, { 1280, 10 }, 0.8f);
         }
 
@@ -58,7 +66,7 @@ namespace Plutus
             ground2.addComponent<TransformComponent>(200.0f, 60.0f, 200, 10);
             ground2.addComponent<SpriteComponent>("");
 
-            auto body = ground2.addComponent<Plutus::RigidBodyComponent>(ground2, Plutus::StaticBody);
+            auto body = ground2.addComponent<Plutus::PhysicBodyComponent>(ground2);
             body->addBox({ 0, 0 }, { 200, 10 });
         }
 
@@ -73,6 +81,10 @@ namespace Plutus
         }
 
         mSystemManager.init();
+
+        auto data = SceneSerializer(mScene.get());
+
+        Utils::saveFile("./scene.json", data.c_str());
 
     }
 

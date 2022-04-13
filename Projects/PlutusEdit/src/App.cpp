@@ -10,7 +10,11 @@
 
 namespace Plutus
 {
-    App::App(const char* name, int width, int height) : Core(name, width, height) {
+    App::App(const char* name, int width, int height) {
+        mName = name;
+        mWidth = width;
+        mHeight = height;
+
         auto& config = Config::get();
         if (config.isLoaded) {
             mWidth = config.winWidth;
@@ -22,7 +26,7 @@ namespace Plutus
 
     }
 
-    void App::Setup() {
+    void App::Init() {
         Config::get().LoadProject("");
         Render::get().Init();
         mMainGui.Init();

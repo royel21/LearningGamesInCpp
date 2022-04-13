@@ -18,12 +18,16 @@
 
 namespace Plutus
 {
-    App::App(const char* name, int width, int height) : Core(name, width, height)
+    App::App(const char* name, int width, int height)
     {
+        mName = name;
+        mWidth = width;
+        mHeight = height;
+
         Input::get()->addEventListener(this);
     }
 
-    void App::Setup()
+    void App::Init()
     {
         // srand(time(NULL));   // Initialization, should only be called once.
         mDebug = DebugRender::get();

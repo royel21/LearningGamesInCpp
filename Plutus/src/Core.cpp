@@ -14,15 +14,6 @@ namespace Plutus
     std::function<void()> loop2;
     void main_loop2() { loop2(); }
 #endif
-
-    Core::Core(const char* name, int width, int height) : mName(name), mWidth(width), mHeight(height) {
-    }
-
-    Core::~Core()
-    {
-
-    };
-
     void Core::init() {
         mWindow.init(mName.c_str(), mWidth, mHeight);
         mCamera.init(mWidth, mHeight);
@@ -37,7 +28,7 @@ namespace Plutus
             Dropfile(file);
         };
 
-        Setup();
+        Init();
     }
 
     void Core::Run() {
@@ -64,7 +55,7 @@ namespace Plutus
         emscripten_set_main_loop(main_loop2, 0, true);
 #endif
         Exit();
-    }
+        }
 
     void Core::swapScreen() {
         if (!mNextScreen.empty()) {
@@ -80,4 +71,4 @@ namespace Plutus
     void Core::setNextScreen(const std::string & screenId) {
         mNextScreen = screenId;
     }
-} // namespace Plutus
+    } // namespace Plutus

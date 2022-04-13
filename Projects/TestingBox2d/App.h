@@ -20,7 +20,7 @@ namespace Plutus
         App() = default;
         App(const char* name, int width, int height);
         ~App();
-        void Setup() override;
+        void Init() override;
         void Update(float dt) override;
         void Draw() override;
         void Exit() override;
