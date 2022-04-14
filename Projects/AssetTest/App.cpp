@@ -25,8 +25,12 @@ namespace Plutus
 
     void App::Init() {
 
-        mCamera.init(1280, 720);
-        mCamera.setScale(2.0f);
+        mCamera.setScale(1.2f);
+        mCamera.init(1280, 720, false);
+        // mCamera.setPosition(-640.00f, -340.00f);
+
+        // mCamera.setViewPosition({ 0, 0 });
+
         mScene = CreateRef<Scene>();
 
         mSystemManager.setScene(mScene.get());
@@ -36,7 +40,7 @@ namespace Plutus
 
         mPlayer = mScene->createEntity("player");
         if (mPlayer) {
-
+            // mCamera.setTarget(mPlayer);
             mPlayer.addComponent<TransformComponent>(10.0f, 50.0f, 32, 32);
             mPlayer.addComponent<SpriteComponent>("");
             mPlayer.addComponent<ScriptComponent>("assets/script/player.lua");
@@ -90,15 +94,14 @@ namespace Plutus
 
     float force = 0.2f;
     float force2 = 10.0f;
-
+    vec2f mouseLast;
+    vec2f camOrg;
     void App::Update(float dt) {
-        mCamera.update();
         auto cPos = mCamera.getPosition();
 
         auto mInput = Input::get();
 
         if (mInput->isCtrl) {
-
 
             if (mInput->onKeyDown("Right")) {
                 cPos.x += 5;
@@ -116,15 +119,38 @@ namespace Plutus
         }
         else {
             auto trans = mPlayer.getComponent<TransformComponent>();
-            if (trans) {
-                auto size = mCamera.getScaleScreen();
-                auto pos = trans->getPosition();
-                auto vec = vec2f{ pos.x - size.x * 0.7f, pos.y - size.y * 0.7f };
+            // if (trans) {
+            //     auto size = mCamera.getScaleScreen();
+            // // // auto vec = mCamera.convertScreenToWold(pos);
 
-                mCamera.setPosition(vec);
-            }
+            // auto pos = trans->getPosition();
+            // mCamera.setPosition({ pos.x - 10, pos.y - 10 });
+            // pos = mCamera.getPosition();
+            // Logger::info("camera Pos: %.2f %.2f", pos.x, pos.y);
+            // }
         }
+        // auto pos = mCamera.getPosition();
+        // auto woldOrg = mCamera.convertScreenToWold({ 0,0 });
+        // Logger::info("camera Pos: %.2f %.2f world: %.2f %.2f", pos.x, pos.y, woldOrg.x, woldOrg.y);
+        // mCamera.setPosition(-woldOrg);
+        if (Input::get()->onKeyPressed("MouseLeft")) {
+            // auto pos = Input::get()->getMouseCoords();
+            // auto worldPos = mCamera.convertScreenToWold(pos);
+            // Logger::info("camera Pos: %.2f %.2f world: %.2f %.2f", pos.x, pos.y, worldPos.x, worldPos.y);
+            mouseLast = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
+            camOrg = mCamera.getPosition();
+            Logger::info("camera Pos: %.2f %.2f", mouseLast.x, mouseLast.y);
+        }
+        camOrg = mCamera.getPosition();
+        Logger::info("camera Pos: %.2f %.2f", camOrg.x, camOrg.y);
 
+        if (Input::get()->onKeyDown("MouseLeft")) {
+            // auto result = Input::get()->getMouseCoords() - mouseLast;
+            // auto newPos = camOrg - result;
+            // Logger::info("camera Pos: %.2f %.2f", result.x, result.y);
+            // mCamera.setPosition({ 217.00f, 6.00f });
+        }
+        // mCamera.setPosition({ -217.00f, -6.00f });
 
         mSystemManager.update(dt);
 

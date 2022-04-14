@@ -19,6 +19,8 @@
 
 #include <Graphics/DebugRenderer.h>
 
+#include <Log/Logger.h>
+
 #define mapIn(x, min_in, max_in, min_out, max_out) (x - min_in) * (max_out - min_out) / (max_in - min_in) + min_out
 
 namespace Plutus
@@ -70,6 +72,7 @@ namespace Plutus
                     vec2f result = pos - mMouseLastCoords;
                     result /= camera.getScale();
                     Config::get().vpPos = mCamCoords - result;
+                    Logger::info("camera Pos: %.2f %.2f", result.x, result.y);
                     camera.setPosition(Config::get().vpPos);
                 }
 
@@ -89,31 +92,33 @@ namespace Plutus
         auto project = Config::get().mProject;
         static Entity ent;
         auto& render = Render::get();
-        if (Input::get()->onKeyPressed("MouseLeft"))
-        {
-            mMouseLastCoords = Config::get().mMouseCoords;
-            auto camPos = render.mCamera.getPosition();
-            mCamCoords = { camPos.x, camPos.y };
-            ent = project->mScene->getEntity(render.mFramePicker.getEntId({ mMouseLastCoords.x, mMouseLastCoords.y }));
+        if (!Input::get()->isCtrl) {
+            if (Input::get()->onKeyPressed("MouseLeft"))
+            {
+                mMouseLastCoords = Config::get().mMouseCoords;
+                auto camPos = render.mCamera.getPosition();
+                mCamCoords = { camPos.x, camPos.y };
+                ent = project->mScene->getEntity(render.mFramePicker.getEntId(mMouseLastCoords));
 
-            if (ent) {
-                project->mEnt = ent;
-                if (ent.hasComponent<TransformComponent>()) {
-                    auto pos = ent.getComponent<TransformComponent>()->getPosition();
-                    mEntLastPos = { pos.x, pos.y };
+                if (ent) {
+                    project->mEnt = ent;
+                    if (ent.hasComponent<TransformComponent>()) {
+                        auto pos = ent.getComponent<TransformComponent>()->getPosition();
+                        mEntLastPos = { pos.x, pos.y };
+                    }
                 }
             }
-        }
 
-        if (Input::get()->onKeyDown("MouseLeft") && Config::get().mProject->mScene->isValid(ent))
-        {
-            if (ent.hasComponent<TransformComponent>()) {
-                auto trans = ent.getComponent<TransformComponent>();
-                vec2f result = Config::get().mMouseCoords - mMouseLastCoords;
-                result /= render.mCamera.getScale();
+            if (Input::get()->onKeyDown("MouseLeft") && Config::get().mProject->mScene->isValid(ent))
+            {
+                if (ent.hasComponent<TransformComponent>()) {
+                    auto trans = ent.getComponent<TransformComponent>();
+                    vec2f result = Config::get().mMouseCoords - mMouseLastCoords;
+                    result /= render.mCamera.getScale();
 
-                trans->x = mEntLastPos.x + result.x;
-                trans->y = mEntLastPos.y + result.y;
+                    trans->x = mEntLastPos.x + result.x;
+                    trans->y = mEntLastPos.y + result.y;
+                }
             }
         }
     }
@@ -153,6 +158,18 @@ namespace Plutus
             ImGui::Image((void*)framebuffer.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
             if (Config::get().isHover = ImGui::IsItemHovered())
             {
+                // Render::get().mCamera.setWindowSize(newSize);
+                // auto mPos = ImGui::GetIO().MousePos;
+                // auto y = newSize.y - (mPos.y - canvas_pos.y);
+                // auto pos = Render::get().mCamera.convertScreenToWold({ mPos.x - canvas_pos.x, y });
+
+                // if (Input::get()->onKeyPressed("MouseLeft")) {
+
+
+                //     float xPos = pos.x; //mapIn(ImGui::GetIO().MousePos.x - canvas_pos.x, 0, newSize.x, 0, winSize.x);
+                //     float yPos = pos.y; //winSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
+                //     Logger::info("camera Pos: %.2f %.2f world: %.2f %.2f", pos.x, pos.y, mPos.x - canvas_pos.x, y);
+                // }
                 Config::get().mMouseCoords = { xPos, yPos };
 
                 CameraControl();
