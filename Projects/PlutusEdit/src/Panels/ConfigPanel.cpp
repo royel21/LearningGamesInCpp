@@ -25,47 +25,45 @@ namespace Plutus
                     ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_BordersInnerV;
                     if (ImGui::BeginTable("ViewportControls", 2, flags)) {
                         ImGui::TableNextColumn();
-                        if (ImGui::BeginUIGroup()) {
-
+                        {
+                            auto width = ImGui::GetContentRegionAvailWidth() * 0.3f;
                             auto& camera = Render::get().mCamera;
                             auto& zoom = Config::get().vpZoom;
-                            ImGui::BeginCol("Zoom");
-                            if (ImGui::InputFloat("##vp-Zoom", &zoom, 0.05f))
+                            ImGui::Row("Zoom", width);
+                            if (ImGui::DragFloat("##vp-Zoom", &zoom, 0.05f))
                             {
                                 zoom = CHECKLIMIT(zoom, 0.20f, 10.0f);
                                 camera.setScale(zoom);
                             }
-                            ImGui::BeginCol("Position");
+                            ImGui::Row("Position", width);
                             if (ImGui::Draw2Float("##cpos", Config::get().vpPos))
                                 camera.setPosition(Config::get().vpPos);
 
-                            ImGui::BeginCol("BG Color");
+                            ImGui::Row("BG Color", width);
                             ImGui::ColorEdit4("##vp-color", &Config::get().vpColor.x);
-                            ImGui::EndUIGroup();
                         }
 
                         ImGui::TableNextColumn();
-                        if (ImGui::BeginUIGroup()) {
+                        {
+                            auto width = ImGui::GetContentRegionAvailWidth() * 0.3f;
                             static bool showGrid = true;
                             auto mDebugRender = DebugRender::get();
-                            ImGui::BeginCol("Enable Grid");
+                            ImGui::Row("Enable Grid", width);
                             if (ImGui::Checkbox("##Enable-grid", &showGrid))
                             {
                                 mDebugRender->setShouldDraw(showGrid);
                             }
-                            ImGui::BeginCol("Cell Size");
+                            ImGui::Row("Cell Size", width);
                             auto cellSize = mDebugRender->getCellSize();
                             if (ImGui::DragInt2("##Cell-Size", &cellSize.x))
                                 mDebugRender->setCellSize(cellSize);
                             static vec4f color = mDebugRender->getGridLineColor();
-                            ImGui::BeginCol("Line Color");
+                            ImGui::Row("Line Color", width);
                             if (ImGui::ColorEdit3("##Grid-Color", &color.x))
                             {
                                 color.w = 1;
                                 mDebugRender->setColor({ color });
                             }
-
-                            ImGui::EndUIGroup();
                         }
                         ImGui::EndTable();
                     }
