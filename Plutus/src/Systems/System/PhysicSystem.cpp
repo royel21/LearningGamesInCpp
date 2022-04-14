@@ -56,7 +56,7 @@ namespace Plutus
             }
             case P_Edge: {
                 b2EdgeShape edgeShape;
-                edgeShape.SetTwoSided(toWorld(pos + fixture.offset), toWorld(pos + fixture.size));
+                edgeShape.SetTwoSided(toWorld(pos + fixture.offset), toWorld(fixture.size + fixture.offset));
 
                 fixDef.shape = &edgeShape;
                 pbody.mBody->CreateFixture(&fixDef);
