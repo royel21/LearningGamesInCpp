@@ -86,7 +86,6 @@ void EditorScreen::update(float dt)
             mCamera.setScale(CHECKLIMIT(newVal, 0.20f, 6));
         }
     }
-    mCamera.update();
 }
 
 void EditorScreen::draw()

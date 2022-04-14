@@ -35,7 +35,6 @@ namespace Plutus
     }
 
     void App::Update(float dt) {
-        Render::get().mCamera.update();
         mExit = mMainGui.mExit;
         mCentralPanel.update(dt);
     }

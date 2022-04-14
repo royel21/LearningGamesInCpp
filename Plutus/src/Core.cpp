@@ -42,7 +42,6 @@ namespace Plutus
 #endif
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             float dt = mLimiter.start();
-            mCamera.update();
             Update(dt);
             Draw();
             Input::get()->update();
@@ -55,7 +54,7 @@ namespace Plutus
         emscripten_set_main_loop(main_loop2, 0, true);
 #endif
         Exit();
-        }
+    }
 
     void Core::swapScreen() {
         if (!mNextScreen.empty()) {
@@ -71,4 +70,4 @@ namespace Plutus
     void Core::setNextScreen(const std::string & screenId) {
         mNextScreen = screenId;
     }
-    } // namespace Plutus
+} // namespace Plutus

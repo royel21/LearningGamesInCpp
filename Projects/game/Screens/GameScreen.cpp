@@ -76,7 +76,6 @@ void GameScreen::update(float dt)
         mCurrentState = Plutus::ScreenState::CHANGE_NEXT;
     }
 
-    mWorldCamera.update();
     mSystemManager.update(dt);
 }
 
