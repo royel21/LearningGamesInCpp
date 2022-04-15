@@ -21,9 +21,8 @@ namespace Plutus
 		Entity mEntity;
 		vec2f mOffset = { 0, 0 };
 		vec2f mCamPos = { 0, 0 };
+		glm::mat4 mOrtho = glm::mat4(0);
 		glm::mat4 mCameraMatrix = glm::mat4(0);
-		glm::mat4 mProjectionMat4 = glm::mat4(0);
-		glm::mat4 mViewMat4 = glm::mat4(0);
 
 	public:
 		/*
@@ -68,7 +67,7 @@ namespace Plutus
 		// return the current scale value
 		inline float getScale() { return mScale; }
 		// zoom the view port
-		inline void setScale(float scale) { mScale = scale > 0 ? scale : 1.0f; update(); }
+		inline void setScale(float scale) { mScale = scale > 0 ? scale : 1.0f; init(mScreenWidth, mScreenHeight); }
 
 		vec4f getViewPortDim();
 		// return the view port size in pixels
@@ -84,7 +83,7 @@ namespace Plutus
 
 		const vec2f getScaleScreen() { return vec2f(mScreenWidth, mScreenHeight) * mScale; }
 
-		bool isBoxInView(const vec4f box, int offset = 0);
+		bool isBoxInView(const vec4f& box, int offset = 0);
 	};
 } // namespace Plutus
 
