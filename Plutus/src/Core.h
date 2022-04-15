@@ -69,6 +69,8 @@ namespace Plutus
 
         void setNextScreen(const std::string& screenId);
 
+        inline void setAlwaysOnTop(bool isTop = true) { mWindow.setAlwaysOnTOp(isTop); }
+
     private:
         void init();
         void swapScreen();

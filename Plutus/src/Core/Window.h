@@ -25,6 +25,8 @@ namespace Plutus
         // tell glfw we want to close the window
         void close();
 
+        void setAlwaysOnTOp(bool isOnTop);
+
         inline GLFWwindow* getGLFWwindow() { return mWindow; }
 
     private:

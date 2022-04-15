@@ -145,6 +145,11 @@ namespace Plutus
         glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
     }
 
+    void Window::setAlwaysOnTOp(bool isOnTop)
+    {
+        glfwSetWindowAttrib(mWindow, GLFW_FLOATING, isOnTop);
+    }
+
     void initKeys()
     {
         unkeys = {
