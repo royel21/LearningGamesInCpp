@@ -10,6 +10,10 @@
 
 namespace Plutus
 {
+    class Camera2D;
+    class Render;
+    struct Config;
+
     enum State {
         Editing,
         Running
@@ -25,22 +29,34 @@ namespace Plutus
     struct Project {
         int vpWidth = 1280;
         int vpHeight = 768;
+        int wondowWidth = 1280;
+        int windowHeight = 1280;
+
+        float zoomLevel = 1.0f;
+        vec4f bgColor = { 1 };
 
         Entity mEnt;
         Ref<Scene> mScene;
         Ref<Scene> mTempScene;
         std::string mOpenScene;
 
+        Config* mConfig;
+
         std::unordered_map<std::string, std::string> mScenes = {};
 
         std::unordered_map<std::string, std::string>& getItems() { return mScenes; }
         Project();
+
+        void  init();
 
         void Create(const std::string& name);
         void add(const std::string& path);
         void Load(const std::string& path);
         void Save();
         void remove(std::string id) { mScenes.erase(id); }
+
+        void setZoom(float zoom = 1);
+        void setBGColor(const vec4f color = { 1 });
     };
 
     struct Config
@@ -52,10 +68,15 @@ namespace Plutus
         vec2f mMouseCoords;
         // Is Viewport hovered
         bool isHover;
+
+        bool drawGrid = true;
         // Window Width
         int winWidth = 1280;
         // Window height
         int winHeight = 768;
+
+        Camera2D* mCamera;
+
         Project* mProject;
         //Current Open Project
         std::string OpenProject = "";
@@ -64,6 +85,10 @@ namespace Plutus
         bool isLoaded = false;
 
         State state = Editing;
+        Render* mRender;
+
+        Config() { load(); }
+        void init(Render* render);
 
         ~Config();
 
@@ -72,11 +97,7 @@ namespace Plutus
         void LoadProject(const std::string& name);
         void RenameProj(const std::string& oldname, const std::string newName);
 
-        static Config& get();
-
     private:
-        Config() { Init(); };
-        void Init();
         void save();
         void load();
     };

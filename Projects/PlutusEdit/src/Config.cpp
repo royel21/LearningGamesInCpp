@@ -11,72 +11,38 @@
 #include <Serialize/SceneSerializer.h>
 
 #include <Utils/Utils.h>
+#include <Graphics/Camera2D.h>
 #include <Assets/AssetManager.h>
+#include <Graphics/GraphicsUtil.h>
 #include <Platforms/Windows/FileUtils.h>
 
+#include "./Helpers/Render.h"
 
 namespace Plutus
 {
-
-    void Config::Init()
-    {
-        if (!isLoaded) {
-            if (!std::filesystem::exists("assets"))
-            {
-                std::filesystem::create_directories("assets/textures");
-                std::filesystem::create_directories("assets/audios");
-                std::filesystem::create_directories("assets/fonts");
-            }
-            isLoaded = true;
-        }
-
-    }
-
-    void Config::CreateProj(const char* name)
-    {
-        mProject = &mProjects[name];
-        OpenProject = name;
-    }
-
-    Config& Config::get() {
-        static Config config;
-        return config;
-    }
 
     Config::~Config() {
         save();
     }
 
-    void Config::RenameProj(const std::string& oldname, const std::string newName) {
-        mProjects[newName] = mProjects[oldname];
-        mProjects.erase(oldname);
-        if (OpenProject.compare(oldname) == 0) {
-            mProject = &mProjects[newName];
-            OpenProject = newName;
-        }
-    }
-
-    void Config::LoadProject(const std::string& name) {
-        if (name.empty()) {
-            load();
-            if (mProject && mProject->mScenes.size())
-                mProject->Load(mProject->mScenes[mProject->mOpenScene]);
-        }
-        else {
-            mProjects[name] = Project();
-            mProject = &mProjects[name];
-        }
-
-    }
-
     void Config::load() {
+
+        if (!std::filesystem::exists("assets"))
+        {
+            std::filesystem::create_directories("assets/textures");
+            std::filesystem::create_directories("assets/audios");
+            std::filesystem::create_directories("assets/fonts");
+            std::filesystem::create_directories("assets/scenes");
+        }
+
         rapidjson::Document doc;
 
         bool isLoaded = loadJsonFromFile("Config.json", doc);
 
         if (isLoaded) {
             JsonHelper jhelper;
-            jhelper.value = &doc.GetJsonObject();
+            auto obj = doc.GetJsonObject();
+            jhelper.value = &obj;
 
             winWidth = jhelper.getInt("win-width", 1280);
             winHeight = jhelper.getInt("win-height", 768);
@@ -85,15 +51,19 @@ namespace Plutus
             vpPos = jhelper.getFloat2("vp-pos");
             vpColor = jhelper.getFloat4("vp-color", { 1,1,1,1 });
 
-            for (auto& obj : doc["projects"].GetArray()) {
+            //Create All Projects
+            for (auto& jproject : doc["projects"].GetArray()) {
 
-                auto& p = mProjects[obj["name"].GetString()];
-                p.mOpenScene = obj["open-scene"].GetString();
-                p.vpWidth = obj["width"].GetInt();
-                p.vpHeight = obj["height"].GetInt();
-                //List of scene
-                for (auto& scene : obj["scenes"].GetArray()) {
-                    p.mScenes[scene["name"].GetString()] = scene["path"].GetString();
+                auto& project = mProjects[jproject["name"].GetString()];
+                project.mConfig = this;
+
+                project.mOpenScene = jproject["open-scene"].GetString();
+                project.vpWidth = jproject["width"].GetInt();
+                project.vpHeight = jproject["height"].GetInt();
+
+                //Create the List of scene for this project
+                for (auto& scene : jproject["scenes"].GetArray()) {
+                    project.mScenes[scene["name"].GetString()] = scene["path"].GetString();
                 }
             }
         }
@@ -104,6 +74,49 @@ namespace Plutus
         }
         else {
             mProject = &mProjects[OpenProject];
+        }
+    }
+
+    void Config::init(Render* render)
+    {
+        mRender = render;
+
+        if (mProject->mScenes.size())
+            mProject->Load(mProject->mScenes[mProject->mOpenScene]);
+
+        mRender->init(this);
+    }
+
+    void Config::CreateProj(const char* name)
+    {
+        mProject = &mProjects[name];
+        OpenProject = name;
+
+        mRender->reload(this);
+    }
+
+    void Config::LoadProject(const std::string& name) {
+        mProject = &mProjects[name];
+        if (mProject->mScenes.size()) {
+            auto found = mProject->mScenes.find(mProject->mOpenScene);
+            if (found != mProject->mScenes.end()) {
+                mProject->Load(found->second);
+            }
+        }
+        else {
+            mProject->mScene = CreateRef<Scene>();
+            mProject->mTempScene = CreateRef<Scene>();
+        }
+
+        mRender->reload(this);
+    }
+
+    void Config::RenameProj(const std::string& oldname, const std::string newName) {
+        mProjects[newName] = mProjects[oldname];
+        mProjects.erase(oldname);
+        if (OpenProject.compare(oldname) == 0) {
+            mProject = &mProjects[newName];
+            OpenProject = newName;
         }
     }
 
@@ -167,10 +180,28 @@ namespace Plutus
         mTempScene = CreateRef<Scene>();
     }
 
+    void Project::init()
+    {
+        vpWidth = 1280;
+        vpHeight = 768;
+        wondowWidth = 1280;
+        windowHeight = 1280;
+
+        zoomLevel = 1.0f;
+        bgColor = { 1 };
+
+        mEnt = {};
+        mOpenScene = "";
+        mScene = CreateRef<Scene>();
+        mTempScene = CreateRef<Scene>();
+    }
+
+
+
     void Project::Create(const std::string& name)
     {
         auto nName = name + ".json";
-        auto found = Config::get().mProject->mScenes.find(name);
+        auto found = mConfig->mProject->mScenes.find(name);
 
         if (found == mScenes.end()) {
             auto newScene = "assets/scenes/" + name;
@@ -224,5 +255,15 @@ namespace Plutus
         auto found = mScenes.find(mOpenScene);
         if (found != mScenes.end())
             toJsonFile(found->second, json.c_str());
+    }
+
+
+    void Project::setZoom(float zoom) {
+        zoomLevel = zoom;
+        mConfig->mCamera->setScale(zoom);
+    }
+
+    void Project::setBGColor(const vec4f color) {
+        bgColor = color;
     }
 } // namespace Plutus

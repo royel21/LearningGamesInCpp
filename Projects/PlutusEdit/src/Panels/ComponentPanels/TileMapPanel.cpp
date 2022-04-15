@@ -20,8 +20,8 @@
 
 namespace Plutus
 {
-    vec2i getCoords() {
-        auto pos = Config::get().mMouseCoords;
+    vec2i getCoords(Config* config) {
+        auto pos = config->mMouseCoords;
         return DebugRender::get()->getSquareCoords({ pos.x, pos.y });
     }
 
@@ -30,13 +30,14 @@ namespace Plutus
         Input::get()->addEventListener(this);
     }
 
-    void TileMapPanel::DrawTileMapComponet()
+    void TileMapPanel::draw(Config* config)
     {
-        if (CollapseComponent<TileMapComponent>("TileMap##tilemap-comp", 4))
+        mConfig = config;
+        if (CollapseComponent<TileMapComponent>("TileMap##tilemap-comp", 4, mConfig))
         {
             static bool addTexture = false;
             mIsOpen = true;
-            mTileMap = Config::get().mProject->mEnt.getComponent<TileMapComponent>();
+            mTileMap = mConfig->mProject->mEnt.getComponent<TileMapComponent>();
 
             float textWidth = ImGui::GetContentRegionAvailWidth() * 0.35f;
             ImGui::Row("Tile Width", textWidth);
@@ -135,11 +136,11 @@ namespace Plutus
                     }
                 }
             }
-            if (mMode == MODE_PLACE && Config::get().isHover) {
+            if (mMode == MODE_PLACE && mConfig->isHover) {
                 renderTemp();
             }
             else {
-                Render::get().mTotalTemp = 0;
+                mConfig->mRender->mTotalTemp = 0;
             }
         }
         else {
@@ -148,17 +149,17 @@ namespace Plutus
 
     }
     void TileMapPanel::processMode() {
-        if (mIsOpen && Config::get().isHover && Input::get()->onKeyDown("MouseLeft")) {
+        if (mIsOpen && mConfig->isHover && Input::get()->onKeyDown("MouseLeft")) {
             switch (mMode)
             {
             case MODE_PLACE:
                 createTiles();
                 break;
             case MODE_EDIT:
-                mCurrentTile = mTileMap->getTile(getCoords());
+                mCurrentTile = mTileMap->getTile(getCoords(mConfig));
                 break;
             default:
-                if (mTileMap->removeTile(getCoords())) {
+                if (mTileMap->removeTile(getCoords(mConfig))) {
                     mCurrentTile = nullptr;
                 }
                 break;
@@ -176,7 +177,7 @@ namespace Plutus
     }
 
     void TileMapPanel::createTiles() {
-        auto coords = getCoords();
+        auto coords = getCoords(mConfig);
         auto& tiles = mTileMap->mTiles;
         for (auto tile : mTempTiles)
         {
@@ -199,17 +200,17 @@ namespace Plutus
 
     void TileMapPanel::renderTemp()
     {
-        auto gridCoords = getCoords();
+        auto gridCoords = getCoords(mConfig);
         int w = mTileMap->mTileWidth;
         int h = mTileMap->mTileHeight;
 
         auto tex = mTileMap->getTexture(mCurrentTexture);
 
-        std::vector<Renderable>& renderables = Render::get().mRenderables;
+        std::vector<Renderable>& renderables = mConfig->mRender->mRenderables;
         if (renderables.size() < mTempTiles.size()) {
             renderables.resize(mTempTiles.size());
         }
-        Render::get().mTotalTemp = (int)mTempTiles.size();
+        mConfig->mRender->mTotalTemp = (int)mTempTiles.size();
 
         int i = 0;
         for (auto tile : mTempTiles)

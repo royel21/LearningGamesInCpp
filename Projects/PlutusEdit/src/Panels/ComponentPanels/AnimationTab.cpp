@@ -9,11 +9,11 @@
 
 namespace Plutus
 {
-    void AnimationTab::DrawAnimation(Entity* ent)
+    void AnimationTab::draw(Config* config)
     {
-        mAnimation = ent->getComponent<AnimationComponent>();
+        mAnimation = config->mProject->mEnt.getComponent<AnimationComponent>();
         auto& mTextures = AssetManager::get()->getAssets<Texture>();
-        if (CollapseComponent<AnimationComponent>("Animation##tilemap-comp", 3))
+        if (CollapseComponent<AnimationComponent>("Animation##tilemap-comp", 3, config))
         {
             auto& sequences = mAnimation->mSequences;
             auto it = sequences.begin();
