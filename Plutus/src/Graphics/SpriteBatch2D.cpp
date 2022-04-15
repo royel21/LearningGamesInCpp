@@ -121,7 +121,7 @@ namespace Plutus
 
 	void SpriteBatch2D::submit(GLuint texture, const vec4f& rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {
 		resize(4);
-		createVertices(texture, rect, uv, c, r, flipX, flipX, entId);
+		createVertices(texture, rect, uv, c, r, flipX, flipY, entId);
 	}
 
 	void SpriteBatch2D::submit(const std::vector<Renderable>& renderables)
