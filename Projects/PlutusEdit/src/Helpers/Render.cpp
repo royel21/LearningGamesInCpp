@@ -11,27 +11,29 @@
 
 namespace Plutus
 {
-    Render& Render::get()
-    {
-        static Render render;
-        return render;
-    }
-
     Render::~Render() {
         mShader.destroy();
     }
 
-    void Render::Init()
+    void Render::init(Config* config)
     {
-        auto& config = Config::get();
-        int w = config.mProject->vpWidth;
-        int h = config.mProject->vpHeight;
-
-        mCamera.init(w, h);
-        mCamera.setPosition(config.vpPos);
-        mCamera.setScale(config.vpZoom);
+        mConfig = config;
+        reload(config);
 
         mShader.init(GLSL::vertexShader, GLSL::fragShader);
+        mDebugRender = Plutus::DebugRender::get();
+        mDebugRender->init(&mCamera);
+        mDebugRender->setCellSize({ 64,64 });
+    }
+
+    void Render::reload(Config* config)
+    {
+        int w = config->mProject->vpWidth;
+        int h = config->mProject->vpHeight;
+
+        mCamera.init(w, h);
+        mCamera.setPosition(config->vpPos);
+        mCamera.setScale(config->vpZoom);
 
         mSpriteBatch.init();
         mSpriteBatch.setShader(&mShader);
@@ -39,34 +41,34 @@ namespace Plutus
 
         mFramePicker.init(w, h, true);
         mFrameBuffer.init(w, h);
-
-        mDebugRender = Plutus::DebugRender::get();
-        mDebugRender->init(&mCamera);
-        mDebugRender->setCellSize({ 64,64 });
+        mScene = config->mProject->mScene.get();
     }
 
 
 
     void Render::draw()
     {
-        // auto start = Timer::millis();
-        mFrameBuffer.setColor(Config::get().vpColor);
-        prepare();
-        mSpriteBatch.begin();
+        if (mScene && mConfig) {
+            // auto start = Timer::millis();
+            mFrameBuffer.setColor(mConfig->vpColor);
+            prepare();
+            mSpriteBatch.begin();
 
-        mFramePicker.bind();
-        mSpriteBatch.draw(BATCH_PICKING);
-        mFramePicker.unBind();
+            mFramePicker.bind();
+            mSpriteBatch.draw(BATCH_PICKING);
+            mFramePicker.unBind();
 
-        mFrameBuffer.bind();
-        mSpriteBatch.draw();
-        mSpriteBatch.end();
+            mFrameBuffer.bind();
+            mSpriteBatch.draw();
+            mSpriteBatch.end();
 
-        mDebugRender->drawGrid();
-        drawPhysicBodies();
+            mDebugRender->drawGrid();
+            drawPhysicBodies();
 
-        mFrameBuffer.unBind();
+            mFrameBuffer.unBind();
+        }
     }
+
     void Render::drawFixtures(PhysicBodyComponent* pbody, TransformComponent* trans) {
         for (auto& fixture : pbody->mFixtures) {
             auto pos = trans->getPosition();//fromWorld(rbody.mBody->GetPosition());
@@ -93,7 +95,6 @@ namespace Plutus
                 break;
             }
             }
-
         }
     }
 

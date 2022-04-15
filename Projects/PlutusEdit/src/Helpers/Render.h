@@ -9,14 +9,16 @@
 
 namespace Plutus
 {
-    class DebugRender;
     class Scene;
-    struct PhysicBodyComponent;
+    struct Config;
+    class DebugRender;
     class TransformComponent;
+    struct PhysicBodyComponent;
 
     class Render
     {
     public:
+        Config* mConfig = nullptr;
         Camera2D mCamera;
         FrameBuffer mFrameBuffer;
         FrameBuffer mFramePicker;
@@ -25,21 +27,21 @@ namespace Plutus
 
         ~Render();
 
-        static Render& get();
         //Initialize the shader, camera viewport size and debug render shader
-        void Init();
+        void init(Config* config);
+        void reload(Config* config);
+
         void draw();
 
         void setScene(Scene* scene) { mScene = scene; }
 
     private:
-        Render() {};
         void prepare();
         void drawFixtures(PhysicBodyComponent* pbody, TransformComponent* trans);
         void drawPhysicBodies();
 
     private:
-        Scene* mScene;
+        Scene* mScene = nullptr;
         Shader mShader;
         SpriteBatch2D mSpriteBatch;
         DebugRender* mDebugRender = nullptr;
