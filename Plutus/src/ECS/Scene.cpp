@@ -5,7 +5,6 @@
 
 namespace Plutus
 {
-    /*******************************     Scene    ************************/
 
     const std::string Entity::getName()
     {
@@ -49,6 +48,7 @@ namespace Plutus
 
         return { ent, this };
     }
+    /*******************************     Scene    ************************/
 
     void Scene::copyScene(Scene* scene) {
 

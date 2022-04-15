@@ -69,7 +69,6 @@ namespace Plutus
     class Scene
     {
     public:
-        Scene() = default;
         ~Scene() { mRegistry.clear(); }
 
         Entity createEntity(const std::string& name);
@@ -106,14 +105,17 @@ namespace Plutus
         void setAutoClearForce(bool val) { mAutoClearForce = val; }
 
     private:
-        friend class Entity;
-        friend class System;
-        float mTimeStepInSec = 60.0f;
+
         int mVelIter = 8;
         int mPositionIter = 3;
         bool mAutoClearForce = true;
+        float mTimeStepInSec = 60.0f;
+
         entt::registry mRegistry;
         vec2f mGravity = { 0.0f, -9.8f };
+
+        friend class Entity;
+        friend class System;
     };
 
     /**********************Entity definitions***************/
