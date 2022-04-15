@@ -28,8 +28,8 @@ public:
     void onScreenResize(int w, int h) override;
 
 private:
+    Plutus::Entity Player;
     Ref<Plutus::Scene> mScene;
     Plutus::Camera2D mWorldCamera;
     Plutus::SystemManager mSystemManager;
-    Plutus::Entity Player;
 };

@@ -4,11 +4,14 @@
 #include <ECS/Scene.h>
 #include <Utils/Pointer.h>
 #include <Systems/SystemManager.h>
+#include <Graphics/FrameBuffer.h>
 
 
 namespace Plutus
 {
     class DebugRender;
+    class SpriteBatch2D;
+
     class App : public Core
     {
     public:
@@ -27,7 +30,8 @@ namespace Plutus
     private:
         Ref<Scene> mScene;
         Entity mPlayer;
-
+        FrameBuffer mFBuffer;
+        SpriteBatch2D* mBatch;
         SystemManager mSystemManager;
     };
 } // namespace Plutus

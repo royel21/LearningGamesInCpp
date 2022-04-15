@@ -3,7 +3,7 @@
 #include <imgui.h>
 #include "Config.h"
 #include "Helpers/Render.h"
-#include "Panels/ScenesList.h"
+#include "Panels/SceneWindow.h"
 
 #include <Serialize/Serialize.h>
 #include <Systems/Systems.h>
@@ -15,10 +15,9 @@ namespace Plutus
         mWidth = width;
         mHeight = height;
 
-        auto& config = Config::get();
-        if (config.isLoaded) {
-            mWidth = config.winWidth;
-            mHeight = config.winHeight;
+        if (mConfig.isLoaded) {
+            mWidth = mConfig.winWidth;
+            mHeight = mConfig.winHeight;
         }
     };
 
@@ -27,30 +26,39 @@ namespace Plutus
     }
 
     void App::Init() {
-        Config::get().LoadProject("");
-        Render::get().Init();
-        mMainGui.Init();
-        Render::get().setScene(Config::get().mProject->mScene.get());
-        mCentralPanel.init();
+        mConfig.init(&mRender);
+        // mRender.init(&mConfig);
+
+        mMainWin.init(&mConfig, this);
+        mAssetsWin.init(&mConfig);
+        mCenterWin.init(&mConfig);
+        mCompWin.init(&mConfig);
+        mConfigWin.init(&mConfig, &mRender);
+        mSceneWindow.init(&mConfig, &mRender);
+
+        // SceneWindow.init()
     }
 
     void App::Update(float dt) {
-        mExit = mMainGui.mExit;
-        mCentralPanel.update(dt);
+        mExit = mMainWin.mExit;
+        mCenterWin.update(dt);
     }
 
     void App::Draw() {
-        mMainGui.Begin();
-        mCentralPanel.drawCenterPanel();
-        if (Config::get().state != Running) {
-            AssetsTab.drawAssets();
-            DrawScenes();
-            mCompPanel.DrawComponentsPanel();
-            mConfigPanel.DrawConfigPanel();
-        }
-        mMainGui.End();
 
-        Render::get().draw();
+        mMainWin.Begin();
+        {
+            mCenterWin.draw();
+            if (mConfig.state != Running) {
+                mAssetsWin.draw();
+                mSceneWindow.draw();
+                mCompWin.draw();
+                mConfigWin.draw();
+            }
+        }
+        mMainWin.End();
+
+        mRender.draw();
     }
     void App::Exit() {
 

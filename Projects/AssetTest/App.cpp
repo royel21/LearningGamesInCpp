@@ -15,6 +15,8 @@
 
 #include <Serialize/SceneSerializer.h>
 
+#define CHECKLIMIT(val, min, max) val<min ? min : val> max ? max : val
+
 namespace Plutus
 {
     App::App(const char* name, int w, int h) {
@@ -24,17 +26,19 @@ namespace Plutus
     }
 
     void App::Init() {
-
-        mCamera.setScale(1.2f);
-        mCamera.init(1280, 720, false);
+        mCamera.setScale(2.0f);
         // mCamera.setPosition(-640.00f, -340.00f);
 
         // mCamera.setViewPosition({ 0, 0 });
 
         mScene = CreateRef<Scene>();
+        mFBuffer.init(mWidth, mHeight, true);
 
         mSystemManager.setScene(mScene.get());
-        mSystemManager.AddSystem<RenderSystem>(&mCamera);
+        auto render = mSystemManager.AddSystem<RenderSystem>(&mCamera);
+        // render->setFrameBuffer(&mFBuffer);
+        // mBatch = render->getSpritebath();
+
         mSystemManager.AddSystem<PhysicSystem>();
         mSystemManager.AddSystem<ScriptSystem>(&mCamera);
 
@@ -64,23 +68,23 @@ namespace Plutus
             body->addBox({ 0, 0 }, { 1280, 10 }, 0.8f);
         }
 
-        auto ground2 = mScene->createEntity("ground2");
+        auto ground2 = mScene->createEntity("ground");
 
         if (ground2) {
-            ground2.addComponent<TransformComponent>(200.0f, 60.0f, 200, 10);
+            ground2.addComponent<TransformComponent>(100.0f, 25.0f, 200, 10);
             ground2.addComponent<SpriteComponent>("");
 
-            auto body = ground2.addComponent<Plutus::PhysicBodyComponent>(ground2);
+            auto body = ground2.addComponent<Plutus::RigidBodyComponent>(ground2, Plutus::StaticBody);
             body->addBox({ 0, 0 }, { 200, 10 });
         }
 
-        auto ground3 = mScene->createEntity("ground2");
+        auto ground3 = mScene->createEntity("ground3");
 
         if (ground3) {
-            ground3.addComponent<TransformComponent>(100.0f, 25.0f, 200, 10);
+            ground3.addComponent<TransformComponent>(200.0f, 60.0f, 200, 10);
             ground3.addComponent<SpriteComponent>("");
 
-            auto body = ground3.addComponent<Plutus::RigidBodyComponent>(ground3, Plutus::StaticBody);
+            auto body = ground3.addComponent<Plutus::PhysicBodyComponent>(ground3);
             body->addBox({ 0, 0 }, { 200, 10 });
         }
 
@@ -124,7 +128,7 @@ namespace Plutus
             // // // auto vec = mCamera.convertScreenToWold(pos);
 
             // auto pos = trans->getPosition();
-            // mCamera.setPosition({ pos.x - 10, pos.y - 10 });
+            // mCamera.setPosition({ pos.x - 100, pos.y - 30 });
             // pos = mCamera.getPosition();
             // Logger::info("camera Pos: %.2f %.2f", pos.x, pos.y);
             // }
@@ -138,26 +142,60 @@ namespace Plutus
             // auto worldPos = mCamera.convertScreenToWold(pos);
             // Logger::info("camera Pos: %.2f %.2f world: %.2f %.2f", pos.x, pos.y, worldPos.x, worldPos.y);
             mouseLast = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
-            camOrg = mCamera.getPosition();
             Logger::info("camera Pos: %.2f %.2f", mouseLast.x, mouseLast.y);
         }
-        camOrg = mCamera.getPosition();
-        Logger::info("camera Pos: %.2f %.2f", camOrg.x, camOrg.y);
 
-        if (Input::get()->onKeyDown("MouseLeft")) {
-            // auto result = Input::get()->getMouseCoords() - mouseLast;
-            // auto newPos = camOrg - result;
-            // Logger::info("camera Pos: %.2f %.2f", result.x, result.y);
-            // mCamera.setPosition({ 217.00f, 6.00f });
+        if (Input::get()->onKeyPressed("MouseLeft"))
+        {
+            mouseLast = Input::get()->getMouseCoords();
+            camOrg = mCamera.getPosition();
         }
-        // mCamera.setPosition({ -217.00f, -6.00f });
+        // move the camera
+        if (Input::get()->isCtrl)
+        {
+            vec2f offset;
+            if (Input::get()->onKeyDown("MouseLeft"))
+            {
+                vec2f result = Input::get()->getMouseCoords() - mouseLast;
+                result /= mCamera.getScale();
+                offset = camOrg - result;
+                Logger::info("camera Pos: %.2f %.2f", result.x, result.y);
+                mCamera.setPosition(offset);
+            }
+
+            auto scroll = Input::get()->getMouseWheel();
+            if (scroll != 0)
+            {
+                auto mpos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
+
+                auto newVal = mCamera.getScale() + (scroll > 0 ? 0.05f : -0.05f);
+                mCamera.setScale(CHECKLIMIT(newVal, 0.20f, 6));
+                auto newPos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
+
+                auto offset = newPos - mpos;
+                mCamera.setPosition(mCamera.getPosition() - offset);
+                Logger::info("offset: %.2f %.2f", offset.x, offset.y);
+
+            }
+        }
+
+
 
         mSystemManager.update(dt);
 
     }
 
     void App::Draw() {
+        // if (Input::get()->onKeyDown("MouseLeft")) {
+        //     auto pos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
 
+        //     auto ent = mScene->getEntity(mFBuffer.getEntId(pos));
+        //     if (ent) {
+        //         Logger::info("camera Pos: %s", ent.getName().c_str());
+        //     }
+        // }
+        // mBatch->submit(mFBuffer.getTextureId(), vec4f{ 0,0, mWidth, mHeight }, { 0, 0,1 ,1 }, {}, 0, false, true);
+        // mBatch->finish();
         // mRenderer.submit(tex->mTexId, rect1, tex->getUV(0));
         // mRenderer.submit(tex->mTexId, rect2, tex->getUV(0));
         // mRenderer.finish();
