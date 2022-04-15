@@ -9,8 +9,9 @@
 
 namespace Plutus
 {
-    void DebugSystem::init()
+    void DebugSystem::init(Scene* scene)
     {
+        mScene = scene;
         mDebug = DebugRender::get();
         mDebug->init(mCamera);
     }

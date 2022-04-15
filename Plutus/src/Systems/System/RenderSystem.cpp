@@ -2,6 +2,7 @@
 
 #include <Graphics/GLSL.h>
 #include <Graphics/Camera2D.h>
+#include <Graphics/FrameBuffer.h>
 
 #include <ECS/Scene.h>
 #include <ECS/Components/SpriteComponent.h>
@@ -12,9 +13,13 @@
 
 namespace Plutus
 {
-    void RenderSystem::init() {
+    RenderSystem::RenderSystem(Camera2D* camera) : ISystem(camera) {
         mShader.init(GLSL::vertexShader, GLSL::fragShader);
         mRenderer.init();
+    }
+
+    void RenderSystem::init(Scene* scene) {
+        mScene = scene;
         mRenderer.setShader(&mShader);
         mRenderer.setCamera(mCamera);
     }
@@ -82,8 +87,15 @@ namespace Plutus
         // sort by layer, y position, texture
         // std::sort(mRenderables.begin(), mRenderables.end());
         mRenderer.submit(mRenderables);
+        if (mFrameBuff) {
+            mFrameBuff->bind();
+            mRenderer.finish(BATCH_PICKING);
+            mFrameBuff->unBind();
+        }
+        else {
+            mRenderer.finish();
+        }
 
-        mRenderer.finish();
     }
 
     void RenderSystem::destroy()

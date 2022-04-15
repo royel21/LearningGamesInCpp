@@ -75,7 +75,8 @@ namespace Plutus
         } // end fixture forloop
     }
 
-    void PhysicSystem::init() {
+    void PhysicSystem::init(Scene* scene) {
+        mScene = scene;
         auto gravity = mScene->getGravity();
         mWorld = new b2World({ gravity.x, gravity.y });
         mWorld->SetAutoClearForces(mScene->getAutoClearForce());

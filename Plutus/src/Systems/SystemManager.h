@@ -29,7 +29,7 @@ namespace Plutus
         template <typename T, typename... TArgs>
         T* AddSystem(TArgs &&... args)
         {
-            T* newSystem = new T(mScene, std::forward<TArgs>(args)...);
+            T* newSystem = new T(std::forward<TArgs>(args)...);
             mSystems[&typeid(T)] = newSystem;
             return newSystem;
         }

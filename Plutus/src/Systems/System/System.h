@@ -12,9 +12,9 @@ namespace Plutus
         Camera2D* mCamera;
 
     public:
-        ISystem(Scene* scene) : mScene(scene), mCamera(nullptr) {};
-        ISystem(Scene* scene, Camera2D* camera) : mScene(scene), mCamera(camera) {};
-        virtual void init() {}
+        ISystem() : mCamera(nullptr) {};
+        ISystem(Camera2D* camera) : mCamera(camera) {};
+        virtual void init(Scene* scene) { mScene = scene; }
         virtual void update(float dt) {}
         virtual void destroy() {}
     };

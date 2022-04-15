@@ -9,10 +9,9 @@ namespace Plutus {
 
 	class PhysicSystem : public ISystem {
 	public:
-		PhysicSystem(Scene* scene) : ISystem(scene) { };
 		~PhysicSystem() { destroy(); };
 
-		void init();
+		void init(Scene* scene);
 		void update(float dt);
 		void destroy();
 	private:
