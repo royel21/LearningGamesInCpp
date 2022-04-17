@@ -81,7 +81,7 @@ namespace Plutus
 		//Convert screen coordination to camera coordination and return it
 		vec2f convertScreenToWold(vec2f screenCoords, bool invertY = false);
 
-		const vec2f getScaleScreen() { return vec2f(mScreenWidth, mScreenHeight) * mScale; }
+		const vec2f getScaleScreen() { return vec2f(mScreenWidth, mScreenHeight) / mScale; }
 
 		bool isBoxInView(const vec4f& box, int offset = 0);
 	};
