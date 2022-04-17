@@ -1,36 +1,27 @@
 
 #include "App.h"
 
-#include "Core/ScreenList.h"
+#include "Screens/GameScreen.h"
+#include "Screens/EditorScreen.h"
 
-App::App(const char* windowName, int screenWidth, int screenHeight) : Engine(windowName, screenWidth, screenHeight)
+App::App(const char* name, int width, int height)
 {
+    mName = name;
+    mWidth = width;
+    mHeight = height;
 }
 
 App::~App()
 {
 }
 
-void App::onInit()
+void App::Init()
 {
+    addScreen("Game", new GameScreen(), true);
+    addScreen("Editor", new EditorScreen());
 }
 
-void App::onReisze(int width, int height)
+
+void App::Exit()
 {
-    glViewport(0, 0, width, height);
-}
-
-void App::onExit()
-{
-}
-
-void App::addScreen()
-{
-    mEditorScreen = std::make_unique<EditorScreen>();
-    mGameScreen = std::make_unique<GameScreen>();
-
-    mScreenList->addScreen(mEditorScreen.get());
-    mScreenList->addScreen(mGameScreen.get());
-
-    mScreenList->setScreent(mGameScreen->getScreenIndex());
 }

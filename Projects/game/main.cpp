@@ -4,7 +4,7 @@
 int main(int argc, char const* argv[])
 {
     App* app = new App("Physics Test", 1280, 768);
-    app->run();
+    app->Run();
 
     delete app;
     return 0;
