@@ -166,6 +166,14 @@ namespace Plutus
 		glBindVertexArray(mVAO);
 	}
 
+	void SpriteBatch2D::unBind() {
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		mIBO->unbind();
+		mShader->disable();
+	}
+
 	void SpriteBatch2D::draw(BatchType type)
 	{
 		mShader->setUniform1i("type", type);

@@ -2,9 +2,10 @@
 #define _SpriteBatch2D_H
 
 #include <vector>
+#include <unordered_map>
 
 #include "vertex.h"
-#include <unordered_map>
+#include "GLheaders.h"
 
 #include <Math/Vectors.h>
 
@@ -86,6 +87,8 @@ namespace Plutus
 		void submit(const std::string& fontId, const std::string& text, float x, float y, float scale = 1, ColorRGBA8 color = {});
 
 		void draw(BatchType type = BATCH_NONE);
+
+		void unBind();
 		//Flush the Vertex buffer to the screen
 		void end();
 
