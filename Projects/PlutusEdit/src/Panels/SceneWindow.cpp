@@ -5,10 +5,12 @@
 #include "../Helpers/ImGuiDialog.h"
 #include "../Helpers/IconsFontAwesome5.h"
 
+#include <Log/Logger.h>
+
 namespace Plutus
 {
     void SceneWindow::draw() {
-        auto project = mConfig->mProject;
+        auto& project = mConfig->mProject;
         static bool openNew = false;
         static bool showConfig = false;
         if (ImGui::Begin("Scene Editor"))
@@ -23,14 +25,17 @@ namespace Plutus
             if (ImGui::TransparentButton(ICON_FA_COG "##config-scene")) showConfig = true;
             ImGui::Separator();
             for (auto& sc : project->mScenes) {
+
                 bool isOpen = project->mOpenScene.compare(sc.first) == 0;
-
                 ImGui::SetNextItemOpen(isOpen);
+                bool isNodeOpen = ImGui::TreeNode((ICON_FA_PHOTO_VIDEO " " + sc.first).c_str());
 
-                if (ImGui::TreeNode((ICON_FA_PHOTO_VIDEO " " + sc.first).c_str()))
+                if (isNodeOpen)
                 {
                     //Load Scene only once
-                    if (!isOpen) project->Load(sc.second.c_str());
+                    if (!isOpen) {
+                        project->Load(sc.second.c_str());
+                    }
 
                     // Right-click on scene
                     if (ImGui::BeginPopupContextItem())
@@ -49,6 +54,9 @@ namespace Plutus
                     }
                     project->mOpenScene = sc.first;
                     ImGui::TreePop();
+                }
+                else  if (isOpen) {
+                    project->mOpenScene = "";
                 }
             }
         }
@@ -71,7 +79,7 @@ namespace Plutus
         ImGuiTreeNodeFlags flags = (isCurrent ? ImGuiTreeNodeFlags_Selected : 0);
         flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Leaf;
 
-        bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)ent, flags, (ICON_FA_MOBILE " " + tag).c_str());
+        ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)ent, flags, (ICON_FA_MOBILE " " + tag).c_str());
         if (ImGui::IsItemClicked())
         {
             project->mEnt = ent;
