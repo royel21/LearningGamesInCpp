@@ -8,14 +8,24 @@
 
 #define umap std::unordered_map
 
+struct ma_engine;
+
 namespace Plutus
 {
+    struct Sound;
+
     class AssetManager
     {
-    public:
-        ~AssetManager() { destroy(); }
+    private:
+        ma_engine* mAudioEngine = nullptr;
+        umap<const std::type_info*, umap<std::string, Asset*>> mAssets;
 
+        friend Sound;
+
+    public:
         static AssetManager* get();
+
+        ~AssetManager();
 
         template <typename T, typename... TArgs>
         T* addAsset(const std::string& id, TArgs &&... args)
@@ -57,7 +67,6 @@ namespace Plutus
         void destroy();
 
     private:
-        AssetManager() = default;
-        umap<const std::type_info*, umap<std::string, Asset*>> mAssets;
+        AssetManager();
     };
 } // namespace Plutus

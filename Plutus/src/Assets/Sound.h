@@ -1,13 +1,19 @@
 #pragma once
 #include "Asset.h"
 
+struct ma_sound;
+
 namespace Plutus
 {
     constexpr int EFFECT = 0;
-    constexpr int MUSIC = 0;
+    constexpr int MUSIC = 1;
 
     struct Sound : public Asset
     {
+    private:
+        ma_sound* mSound = nullptr;
+
+    public:
         int mType = EFFECT;
 
         Sound() = default;
