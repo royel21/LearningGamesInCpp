@@ -105,7 +105,7 @@ namespace Plutus
             auto sprite = mEnt.getComponent<SpriteComponent>();
             auto& textures = AssetManager::get()->getAssets<Texture>();
 
-            auto color = sprite->mColor;
+            uint32_t color = sprite->mColor;
             std::string selected = sprite->mTextureId;
             ImGui::Row("TileSheet", textWidth);
             if (ImGui::ComboBox("##TileSheet", textures, selected)) {
