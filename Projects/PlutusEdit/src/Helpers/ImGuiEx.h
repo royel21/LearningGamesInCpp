@@ -141,11 +141,11 @@ namespace ImGui
 
     bool InputString(const char* label, std::string& text);
 
-    bool Texture(Plutus::Texture* tileset, float scale, std::vector<Plutus::vec3i>& selected);
+    bool Texture(const Plutus::Texture* tileset, float scale, std::vector<Plutus::vec3i>& selected);
 
-    bool DrawTextureOne(Plutus::Texture* tileset, int& selected);
+    bool DrawTextureOne(const Plutus::Texture* tileset, int& selected);
 
-    bool DrawTexture(Plutus::Texture* tileset, int winWidth = 0, int winHeight = 0, float scale = 1.0f, std::vector<Plutus::vec3i>* selected = nullptr, bool onlyOne = false);
+    bool DrawTexture(const Plutus::Texture* tileset, int winWidth = 0, int winHeight = 0, float scale = 1.0f, std::vector<Plutus::vec3i>* selected = nullptr, bool onlyOne = false);
 
-    void DrawTexCoords(Plutus::Texture* tileset, Plutus::vec4f& coords);
+    void DrawTexCoords(const Plutus::Texture* tileset, Plutus::vec4f& coords);
 } // namespace ImGui

@@ -1,18 +1,16 @@
 #include "App.h"
-#include <Assets/Assets.h>
+#include <unordered_map>
 
 #include <Log/Logger.h>
-#include <Utils/FileIO.h>
 // #include "Logger.h"
+
 #include <Time/Timer.h>
-
-#include <unordered_map>
-#include <Graphics/DebugRenderer.h>
-
+#include <Input/Input.h>
+#include <Utils/FileIO.h>
+#include <Assets/Assets.h>
 #include <ECS/Components.h>
-
 #include <Systems/Systems.h>
-
+#include <Graphics/DebugRenderer.h>
 #include <Serialize/SceneSerializer.h>
 
 #define CHECKLIMIT(val, min, max) val<min ? min : val> max ? max : val
@@ -26,7 +24,7 @@ namespace Plutus
     }
 
     void App::Init() {
-        mCamera.setScale(2.0f);
+        mCamera.setScale(1.0f);
         // mCamera.setPosition(-640.00f, -340.00f);
 
         // mCamera.setViewPosition({ 0, 0 });
@@ -46,14 +44,14 @@ namespace Plutus
         if (mPlayer) {
             // mCamera.setTarget(mPlayer);
             mPlayer.addComponent<TransformComponent>(10.0f, 50.0f, 32, 32);
-            mPlayer.addComponent<SpriteComponent>("");
+            mPlayer.addComponent<SpriteComponent>("", ColorRGBA8{ 255,0,0,255 });
             mPlayer.addComponent<ScriptComponent>("assets/script/player.lua");
 
             auto pbody = mPlayer.addComponent<RigidBodyComponent>(mPlayer);
             // pbody->mLinearDamping = 1;
             // pbody->mGravityScale = 0;
 
-            pbody->addBox({ 0, 2 }, { 20, 20 });
+            pbody->addBox({ 0, 2 }, { 20, 20 }, 0.3f);
             pbody->setMaxVel(4);
             // pbody->addCircle({ 32, 24 }, 5, 1);
         }
@@ -62,10 +60,10 @@ namespace Plutus
 
         if (ground) {
             ground.addComponent<TransformComponent>(5.0f, 10.0f, 1280, 10);
-            ground.addComponent<SpriteComponent>("");
+            ground.addComponent<SpriteComponent>("", ColorRGBA8{ 0,0,255,255 });
 
             auto body = ground.addComponent<Plutus::PhysicBodyComponent>(ground);
-            body->addBox({ 0, 0 }, { 1280, 10 }, 0.8f);
+            body->addBox({ 0, 0 }, { 1280, 10 }, 0.3f);
         }
 
         auto ground2 = mScene->createEntity("ground");
@@ -93,6 +91,10 @@ namespace Plutus
         auto data = SceneSerializer(mScene.get());
 
         Utils::saveFile("./scene.json", data.c_str());
+
+        auto chunky = AssetManager::get()->addAsset<Sound>("Chunky", "./Chunky.mp3", MUSIC);
+
+        chunky->play();
 
     }
 

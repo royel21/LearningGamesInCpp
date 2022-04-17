@@ -1,5 +1,5 @@
 #pragma once
-#include <Core.h>
+#include <Core/Core.h>
 
 #include <ECS/Scene.h>
 #include <Utils/Pointer.h>

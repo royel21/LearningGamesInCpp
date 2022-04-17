@@ -90,6 +90,8 @@ namespace Plutus
                     mConfig->vpPos = camera.getPosition() - offset;
                 }
 
+                // mConfig->vpPos = { roundf(mConfig->vpPos.x), floor(mConfig->vpPos.y) };
+
                 camera.setPosition(mConfig->vpPos);
             }
         }
