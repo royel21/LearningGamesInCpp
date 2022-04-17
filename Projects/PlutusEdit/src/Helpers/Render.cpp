@@ -58,11 +58,13 @@ namespace Plutus
             mSpriteBatch.draw(BATCH_PICKING);
             mFramePicker.unBind();
 
-            mFrameBuffer.bind();
-            mSpriteBatch.draw();
-            mSpriteBatch.end();
+            mSpriteBatch.unBind();
 
+            mFrameBuffer.bind();
             mDebugRender->drawGrid();
+
+            mSpriteBatch.finish();
+
             drawPhysicBodies();
 
             mFrameBuffer.unBind();
