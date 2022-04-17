@@ -18,3 +18,4 @@ imgui.ini
 pe-config.json
 config.json
 assets/script/player2.lua
+*.mp3
