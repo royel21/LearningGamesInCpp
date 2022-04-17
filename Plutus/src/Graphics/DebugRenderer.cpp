@@ -191,13 +191,59 @@ namespace Plutus
 		mIndices.push_back(start);
 	}
 
+	void DebugRender::drawGrid()
+	{
+		if (isDraw) {
+			float tw = (float)mCellSize.x;
+			float th = (float)mCellSize.y;
+
+			auto campos = mCamera->getPosition();
+
+			vec2f size = mCamera->getScaleScreen();
+			vec2f lineStart;
+			vec2f lineEnd;
+
+			vec2f cpos = { round(campos.x / tw) * tw, round(campos.y / th) * th };
+
+			float currentLine = -2 * tw;
+
+			for (float x = -2; currentLine <= size.x + tw; x++)
+			{
+				currentLine = x * tw;
+
+				lineStart.x = cpos.x + currentLine;
+				lineStart.y = cpos.y;
+
+				lineEnd.x = cpos.x + (currentLine);
+				lineEnd.y = cpos.y + size.y;
+				drawLine(lineStart, lineEnd, 0, mGridColor);
+			}
+
+			currentLine = -2 * th;
+			for (float y = -2; currentLine <= size.y + th; y++)
+			{
+				currentLine = y * th;
+
+				lineStart.x = cpos.x;
+				lineStart.y = cpos.y + (currentLine);
+
+				lineEnd.x = cpos.x + size.x;
+				lineEnd.y = cpos.y + (currentLine);
+				drawLine(lineStart, lineEnd, 0, mGridColor);
+			}
+			end();
+
+			render(1.50f);
+		}
+	}
+
 	void DebugRender::render(float lineWidth)
 	{
 		if (isDraw) {
 			mShader.enable();
 			mShader.setUniformMat4("camera", mCamera->getCameraMatrix());
 			// glEnable(GL_LINE_SMOOTH);
-			glEnable(GL_BLEND);
+			// glEnable(GL_BLEND);
 			glLineWidth(lineWidth);
 			glBindVertexArray(mVao);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
@@ -206,56 +252,6 @@ namespace Plutus
 			glBindVertexArray(0);
 
 			mShader.disable();
-		}
-	}
-
-	void DebugRender::drawGrid()
-	{
-		if (isDraw) {
-			float tw = (float)mCellSize.x;
-			float th = (float)mCellSize.y;
-
-			auto orgScreenHalf = mCamera->getViewPortSize() / 2.0f;
-			auto newPos = mCamera->getPosition() + orgScreenHalf;
-
-			vec2f scaleScreen = mCamera->getScaleScreen();
-			auto half = (scaleScreen / 2.0f);
-
-			vec2f screenStart = newPos - half;
-			vec2f screenEnd = newPos + half;
-			vec2f lineStart;
-			vec2f lineEnd;
-
-			int sizeX = static_cast<int>((scaleScreen.x) / tw) + 2;
-			int sizeY = static_cast<int>((scaleScreen.y) / th) + 2;
-
-			float initalX = floor(screenStart.x / tw);
-			float initalY = floor(screenStart.y / th);
-
-			vec2f cPos(initalX * tw, initalY * th);
-
-			for (int x = 0; x <= sizeX; x++)
-			{
-				lineStart.x = cPos.x + (x * tw);
-				lineStart.y = cPos.y;
-
-				lineEnd.x = cPos.x + (x * tw);
-				lineEnd.y = screenEnd.y;
-				drawLine(lineStart, lineEnd, 0, mGridColor);
-			}
-
-			for (int y = 0; y <= sizeY; y++)
-			{
-				lineStart.x = cPos.x;
-				lineStart.y = cPos.y + (y * th);
-
-				lineEnd.x = screenEnd.x;
-				lineEnd.y = cPos.y + (y * th);
-				drawLine(lineStart, lineEnd, 0, mGridColor);
-			}
-			end();
-
-			render(1.0f);
 		}
 	}
 
