@@ -102,7 +102,7 @@ namespace Plutus
     void Project::Create(const std::string& name)
     {
         auto nName = name + ".json";
-        auto found = mConfig->mProject->mScenes.find(name);
+        auto found = mScenes.find(name);
 
         if (found == mScenes.end()) {
             auto newScene = "assets/scenes/" + name;

@@ -12,7 +12,7 @@ namespace Plutus
     struct Config;
 
     struct EnumFilter {
-        GLint filter;
+        int filter;
         char* Name;
     };
 

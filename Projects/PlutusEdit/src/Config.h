@@ -10,9 +10,8 @@
 
 namespace Plutus
 {
-    class Camera2D;
     class Render;
-    struct Config;
+    class Camera2D;
 
     enum State {
         Editing,
@@ -20,20 +19,32 @@ namespace Plutus
     };
 
     struct Project {
+        // Window Size
         int windowWidth = 1280;
         int windowHeight = 768;
-
+        // View Port Size
         int vpWidth = 1280;
         int vpHeight = 768;
 
         float zoomLevel = 1.0f;
+        //FPS Limiter
+        float FPS = 60.0f;
+        /*********************** Box2d Config ***********************/
+        // Box2d Velocity Iteration
+        int velIter = 8;
+        // Box2d Position Iteration
+        int positionIter = 3;
+        // Box2d Time step FPS 
+        float timeStepInSec = 60.0f;
+        // Box2d gravity
+        vec2f gravity = { 0.0f, -9.8f };
+        // Box2d Auto Clear Force
+        bool autoClearForce = true;
 
         Entity mEnt;
         Ref<Scene> mScene;
         Ref<Scene> mTempScene;
         std::string mOpenScene;
-
-        Config* mConfig;
 
         std::unordered_map<std::string, std::string> mScenes = {};
 
@@ -46,7 +57,6 @@ namespace Plutus
         void Load(const std::string& path);
         void Save();
         void remove(std::string id) { mScenes.erase(id); }
-
     };
 
     struct Config

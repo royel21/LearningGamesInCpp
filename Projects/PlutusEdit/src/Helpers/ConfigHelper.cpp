@@ -27,7 +27,6 @@ namespace Plutus
             for (auto& jproject : doc["projects"].GetArray()) {
 
                 auto& project = config->mProjects[jproject["name"].GetString()];
-                project.mConfig = config;
 
                 project.mOpenScene = jproject["open-scene"].GetString();
                 project.vpWidth = jproject["width"].GetInt();

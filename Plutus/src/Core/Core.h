@@ -65,9 +65,9 @@ namespace Plutus
         //Called whenever window resize
         virtual void Dropfile(const char* file) {}
         // FPS on micro seconds 0.016 millis by default. 
-        float getFPS() { return mLimiter.getFPS(); }
+        inline float getFPS() { return mLimiter.getFPS(); }
         //Set the fps of the game loop.
-        void setFPS(float fps) { mLimiter.setFPS(fps); }
+        inline void setFPS(float fps) { mLimiter.setFPS(fps); }
         //set if fps should be limited.
         void limitFPS(bool state) { mLimiter.setFPSLimiter(state); }
 
