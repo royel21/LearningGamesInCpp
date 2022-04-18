@@ -33,9 +33,10 @@ namespace Plutus
             {
                 ser.addString("id", tile.first);
                 ser.addString("path", tex->mPath);
-                ser.addInt("columns", tex->mColumns);
                 ser.addInt("width", tex->mTileWidth);
                 ser.addInt("height", tex->mTileHeight);
+                ser.addInt("min-filter", tex->mMinFilter);
+                ser.addInt("mag-filter", tex->mMagFilter);
             }
             ser.EndObj();
         }

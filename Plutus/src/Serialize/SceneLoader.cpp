@@ -131,12 +131,15 @@ namespace Plutus
                 for (uint32_t i = 0; i < textures.Size(); i++)
                 {
                     auto tex = textures[i].GetJsonObject();
-                    auto id = tex["id"].GetString();
-                    auto path = tex["path"].GetString();
-                    int columns = tex["columns"].GetInt();
-                    int tilewidth = tex["width"].GetInt();
-                    int tileheight = tex["height"].GetInt();
-                    AssetManager::get()->addAsset<Texture>(id, path, columns, tilewidth, tileheight);
+                    jhelper.value = &tex;
+
+                    auto id = jhelper.getString("id");
+                    auto path = jhelper.getString("path");
+                    int tilewidth = jhelper.getInt("width");
+                    int tileheight = jhelper.getInt("height");
+                    int minFilter = jhelper.getInt("min-filter");
+                    int magFilter = jhelper.getInt("mag-filter");
+                    AssetManager::get()->addAsset<Texture>(id, path, tilewidth, tileheight, minFilter, magFilter);
                 }
             }
 
