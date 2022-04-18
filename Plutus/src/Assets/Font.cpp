@@ -12,7 +12,11 @@ constexpr int BITMAPSIZE = 500;
 
 namespace Plutus
 {
-    Font::Font(const std::string& path, unsigned int fontSize)
+    Font::Font(const std::string& path, unsigned int fontSize) {
+        init(path, fontSize);
+    }
+
+    void Font::init(const std::string& path, unsigned int fontSize)
     {
         mPath = path;
         mSize = fontSize;
@@ -87,6 +91,9 @@ namespace Plutus
 
     void Font::destroy()
     {
-        glDeleteTextures(1, &mTexId);
+        if (mTexId != -1)
+            glDeleteTextures(1, &mTexId);
+
+        mTexId = -1;
     }
 }

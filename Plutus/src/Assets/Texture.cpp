@@ -4,15 +4,34 @@
 
 namespace Plutus
 {
-    Texture::Texture(const std::string& path, int c, int w, int h, GLint minFilter, GLint magFilter)
+    Texture::Texture(const std::string& path, int w, int h, GLint minFilter, GLint magFilter)
     {
-        mPath = path;
+        init(path, w, h, minFilter, magFilter);
+    }
 
-        mColumns = c;
+    void Texture::init(const std::string& path, int w, int h, GLint minFilter, GLint magFilter)
+    {
+        destroy();
+
+        mPath = path;
+        if (minFilter && magFilter) {
+            mMinFilter = minFilter;
+            mMagFilter = magFilter;
+        }
+
         mTileWidth = w;
         mTileHeight = h;
-        loadTexture(minFilter, magFilter);
-        c ? calculateUV() : uvs.push_back({ 0, 0, 1, 1 });
+        loadTexture();
+        (w && h) ? calculateUV() : uvs.push_back({ 0, 0, 1, 1 });
+    }
+
+    void Texture::setTilesSize(int w, int h)
+    {
+        if (w && h) {
+            mTileWidth = w;
+            mTileHeight = h;
+            calculateUV();
+        }
     }
 
     vec4f Texture::getUVs(float column, float row, float w, float h)
@@ -24,7 +43,9 @@ namespace Plutus
 
     void Texture::destroy()
     {
-        glDeleteTextures(1, &mTexId);
+        if (mTexId > -1)
+            glDeleteTextures(1, &mTexId);
+        mTexId = -1;
     }
 
     void Texture::calculateUV()
@@ -32,12 +53,14 @@ namespace Plutus
         if (mTileWidth > 0 && mTileHeight > 0)
         {
             uvs.clear();
-            auto totalTiles = mColumns * int(mHeight / mTileHeight);
+            int columns = mWidth / mTileWidth;
+
+            auto totalTiles = columns * int(mHeight / mTileHeight);
 
             for (int i = 0; i < totalTiles; i++)
             {
-                int y = i / mColumns;
-                int x = i % mColumns;
+                int y = i / columns;
+                int x = i % columns;
                 vec4f UV;
                 UV.x = ((float)(x * mTileWidth) / (float)mWidth);
                 UV.y = ((float)(y * mTileHeight) / (float)mHeight);
@@ -48,7 +71,7 @@ namespace Plutus
         }
     }
 
-    void Texture::loadTexture(GLint minFilter, GLint magFilter)
+    void Texture::loadTexture()
     {
         int ch = Utils::getExtension(mPath).compare("png") == 0 ? 4 : 3;
 
@@ -58,7 +81,9 @@ namespace Plutus
             auto format = ch == 3 ? GL_RGB8 : GL_RGBA8;
             auto gltype = ch == 3 ? GL_RGB : GL_RGBA;
 
-            mTexId = createTexture(mWidth, mHeight, out, format, gltype, GL_UNSIGNED_BYTE, minFilter, magFilter);
+            glActiveTexture(GL_TEXTURE0);
+
+            mTexId = createTexture(mWidth, mHeight, out, format, gltype, GL_UNSIGNED_BYTE, mMinFilter, mMagFilter);
             //unlink the texture
             glBindTexture(GL_TEXTURE_2D, 0);
             //delete the image buffer from memory
