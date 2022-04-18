@@ -19,21 +19,14 @@ namespace Plutus
         Running
     };
 
-    struct FloatColor {
-        float r = 1;
-        float g = 1;
-        float b = 1;
-        float a = 1;
-    };
-
     struct Project {
+        int windowWidth = 1280;
+        int windowHeight = 768;
+
         int vpWidth = 1280;
         int vpHeight = 768;
-        int wondowWidth = 1280;
-        int windowHeight = 1280;
 
         float zoomLevel = 1.0f;
-        vec4f bgColor = { 1 };
 
         Entity mEnt;
         Ref<Scene> mScene;
@@ -44,10 +37,9 @@ namespace Plutus
 
         std::unordered_map<std::string, std::string> mScenes = {};
 
-        std::unordered_map<std::string, std::string>& getItems() { return mScenes; }
         Project();
 
-        void  init();
+        void init();
 
         void Create(const std::string& name);
         void add(const std::string& path);
@@ -55,8 +47,6 @@ namespace Plutus
         void Save();
         void remove(std::string id) { mScenes.erase(id); }
 
-        void setZoom(float zoom = 1);
-        void setBGColor(const vec4f color = { 1 });
     };
 
     struct Config
