@@ -2,7 +2,7 @@
 
 #include <string>
 #include <Math/Vectors.h>
-#include <Utils/RGBAColor.h>
+#include <Utils/ColorRGBA8.h>
 
 namespace Plutus
 {
