@@ -49,7 +49,39 @@ namespace Plutus
                     mCurSeq = "";
                 }
             }
+
+
             ImGui::ComboBox("##a-seq", sequences, mCurSeq, defItem);
+
+            auto found = sequences.find(mCurSeq);
+            if (found != sequences.end()) {
+                auto& seq = found->second;
+                auto tex = AssetManager::get()->getAsset<Texture>(seq.mTexId);
+
+
+                ImGui::Row("Time");
+                ImGui::InputFloat("##seq-time", &seq.mSeqTime, 0.001f);
+                ImGui::Separator();
+
+                ImGui::BeginChild("Anim", { 0, 224 });
+                {
+                    float tileSize = 128;
+
+                    float center = ImGui::GetContentRegionAvailWidth() * 0.5f - tileSize / 2.0f;
+                    ImGui::SetCursorPos({ center, tileSize / 2.0f });
+
+                    if (seq.mFrames.size()) {
+                        time += (1000.0f / ImGui::GetIO().Framerate) / 1000.0f;
+                        if (time > seq.mSeqTime) {
+                            seq.mFrame = ++seq.mFrame % seq.mFrames.size();
+                            time = 0;
+                        }
+                        auto uv = tex->getUV(seq.mFrames[seq.mFrame]);
+                        ImGui::Image((ImTextureID)tex->mTexId, { tileSize, tileSize }, { uv.x, uv.y }, { uv.z, uv.w });
+                    }
+                }
+                ImGui::EndChild();
+            }
             ImGui::PopStyleVar();
 
             SeqWindow();
@@ -62,19 +94,19 @@ namespace Plutus
             auto found = mAnimation->mSequences.find(mCurSeq);
             auto& seq = mMode ? found->second : newSeq;
 
+            float width = ImGui::GetContentRegionAvailWidth() * .3f;
+
             ImGui::SetNextWindowSize({ 465, 650 });
             ImGui::BeginDialog("Sequence");
             {
 
-                if (ImGui::BeginUIGroup())
                 {
-                    ImGui::BeginCol("Name", 300);
-                    ImGui::InputString("##seq-name", mNewSeqId);
-                    ImGui::BeginCol("Time", 300);
+                    ImGui::Row("Name", width);
+                    ImGui::ComboBox("##seq-name", mAnimation->mSequences, mCurSeq);
+                    ImGui::Row("Time", width);
                     ImGui::InputFloat("##seq-time", &seq.mSeqTime, 0.001f);
-                    ImGui::BeginCol("Texure", 300);
+                    ImGui::Row("Texure", width);
                     ImGui::ComboBox("##tex-seq", mTextures, seq.mTexId);
-                    ImGui::EndUIGroup();
                 }
 
                 ImGui::Separator();
