@@ -142,14 +142,6 @@ namespace Plutus
         return false;
     }
 
-    void toJsonFile(const std::string& path, const char* buffer)
-    {
-        std::ofstream outfile;
-        outfile.open(path.c_str(), std::ios_base::out); //std::ios_base::app
-        outfile << buffer;
-        outfile.close();
-    }
-
     bool loadJsonFromFile(const char* filePath, rapidjson::Document& document) {
         std::string ex = Utils::getExtension(filePath);
         if (ex == "json")
@@ -161,12 +153,5 @@ namespace Plutus
             }
         }
         return false;
-    }
-
-    void saveJsonToFile(const char* filePath, const char* buffer) {
-        std::ofstream outfile;
-        outfile.open(filePath, std::ios_base::out); //std::ios_base::app
-        outfile << buffer;
-        outfile.close();
     }
 } // namespace Plutus

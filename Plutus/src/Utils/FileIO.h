@@ -8,5 +8,7 @@ namespace Plutus
 
     std::string readFileAsString(const char* path);
 
+    void saveBufferToFile(const std::string& path, const char* buffer);
+
     bool exists(const char* path);
 } // namespace Plutus

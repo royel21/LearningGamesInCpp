@@ -39,6 +39,16 @@ namespace Plutus
         return data.size() ? std::string(reinterpret_cast<char*>(data.data()), data.size()) : "";
     }
 
+    void saveBufferToFile(const std::string& path, const char* buffer)
+    {
+        FILE* file = fopen(path.c_str(), "w");
+        int results = fputs(buffer, file);
+        if (results == EOF) {
+
+        }
+        fclose(file);
+    }
+
     bool exists(const char* path)
     {
         FILE* fp = fopen(path, "r");
