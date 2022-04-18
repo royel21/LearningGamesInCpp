@@ -26,15 +26,21 @@ namespace Plutus
     private:
         Config* mConfig;
         Scene* mScene;
+
         Sound mSound;
-        std::string selectedDir;
-        std::string assetId;
-        boolmap nodes;
-        boolmap nodes2;
         Texture texture;
+        Font mFont;
+
+        std::string assetId;
+        std::string selectedDir;
+
         EnumFilter texfilter = { GL_NEAREST, "Nearest" };
+
         AssetType assetType;
         std::string filter;
+
+        boolmap nodes;
+        boolmap nodes2;
 
     public:
         AssetsWindow();
@@ -53,7 +59,7 @@ namespace Plutus
 
         void addSound2Scene();
 
-        void showTexure(Texture& texture, bool newTex = false);
+        void showTexure(Texture& texture, bool newTex = false, float width = 0);
 
         void viewAssets(bool& show);
 
