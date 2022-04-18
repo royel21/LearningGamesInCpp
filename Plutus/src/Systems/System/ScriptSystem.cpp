@@ -111,8 +111,8 @@ namespace Plutus
         /**************************Register Texture Asset*************************************************/
         auto texture_table = mGlobalLua.new_usertype<Texture>("Texture",
             sol::constructors<Texture(const std::string&),
-            Texture(const std::string&, int, int, int),
-            Texture(const std::string&, int, int, int, GLint, GLint)>()
+            Texture(const std::string&, int, int),
+            Texture(const std::string&, int, int, GLint, GLint)>()
             );
         texture_table["getUV"] = sol::overload(&Texture::getUV<int>, &Texture::getUV<float, float, float, float>);
 
