@@ -1,15 +1,16 @@
 #include "Texture.h"
 #include <stb_image.h>
 #include <Utils/Utils.h>
+#include <Graphics/GLheaders.h>
 
 namespace Plutus
 {
-    Texture::Texture(const std::string& path, int w, int h, GLint minFilter, GLint magFilter)
+    Texture::Texture(const std::string& path, int w, int h, int minFilter, int magFilter)
     {
         init(path, w, h, minFilter, magFilter);
     }
 
-    void Texture::init(const std::string& path, int w, int h, GLint minFilter, GLint magFilter)
+    void Texture::init(const std::string& path, int w, int h, int minFilter, int magFilter)
     {
         destroy();
 
@@ -80,8 +81,6 @@ namespace Plutus
         if (mWidth && mHeight) {
             auto format = ch == 3 ? GL_RGB8 : GL_RGBA8;
             auto gltype = ch == 3 ? GL_RGB : GL_RGBA;
-
-            glActiveTexture(GL_TEXTURE0);
 
             mTexId = createTexture(mWidth, mHeight, out, format, gltype, GL_UNSIGNED_BYTE, mMinFilter, mMagFilter);
             //unlink the texture

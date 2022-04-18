@@ -110,9 +110,9 @@ namespace Plutus
         int mPositionIter = 3;
         bool mAutoClearForce = true;
         float mTimeStepInSec = 60.0f;
+        vec2f mGravity = { 0.0f, -9.8f };
 
         entt::registry mRegistry;
-        vec2f mGravity = { 0.0f, -9.8f };
 
         friend class Entity;
         friend class System;

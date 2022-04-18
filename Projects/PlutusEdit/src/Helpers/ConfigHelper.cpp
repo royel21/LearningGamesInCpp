@@ -68,7 +68,6 @@ namespace Plutus
                         ser.addInt("win-height", p.second.windowHeight);
                         ser.addInt("vp-width", p.second.vpWidth);
                         ser.addInt("vp-height", p.second.vpHeight);
-                        ser.addInt("bg-color", p.second.mBGColor);
                         ser.addFloat("zoom", p.second.zoomLevel);
 
                         ser.StartArr("scenes");

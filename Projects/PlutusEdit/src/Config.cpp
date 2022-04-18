@@ -92,7 +92,6 @@ namespace Plutus
         windowHeight = 1280;
 
         zoomLevel = 1.0f;
-        mBGColor = { 1 };
 
         mEnt = {};
         mOpenScene = "";

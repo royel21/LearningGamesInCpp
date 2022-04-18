@@ -31,6 +31,8 @@ namespace Plutus
         Window mWindow;
         Limiter mLimiter;
 
+        bool mUseConfig = false;
+
     protected:
         //Width of the Window
         int mWidth = 1280;
