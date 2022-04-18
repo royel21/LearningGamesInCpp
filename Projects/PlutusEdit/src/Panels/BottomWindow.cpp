@@ -33,15 +33,16 @@ namespace Plutus
 
                             ImGui::BeginGroup();
                             ImGui::PushID("zoom-group");
-                            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
-                            if (ImGui::Button("RS", { 20, 0 })) {
-
+                            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 4, 0 });
+                            if (ImGui::InputFloat("##seq-time", &zoom, 0.05f))
+                            {
+                                mConfig->vpZoom = CHECKLIMIT(zoom, 0.20f, 10.0f);
+                                camera.setScale(mConfig->vpZoom);
                             }
                             ImGui::SameLine();
-                            if (ImGui::DragFloat("##vp-Zoom", &zoom, 0.05f))
-                            {
-                                zoom = CHECKLIMIT(zoom, 0.20f, 10.0f);
-                                camera.setScale(zoom);
+                            if (ImGui::Button("RS", { 24, 0 })) {
+                                camera.setScale(1.0f);
+                                mConfig->vpZoom = 1.0f;
                             }
                             ImGui::PopStyleVar();
                             ImGui::PopID();
