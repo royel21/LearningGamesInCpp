@@ -24,6 +24,7 @@ namespace Plutus
         FrameBuffer mFramePicker;
         std::vector<Renderable> mRenderables;
         int mTotalTemp = 0;
+        bool isLoaded = false;
 
         ~Render();
 

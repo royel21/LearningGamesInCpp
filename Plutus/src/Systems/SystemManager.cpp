@@ -16,7 +16,7 @@ namespace Plutus
     void SystemManager::init()
     {
         for (auto& sys : mSystems) {
-            if (sys.second)sys.second->init(mScene);
+            if (sys.second)sys.second->init(mProject);
         }
     }
 

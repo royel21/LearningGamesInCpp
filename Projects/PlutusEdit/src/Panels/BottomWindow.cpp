@@ -28,7 +28,7 @@ namespace Plutus
                         {
                             auto width = ImGui::GetContentRegionAvailWidth() * 0.3f;
                             auto& camera = mRender->mCamera;
-                            auto& zoom = mConfig->vpZoom;
+                            auto& zoom = mConfig->mProject.zoomLevel;
                             ImGui::Row("Zoom", width);
 
                             ImGui::BeginGroup();
@@ -36,24 +36,27 @@ namespace Plutus
                             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 4, 0 });
                             if (ImGui::InputFloat("##seq-time", &zoom, 0.05f))
                             {
-                                mConfig->vpZoom = CHECKLIMIT(zoom, 0.20f, 10.0f);
-                                camera.setScale(mConfig->vpZoom);
+                                mConfig->mProject.zoomLevel = CHECKLIMIT(zoom, 0.20f, 10.0f);
+                                camera.setScale(mConfig->mProject.zoomLevel);
                             }
                             ImGui::SameLine();
                             if (ImGui::Button("RS", { 24, 0 })) {
                                 camera.setScale(1.0f);
-                                mConfig->vpZoom = 1.0f;
+                                mConfig->mProject.zoomLevel = 1.0f;
                             }
                             ImGui::PopStyleVar();
                             ImGui::PopID();
                             ImGui::EndGroup();
 
                             ImGui::Row("Position", width);
-                            if (ImGui::Draw2Float("##cpos", mConfig->vpPos))
-                                camera.setPosition(mConfig->vpPos);
+                            if (ImGui::Draw2Float("##cpos", mConfig->mProject.vpPos))
+                                camera.setPosition(mConfig->mProject.vpPos);
 
                             ImGui::Row("BG Color", width);
-                            ImGui::ColorEdit4("##vp-color", &mConfig->vpColor.x);
+                            vec4f color = mConfig->mProject.scene->mBGColor;
+                            if (ImGui::ColorEdit4("##vp-color", &color.x)) {
+                                mConfig->mProject.scene->mBGColor.setColor(color);
+                            }
                         }
 
                         ImGui::TableNextColumn();

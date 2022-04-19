@@ -34,6 +34,8 @@ namespace Plutus
         App(const char* name, int width, int height);
         ~App();
 
+        void initialize();
+
         void Init() override;
         void Update(float dt) override;
         void Draw() override;

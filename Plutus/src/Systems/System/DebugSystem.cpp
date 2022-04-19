@@ -7,18 +7,20 @@
 #include <Graphics/Camera2D.h>
 #include <Graphics/DebugRenderer.h>
 
+#include <Core/Project.h>
+
 namespace Plutus
 {
-    void DebugSystem::init(Scene* scene)
+    void DebugSystem::init(Project* project)
     {
-        mScene = scene;
+        mProject = project;
         mDebug = DebugRender::get();
         mDebug->init(mCamera);
     }
 
     void DebugSystem::update(float dt)
     {
-        auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
+        auto view = mProject->scene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
         for (auto [e, trans, rbody] : view.each()) {
 
             for (auto& fixture : rbody.mFixtures) {

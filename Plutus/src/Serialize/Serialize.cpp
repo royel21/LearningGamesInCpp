@@ -132,7 +132,7 @@ namespace Plutus
         std::string ex = Utils::getExtension(filePath);
         if (ex == "json")
         {
-            auto buffer = readFileAsString(filePath);
+            auto buffer = FileIO::readFileAsString(filePath);
             if (!buffer.empty())
             {
                 bool result = document->Parse(buffer.c_str()).HasParseError() == false;
@@ -146,7 +146,7 @@ namespace Plutus
         std::string ex = Utils::getExtension(filePath);
         if (ex == "json")
         {
-            auto buffer = readFileAsString(filePath);
+            auto buffer = FileIO::readFileAsString(filePath);
             if (!buffer.empty())
             {
                 return document.Parse(buffer.c_str()).HasParseError() == false;

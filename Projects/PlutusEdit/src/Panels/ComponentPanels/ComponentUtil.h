@@ -20,7 +20,7 @@ namespace Plutus
         ImGui::PushID(id);
         if (ImGui::TransparentButton(ICON_FA_TRASH_ALT, false, { 1,0,0,1 })) {
             isOpen = false;
-            config->mProject->mEnt.removeComponent<T>();
+            config->mProject.mEnt.removeComponent<T>();
         }
         ImGui::PopID();
         return isOpen;

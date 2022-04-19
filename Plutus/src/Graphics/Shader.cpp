@@ -147,7 +147,7 @@ namespace Plutus
 	{
 		bool isShader = shaderPath.find("void main") != -1;
 
-		std::string data = isShader ? shaderPath : readFileAsString(shaderPath.c_str());
+		std::string data = isShader ? shaderPath : FileIO::readFileAsString(shaderPath.c_str());
 
 		char const* vertSource = data.c_str();
 

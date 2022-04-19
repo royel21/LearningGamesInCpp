@@ -169,11 +169,7 @@ namespace Plutus
         auto writer = ser.getWriter();
         ser.StartObj();
 
-        ser.add2Float("grv", scene->getGravity());
-        ser.addFloat("fps", 1.0f / scene->getTimeIterSec());
-        ser.addInt("vel-itel", scene->getVelIter());
-        ser.addInt("pos-iter", scene->getPositionIter());
-        ser.addBool("cls-forc", scene->getAutoClearForce());
+        ser.addInt("bg-color", scene->mBGColor);
 
         Textures_JSON(ser);
 

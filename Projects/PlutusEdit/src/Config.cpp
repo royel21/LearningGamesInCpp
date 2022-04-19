@@ -1,35 +1,38 @@
 #include "Config.h"
 
-#include <math.h>
-#include <fstream>  
-#include <iostream>
 #include <filesystem>
 
 #include <Utils/Utils.h>
 #include <Utils/FileIO.h>
 #include <Assets/AssetManager.h>
 
-#include <Serialize/SceneLoader.h>
-#include <Serialize/SceneSerializer.h>
+#include <ECS/Scene.h>
 
 #include "Helpers/Render.h"
 #include "Helpers/ConfigHelper.h"
 
+#include <Platforms/Windows/FileUtils.h>
+
+#include <Log/Logger.h>
+
 namespace Plutus
 {
+    void createDirs(const std::string& workingDir) {
+        auto dir = FileIO::joinPath(workingDir, "assets");
+        if (!FileIO::exists(dir))
+        {
+            FileIO::mkdirs(FileIO::joinPath(dir, "fonts"));
+            FileIO::mkdirs(FileIO::joinPath(dir, "scenes"));
+            FileIO::mkdirs(FileIO::joinPath(dir, "sounds"));
+            FileIO::mkdirs(FileIO::joinPath(dir, "textures"));
+        }
+    }
+
     Config::~Config() {
         save();
     }
 
     void Config::load() {
-
-        if (!std::filesystem::exists("assets"))
-        {
-            std::filesystem::create_directories("assets/textures");
-            std::filesystem::create_directories("assets/sounds");
-            std::filesystem::create_directories("assets/fonts");
-            std::filesystem::create_directories("assets/scenes");
-        }
         loadConfig(this);
     }
 
@@ -37,125 +40,57 @@ namespace Plutus
 
     void Config::init(Render* render)
     {
+        if (!currentProject.empty()) {
+            mProject.load(mProjects[currentProject]);
+        }
         mRender = render;
-
-        if (mProject->mScenes.size())
-            mProject->Load(mProject->mScenes[mProject->mOpenScene]);
-
         mRender->init(this);
     }
 
-    void Config::CreateProj(const char* name)
+    void Config::CreateProj()
     {
-        mProject = &mProjects[name];
-        OpenProject = name;
+        std::string filePath;
 
-        mRender->reload(this);
+        if (windowDialog(SAVE_FILE, filePath, "Select Directory")) {
+            auto path = Utils::getDirectory(filePath);
+            auto name = Utils::getFileName(filePath);
+
+            createDirs(path);
+
+            mProject.save(filePath);
+            mProject.workingDir = path;
+
+            currentProject = name;
+            mProjects[name] = filePath;
+        }
     }
 
     void Config::LoadProject(const std::string& name) {
-        mProject = &mProjects[name];
-        if (mProject->mScenes.size()) {
-            auto found = mProject->mScenes.find(mProject->mOpenScene);
-            if (found != mProject->mScenes.end()) {
-                mProject->Load(found->second);
+
+        auto found = mProjects.find(name);
+        if (found != mProjects.end()) {
+            if (FileIO::exists(found->second)) {
+                mProject.workingDir = Utils::getDirectory(found->second);
+                mProject.load(found->second);
+                mRender->reload(this);
             }
         }
-        else {
-            mProject->mScene = CreateRef<Scene>();
-            mProject->mTempScene = CreateRef<Scene>();
-        }
-
-        mRender->reload(this);
     }
 
-    void Config::RenameProj(const std::string& oldname, const std::string newName) {
-        mProjects[newName] = mProjects[oldname];
-        mProjects.erase(oldname);
-        if (OpenProject.compare(oldname) == 0) {
-            mProject = &mProjects[newName];
-            OpenProject = newName;
-        }
-    }
-
-    Project::Project()
+    EditorProject::EditorProject() : Project()
     {
-        mScene = CreateRef<Scene>();
         mTempScene = CreateRef<Scene>();
     }
 
-    void Project::init()
+    void EditorProject::Create(const std::string& name)
     {
-        vpWidth = 1280;
-        vpHeight = 768;
-        windowWidth = 1280;
-        windowHeight = 1280;
 
-        zoomLevel = 1.0f;
-
-        mEnt = {};
-        mOpenScene = "";
-        mScene = CreateRef<Scene>();
-        mTempScene = CreateRef<Scene>();
     }
 
-    void Project::Create(const std::string& name)
+    void EditorProject::add(const std::string& path)
     {
-        auto nName = name + ".json";
-        auto found = mScenes.find(name);
-
-        if (found == mScenes.end()) {
-            auto newScene = "assets/scenes/" + name;
-            if (Utils::createFile(newScene.c_str(), "{}")) {
-                mScenes[nName] = newScene;
-                mOpenScene = nName;
-
-                mEnt = {};
-                mScene->clear();
-                AssetManager::get()->destroy();
-            }
-        }
-    }
-
-    void Project::add(const std::string& path)
-    {
-        auto name = Utils::getFileName(path);
-        auto found = mScenes.find(name);
-        if (found == mScenes.end()) {
-            auto newScene = "assets/scenes/" + name;
-            mEnt = {};
-            mScene->clear();
-            AssetManager::get()->destroy();
-            if (SceneLoader::loadFromPath(newScene.c_str(), mScene.get())) {
-                mScenes[name] = newScene;
-                mOpenScene = name;
-            }
-        }
-    }
-
-    void Project::Load(const std::string& path)
-    {
-        auto name = Utils::getFileName(path);
-        auto found = mScenes.find(name);
-        if (found != mScenes.end()) {
-
-            mEnt = {};
-            mScene->clear();
-            AssetManager::get()->destroy();
-            if (SceneLoader::loadFromPath(path.c_str(), mScene.get())) {
-                found->second = path;
-                std::replace(found->second.begin(), found->second.end(), '\\', '/');
-                mOpenScene = name;
-            }
-        }
-    }
-
-    void Project::Save()
-    {
-        std::string json = Plutus::SceneSerializer(mScene.get());
-        auto found = mScenes.find(mOpenScene);
-        if (found != mScenes.end())
-            saveBufferToFile(found->second, json.c_str());
+        scene->clear();
+        mTempScene->clear();
     }
 
 } // namespace Plutus

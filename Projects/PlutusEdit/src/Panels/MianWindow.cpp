@@ -54,7 +54,7 @@ namespace Plutus
         icons_config.PixelSnapH = true;
         const char* openSanf = "assets/fonts/OpenSans/OpenSans-Regular.ttf";
         const char* fontawson = "assets/fonts/fa-solid-900.ttf";
-        if (exists(openSanf) && exists(fontawson)) {
+        if (FileIO::exists(openSanf) && FileIO::exists(fontawson)) {
             mImGui_IO->Fonts->AddFontFromFileTTF(openSanf, 20.0f);
             mImGui_IO->Fonts->AddFontFromFileTTF(fontawson, 18.0f, &icons_config, icons_ranges);
             // use FONT_ICON_FILE_NAME_FAR if you want regular instead of solid
@@ -89,11 +89,14 @@ namespace Plutus
         auto& projects = mConfig->mProjects;
         if (!mProjToRemove.empty())
         {
-            if (mConfig->mProjects.size() > 1) {
+            if (mConfig->mProjects.size() > 0) {
                 mConfig->mProjects.erase(mProjToRemove);
 
                 if (mConfig->mProjects.size()) {
                     mConfig->LoadProject(mConfig->mProjects.begin()->first);
+                }
+                else {
+                    mConfig->currentProject = "";
                 }
             }
         }
@@ -150,7 +153,7 @@ namespace Plutus
             {
                 if (ImGui::MenuItem(ICON_FA_FILE " New", "Ctrl+N", noSplit))
                 {
-                    open = true;
+                    mConfig->CreateProj();
                 }
 
                 if (ImGui::BeginMenu(ICON_FA_LIST " Projects"))
@@ -172,7 +175,7 @@ namespace Plutus
                         if (ImGui::MenuItem(item.c_str()))
                         {
                             mConfig->LoadProject(recent.first.c_str());
-                            mConfig->OpenProject = recent.first;
+                            mConfig->currentProject = recent.first;
                         }
                     }
                     ImGui::EndMenu();
@@ -197,26 +200,6 @@ namespace Plutus
             if (mShowDemo) {
                 ImGui::ShowDemoWindow();
             }
-        }
-
-        if (open) ImGui::NewFileDialig("New Project", [&](const std::string& name) {
-            if (!name.empty()) mConfig->CreateProj(name.c_str());
-            open = false;
-            });
-
-        if (edit && ImGui::BeginDialogText("Edit Project")) {
-            ImGui::BeginUIGroup();
-            ImGui::BeginCol("Name", 200);
-            ImGui::InputString("##n-p", toEdit);
-            ImGui::EndUIGroup();
-            ImGui::EndDialogText([&](bool save) {
-                if (save) {
-                    mConfig->RenameProj(projName, toEdit);
-                    toEdit = "";
-                    projName = "";
-                }
-                edit = false;
-                });
         }
     }
 }

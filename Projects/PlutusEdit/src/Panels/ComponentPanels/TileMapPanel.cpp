@@ -37,7 +37,7 @@ namespace Plutus
         {
             static bool addTexture = false;
             mIsOpen = true;
-            mTileMap = mConfig->mProject->mEnt.getComponent<TileMapComponent>();
+            mTileMap = mConfig->mProject.mEnt.getComponent<TileMapComponent>();
 
             float textWidth = ImGui::GetContentRegionAvailWidth() * 0.35f;
             ImGui::Row("Tile Width", textWidth);

@@ -13,6 +13,8 @@
 
 #include <Math/Vectors.h>
 
+#include <Core/Project.h>
+
 namespace Plutus
 {
     int my_exception_handler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description)
@@ -63,22 +65,22 @@ namespace Plutus
         registerComponents();
     }
 
-    void ScriptSystem::init(Scene* scene)
+    void ScriptSystem::init(Project* project)
     {
-        mScene = scene;
+        mProject = project;
         //Scene References
-        mGlobalLua.set("scene", scene);
+        mGlobalLua.set("scene", project->scene.get());
 
-        auto view = scene->getRegistry()->view<ScriptComponent>();
+        auto view = project->scene->getRegistry()->view<ScriptComponent>();
 
         for (auto [ent, script] : view.each()) {
-            script.init(mGlobalLua, { ent, scene });
+            script.init(mGlobalLua, { ent, project->scene.get() });
         }
     }
 
     void ScriptSystem::update(float dt)
     {
-        auto view = mScene->getRegistry()->view<ScriptComponent>();
+        auto view = mProject->scene->getRegistry()->view<ScriptComponent>();
 
         for (auto [ent, script] : view.each()) {
             script.update(dt);

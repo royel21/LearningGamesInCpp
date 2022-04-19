@@ -9,7 +9,7 @@ namespace Plutus
     bool windowDialog(int mode, std::string& path, const std::string& title)
     {
         OPENFILENAME ofn;
-        char* FilterSpec = "All Files(*.*)\0*.*\0";
+        char* FilterSpec = "Projects (*.json*)\0";
         char szFileName[MAX_PATH];
         char szFileTitle[MAX_PATH];
 
@@ -35,6 +35,19 @@ namespace Plutus
         bool success = false;
         TCHAR currentDir[MAX_PATH];
         GetCurrentDirectory(MAX_PATH, currentDir);
+
+        switch (mode) {
+        case 0: {
+            break;
+        }
+        case 1: {
+            break;
+        }
+        case 2: {
+            break;
+        }
+        }
+
         if (mode)
         {
             success = GetOpenFileName((LPOPENFILENAME)&ofn);

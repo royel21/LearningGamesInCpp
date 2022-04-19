@@ -28,7 +28,7 @@ namespace Plutus
             return;
         }
 
-        auto buffer = readFile(path.c_str());
+        auto buffer = FileIO::readFile(path.c_str());
         // Load font as face
         FT_Face face;
         if (FT_New_Memory_Face(ft, buffer.data(), (long)buffer.size(), 0, &face)) {

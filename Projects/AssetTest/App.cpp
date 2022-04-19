@@ -32,7 +32,7 @@ namespace Plutus
         mScene = CreateRef<Scene>();
         mFBuffer.init(mWidth, mHeight, true);
 
-        mSystemManager.setScene(mScene.get());
+        mSystemManager.setProject(&mProject);
         auto render = mSystemManager.AddSystem<RenderSystem>(&mCamera);
         // render->setFrameBuffer(&mFBuffer);
         // mBatch = render->getSpritebath();

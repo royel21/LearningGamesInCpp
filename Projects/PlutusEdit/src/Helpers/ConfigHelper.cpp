@@ -21,30 +21,12 @@ namespace Plutus
 
             config->winWidth = jhelper.getInt("win-width", 1280);
             config->winHeight = jhelper.getInt("win-height", 768);
-            config->OpenProject = jhelper.getString("open-project");
+            config->currentProject = jhelper.getString("current-project");
 
             //Create All Projects
             for (auto& jproject : doc["projects"].GetArray()) {
-
-                auto& project = config->mProjects[jproject["name"].GetString()];
-
-                project.mOpenScene = jproject["open-scene"].GetString();
-                project.vpWidth = jproject["width"].GetInt();
-                project.vpHeight = jproject["height"].GetInt();
-
-                //Create the List of scene for this project
-                for (auto& scene : jproject["scenes"].GetArray()) {
-                    project.mScenes[scene["name"].GetString()] = scene["path"].GetString();
-                }
+                config->mProjects[jproject["name"].GetString()] = jproject["path"].GetString();
             }
-        }
-
-        if (config->OpenProject.empty()) {
-            config->mProject = &config->mProjects["Project1"];
-            config->OpenProject = "Project1";
-        }
-        else {
-            config->mProject = &config->mProjects[config->OpenProject];
         }
     }
 
@@ -55,39 +37,24 @@ namespace Plutus
         {
             ser.addInt("win-width", config->winWidth ? config->winWidth : 1280);
             ser.addInt("win-height", config->winHeight ? config->winHeight : 1280);
-            ser.addString("open-project", config->OpenProject);
-            ser.StartArr("projects");
-            {
-                for (auto& p : config->mProjects) {
-                    ser.StartObj();
-                    {
-                        ser.addString("name", p.first);
-                        ser.addString("open-scene", p.second.mOpenScene);
-                        ser.addInt("win-width", p.second.windowWidth);
-                        ser.addInt("win-height", p.second.windowHeight);
-                        ser.addInt("vp-width", p.second.vpWidth);
-                        ser.addInt("vp-height", p.second.vpHeight);
-                        ser.addFloat("zoom", p.second.zoomLevel);
+            ser.addString("current-project", config->currentProject);
 
-                        ser.StartArr("scenes");
-                        { for (auto& p : p.second.mScenes) {
-                            ser.StartObj();
-                            {
-                                ser.addString("name", p.first);
-                                ser.addString("path", p.second);
-                            }
-                            ser.EndObj();
-                        }
-                        }
-                        ser.EndArr();
-                    }
-                    ser.EndObj();
+            ser.StartArr("projects");
+            for (auto& proj : config->mProjects) {
+                ser.StartObj();
+                {
+                    ser.addString("name", proj.first);
+                    ser.addString("path", proj.second);
                 }
+                ser.EndObj();
             }
             ser.EndArr();
+
+            if (!config->currentProject.empty())
+                config->mProject.save(config->mProjects[config->currentProject]);
         }
         ser.EndObj();
 
-        saveBufferToFile("config.json", ser.getString());
+        FileIO::saveBufferToFile("config.json", ser.getString());
     }
 }

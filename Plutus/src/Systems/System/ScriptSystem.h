@@ -9,7 +9,7 @@ namespace Plutus
     public:
         ScriptSystem(Camera2D* camera);
 
-        void init(Scene* scene);
+        void init(Project* project);
         void update(float dt);
     private:
         sol::state mGlobalLua;

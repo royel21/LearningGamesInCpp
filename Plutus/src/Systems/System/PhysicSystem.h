@@ -11,7 +11,7 @@ namespace Plutus {
 	public:
 		~PhysicSystem() { destroy(); };
 
-		void init(Scene* scene);
+		void init(Project* project);
 		void update(float dt);
 		void destroy();
 	private:

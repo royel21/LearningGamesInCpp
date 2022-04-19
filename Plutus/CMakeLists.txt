@@ -15,6 +15,11 @@ file(GLOB MATH src/Math/*.h src/Math/*.cpp)
 file(GLOB LOG src/Log/*.h src/Log/*.cpp)
 set(BASE_SRCS ${ASSETS} ${CORE} ${ECS} ${GRAPHICS} ${INPUT} ${PARTICLES} ${SERIALIZE} ${SYSTEMS} ${TIME} ${UTILS} ${PHYSICS} ${MATH} ${LOG})
 
+if (WIN32)
+  list(APPEND BASE_SRCS src/Platforms/Windows/FileUtils.cpp)
+endif ()
+
+
 add_subdirectory(libs)
 
 find_package(OpenGL REQUIRED)

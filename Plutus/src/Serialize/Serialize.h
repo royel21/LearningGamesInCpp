@@ -66,6 +66,4 @@ namespace Plutus
     void toJsonFile(const std::string& path, const char* buffer);
 
     bool loadJsonFromFile(const char* filePath, rapidjson::Document& doc);
-    void saveJsonToFile(const char* filePath, const char* buffer);
-
 } // namespace Plutus

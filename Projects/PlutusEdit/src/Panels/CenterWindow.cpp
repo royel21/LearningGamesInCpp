@@ -37,7 +37,7 @@ namespace Plutus
         scripts = Utils::listFiles("assets/script", ".lua");
         currentScript = scripts.size() ? scripts[0] : "";
         if (!currentScript.empty()) {
-            mTextEditor.SetText(readFileAsString(currentScript.c_str()));
+            mTextEditor.SetText(FileIO::readFileAsString(currentScript.c_str()));
         }
 
         mSysManager.AddSystem<ScriptSystem>(&mConfig->mRender->mCamera);
@@ -57,7 +57,7 @@ namespace Plutus
 
             if (Input::get()->onKeyPressed("F3")) {
                 camera.setScale(1);
-                mConfig->vpZoom = 1;
+                mConfig->mProject.zoomLevel = 1;
             }
 
             if (Input::get()->onKeyPressed("MouseLeft"))
@@ -72,7 +72,7 @@ namespace Plutus
                 {
                     vec2f result = pos - mMouseLastCoords;
                     result /= camera.getScale();
-                    mConfig->vpPos = mCamCoords - result;
+                    mConfig->mProject.vpPos = mCamCoords - result;
                 }
 
                 auto scroll = Input::get()->getMouseWheel();
@@ -82,17 +82,17 @@ namespace Plutus
 
                     auto newVal = camera.getScale() + (scroll > 0 ? 0.05f : -0.05f);
                     camera.setScale(CHECKLIMIT(newVal, 0.20f, 6));
-                    mConfig->vpZoom = camera.getScale();
+                    mConfig->mProject.zoomLevel = camera.getScale();
 
                     auto newPos = pos / camera.getScale();
 
                     auto offset = newPos - scalePos;
-                    mConfig->vpPos = camera.getPosition() - offset;
+                    mConfig->mProject.vpPos = camera.getPosition() - offset;
                 }
 
                 // mConfig->vpPos = { roundf(mConfig->vpPos.x), floor(mConfig->vpPos.y) };
 
-                camera.setPosition(mConfig->vpPos);
+                camera.setPosition(mConfig->mProject.vpPos);
             }
         }
     }
@@ -107,10 +107,10 @@ namespace Plutus
                 mMouseLastCoords = mConfig->mMouseCoords;
                 auto camPos = mConfig->mRender->mCamera.getPosition();
                 mCamCoords = { camPos.x, camPos.y };
-                ent = project->mScene->getEntity(mConfig->mRender->mFramePicker.getEntId(mMouseLastCoords));
+                ent = project.scene->getEntity(mConfig->mRender->mFramePicker.getEntId(mMouseLastCoords));
 
                 if (ent) {
-                    project->mEnt = ent;
+                    project.mEnt = ent;
                     if (ent.hasComponent<TransformComponent>()) {
                         auto pos = ent.getComponent<TransformComponent>()->getPosition();
                         mEntLastPos = { pos.x, pos.y };
@@ -118,7 +118,7 @@ namespace Plutus
                 }
             }
 
-            if (Input::get()->onKeyDown("MouseLeft") && mConfig->mProject->mScene->isValid(ent))
+            if (Input::get()->onKeyDown("MouseLeft") && mConfig->mProject.scene->isValid(ent))
             {
                 if (ent.hasComponent<TransformComponent>()) {
                     auto trans = ent.getComponent<TransformComponent>();
@@ -226,21 +226,21 @@ namespace Plutus
 
                 if (ImGui::TransparentButton(isRunning ? ICON_FA_STOP : ICON_FA_PLAY)) {
                     if (isRunning) {
-                        mConfig->mRender->setScene(project->mScene.get());
+                        mConfig->mRender->setScene(project.scene.get());
                         mConfig->state = Editing;
-                        project->mTempScene->clear();
+                        project.mTempScene->clear();
                         mSysManager.stop();
                         DebugRender::get()->setShouldDraw(mConfig->drawGrid);
                     }
                     else {
                         mConfig->state = Running;
 
-                        project->mTempScene.get()->copyScene(project->mScene.get());
+                        project.mTempScene.get()->copyScene(project.scene.get());
                         DebugRender::get()->setShouldDraw(false);
 
-                        mSysManager.setScene(mConfig->mProject->mTempScene.get());
+                        mSysManager.setProject(&mConfig->mProject);
                         mSysManager.init();
-                        mConfig->mRender->setScene(mConfig->mProject->mTempScene.get());
+                        mConfig->mRender->setScene(mConfig->mProject.mTempScene.get());
                     }
                 }
                 ImGui::SameLine();
@@ -257,7 +257,7 @@ namespace Plutus
                 int selected = Utils::getIndex(scripts, currentScript);
                 if (ImGui::ComboBox("##scr-list", scripts, selected)) {
                     currentScript = scripts[selected];
-                    mTextEditor.SetText(readFileAsString(currentScript.c_str()));
+                    mTextEditor.SetText(FileIO::readFileAsString(currentScript.c_str()));
                 }
                 ImGui::PopItemWidth();
             }

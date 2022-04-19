@@ -12,6 +12,11 @@ namespace Plutus
 {
     namespace Utils
     {
+        std::string getDirectory(const std::string& filePath)
+        {
+            return std::filesystem::path(filePath).remove_filename().string();
+        }
+
         std::string getFileName(const std::string& filePath)
         {
             return std::filesystem::path(filePath).filename().string();

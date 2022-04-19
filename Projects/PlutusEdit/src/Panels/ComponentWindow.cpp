@@ -18,10 +18,10 @@ namespace Plutus
 
     template<typename T>
     void ComponentMenuItem(Config* config, const char* name) {
-        if (!config->mProject->mEnt.hasComponent<T>()) {
+        if (!config->mProject.mEnt.hasComponent<T>()) {
             if (ImGui::MenuItem(name))
             {
-                config->mProject->mEnt.addComponent<T>();
+                config->mProject.mEnt.addComponent<T>();
             }
         }
     }
@@ -29,8 +29,8 @@ namespace Plutus
     void ComponentWindow::draw()
     {
         if (ImGui::Begin("##ComPanel")) {
-            mEnt = mConfig->mProject->mEnt;
-            if (mConfig->mProject->mScene->isValid(mEnt)) {
+            mEnt = mConfig->mProject.mEnt;
+            if (mConfig->mProject.scene->isValid(mEnt)) {
                 ImGui::InputString("Name##c-tag", mEnt.getComponent<Tag>()->Name);
 
                 if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE " Add Component##cp")) {

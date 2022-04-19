@@ -69,7 +69,7 @@ namespace Plutus
         std::string ex = Utils::getExtension(path);
         if (ex == "json")
         {
-            auto data = readFileAsString(path);
+            auto data = FileIO::readFileAsString(path);
             if (!data.empty()) {
                 return loadFromString(data, scene);
             }
@@ -105,11 +105,7 @@ namespace Plutus
             auto docObj = doc.GetJsonObject();
             jhelper.value = &docObj;
 
-            scene->setGravity(jhelper.getFloat2("grv", { 0.0f, -9.8f }));
-            scene->setTimeIterSec(jhelper.getFloat("fps", 60));
-            scene->setVelIter(jhelper.getInt("vel-itel", 8));
-            scene->setPositionIter(jhelper.getInt("pos-itel", 3));
-            scene->setAutoClearForce(jhelper.getBool("cls-forc", true));
+            scene->mBGColor = jhelper.getInt("bg-color");
 
             if (doc.HasMember("fonts") && doc["fonts"].IsArray())
             {

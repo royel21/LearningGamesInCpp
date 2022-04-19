@@ -19,7 +19,7 @@ GameScreen::~GameScreen()
 
 void GameScreen::Init()
 {
-    mSystemManager.setScene(&mScene);
+    mSystemManager.setProject(&mCore->mProject);
     mSystemManager.AddSystem<Plutus::ScriptSystem>(mCamera);
     mSystemManager.AddSystem<Plutus::PhysicSystem>();
     mSystemManager.AddSystem<Plutus::AnimationSystem>();

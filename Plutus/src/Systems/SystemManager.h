@@ -6,8 +6,8 @@
 
 namespace Plutus
 {
-    class Scene;
     class ISystem;
+    struct Project;
 
     class SystemManager
     {
@@ -16,7 +16,7 @@ namespace Plutus
         SystemManager();
         ~SystemManager() { cleanup(); };
 
-        void setScene(Scene* scene) { mScene = scene; }
+        void setProject(Project* project) { mProject = project; }
 
         void init();
         void stop();
@@ -48,7 +48,7 @@ namespace Plutus
         void cleanup();
 
     private:
-        Scene* mScene;
+        Project* mProject;
         std::unordered_map<const std::type_info*, ISystem*> mSystems;
     };
 } // namespace Plutus

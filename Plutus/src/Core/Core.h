@@ -7,7 +7,7 @@
 #include <Time/Limiter.h>
 #include <Graphics/Camera2D.h>
 
-#include <memory>
+#include "Project.h"
 
 
 namespace Plutus
@@ -38,6 +38,8 @@ namespace Plutus
         int mWidth = 1280;
         //Height of the Window
         int mHeight = 768;
+
+        bool mExit = false;
         //Title of the Window
         std::string mName = "Plutus App";
         //Game Main Camera
@@ -46,7 +48,9 @@ namespace Plutus
         std::string mNextScreen;
         IScreen* mCurrentScreen = nullptr;
         std::unordered_map<std::string, IScreen*> mScreenList;
-        bool mExit = false;
+
+    public:
+        Project mProject;
 
     public:
         Core() = default;

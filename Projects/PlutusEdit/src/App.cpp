@@ -25,40 +25,53 @@ namespace Plutus
 
     }
 
+    void App::initialize()
+    {
+        if (!mConfig.currentProject.empty() && !isInitialize) {
+            mConfig.init(&mRender);
+            mAssetsWin.init(&mConfig);
+            mCenterWin.init(&mConfig);
+            mCompWin.init(&mConfig);
+            mConfigWin.init(&mConfig, &mRender);
+            mSceneWindow.init(&mConfig, &mRender);
+            isInitialize = true;
+        }
+
+        isInitialize = !mConfig.currentProject.empty();
+    }
+
     void App::Init() {
-        mConfig.init(&mRender);
-        // mRender.init(&mConfig);
-
         mMainWin.init(&mConfig, this);
-        mAssetsWin.init(&mConfig);
-        mCenterWin.init(&mConfig);
-        mCompWin.init(&mConfig);
-        mConfigWin.init(&mConfig, &mRender);
-        mSceneWindow.init(&mConfig, &mRender);
-
-        // SceneWindow.init()
     }
 
     void App::Update(float dt) {
+        initialize();
+
         mExit = mMainWin.mExit;
-        mCenterWin.update(dt);
+        if (isInitialize) {
+            mCenterWin.update(dt);
+        }
     }
 
     void App::Draw() {
 
         mMainWin.Begin();
         {
-            mCenterWin.draw();
-            if (mConfig.state != Running) {
-                mAssetsWin.draw();
-                mSceneWindow.draw();
-                mCompWin.draw();
-                mConfigWin.draw();
+            if (isInitialize) {
+                mCenterWin.draw();
+                if (mConfig.state != Running) {
+                    mAssetsWin.draw();
+                    mSceneWindow.draw();
+                    mCompWin.draw();
+                    mConfigWin.draw();
+                }
             }
         }
-        mMainWin.End();
 
-        mRender.draw();
+        mMainWin.End();
+        if (isInitialize) {
+            mRender.draw();
+        }
     }
     void App::Exit() {
 

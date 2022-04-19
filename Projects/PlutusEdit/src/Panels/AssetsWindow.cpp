@@ -231,7 +231,7 @@ namespace Plutus
                     if (ImGui::BeginPopupContextItem())
                     {
                         if (isScene && ImGui::MenuItem(("Add Scene '" + name + "' to project").c_str())) {
-                            mConfig->mProject->add(path.c_str());
+                            mConfig->mProject.add(path.c_str());
                         }
 
                         if (!isScene && ImGui::MenuItem(("Add " + name + " to scene").c_str())) {

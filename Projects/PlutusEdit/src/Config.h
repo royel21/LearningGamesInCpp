@@ -5,8 +5,8 @@
 
 #include <ECS/Scene.h>
 #include <Math/Vectors.h>
-
 #include <Utils/Pointer.h>
+#include <Core/Project.h>
 
 namespace Plutus
 {
@@ -18,52 +18,25 @@ namespace Plutus
         Running
     };
 
-    struct Project {
+    struct EditorProject : public Project {
         // Window Size
-        int windowWidth = 1280;
-        int windowHeight = 768;
-        // View Port Size
-        int vpWidth = 1280;
-        int vpHeight = 768;
+        std::string workingDir = "./";
 
-        float zoomLevel = 1.0f;
-        //FPS Limiter
-        float FPS = 60.0f;
-        /*********************** Box2d Config ***********************/
-        // Box2d Velocity Iteration
-        int velIter = 8;
-        // Box2d Position Iteration
-        int positionIter = 3;
-        // Box2d Time step FPS 
-        float timeStepInSec = 60.0f;
-        // Box2d gravity
-        vec2f gravity = { 0.0f, -9.8f };
-        // Box2d Auto Clear Force
-        bool autoClearForce = true;
+        int tileWidth = 64;
+        int tileHeight = 64;
 
         Entity mEnt;
-        Ref<Scene> mScene;
         Ref<Scene> mTempScene;
-        std::string mOpenScene;
 
-        std::unordered_map<std::string, std::string> mScenes = {};
-
-        Project();
-
-        void init();
+        EditorProject();
 
         void Create(const std::string& name);
         void add(const std::string& path);
-        void Load(const std::string& path);
-        void Save();
-        void remove(std::string id) { mScenes.erase(id); }
+        void remove(std::string id) { sceneList.erase(id); }
     };
 
     struct Config
     {
-        float vpZoom = 1.0f;
-        vec4f vpColor = { 1.0f };
-        vec2f vpPos;
         //Mouse Coords in view port
         vec2f mMouseCoords;
         // Is Viewport hovered
@@ -77,11 +50,12 @@ namespace Plutus
 
         Camera2D* mCamera;
 
-        Project* mProject;
+        EditorProject mProject;
         //Current Open Project
-        std::string OpenProject = "";
+        std::string currentProject = "";
+        std::string workingDir;
         //List Of Project
-        std::unordered_map<std::string, Project> mProjects = {};
+        std::unordered_map<std::string, std::string> mProjects;
         bool isLoaded = false;
 
         State state = Editing;
@@ -93,9 +67,8 @@ namespace Plutus
         ~Config();
 
         // Create a Blank Project
-        void CreateProj(const char* filePath);
+        void CreateProj();
         void LoadProject(const std::string& name);
-        void RenameProj(const std::string& oldname, const std::string newName);
 
     private:
         void save();

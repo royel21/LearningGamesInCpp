@@ -10,7 +10,7 @@ namespace Plutus
     {
     public:
         DebugSystem(Camera2D* camera) : ISystem(camera) {};
-        void init(Scene* scene);
+        void init(Project* project);
         void update(float dt);
         void drawGrid(bool isDraw, int cellW = 32, int cellH = 32);
     private:

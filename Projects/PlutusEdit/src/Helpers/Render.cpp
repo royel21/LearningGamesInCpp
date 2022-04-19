@@ -20,20 +20,23 @@ namespace Plutus
         mConfig = config;
         reload(config);
 
-        mShader.init(GLSL::vertexShader, GLSL::fragShader);
-        mDebugRender = Plutus::DebugRender::get();
-        mDebugRender->init(&mCamera);
-        mDebugRender->setCellSize({ 64,64 });
+        if (!isLoaded) {
+            mShader.init(GLSL::vertexShader, GLSL::fragShader);
+            mDebugRender = Plutus::DebugRender::get();
+            mDebugRender->init(&mCamera);
+            mDebugRender->setCellSize({ mConfig->mProject.tileWidth, mConfig->mProject.tileHeight });
+            isLoaded = true;
+        }
     }
 
     void Render::reload(Config* config)
     {
-        int w = config->mProject->vpWidth;
-        int h = config->mProject->vpHeight;
+        int w = config->mProject.vpWidth;
+        int h = config->mProject.vpHeight;
 
         mCamera.init(w, h);
-        mCamera.setPosition(config->vpPos);
-        mCamera.setScale(config->vpZoom);
+        mCamera.setPosition(config->mProject.vpPos);
+        mCamera.setScale(config->mProject.zoomLevel);
 
         mSpriteBatch.init();
         mSpriteBatch.setShader(&mShader);
@@ -41,7 +44,7 @@ namespace Plutus
 
         mFramePicker.init(w, h, true);
         mFrameBuffer.init(w, h);
-        mScene = config->mProject->mScene.get();
+        mScene = config->mProject.scene.get();
     }
 
 
@@ -50,7 +53,7 @@ namespace Plutus
     {
         if (mScene && mConfig) {
             // auto start = Timer::millis();
-            mFrameBuffer.setColor(mConfig->vpColor);
+            mFrameBuffer.setColor(mScene->mBGColor);
             prepare();
             mSpriteBatch.begin();
 

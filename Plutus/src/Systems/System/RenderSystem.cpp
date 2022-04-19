@@ -11,6 +11,8 @@
 
 #include <Assets/Assets.h>
 
+#include <Core/Project.h>
+
 namespace Plutus
 {
     RenderSystem::RenderSystem(Camera2D* camera) : ISystem(camera) {
@@ -18,8 +20,8 @@ namespace Plutus
         mRenderer.init();
     }
 
-    void RenderSystem::init(Scene* scene) {
-        mScene = scene;
+    void RenderSystem::init(Project* project) {
+        mProject = project;
         mRenderer.setShader(&mShader);
         mRenderer.setCamera(mCamera);
     }
@@ -28,8 +30,8 @@ namespace Plutus
     {
         // auto start = Timer::millis();
 
-        auto viewMap = mScene->getRegistry()->view<TileMapComponent>();
-        auto view = mScene->getRegistry()->view<TransformComponent, SpriteComponent>();
+        auto viewMap = mProject->scene->getRegistry()->view<TileMapComponent>();
+        auto view = mProject->scene->getRegistry()->view<TransformComponent, SpriteComponent>();
 
         /******************Resize temp buffer************************/
         auto size = view.size_hint();

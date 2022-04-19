@@ -13,7 +13,7 @@ namespace Plutus
     public:
         RenderSystem(Camera2D* camera);
         ~RenderSystem() { destroy(); }
-        void init(Scene* scene) override;
+        void init(Project* project) override;
         void update(float dt) override;
         void destroy() override;
         inline void setFrameBuffer(FrameBuffer* fbuffer) { mFrameBuff = fbuffer; }

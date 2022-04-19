@@ -10,6 +10,8 @@ namespace Plutus
 {
     namespace Utils
     {
+        std::string getDirectory(const std::string& filePath);
+
         std::string getFileName(const std::string& filePath);
         //Get file extenxion
         std::string getExtension(const std::string& fileName);
