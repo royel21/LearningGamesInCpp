@@ -5,11 +5,6 @@
 
 namespace Plutus
 {
-    Texture::Texture(const std::string& path, int w, int h, int minFilter, int magFilter)
-    {
-        init(path, w, h, minFilter, magFilter);
-    }
-
     void Texture::init(const std::string& path, int w, int h, int minFilter, int magFilter)
     {
         destroy();
@@ -77,7 +72,7 @@ namespace Plutus
         int ch = Utils::getExtension(mPath).compare("png") == 0 ? 4 : 3;
 
         int BPP;
-        uint8_t* out = stbi_load(mPath.c_str(), &mWidth, &mHeight, &BPP, ch);
+        uint8_t* out = stbi_load((baseDir + mPath).c_str(), &mWidth, &mHeight, &BPP, ch);
         if (mWidth && mHeight) {
             auto format = ch == 3 ? GL_RGB8 : GL_RGBA8;
             auto gltype = ch == 3 ? GL_RGB : GL_RGBA;

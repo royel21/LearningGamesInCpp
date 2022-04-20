@@ -17,7 +17,7 @@ namespace Plutus
         int mType = EFFECT;
 
         Sound() = default;
-        Sound(const std::string& path, int type = EFFECT);
+        Sound(const std::string& path, int type = EFFECT) { init(path, type); }
 
         ~Sound() {
             destroy();

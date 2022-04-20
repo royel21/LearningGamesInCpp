@@ -22,7 +22,9 @@ namespace Plutus
     {
     public:
         Texture() = default;
-        Texture(const std::string& path, int w = 0, int h = 0, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
+        Texture(const std::string& path, int w = 0, int h = 0, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST) {
+            init(path, w, h, minFilter, magFilter);
+        }
 
         void init(const std::string& path, int w = 0, int h = 0, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
 

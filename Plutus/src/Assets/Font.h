@@ -34,7 +34,7 @@ namespace Plutus
         Font() = default;
         ~Font() { destroy(); }
         //Constructor
-        Font(const std::string& path, unsigned int fontSize = 16);
+        Font(const std::string& path, unsigned int fontSize = 16) { init(path, fontSize); }
         void init(const std::string& path, unsigned int fontSize = 16);
 
         void destroy() override;

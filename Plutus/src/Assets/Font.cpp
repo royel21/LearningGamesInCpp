@@ -12,10 +12,6 @@ constexpr int BITMAPSIZE = 500;
 
 namespace Plutus
 {
-    Font::Font(const std::string& path, unsigned int fontSize) {
-        init(path, fontSize);
-    }
-
     void Font::init(const std::string& path, unsigned int fontSize)
     {
         mPath = path;
@@ -28,7 +24,7 @@ namespace Plutus
             return;
         }
 
-        auto buffer = FileIO::readFile(path.c_str());
+        auto buffer = FileIO::readFile((baseDir + mPath).c_str());
         // Load font as face
         FT_Face face;
         if (FT_New_Memory_Face(ft, buffer.data(), (long)buffer.size(), 0, &face)) {

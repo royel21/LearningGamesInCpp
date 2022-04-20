@@ -10,8 +10,11 @@ namespace Plutus
     struct Asset
     {
         std::string mPath;
+        std::string baseDir = "";
         virtual ~Asset() {};
 
         virtual void destroy() = 0;
+
+        void setDir(const std::string dir) { baseDir = dir; }
     };
 } // namespace Plutus

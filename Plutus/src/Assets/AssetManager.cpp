@@ -22,7 +22,6 @@ namespace Plutus
 				delete mAudioEngine;
 				mAudioEngine = nullptr;
 				Logger::error("Failed to initialize audio engine.");
-
 			}
 		}
 	}

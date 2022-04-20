@@ -6,11 +6,6 @@
 
 namespace Plutus
 {
-    Sound::Sound(const std::string& path, int type)
-    {
-        init(path, type);
-    }
-
     void Sound::init(const std::string& path, int type)
     {
         if (AssetManager::get()->mAudioEngine == nullptr) {
@@ -33,12 +28,12 @@ namespace Plutus
             flags = MA_SOUND_FLAG_STREAM;
         }
 
-        ma_result result = ma_sound_init_from_file(AssetManager::get()->mAudioEngine, path.c_str(), flags, NULL, NULL, mSound);
+        ma_result result = ma_sound_init_from_file(AssetManager::get()->mAudioEngine, (baseDir + mPath).c_str(), flags, NULL, NULL, mSound);
 
         if (result != MA_SUCCESS) {
             delete mSound;
             mSound = nullptr;
-            Logger::error("Failed load sound path: %s", path.c_str());
+            Logger::error("Failed load sound path: %s", (baseDir + mPath).c_str());
             return;
         }
     }

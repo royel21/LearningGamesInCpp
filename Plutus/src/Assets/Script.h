@@ -3,10 +3,16 @@
 
 namespace Plutus
 {
-    class Script : public Asset
+    struct Script : public Asset
     {
-    public:
-        Script(std::string& path) { mPath = path; }
-        void destroy() override {}
+        std::string mBuffer;
+
+        Script();
+
+        Script(std::string& path) { init(path); }
+
+        void init(std::string& path);
+        void save();
+        void destroy();
     };
 } // namespace Plutus
