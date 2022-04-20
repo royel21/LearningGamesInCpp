@@ -1,6 +1,6 @@
 #include "Utils.h"
+
 #include <fstream>
-#include <cmath>
 #include <filesystem>
 
 #define PI 3.141592653589793238463
@@ -75,6 +75,14 @@ namespace Plutus
             outfile.open(filePath, std::ios_base::out); //std::ios_base::app
             outfile << buffer;
             outfile.close();
+        }
+
+        void replaceAll(std::string& str, char what, char with)
+        {
+            size_t i = 0;
+            while (i++ < str.length()) {
+                if (str[i] == what) str[i] = with;
+            }
         }
     } // namespace Utils
 } // namespace Plutus

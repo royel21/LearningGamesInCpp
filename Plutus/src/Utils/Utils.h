@@ -23,6 +23,8 @@ namespace Plutus
         bool createFile(const char* file, const char* content, bool asString = true);
 
         void saveFile(const char* filePath, const char* buffer);
+
+        void replaceAll(std::string& str, char what, char with);
     } // namespace Utils
 
 } // namespace Plutus
