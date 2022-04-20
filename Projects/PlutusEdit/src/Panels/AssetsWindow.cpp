@@ -106,12 +106,10 @@ namespace Plutus
         if (!width)
             width = ImGui::GetContentRegionAvailWidth() * 0.3f;
 
-        ImGui::Text("Loop");
-        ImGui::SameLine(width);
+        ImGui::Row("Loop", width);
         ImGui::Checkbox("##loop", &loop);
         ImGui::Separator();
-        ImGui::Text("Play");
-        ImGui::SameLine(width);
+        ImGui::Row("Play", width);
         bool state = sound->getState() != 1;
         if (ImGui::TransparentButton(state ? ICON_FA_PLAY : ICON_FA_STOP, true, { 0,0,1,1 })) {
             state ? sound->play(loop) : sound->stop();
@@ -120,21 +118,16 @@ namespace Plutus
         ImGui::Text(name.c_str());
     }
 
-    void AssetsWindow::drawFilter()
-    {
-        ImGui::BeginUIGroup(ImGuiTableFlags_SizingStretchProp);
-        ImGui::BeginCol("Filter");
-        ImGui::InputString("##a-filter", filter);
-        ImGui::EndUIGroup();
-        ImGui::Separator();
-    }
-
     void AssetsWindow::draw()
     {
         if (ImGui::Begin("Assets")) {
             auto mAsset = AssetManager::get();
             if (std::filesystem::exists("./assets/")) {
-                drawFilter();
+
+                ImGui::Row("Filter");
+                ImGui::InputString("##a-filter", filter);
+                ImGui::Separator();
+
                 if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
                     drawTreeNode<Font>("Fonts");
                     drawTreeNode<SceneAsset>("Scenes");
