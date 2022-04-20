@@ -69,5 +69,10 @@ namespace Plutus
             }
             return false;
         }
+
+        bool copyFile(const std::string& src, const std::string dst)
+        {
+            return std::filesystem::copy_file(src, dst, std::filesystem::copy_options::overwrite_existing);
+        }
     }
 }
