@@ -16,9 +16,12 @@ namespace Plutus
         char* Name;
     };
 
-    struct AssetType {
+    struct AssetFile {
         std::string id;
-        std::string type;
+        std::string name;
+        std::string fullpath;
+        int type = 0;
+        bool isNew = false;
     };
 
     class AssetsWindow
@@ -30,17 +33,20 @@ namespace Plutus
         Sound mSound;
         Texture texture;
         Font mFont;
+        Script mScript;
+        SceneAsset mSceneAsset;
 
         std::string assetId;
-        std::string dropFile = "";
 
         EnumFilter texfilter = { GL_NEAREST, "Nearest" };
 
-        AssetType assetType;
+        AssetFile assetFile;
         std::string filter;
 
         boolmap nodes;
         boolmap nodes2;
+
+        std::unordered_map<std::string, int> fileTypes;
 
     public:
         AssetsWindow();
@@ -64,6 +70,8 @@ namespace Plutus
         void viewAssets(bool& show);
 
         void drawFilter();
+
+        void showFont(Font* font, float width);
     };
 
 } // namespace Plutus

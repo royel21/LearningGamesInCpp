@@ -28,14 +28,14 @@ namespace Plutus
     struct Font : public Asset
     {
         unsigned int mTexId = -1;
-        unsigned int mSize = 16;
+        int mSize = 16;
         CharData ch[128];
 
         Font() = default;
         ~Font() { destroy(); }
         //Constructor
-        Font(const std::string& path, unsigned int fontSize = 16) { init(path, fontSize); }
-        void init(const std::string& path, unsigned int fontSize = 16);
+        Font(const std::string& path, int fontSize = 16) { init(path, fontSize); }
+        void init(const std::string& path, int fontSize = 16);
 
         void destroy() override;
     };

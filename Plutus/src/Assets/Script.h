@@ -7,11 +7,11 @@ namespace Plutus
     {
         std::string mBuffer;
 
-        Script();
+        Script() = default;
 
-        Script(std::string& path) { init(path); }
+        Script(const std::string& path) { init(path); }
 
-        void init(std::string& path);
+        void init(const std::string& path);
         void save();
         void destroy();
     };

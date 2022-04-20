@@ -13,11 +13,12 @@
 #include "../Helpers/ImGuiEx.h"
 #include "../Helpers/IconsFontAwesome5.h"
 
-#include "ECS/Components/TransformComponent.h"
 
 #include <Systems/Systems.h>
 
 #include <Graphics/DebugRenderer.h>
+#include <Assets/Assets.h>
+#include <ECS/Components/TransformComponent.h>
 
 #include <Log/Logger.h>
 
@@ -33,12 +34,12 @@ namespace Plutus
         mTextEditor.SetPalette(TextEditor::GetDarkPalette());
         mTextEditor.SetLanguageDefinition(lang);
         mTextEditor.SetShowWhitespaces(false);
-
-        scripts = Utils::listFiles("assets/script", ".lua");
-        currentScript = scripts.size() ? scripts[0] : "";
-        if (!currentScript.empty()) {
-            mTextEditor.SetText(FileIO::readFileAsString(currentScript.c_str()));
+        auto scripts = AssetManager::get()->getAssets<Script>();
+        if (scripts.size()) {
+            currentScript = scripts.begin()->first;
+            mTextEditor.SetText(static_cast<Script*>(scripts.begin()->second)->mBuffer);
         }
+
 
         mSysManager.AddSystem<ScriptSystem>(&mConfig->mRender->mCamera);
         mSysManager.AddSystem<PhysicSystem>();
@@ -99,7 +100,7 @@ namespace Plutus
 
     void CenterWindow::selectEntity()
     {
-        auto project = mConfig->mProject;
+        auto& project = mConfig->mProject;
         static Entity ent;
         if (!Input::get()->isCtrl) {
             if (Input::get()->onKeyPressed("MouseLeft"))
@@ -247,19 +248,28 @@ namespace Plutus
                 ImGui::TransparentButton(ICON_FA_COG);
             }
             else {
+                auto scripts = AssetManager::get()->getAssets<Script>();
+                auto script = static_cast<Script*>(scripts[currentScript]);
+                auto basePath = AssetManager::get()->getBaseDir() + scripts[currentScript]->mPath;
+
                 ImGui::TransparentButton(ICON_FA_FILE " New");
                 ImGui::SameLine();
                 if (ImGui::TransparentButton(ICON_FA_SAVE " Save")) {
-                    Utils::saveFile(currentScript.c_str(), mTextEditor.GetText().c_str());
+                    script->mBuffer = mTextEditor.GetText().c_str();
+                    FileIO::saveBufferToFile(basePath, mTextEditor.GetText().c_str());
                 }
+
                 ImGui::SameLine();
                 ImGui::PushItemWidth(200);
-                int selected = Utils::getIndex(scripts, currentScript);
-                if (ImGui::ComboBox("##scr-list", scripts, selected)) {
-                    currentScript = scripts[selected];
-                    mTextEditor.SetText(FileIO::readFileAsString(currentScript.c_str()));
+                if (ImGui::ComboBox("##scr-list", scripts, currentScript)) {
+                    mTextEditor.SetText(static_cast<Script*>(scripts[currentScript])->mBuffer);
                 }
                 ImGui::PopItemWidth();
+
+                if (Input::get()->isCtrl && Input::get()->onKeyPressed("S") && ImGui::IsWindowFocused()) {
+                    script->mBuffer = mTextEditor.GetText().c_str();
+                    FileIO::saveBufferToFile(basePath, mTextEditor.GetText().c_str());
+                }
             }
 
         }

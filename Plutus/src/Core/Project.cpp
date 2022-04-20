@@ -3,10 +3,11 @@
 #include <ECS/Scene.h>
 #include <Utils/FileIO.h>
 #include <Serialize/Serialize.h>
-#include <Assets/AssetManager.h>
 
-#include <Serialize/SceneSerializer.h>
+#include <Assets/Assets.h>
+
 #include <Serialize/SceneLoader.h>
+#include <Serialize/SceneSerializer.h>
 
 namespace Plutus
 {
@@ -34,8 +35,8 @@ namespace Plutus
 
         scene->clear();
         currentScene = "";
-
-        sceneList.clear();
+        currentScenePath = "";
+        AssetManager::get()->destroy();
     }
 
     void Project::load(const std::string& path)
@@ -43,6 +44,9 @@ namespace Plutus
         rapidjson::Document doc;
         bool isLoaded = loadJsonFromFile(path.c_str(), doc);
         if (isLoaded) {
+            scene->clear();
+            AssetManager::get()->destroy();
+
             JsonHelper jhelper;
             auto obj = doc.GetJsonObject();
             jhelper.value = &obj;
@@ -70,15 +74,14 @@ namespace Plutus
             autoClearForce = jhelper.getInt("auto-clear-force");
 
             currentScene = jhelper.getString("current-scene");
-            //Create the List of scene for this project
-            for (auto& scene : obj["scenes"].GetArray()) {
-                sceneList[scene["name"].GetString()] = scene["path"].GetString();
+
+            if (doc.HasMember("scenes")) {
+                for (auto& sc : doc["scenes"].GetArray()) {
+                    AssetManager::get()->addAsset<SceneAsset>(sc["name"].GetString(), sc["path"].GetString());
+                }
             }
 
-            currentScene.clear();
-
-            if (!currentScene.empty())
-                loadScene(sceneList[currentScene].c_str());
+            loadScene(currentScene);
         }
     }
 
@@ -104,36 +107,38 @@ namespace Plutus
             ser.addString("current-scene", currentScene);
 
             ser.StartArr("scenes");
-            { for (auto& sc : sceneList) {
-                ser.StartObj();
-                {
-                    ser.addString("name", sc.first);
-                    ser.addString("path", sc.second);
+            {
+                for (auto sc : AssetManager::get()->getAssets<SceneAsset>()) {
+                    ser.StartObj();
+                    {
+                        ser.addString("name", sc.first);
+                        ser.addString("path", sc.second->mPath);
+                    }
+                    ser.EndObj();
                 }
-                ser.EndObj();
-            }
             }
             ser.EndArr();
         }
         ser.EndObj();
-
         FileIO::saveBufferToFile(path, ser.getString());
+        saveScene();
     }
 
     void Project::loadScene(const std::string& name)
     {
-        auto found = sceneList.find(name);
-        if (found != sceneList.end()) {
+        auto assetScene = AssetManager::get()->getAsset<SceneAsset>(name);
+        if (assetScene) {
             scene->clear();
-            SceneLoader::loadFromPath(found->second.c_str(), scene.get());
+            currentScenePath = AssetManager::get()->getBaseDir() + assetScene->mPath;
+            SceneLoader::loadFromPath(assetScene->mPath.c_str(), scene.get());
         }
     }
 
     void Project::saveScene()
     {
-        if (currentScene.empty()) {
+        if (!currentScene.empty()) {
             auto data = SceneSerializer(scene.get());
-            FileIO::saveBufferToFile(sceneList[currentScene].c_str(), data.c_str());
+            FileIO::saveBufferToFile(currentScenePath.c_str(), data.c_str());
         }
     }
 }

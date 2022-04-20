@@ -66,10 +66,11 @@ namespace Plutus
 
     bool SceneLoader::loadFromPath(const char* path, Scene* scene)
     {
+        auto basedir = AssetManager::get()->getBaseDir();
         std::string ex = Utils::getExtension(path);
         if (ex == "json")
         {
-            auto data = FileIO::readFileAsString(path);
+            auto data = FileIO::readFileAsString((basedir + path).c_str());
             if (!data.empty()) {
                 return loadFromString(data, scene);
             }
@@ -120,6 +121,27 @@ namespace Plutus
                 }
             }
 
+            if (doc.HasMember("scripts") && doc["scripts"].IsArray())
+            {
+                for (auto& script : doc["scripts"].GetArray())
+                {
+                    auto name = script["id"].GetString();
+                    auto path = script["path"].GetString();
+                    AssetManager::get()->addAsset<Script>(name, path);
+                }
+            }
+
+            if (doc.HasMember("sounds") && doc["sounds"].IsArray())
+            {
+                for (auto& sound : doc["sounds"].GetArray())
+                {
+                    auto id = sound["id"].GetString();
+                    auto path = sound["path"].GetString();
+                    int type = sound["type"].GetInt();
+                    AssetManager::get()->addAsset<Sound>(id, path, type);
+                }
+            }
+
             //Load All Textures
             if (doc.HasMember("textures") && doc["textures"].IsArray())
             {
@@ -136,19 +158,6 @@ namespace Plutus
                     int minFilter = jhelper.getInt("min-filter");
                     int magFilter = jhelper.getInt("mag-filter");
                     AssetManager::get()->addAsset<Texture>(id, path, tilewidth, tileheight, minFilter, magFilter);
-                }
-            }
-
-            if (doc.HasMember("sounds") && doc["sounds"].IsArray())
-            {
-                auto sounds = doc["sounds"].GetArray();
-                for (uint32_t i = 0; i < sounds.Size(); i++)
-                {
-                    auto tex = sounds[i].GetJsonObject();
-                    auto id = tex["id"].GetString();
-                    auto path = tex["path"].GetString();
-                    int type = tex["type"].GetInt();
-                    AssetManager::get()->addAsset<Sound>(id, path, type);
                 }
             }
 

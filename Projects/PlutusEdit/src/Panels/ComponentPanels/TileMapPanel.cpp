@@ -229,15 +229,15 @@ namespace Plutus
             static std::string current = textures.begin()->first;
             int index = (int)mTileMap->mTextures.size();
 
+            float width = ImGui::GetContentRegionAvailWidth() * 0.3f;
+
             ImGui::BeginDialog("Texture Modal");
-            if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingStretchProp))
-            {
-                ImGui::BeginCol("Textures");
-                ImGui::ComboBox("##mt-add-tex", textures, current);
-                ImGui::BeginCol("Scale");
-                ImGui::DragFloat("##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
-                ImGui::EndUIGroup();
-            }
+
+            ImGui::Row("Textures", width);
+            ImGui::ComboBox("##mt-add-tex", textures, current);
+            ImGui::Row("Scale", width);
+            ImGui::DragFloat("##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
+
             auto texture = static_cast<Texture*>(textures[current]);
             ImGui::DrawTexture(texture, 400, 350, scale);
             ImGui::Separator();

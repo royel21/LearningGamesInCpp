@@ -27,7 +27,12 @@
 
 boolmap imgTypes;
 boolmap fontTypes;
-boolmap soundsTypes;
+
+#define FONTS 0
+#define TEXURES 1
+#define SOUNDS 2
+#define SCRIPTS 3
+#define SCENES 4
 
 umap<std::string, std::string> icons;
 
@@ -66,33 +71,42 @@ namespace Plutus
 
     AssetsWindow::AssetsWindow()
     {
-        imgTypes["png"] = true;
-        imgTypes["jpg"] = true;
-        imgTypes["jpeg"] = true;
-
-        fontTypes["ttf"] = true;
-        fontTypes["otf"] = true;
-
-        soundsTypes["ogg"] = true;
-        soundsTypes["wav"] = true;
-        soundsTypes["mp3"] = true;
-
         icons["Textures"] = ICON_FA_IMAGE " ";
         icons["Fonts"] = ICON_FA_FONT " ";
         icons["Sounds"] = ICON_FA_MUSIC " ";
 
         icons["png"] = ICON_FA_IMAGE " ";
         icons["jpg"] = ICON_FA_IMAGE " ";
+        icons["jpeg"] = ICON_FA_IMAGE " ";
+
         icons["ttf"] = ICON_FA_FONT " ";
         icons["otf"] = ICON_FA_FONT " ";
         icons["ogg"] = ICON_FA_MUSIC " ";
         icons["wav"] = ICON_FA_MUSIC " ";
+
+        fileTypes["ttf"] = FONTS;
+        fileTypes["otf"] = FONTS;
+
+        fileTypes["ogg"] = SOUNDS;
+        fileTypes["wav"] = SOUNDS;
+        fileTypes["mp3"] = SOUNDS;
+
+        fileTypes["png"] = TEXURES;
+        fileTypes["jpg"] = TEXURES;
+        fileTypes["jpeg"] = TEXURES;
+
+        fileTypes["lua"] = SCRIPTS;
+
+        fileTypes["json"] = SCENES;
     }
 
     void AssetsWindow::fileDrop(const std::string& file)
     {
-        dropFile = file;
-        assetId = Utils::getFileName(file);
+        assetFile.isNew = true;
+        assetFile.id = Utils::getFileName(file);
+        assetFile.name = assetFile.id;
+        assetFile.fullpath = file;
+        assetFile.type = fileTypes[Utils::getExtension(file)];
     }
 
     std::string AssetsWindow::getIcon(boolmap& nodes, std::string name)
@@ -108,7 +122,6 @@ namespace Plutus
 
         ImGui::Row("Loop", width);
         ImGui::Checkbox("##loop", &loop);
-        ImGui::Separator();
         ImGui::Row("Play", width);
         bool state = sound->getState() != 1;
         if (ImGui::TransparentButton(state ? ICON_FA_PLAY : ICON_FA_STOP, true, { 0,0,1,1 })) {
@@ -162,7 +175,8 @@ namespace Plutus
 
                 if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
                 {
-                    assetType = { asset.first, name };
+                    assetFile.name = asset.first;
+                    assetFile.type = fileTypes[Utils::getExtension(asset.second->mPath)];
                     show = true;
                 }
                 if (ImGui::BeginPopupContextItem())
@@ -186,135 +200,166 @@ namespace Plutus
 
     void AssetsWindow::viewAssets(bool& show) {
         ImGui::BeginDialog("Asset Modal");
-        ImGui::Text(assetType.id.c_str());
+        float width = ImGui::GetContentRegionAvailWidth() * 0.3f;
+        ImGui::Row("Id", width);
+        ImGui::Text(assetFile.name.c_str());
         ImGui::Separator();
-        auto sound = AssetManager::get()->getAsset<Sound>(assetType.id);
-        if (assetType.type.compare("Textures") == 0) {
-            auto texture = AssetManager::get()->getAsset<Texture>(assetType.id);
-            showTexure(*texture);
+        switch (assetFile.type)
+        {
+        case FONTS:
+        {
+            auto font = AssetManager::get()->getAsset<Font>(assetFile.name);
+            if (font) {
+                showFont(font, width);
+            }
+            break;
         }
-
-        if (assetType.type.compare("Fonts") == 0) {
+        case TEXURES:
+        {
+            auto tex = AssetManager::get()->getAsset<Texture>(assetFile.name);
+            if (tex) {
+                showTexure(*tex);
+            }
+            break;
         }
-
-        if (assetType.type.compare("Sounds") == 0) {
-            audioPlay(sound, assetType.id);
+        case SOUNDS:
+        {
+            auto sound = AssetManager::get()->getAsset<Sound>(assetFile.name);
+            if (sound) {
+                ImGui::Row("Type", width);
+                EnumTypeCombo("###sound-types", SoundTypeMaps, mSound.mType);
+                audioPlay(sound, assetFile.name, width);
+            }
+            break;
         }
-
-        ImGui::Separator();
+        case SCRIPTS:
+        {
+            break;
+        }
+        case SCENES: {
+            break;
+        }
+        }
         ImGui::EndDialog(show);
         if (!show) {
-            if (sound && sound->getState() == 1) sound->stop();
+            texture.destroy();
+            assetFile.name = "";
+            assetFile.fullpath = "";
         }
     }
 
     void AssetsWindow::processFile()
     {
-        if (!dropFile.empty()) {
+        bool show = true;
+        if (!assetFile.fullpath.empty()) {
             std::string asset = "";
-            auto name = Utils::getFileName(dropFile);
-
-            static int fontSize = 16;
-            ImVec2 vec = { 1,1 };
-
-            int type = 0;
-            static int soundType = 0;
 
             float width = ImGui::GetContentRegionAvailWidth() * 0.3f;
 
-            auto ex = Utils::getExtension(dropFile);
 
-            bool show = true;
-
-            ImGui::BeginDialog(("Asset Modal - " + assetType.id).c_str());
+            ImGui::BeginDialog(("Asset Modal - " + assetFile.name).c_str());
             //Texure Or Font Id
             ImGui::Row("Asset Id", width);
-            ImGui::InputText("##asset-modal", &assetId);
+            ImGui::InputText("##asset-modal", &assetFile.id);
             ImGui::Separator();
 
-            if (imgTypes[ex]) {
-
+            switch (assetFile.type)
+            {
+            case FONTS:
+            {
+                mFont.mPath = assetFile.fullpath;
+                showFont(&mFont, width);
+                asset = "assets\\fonts\\" + assetFile.name;
+                break;
+            }
+            case TEXURES:
+            {
                 if (texture.mTexId == -1) {
-                    texture.init(dropFile, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
+                    texture.init(assetFile.fullpath, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
                 }
-                type = 1;
                 showTexure(texture, true, width);
 
-                asset = "assets\\textures\\" + name;
+                asset = "assets\\textures\\" + assetFile.name;
+                break;
             }
-
-            if (fontTypes[ex]) {
-                ImGui::Row("Font Size", width);
-                if (ImGui::InputInt("##Font-Size", &fontSize)) {
-                    mFont.destroy();
-                }
-                ImGui::Separator();
-                if (mFont.mTexId == -1) {
-                    mFont.init(dropFile, fontSize);
-
-                    texture.mTexId = mFont.mTexId;
-                    texture.mWidth = 500;
-                    texture.mHeight = 500;
-                }
-
-                drawTexture(texture, width);
-                type = 2;
-                asset = "assets\\fonts\\" + name;
-            }
-
-            if (soundsTypes[ex]) {
-                type = 3;
+            case SOUNDS:
+            {
                 if (mSound.mPath.empty()) {
-                    mSound.init(dropFile);
+                    mSound.init(assetFile.fullpath);
                 }
                 ImGui::Row("Type", width);
-                EnumTypeCombo("###sound-types", SoundTypeMaps, soundType);
-                audioPlay(&mSound, assetType.id, width);
+                EnumTypeCombo("###sound-types", SoundTypeMaps, mSound.mType);
+                audioPlay(&mSound, assetFile.name, width);
 
-                asset = "assets\\sounds\\" + name;
+                asset = "assets\\sounds\\" + assetFile.name;
+                break;
             }
-
-            ImGui::Separator();
-            if (ImGui::Button("save##modal") && assetId.length() > 0)
+            case SCRIPTS:
             {
-                std::string baseDir = mConfig->mProject.workingDir;
-                std::string dest = FileIO::joinPath(baseDir, asset);
+                if (mScript.mBuffer.length())
+                    mScript.init(assetFile.fullpath);
 
-                Utils::replaceAll(asset, '\\', '/');
-                if (FileIO::copyFile(dropFile, dest))
+                asset = "assets\\scripts\\" + assetFile.name;
+                break;
+            }
+            case SCENES:
+            {
+                if (!mSceneAsset.mPath.length())
+                    mSceneAsset.init(assetFile.fullpath);
+
+                asset = "assets\\scenes\\" + assetFile.name;
+                break;
+            }
+
+            }
+
+            ImGui::EndDialog(show, [&] {
+                if (assetFile.id.length() > 0)
                 {
-                    switch (type)
+                    std::string baseDir = mConfig->mProject.workingDir;
+                    std::string dest = FileIO::joinPath(baseDir, asset);
+
+                    Utils::replaceAll(asset, '\\', '/');
+                    if (FileIO::copyFile(assetFile.fullpath, dest))
                     {
-                    case 1:
-                    {
-                        AssetManager::get()->addAsset<Texture>(assetId, asset, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
-                        break;
+                        switch (assetFile.type)
+                        {
+                        case FONTS: {
+                            AssetManager::get()->addAsset<Font>(assetFile.id, asset, mFont.mSize);
+                            break;
+                        }
+                        case TEXURES:
+                        {
+                            AssetManager::get()->addAsset<Texture>(assetFile.id, asset, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
+                            break;
+                        }
+                        case SOUNDS:
+                        {
+                            AssetManager::get()->addAsset<Sound>(assetFile.id, asset, mSound.mType);
+                            break;
+                        }
+                        case SCRIPTS:
+                        {
+                            AssetManager::get()->addAsset<Script>(assetFile.id, asset);
+                            break;
+                        }
+                        case SCENES: {
+                            AssetManager::get()->addAsset<SceneAsset>(assetFile.id, asset);
+                            break;
+                        }
+                        }
                     }
-                    case 2:
-                    {
-                        AssetManager::get()->addAsset<Font>(assetId, asset, fontSize);
-                        break;
-                    }
-                    case 3:
-                    {
-                        AssetManager::get()->addAsset<Sound>(assetId, asset, soundType);
-                        break;
-                    }
-                    }
+
+                    texture.destroy();
+                    mSound.destroy();
+                    mFont.destroy();
+                    mScript.destroy();
+                    mSceneAsset.destroy();
                 }
-
-                show = false;
-            }
-            ImGui::EndDialog(show);
-
-            if (!show) {
-                dropFile = "";
-                assetId = "";
-                fontSize = 20;
-                texture.destroy();
-                mSound.destroy();
-                mFont.destroy();
-            }
+                });
+        }
+        if (!show) {
+            assetFile.fullpath = "";
         }
 
     }
@@ -323,26 +368,25 @@ namespace Plutus
         if (!width)
             width = ImGui::GetContentRegionAvailWidth() * 0.3f;
 
-        {
-            ImGui::Row("Tile Width", width);
-            if (ImGui::InputInt("##Tile Width", &texture.mTileWidth))  texture.calculateUV();
+        ImGui::Row("Tile Width", width);
+        if (ImGui::InputInt("##Tile Width", &texture.mTileWidth))  texture.calculateUV();
 
-            ImGui::Row("Tile Height", width);
-            if (ImGui::InputInt("##Tile Height", &texture.mTileHeight)) texture.calculateUV();
-            if (newTex) {
-                static int selected = 0;
-                ImGui::Row("Filters", width);
-                if (EnumTypeCombo("##filters", filters, selected)) {
-                    texfilter = filters[selected];
+        ImGui::Row("Tile Height", width);
+        if (ImGui::InputInt("##Tile Height", &texture.mTileHeight)) texture.calculateUV();
+        if (newTex) {
+            static int selected = 0;
+            ImGui::Row("Filters", width);
+            if (EnumTypeCombo("##filters", filters, selected)) {
+                texfilter = filters[selected];
 
-                    if (texture.mWidth) {
-                        texture.mWidth = 0;
-                        texture.destroy();
-                    }
+                if (texture.mWidth) {
+                    texture.mWidth = 0;
+                    texture.destroy();
                 }
             }
-
         }
+
+
 
         drawTexture(texture, width);
     }
@@ -355,5 +399,26 @@ namespace Plutus
         ImGui::Separator();
         std::vector<vec3i> selected;
         ImGui::DrawTexture(&tex, 400, 300, scale, &selected);
+    }
+
+
+    void AssetsWindow::showFont(Font* font, float width) {
+        ImGui::Row("Font Size", width);
+        if (ImGui::InputInt("##Font-Size", &font->mSize)) {
+            font->destroy();
+        }
+        ImGui::Separator();
+        if (font->mTexId == -1) {
+            font->init(font->mPath, font->mSize);
+        }
+
+
+        texture.mTexId = font->mTexId;
+        texture.mWidth = 500;
+        texture.mHeight = 500;
+        texture.mMagFilter = GL_NEAREST;
+        texture.mMinFilter = GL_NEAREST;
+
+        drawTexture(texture, width);
     }
 }

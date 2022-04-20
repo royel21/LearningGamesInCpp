@@ -19,7 +19,7 @@ namespace Plutus
     private:
         ma_engine* mAudioEngine = nullptr;
         umap<const std::type_info*, umap<std::string, Asset*>> mAssets;
-        std::string baseDir = "./";
+        std::string baseDir = "";
 
         friend Sound;
 
@@ -29,6 +29,7 @@ namespace Plutus
         ~AssetManager();
 
         void setBaseDir(const std::string& dir) { baseDir = dir; }
+        std::string getBaseDir() { return baseDir; }
 
         template <typename T, typename... TArgs>
         T* addAsset(const std::string& id, TArgs &&... args)

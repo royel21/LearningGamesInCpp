@@ -161,22 +161,15 @@ namespace Plutus
         {
             auto script = mEnt.getComponent<ScriptComponent>();
             auto files = Utils::listFiles("assets/script", ".lua");
-            if (files.size())
-            {
+            auto scripts = AssetManager::get()->getAssets<Script>();
 
-                ImGui::Text("Scripts");
-                ImGui::Separator();
-                int selected = Utils::getIndex(files, script->mScript);
 
-                if (ImGui::TransparentButton(ICON_FA_TRASH "", true, { 1,0,0,1 }) && selected > -1) {
-                    script->destroy();
-                }
-
-                if (ImGui::ComboBox("##slist", files, selected))
-                {
-                    script->setScript(files[selected]);
-                }
+            ImGui::Text("Scripts");
+            ImGui::Separator();
+            if (ImGui::TransparentButton(ICON_FA_TRASH "", true, { 1,0,0,1 })) {
+                script->mScript = "";
             }
+            ImGui::ComboBox("##slist", scripts, script->mScript);
         }
     }
 

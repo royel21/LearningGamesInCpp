@@ -12,7 +12,7 @@ constexpr int BITMAPSIZE = 500;
 
 namespace Plutus
 {
-    void Font::init(const std::string& path, unsigned int fontSize)
+    void Font::init(const std::string& path, int fontSize)
     {
         mPath = path;
         mSize = fontSize;
@@ -32,7 +32,7 @@ namespace Plutus
             return;
         }
         //Set font height in pixel
-        FT_Set_Pixel_Sizes(face, 0, fontSize);
+        FT_Set_Pixel_Sizes(face, 0, (FT_UInt)fontSize);
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 

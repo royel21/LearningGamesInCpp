@@ -1,4 +1,5 @@
 #include "ScriptComponent.h"
+#include <Assets/Assets.h>
 
 namespace Plutus
 {
@@ -15,15 +16,18 @@ namespace Plutus
 
     void ScriptComponent::init(sol::state& lua, Entity ent)
     {
-        mEnv = sol::environment(lua, sol::create, lua.globals());
+        auto script = AssetManager::get()->getAsset<Script>(mScript);
+        if (script) {
+            mEnv = sol::environment(lua, sol::create, lua.globals());
 
-        auto result = lua.do_file(mScript, mEnv);
-        if (result.valid()) {
-            mEnv[ent.getName()] = Entity{ ent.mId, ent.mScene };
+            auto result = lua.script(script->mBuffer, mEnv);
+            if (result.valid()) {
+                mEnv[ent.getName()] = Entity{ ent.mId, ent.mScene };
 
-            if (mEnv["init"] != sol::nil) {
-                mEnv["init"]();
-                isLoaded = true;
+                if (mEnv["init"] != sol::nil) {
+                    mEnv["init"]();
+                    isLoaded = true;
+                }
             }
         }
     }

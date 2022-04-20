@@ -276,35 +276,24 @@ namespace ImGui {
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.33f, 0.33f, 0.33f, 0.8f));
     }
 
-    void EndDialog(bool& show)
+    void EndDialog(bool& show, std::function<void()> callback)
     {
-        ImGui::SameLine();
+        float width = ImGui::GetWindowContentRegionWidth();
+        ImGui::SetCursorPosX(width * 0.5f);
+
+        ImGui::Separator();
+        if (callback) {
+            if (ImGui::Button("save##modal")) {
+                show = false;
+                callback();
+            }
+            ImGui::SameLine();
+        }
         if (ImGui::Button("Cancel##modal-1"))
             show = false;
         ImGui::PopStyleColor();
         ImGui::EndPopup();
     }
-
-    bool BeginUIGroup(ImGuiTableFlags flags) {
-        static int id = 0;
-        return ImGui::BeginTable(("##ground" + std::to_string(id)).c_str(), 2, flags);
-    }
-
-    void EndUIGroup() {
-        ImGui::EndTable();
-    }
-
-    void BeginCol(const char* label, float width) {
-
-        float freeWidthSpace = ImGui::GetContentRegionAvailWidth();
-        ImGui::TableNextColumn();
-        PushItemWidth(freeWidthSpace * 0.3f);
-        ImGui::TextUnformatted(label);
-        ImGui::PopItemWidth();
-        ImGui::TableNextColumn();
-        ImGui::SetNextItemWidth(freeWidthSpace * 0.7f);
-    }
-
 
     bool LabelButton(const char* tag, ImVec2 size, int color = 0) {
         bool clicked = false;

@@ -5,6 +5,8 @@
 #include "../Helpers/ImGuiDialog.h"
 #include "../Helpers/IconsFontAwesome5.h"
 
+#include <Assets/Assets.h>
+
 #include <Log/Logger.h>
 
 namespace Plutus
@@ -24,7 +26,7 @@ namespace Plutus
             ImGui::SameLine();
             if (ImGui::TransparentButton(ICON_FA_COG "##config-scene")) showConfig = true;
             ImGui::Separator();
-            for (auto& sc : project.sceneList) {
+            for (auto sc : AssetManager::get()->getAssets<SceneAsset>()) {
 
                 bool isOpen = project.currentScene.compare(sc.first) == 0;
                 ImGui::SetNextItemOpen(isOpen);
@@ -63,7 +65,7 @@ namespace Plutus
         ImGui::End();
 
         if (openNew) ImGui::NewFileDialig("New Project", [&](const std::string& name) {
-            if (!name.empty())  project.Create(name);
+            if (!name.empty())  project.CreateScene(name);
             openNew = false;
             });
 
@@ -72,7 +74,7 @@ namespace Plutus
 
     void SceneWindow::drawEntity(Entity ent)
     {
-        auto project = mConfig->mProject;
+        auto& project = mConfig->mProject;
         bool isCurrent = project.mEnt == ent;
         auto& tag = ent.getName();
 

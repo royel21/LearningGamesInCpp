@@ -25,18 +25,13 @@ namespace Plutus
         }
         ser.EndArr();
 
-        ser.StartArr("textures");
-        for (auto& tile : AssetManager::get()->getAssets<Texture>())
+        ser.StartArr("scripts");
+        for (auto& script : AssetManager::get()->getAssets<Script>())
         {
-            auto tex = static_cast<Texture*>(tile.second);
             ser.StartObj();
             {
-                ser.addString("id", tile.first);
-                ser.addString("path", tex->mPath);
-                ser.addInt("width", tex->mTileWidth);
-                ser.addInt("height", tex->mTileHeight);
-                ser.addInt("min-filter", tex->mMinFilter);
-                ser.addInt("mag-filter", tex->mMagFilter);
+                ser.addString("id", script.first);
+                ser.addString("path", script.second->mPath);
             }
             ser.EndObj();
         }
@@ -55,6 +50,24 @@ namespace Plutus
             ser.EndObj();
         }
         ser.EndArr();
+
+        ser.StartArr("textures");
+        for (auto& tile : AssetManager::get()->getAssets<Texture>())
+        {
+            auto tex = static_cast<Texture*>(tile.second);
+            ser.StartObj();
+            {
+                ser.addString("id", tile.first);
+                ser.addString("path", tex->mPath);
+                ser.addInt("width", tex->mTileWidth);
+                ser.addInt("height", tex->mTileHeight);
+                ser.addInt("min-filter", tex->mMinFilter);
+                ser.addInt("mag-filter", tex->mMagFilter);
+            }
+            ser.EndObj();
+        }
+        ser.EndArr();
+
     }
 
 

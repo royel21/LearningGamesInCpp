@@ -3,7 +3,7 @@
 
 namespace Plutus
 {
-    void Script::init(std::string& path)
+    void Script::init(const std::string& path)
     {
         mPath = path;
         mBuffer = FileIO::readFileAsString((baseDir + mPath).c_str());

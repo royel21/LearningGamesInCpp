@@ -38,8 +38,7 @@ namespace Plutus
 
         Ref<Scene> scene;
         std::string currentScene;
-
-        std::unordered_map<std::string, std::string> sceneList = {};
+        std::string currentScenePath;
 
         Project();
 

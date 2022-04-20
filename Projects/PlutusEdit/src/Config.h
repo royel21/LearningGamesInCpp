@@ -30,9 +30,8 @@ namespace Plutus
 
         EditorProject();
 
-        void Create(const std::string& name);
-        void add(const std::string& path);
-        void remove(std::string id) { sceneList.erase(id); }
+        void CreateScene(const std::string& name);
+        void removeScene(std::string id);
     };
 
     struct Config

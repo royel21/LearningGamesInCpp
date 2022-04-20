@@ -53,11 +53,13 @@ namespace Plutus
         void saveBufferToFile(const std::string& path, const char* buffer)
         {
             FILE* file = fopen(path.c_str(), "w");
-            int results = fputs(buffer, file);
-            if (results == EOF) {
+            if (file) {
+                int results = fputs(buffer, file);
+                if (results == EOF) {
 
+                }
+                fclose(file);
             }
-            fclose(file);
         }
 
         bool exists(const std::string& path)

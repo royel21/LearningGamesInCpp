@@ -86,15 +86,14 @@ namespace Plutus
         mTempScene = CreateRef<Scene>();
     }
 
-    void EditorProject::Create(const std::string& name)
+    void EditorProject::CreateScene(const std::string& name)
     {
 
     }
 
-    void EditorProject::add(const std::string& path)
+    void EditorProject::removeScene(std::string id)
     {
-        scene->clear();
-        mTempScene->clear();
+
     }
 
 } // namespace Plutus

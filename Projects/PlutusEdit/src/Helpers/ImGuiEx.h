@@ -130,12 +130,7 @@ namespace ImGui
 
     void BeginDialog(const char* name, bool fixedPos = false);
 
-    void EndDialog(bool& show);
-
-    bool BeginUIGroup(ImGuiTableFlags flags = 0);
-    void EndUIGroup();
-
-    void BeginCol(const char* label, float width = -1);
+    void EndDialog(bool& show, std::function<void()> callback = nullptr);
 
     bool Draw2Float(char* id, Plutus::vec2f& value, float step = 1.0f, const char* btntag1 = "X", const char* btntag2 = "Y");
 
