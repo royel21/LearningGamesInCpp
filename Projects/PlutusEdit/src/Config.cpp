@@ -23,6 +23,7 @@ namespace Plutus
         {
             FileIO::mkdirs(FileIO::joinPath(dir, "fonts"));
             FileIO::mkdirs(FileIO::joinPath(dir, "scenes"));
+            FileIO::mkdirs(FileIO::joinPath(dir, "script"));
             FileIO::mkdirs(FileIO::joinPath(dir, "sounds"));
             FileIO::mkdirs(FileIO::joinPath(dir, "textures"));
         }
@@ -41,7 +42,10 @@ namespace Plutus
     void Config::init(Render* render)
     {
         if (!currentProject.empty()) {
-            mProject.load(mProjects[currentProject]);
+            auto path = mProjects[currentProject];
+            mProject.workingDir = Utils::getDirectory(path);
+            AssetManager::get()->setBaseDir(mProject.workingDir);
+            mProject.load(path);
         }
         mRender = render;
         mRender->init(this);

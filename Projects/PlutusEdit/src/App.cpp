@@ -53,6 +53,13 @@ namespace Plutus
         }
     }
 
+    void App::Dropfile(const char* file)
+    {
+        if (isInitialize) {
+            mAssetsWin.fileDrop(file);
+        }
+    }
+
     void App::Draw() {
 
         mMainWin.Begin();

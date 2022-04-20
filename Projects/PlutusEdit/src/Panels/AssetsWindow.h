@@ -32,7 +32,7 @@ namespace Plutus
         Font mFont;
 
         std::string assetId;
-        std::string selectedDir;
+        std::string dropFile = "";
 
         EnumFilter texfilter = { GL_NEAREST, "Nearest" };
 
@@ -45,17 +45,17 @@ namespace Plutus
     public:
         AssetsWindow();
         void init(Config* config) { mConfig = config; }
+
+        void fileDrop(const std::string& file);
         void draw();
 
     private:
-        void drawDiskAssets(std::string dirpath);
-
         void processFile();
 
         std::string getIcon(boolmap& nodes, const std::string name);
 
         template<typename T>
-        void drawTreeNode(const std::string& name, int& id);
+        void drawTreeNode(const std::string& name);
 
         void addSound2Scene();
 

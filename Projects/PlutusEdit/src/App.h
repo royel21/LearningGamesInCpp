@@ -38,6 +38,7 @@ namespace Plutus
 
         void Init() override;
         void Update(float dt) override;
+        void Dropfile(const char* file) override;
         void Draw() override;
         void Exit() override;
     };
