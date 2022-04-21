@@ -154,8 +154,10 @@ namespace Plutus
                     if (mCamera.isBoxInView(rect, 200))
                     {
                         auto tex = tilemap.getTexture(tile.texture);
+                        auto texId = tex ? tex->mTexId : -1;
+
                         if (tex) {
-                            mRenderables[i++] = { tex->mTexId, rect, tex->getUV(tile.texcoord),
+                            mRenderables[i++] = { texId, rect, tex->getUV(tile.texcoord),
                                 { tile.color }, tile.rotate, tile.flipX, tile.flipY, (int)entt::to_integral(ent), tilemap.mLayer, false };
                         }
                     }
@@ -169,7 +171,10 @@ namespace Plutus
             auto rect = trans.getRect();
             if (mCamera.isBoxInView(rect, 200))
             {
-                auto texId = AssetManager::get()->getAsset<Texture>(sprite.mTextureId)->mTexId;
+                auto tex = AssetManager::get()->getAsset<Texture>(sprite.mTextureId);
+
+                auto texId = tex ? tex->mTexId : -1;
+
                 mRenderables[i++] = { texId, rect, sprite.mUVCoord, sprite.mColor,
                     trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
             }

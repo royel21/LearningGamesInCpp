@@ -58,29 +58,30 @@ namespace Plutus
                 auto& seq = found->second;
                 auto tex = AssetManager::get()->getAsset<Texture>(seq.mTexId);
 
+                if (tex) {
+                    ImGui::Row("Time");
+                    ImGui::InputFloat("##seq-time", &seq.mSeqTime, 0.001f);
+                    ImGui::Separator();
 
-                ImGui::Row("Time");
-                ImGui::InputFloat("##seq-time", &seq.mSeqTime, 0.001f);
-                ImGui::Separator();
+                    ImGui::BeginChild("Anim", { 0, 224 });
+                    {
+                        float tileSize = 128;
 
-                ImGui::BeginChild("Anim", { 0, 224 });
-                {
-                    float tileSize = 128;
+                        float center = ImGui::GetContentRegionAvailWidth() * 0.5f - tileSize / 2.0f;
+                        ImGui::SetCursorPos({ center, tileSize / 2.0f });
 
-                    float center = ImGui::GetContentRegionAvailWidth() * 0.5f - tileSize / 2.0f;
-                    ImGui::SetCursorPos({ center, tileSize / 2.0f });
-
-                    if (seq.mFrames.size()) {
-                        time += (1000.0f / ImGui::GetIO().Framerate) / 1000.0f;
-                        if (time > seq.mSeqTime) {
-                            seq.mFrame = ++seq.mFrame % seq.mFrames.size();
-                            time = 0;
+                        if (seq.mFrames.size()) {
+                            time += (1000.0f / ImGui::GetIO().Framerate) / 1000.0f;
+                            if (time > seq.mSeqTime) {
+                                seq.mFrame = ++seq.mFrame % seq.mFrames.size();
+                                time = 0;
+                            }
+                            auto uv = tex->getUV(seq.mFrames[seq.mFrame]);
+                            ImGui::Image((ImTextureID)tex->mTexId, { tileSize, tileSize }, { uv.x, uv.y }, { uv.z, uv.w });
                         }
-                        auto uv = tex->getUV(seq.mFrames[seq.mFrame]);
-                        ImGui::Image((ImTextureID)tex->mTexId, { tileSize, tileSize }, { uv.x, uv.y }, { uv.z, uv.w });
                     }
+                    ImGui::EndChild();
                 }
-                ImGui::EndChild();
             }
             ImGui::PopStyleVar();
 
@@ -114,8 +115,8 @@ namespace Plutus
                 ImGui::Separator();
 
                 auto curPos = ImGui::GetWindowSize();
-                if (!seq.mTexId.empty()) {
-                    auto tex = static_cast<Texture*>(mTextures[seq.mTexId]);
+                auto tex = AssetManager::get()->getAsset<Texture>(seq.mTexId);
+                if (tex) {
                     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 1, 2 });
                     if (ImGui::BeginChild("##tex-img", { curPos.x, 217 })) {
                         for (size_t i = 0; i < tex->uvs.size(); i++) {
@@ -191,26 +192,27 @@ namespace Plutus
                     }
                 }
 
-                ImGui::SetCursorPos({ curPos.x * 0.5f - 50.0f, curPos.y - 34.0f });
-                if (ImGui::Button("Save##s-seq") && !mNewSeqId.empty()) {
-                    if (!mNewSeqId.empty()) {
-                        if (mMode) {
-                            mAnimation->swapSeq(mNewSeqId, mCurSeq);
-                            mCurSeq = mNewSeqId;
-                            showSeqWindow = false;
-                        }
-                        else {
-                            mAnimation->addSequence(mNewSeqId, seq);
-                            mNewSeqId = "";
-                            newSeq.mFrames = {};
-                            newSeq.mFrame = 0;
+                ImGui::EndDialog(showSeqWindow, [&](bool save) {
+
+                    if (save && mNewSeqId.empty()) {
+                        if (!mNewSeqId.empty()) {
+                            if (mMode) {
+                                mAnimation->swapSeq(mNewSeqId, mCurSeq);
+                                mCurSeq = mNewSeqId;
+                                showSeqWindow = false;
+                            }
+                            else {
+                                mAnimation->addSequence(mNewSeqId, seq);
+                                mNewSeqId = "";
+                                newSeq.mFrames = {};
+                                newSeq.mFrame = 0;
+                            }
                         }
                     }
-                }}
-            ImGui::EndDialog(showSeqWindow);
-            if (!showSeqWindow) {
-                newSeq = {};
-                mNewSeqId = "";
+                    newSeq = {};
+                    mNewSeqId = "";
+
+                    });
             }
         }
     }
