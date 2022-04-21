@@ -103,6 +103,11 @@ namespace Plutus
         scene->copyScene(proj.scene.get());
     }
 
+    std::string EditorProject::getDir(const std::string& part)
+    {
+        return workingDir + "assets\\" + Utils::ToLowerCase(part);
+    }
+
     void EditorProject::CreateScene(const std::string& name)
     {
 

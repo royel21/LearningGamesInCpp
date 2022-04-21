@@ -2,7 +2,6 @@
 
 #include <vector>
 
-#include "../Scene.h"
 #include <Math/Vectors.h>
 
 
@@ -68,14 +67,12 @@ namespace Plutus
 
     struct PhysicBodyComponent
     {
-        Entity mEnt;
         b2Body* mBody;
 
         std::vector<Fixture> mFixtures;
         BodyType mBodyType = StaticBody;
 
-        PhysicBodyComponent() = default;
-        PhysicBodyComponent(Entity ent, BodyType type = StaticBody) : mEnt(ent), mBodyType(type) {};
+        PhysicBodyComponent(BodyType type = StaticBody) : mBodyType(type) {};
 
         inline Fixture& addFixture(int type) {
             mFixtures.push_back({ type });

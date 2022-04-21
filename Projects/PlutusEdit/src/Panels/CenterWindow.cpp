@@ -134,6 +134,62 @@ namespace Plutus
         }
     }
 
+    void CenterWindow::showConfig()
+    {
+        auto camera = mConfig->mRender->mCamera;
+        auto& project = mConfig->mProject;
+
+        ImGui::SetNextWindowSize({ 0, 0 });
+        auto winPos = ImGui::GetCursorScreenPos();
+        ImVec2 pos(winPos.x + 200, winPos.y + 50);
+        ImGui::SetNextWindowPos(pos);
+        ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove
+            | ImGuiWindowFlags_NoDecoration
+            | ImGuiWindowFlags_AlwaysAutoResize
+            | ImGuiWindowFlags_NoSavedSettings;
+
+        if (ImGui::BeginPopupModal("Project Config", NULL, flags))
+        {
+            float width = 380 * 0.35f;
+            ImGui::Text("Window Config");
+            ImGui::Separator();
+            ImGui::Row("Width", width);
+            ImGui::DragInt("##win-width", &project.winWidth);
+            ImGui::Row("Height", width);
+            ImGui::DragInt("##win-height", &project.winHeight);
+
+            ImGui::Separator();
+            ImGui::Text("Viewport Config");
+            ImGui::Separator();
+            ImGui::Row("Width", width);
+            ImGui::DragInt("##vp-width", &project.vpWidth);
+            ImGui::Row("Height", width);
+            ImGui::DragInt("##vp-height", &project.vpHeight);
+
+            ImGui::Separator();
+            ImGui::Text("Box2d Config");
+            ImGui::Separator();
+
+            ImGui::Row("Gravity", width);
+            ImGui::Draw2Float("##gravity", project.gravity);
+
+            ImGui::Row("Max FPS", width);
+            ImGui::DragFloat("##timeIter", &project.maxFPS, 1, 16, 128, "%0.0f");
+
+            ImGui::Row("Velocity Iter", width);
+            ImGui::DragInt("##viter", &project.velIter, 1, 1, 20);
+
+            ImGui::Row("Position Iter", width);
+            ImGui::DragInt("##viter", &project.positionIter, 1, 1, 20);
+
+            ImGui::Row("Auto Clear Force", width);
+            ImGui::Checkbox("##cforce", &project.autoClearForce);
+            ImGui::Separator();
+            if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+            ImGui::EndPopup();
+        }
+    }
+
     void CenterWindow::drawViewPort() {
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
@@ -247,7 +303,10 @@ namespace Plutus
                     }
                 }
                 ImGui::SameLine();
-                ImGui::TransparentButton(ICON_FA_COG);
+                if (ImGui::TransparentButton(ICON_FA_COG)) {
+                    ImGui::OpenPopup("Project Config");
+                }
+                showConfig();
             }
             else {
                 auto scripts = AssetManager::get()->getAssets<Script>();

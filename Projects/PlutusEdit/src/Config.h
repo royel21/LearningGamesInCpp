@@ -31,6 +31,8 @@ namespace Plutus
 
         operator bool() const { return currentScene.empty(); }
 
+        std::string getDir(const std::string& part);
+
         void CreateScene(const std::string& name);
         void removeScene(std::string id);
 

@@ -215,7 +215,7 @@ namespace Plutus
                         }
                         if (compType == "RigidBody") {
                             jhelper.value = &component;
-                            auto rbody = entity.addComponent<RigidBodyComponent>(entity, (BodyType)jhelper.getInt("type"));
+                            auto rbody = entity.addComponent<RigidBodyComponent>((BodyType)jhelper.getInt("type"));
 
                             rbody->mBullet = jhelper.getInt("isbullet");
                             rbody->mFixedRotation = jhelper.getInt("fixedRotation");
@@ -228,7 +228,7 @@ namespace Plutus
                         }
 
                         if (compType == "PhysicBody") {
-                            auto phybody = entity.addComponent<PhysicBodyComponent>(entity);
+                            auto phybody = entity.addComponent<PhysicBodyComponent>();
                             loadFixtures(phybody, component, jhelper);
                         }
                     }

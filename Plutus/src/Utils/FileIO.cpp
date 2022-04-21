@@ -81,5 +81,10 @@ namespace Plutus
 
             return std::filesystem::copy_file(src, dst, std::filesystem::copy_options::overwrite_existing);
         }
+
+        void openDir(const std::string& dir)
+        {
+            system(("start " + dir).c_str());
+        }
     }
 }

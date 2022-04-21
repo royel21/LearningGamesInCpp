@@ -25,6 +25,8 @@ namespace Plutus
         void saveFile(const char* filePath, const char* buffer);
 
         void replaceAll(std::string& str, char what, char with);
+
+        std::string ToLowerCase(const std::string& str);
     } // namespace Utils
 
 } // namespace Plutus

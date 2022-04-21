@@ -47,7 +47,7 @@ namespace Plutus
             mPlayer.addComponent<SpriteComponent>("", ColorRGBA8{ 255,0,0,255 });
             mPlayer.addComponent<ScriptComponent>("assets/script/player.lua");
 
-            auto pbody = mPlayer.addComponent<RigidBodyComponent>(mPlayer);
+            auto pbody = mPlayer.addComponent<RigidBodyComponent>();
             // pbody->mLinearDamping = 1;
             // pbody->mGravityScale = 0;
 
@@ -62,7 +62,7 @@ namespace Plutus
             ground.addComponent<TransformComponent>(5.0f, 10.0f, 1280, 10);
             ground.addComponent<SpriteComponent>("", ColorRGBA8{ 0,0,255,255 });
 
-            auto body = ground.addComponent<Plutus::PhysicBodyComponent>(ground);
+            auto body = ground.addComponent<Plutus::PhysicBodyComponent>();
             body->addBox({ 0, 0 }, { 1280, 10 }, 0.3f);
         }
 
@@ -72,7 +72,7 @@ namespace Plutus
             ground2.addComponent<TransformComponent>(100.0f, 25.0f, 200, 10);
             ground2.addComponent<SpriteComponent>("");
 
-            auto body = ground2.addComponent<Plutus::RigidBodyComponent>(ground2, Plutus::StaticBody);
+            auto body = ground2.addComponent<Plutus::PhysicBodyComponent>();
             body->addBox({ 0, 0 }, { 200, 10 });
         }
 
@@ -82,7 +82,7 @@ namespace Plutus
             ground3.addComponent<TransformComponent>(200.0f, 60.0f, 200, 10);
             ground3.addComponent<SpriteComponent>("");
 
-            auto body = ground3.addComponent<Plutus::PhysicBodyComponent>(ground3);
+            auto body = ground3.addComponent<Plutus::PhysicBodyComponent>();
             body->addBox({ 0, 0 }, { 200, 10 });
         }
 

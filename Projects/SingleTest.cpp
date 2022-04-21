@@ -5,32 +5,19 @@
 #include <iostream>
 #include <sstream>
 
-template <typename... TArgs>
-std::string joinPath(TArgs ...args) {
-    std::stringstream ss;
-    int i = 0;
-    auto size = sizeof...(args) - 1;
-    ([&](const auto& arg) {
-        if (i == 0) {
-            ss << arg;
-        }
-        else {
-            auto str = ss.str();
-            if (str[str.length() - 1] == '/') {
-                ss << arg;
-            }
-            else {
-                ss << "/" << arg;
-            }
-        }
-        i++;
-        }(args), ...);
-    return ss.str();
+std::string ToLowerCase(const std::string& str)
+{
+    auto str2 = str;
+    for (auto& s : str2)
+    {
+        if (s < 91) s = s + 32;
+    }
+    return str2;
 }
 
 int main(int argc, char** argv)
 {
 
-    std::cout << joinPath("./", "assets", "sound");
+    std::cout << ToLowerCase("Textures") << std::endl;
     return 0;
 }

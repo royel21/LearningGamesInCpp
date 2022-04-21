@@ -124,7 +124,7 @@ namespace Plutus
 
         if (view.size_hint()) {
             mDebugRender->end();
-            mDebugRender->render();
+            mDebugRender->render(1.5f);
         }
     }
 

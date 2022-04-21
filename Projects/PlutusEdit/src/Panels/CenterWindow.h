@@ -20,6 +20,7 @@ namespace Plutus
         void CameraControl();
         void selectEntity();
         vec2f getMousePos();
+        void showConfig();
 
     private:
         Config* mConfig;

@@ -15,9 +15,7 @@ namespace Plutus
         float mLinearDamping = 0;
         float mGravityScale = 1;
         vec2f mMaxVel;
-
-        RigidBodyComponent() = default;
-        RigidBodyComponent(Entity ent, BodyType type = DynamicBody) { mEnt = ent, mBodyType = type; };
+        RigidBodyComponent(BodyType type = DynamicBody) : PhysicBodyComponent(mBodyType) { };
 
         void ApplyForce(float x, float y);
         void ApplyImpulse(float x, float y);

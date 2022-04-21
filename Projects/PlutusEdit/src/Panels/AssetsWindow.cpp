@@ -165,6 +165,16 @@ namespace Plutus
     {
         ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_SpanAvailWidth;
         nodes2[name] = ImGui::TreeNodeEx(name.c_str(), flags, getIcon(nodes2, name).c_str());
+
+        if (ImGui::BeginPopupContextItem())
+        {
+            if (ImGui::MenuItem((ICON_FA_FOLDER_OPEN" Open Dir: " + name).c_str()))
+            {
+                FileIO::openDir(mConfig->mProject.getDir(name));
+            }
+            ImGui::EndPopup();
+        }
+
         std::string selectedAssetId = "";
         if (nodes2[name]) {
             auto& assets = AssetManager::get()->getAssets<T>();

@@ -25,6 +25,8 @@ namespace Plutus
 
         bool copyFile(const std::string& src, const std::string dst);
 
+        void openDir(const std::string& dir);
+
         template <typename... TArgs>
         std::string joinPath(TArgs ...args) {
             std::stringstream ss;

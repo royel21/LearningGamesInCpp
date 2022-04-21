@@ -84,5 +84,12 @@ namespace Plutus
                 if (str[i] == what) str[i] = with;
             }
         }
+
+        std::string ToLowerCase(const std::string& str)
+        {
+            auto str2 = str;
+            for (auto& s : str2) if (s < 91) s = s + 32;
+            return str2;
+        }
     } // namespace Utils
 } // namespace Plutus
