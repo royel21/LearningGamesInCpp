@@ -174,7 +174,6 @@ namespace Plutus
     }
 
     std::unordered_map<std::string, BodyType> rigidBodyTypes = {
-            {"Static Body", StaticBody},
             {"Dynamic Body", DynamicBody},
             {"Kinematic Body", KinematicBody},
     };
