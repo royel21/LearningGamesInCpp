@@ -37,7 +37,7 @@ namespace Plutus
 
         unsigned int getTextureId() const { return mTexId; }
 
-        void setColor(vec4f bgColor) { mBGColor = { bgColor.x,bgColor.y,bgColor.z,bgColor.w }; }
+        void setColor(const vec4f& bgColor) { mBGColor = bgColor; }
 
         void cleanUp();
     private:
