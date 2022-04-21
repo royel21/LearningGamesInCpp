@@ -102,11 +102,14 @@ namespace Plutus
 
     void AssetsWindow::fileDrop(const std::string& file)
     {
-        assetFile.isNew = true;
-        assetFile.id = Utils::getFileName(file);
-        assetFile.name = assetFile.id;
-        assetFile.fullpath = file;
-        assetFile.type = fileTypes[Utils::getExtension(file)];
+        auto ex = Utils::getExtension(file);
+        if (!mConfig->mProject || ex == "json") {
+            assetFile.isNew = true;
+            assetFile.id = Utils::getFileName(file);
+            assetFile.name = assetFile.id;
+            assetFile.fullpath = file;
+            assetFile.type = fileTypes[Utils::getExtension(file)];
+        }
     }
 
     std::string AssetsWindow::getIcon(boolmap& nodes, std::string name)
@@ -313,8 +316,8 @@ namespace Plutus
 
             }
 
-            ImGui::EndDialog(show, [&] {
-                if (assetFile.id.length() > 0)
+            ImGui::EndDialog(show, [&](bool save) {
+                if (save && assetFile.id.length() > 0)
                 {
                     std::string baseDir = mConfig->mProject.workingDir;
                     std::string dest = FileIO::joinPath(baseDir, asset);
@@ -326,21 +329,25 @@ namespace Plutus
                         {
                         case FONTS: {
                             AssetManager::get()->addAsset<Font>(assetFile.id, asset, mFont.mSize);
+                            mFont.destroy();
                             break;
                         }
                         case TEXURES:
                         {
                             AssetManager::get()->addAsset<Texture>(assetFile.id, asset, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
+                            texture.destroy();
                             break;
                         }
                         case SOUNDS:
                         {
                             AssetManager::get()->addAsset<Sound>(assetFile.id, asset, mSound.mType);
+                            mSound.destroy();
                             break;
                         }
                         case SCRIPTS:
                         {
                             AssetManager::get()->addAsset<Script>(assetFile.id, asset);
+                            mScript.destroy();
                             break;
                         }
                         case SCENES: {
@@ -349,17 +356,10 @@ namespace Plutus
                         }
                         }
                     }
-
-                    texture.destroy();
-                    mSound.destroy();
-                    mFont.destroy();
-                    mScript.destroy();
-                    mSceneAsset.destroy();
                 }
+
+                assetFile.fullpath = "";
                 });
-        }
-        if (!show) {
-            assetFile.fullpath = "";
         }
 
     }
@@ -416,9 +416,11 @@ namespace Plutus
         texture.mTexId = font->mTexId;
         texture.mWidth = 500;
         texture.mHeight = 500;
+        texture.setTilesSize(0, 0);
         texture.mMagFilter = GL_NEAREST;
         texture.mMinFilter = GL_NEAREST;
 
         drawTexture(texture, width);
+        texture.mTexId = -1;
     }
 }
