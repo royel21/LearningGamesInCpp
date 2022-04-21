@@ -30,6 +30,8 @@ namespace Plutus
 
         EditorProject();
 
+        operator bool() const { return currentScene.empty(); }
+
         void CreateScene(const std::string& name);
         void removeScene(std::string id);
     };
