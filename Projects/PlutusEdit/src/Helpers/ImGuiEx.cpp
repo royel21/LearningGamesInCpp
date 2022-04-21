@@ -276,21 +276,22 @@ namespace ImGui {
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.33f, 0.33f, 0.33f, 0.8f));
     }
 
-    void EndDialog(bool& show, std::function<void()> callback)
+    void EndDialog(bool& show, std::function<void(bool)> callback)
     {
-        float width = ImGui::GetWindowContentRegionWidth();
-        ImGui::SetCursorPosX(width * 0.5f);
-
-        ImGui::Separator();
+        auto size = ImGui::GetWindowContentRegionMax();
         if (callback) {
+            ImGui::Separator();
             if (ImGui::Button("save##modal")) {
                 show = false;
-                callback();
+                callback(true);
             }
-            ImGui::SameLine();
         }
+        ImGui::SameLine();
         if (ImGui::Button("Cancel##modal-1"))
+        {
+            if (callback) callback(false);
             show = false;
+        }
         ImGui::PopStyleColor();
         ImGui::EndPopup();
     }

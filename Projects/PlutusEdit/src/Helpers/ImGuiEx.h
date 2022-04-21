@@ -130,7 +130,7 @@ namespace ImGui
 
     void BeginDialog(const char* name, bool fixedPos = false);
 
-    void EndDialog(bool& show, std::function<void()> callback = nullptr);
+    void EndDialog(bool& show, std::function<void(bool)> callback = nullptr);
 
     bool Draw2Float(char* id, Plutus::vec2f& value, float step = 1.0f, const char* btntag1 = "X", const char* btntag2 = "Y");
 
