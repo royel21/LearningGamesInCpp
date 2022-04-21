@@ -2,6 +2,8 @@
 #include <cstdio>
 #include <filesystem>
 
+#include "Utils.h"
+
 #pragma warning(disable : 4996)
 
 
@@ -74,6 +76,9 @@ namespace Plutus
 
         bool copyFile(const std::string& src, const std::string dst)
         {
+            auto dir = Utils::getDirectory(dst);
+            if (!exists(dir)) mkdirs(dir);
+
             return std::filesystem::copy_file(src, dst, std::filesystem::copy_options::overwrite_existing);
         }
     }
