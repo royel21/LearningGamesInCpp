@@ -39,6 +39,11 @@ namespace Plutus
             mIsOpen = true;
             mTileMap = mConfig->mProject.mEnt.getComponent<TileMapComponent>();
 
+            auto found = mTileMap->mTextures.find(mCurrentTexture);
+            if (mTileMap->mTextures.size() && found == mTileMap->mTextures.end()) {
+                mCurrentTexture = mTileMap->mTextures.begin()->first;
+            }
+
             float textWidth = ImGui::GetContentRegionAvailWidth() * 0.35f;
             ImGui::Row("Tile Width", textWidth);
             ImGui::InputInt("##tm-w", &mTileMap->mTileWidth);
@@ -75,7 +80,8 @@ namespace Plutus
             ImGui::Separator();
 
             AddTexureDialog(addTexture);
-
+            ImGui::Text("Tiles Count: %i", mTileMap->mTextures.size());
+            ImGui::Separator();
             if (mTileMap->mTextures.size())
             {
                 ImGui::RadioButton("Place", &mMode, MODE_PLACE);
@@ -148,6 +154,7 @@ namespace Plutus
         }
 
     }
+
     void TileMapPanel::processMode() {
         if (mIsOpen && mConfig->isHover && Input::get()->onKeyDown("MouseLeft")) {
             switch (mMode)
