@@ -40,7 +40,7 @@ bool drawFixture(Plutus::Fixture& fix, int index, int btype) {
         ImGui::DragFloat("##fix-friction", &fix.friction, 0.01f, 0.01f, 5, "%0.2f");
         if (btype) {
             ImGui::Row("density", textWidth);
-            ImGui::DragFloat("##fix-density", &fix.density, 0.1, 0, 20, "%0.02f");
+            ImGui::DragFloat("##fix-density", &fix.density, 0.1f, 0, 20, "%0.02f");
             ImGui::Row("restitution", textWidth);
             ImGui::DragFloat("##fix-restitution", &fix.restitution, 0.00f, 0.01f, 1, "%0.2f");
             ImGui::Row("isSensor", textWidth);
