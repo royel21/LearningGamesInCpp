@@ -128,7 +128,7 @@ namespace ImGui
 
     bool ColorInt(const char* label, unsigned int& color);
 
-    void BeginDialog(const char* name, bool fixedPos = false);
+    void BeginDialog(const char* name, bool fixedPos = false, Plutus::vec2f size = { 0, 0 });
 
     void EndDialog(bool& show, std::function<void(bool)> callback = nullptr);
 

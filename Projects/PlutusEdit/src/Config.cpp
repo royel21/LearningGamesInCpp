@@ -41,13 +41,13 @@ namespace Plutus
 
     void Config::init(Render* render)
     {
+        mRender = render;
         if (!currentProject.empty()) {
             auto path = mProjects[currentProject];
             mProject.workingDir = Utils::getDirectory(path);
             AssetManager::get()->setBaseDir(mProject.workingDir);
             mProject.load(path);
         }
-        mRender = render;
         mRender->init(this);
     }
 
@@ -81,9 +81,26 @@ namespace Plutus
         }
     }
 
-    EditorProject::EditorProject() : Project()
+    void EditorProject::Copy(const EditorProject& proj)
     {
-        mTempScene = CreateRef<Scene>();
+        winWidth = proj.winWidth;
+        winHeight = proj.winHeight;
+        vpWidth = proj.vpWidth;
+        vpHeight = proj.vpHeight;
+        vpPos = proj.vpPos;
+        zoomLevel = proj.zoomLevel;
+        maxFPS = proj.maxFPS;
+        velIter = proj.velIter;
+        positionIter = proj.positionIter;
+        timeStepInSec = proj.timeStepInSec;
+        gravity = proj.gravity;
+        autoClearForce = proj.autoClearForce;
+        tileWidth = proj.tileWidth;
+        tileHeight = proj.tileHeight;
+
+        scene->clear();
+        scene->mBGColor = proj.scene->mBGColor;
+        scene->copyScene(proj.scene.get());
     }
 
     void EditorProject::CreateScene(const std::string& name)
@@ -94,6 +111,11 @@ namespace Plutus
     void EditorProject::removeScene(std::string id)
     {
 
+    }
+
+    void EditorProject::clearScene()
+    {
+        scene->clear();
     }
 
 } // namespace Plutus

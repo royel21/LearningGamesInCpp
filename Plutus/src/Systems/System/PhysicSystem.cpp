@@ -99,16 +99,21 @@ namespace Plutus
             createFixture(rbody, trans.getPosition());
         } // end body forloop
 
-        auto view2 = mProject->scene->getRegistry()->view<TransformComponent, PhysicBodyComponent>();
+        auto staticView = mProject->scene->getRegistry()->view<PhysicBodyComponent>();
 
-        for (auto [ent, trans, pbody] : view2.each()) {
-            auto pos = toWorld(trans.getPosition());
+        for (auto [ent, pbody] : staticView.each()) {
+            Entity ent = { ent, mProject->scene.get() };
+            auto trans = ent.getComponent<TransformComponent>();
+            b2Vec2 pos = { 0, 0 };
+            if (trans) {
+                pos = toWorld(trans->getPosition());
+            }
 
             b2BodyDef body;
             body.type = (b2BodyType)pbody.mBodyType;
             body.position = pos;
             pbody.mBody = mWorld->CreateBody(&body);
-            createFixture(pbody, trans.getPosition());
+            createFixture(pbody, { pos.x, pos.y });
         }
     }
 

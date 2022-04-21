@@ -62,7 +62,6 @@ namespace Plutus
 
             zoomLevel = jhelper.getFloat("zoom-level");
 
-
             velIter = jhelper.getInt("velocity-iter");
             positionIter = jhelper.getInt("position-iter");
 
@@ -96,11 +95,11 @@ namespace Plutus
             ser.addInt("vp-width", vpWidth);
             ser.addInt("vp-height", vpHeight);
             ser.add2Float("vp-pos", vpPos);
-            ser.addFloat("zoom", zoomLevel);
+            ser.addFloat("zoom-level", zoomLevel);
             ser.addFloat("max-fps", maxFPS);
 
-            ser.addInt("vel-iter", velIter);
-            ser.addInt("pos-iter", positionIter);
+            ser.addInt("velocity-iter", velIter);
+            ser.addInt("position-iter", positionIter);
             ser.add2Float("gravity", gravity);
             ser.addInt("auto-clear-force", autoClearForce);
 

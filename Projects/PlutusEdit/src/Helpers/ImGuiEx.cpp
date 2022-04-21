@@ -262,11 +262,14 @@ namespace ImGui {
         return change;
     }
 
-    void BeginDialog(const char* name, bool fixedPos)
+    void BeginDialog(const char* name, bool fixedPos, Plutus::vec2f size)
     {
         if (fixedPos) {
             auto pos = ImGui::GetWindowPos();
             ImGui::SetNextWindowPos({ pos.x + 5, pos.y + 60 });
+        }
+        if (size.x || size.y) {
+            ImGui::SetNextWindowSize({ size.x, size.y });
         }
         ImVec2 center = ImGui::GetMainViewport()->GetCenter();
         ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
@@ -278,15 +281,13 @@ namespace ImGui {
 
     void EndDialog(bool& show, std::function<void(bool)> callback)
     {
-        auto size = ImGui::GetWindowContentRegionMax();
         if (callback) {
-            ImGui::Separator();
             if (ImGui::Button("save##modal")) {
                 show = false;
                 callback(true);
             }
+            ImGui::SameLine();
         }
-        ImGui::SameLine();
         if (ImGui::Button("Cancel##modal-1"))
         {
             if (callback) callback(false);

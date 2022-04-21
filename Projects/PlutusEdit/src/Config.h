@@ -26,14 +26,15 @@ namespace Plutus
         int tileHeight = 64;
 
         Entity mEnt;
-        Ref<Scene> mTempScene;
-
-        EditorProject();
+        EditorProject() = default;
+        void Copy(const EditorProject& proj);
 
         operator bool() const { return currentScene.empty(); }
 
         void CreateScene(const std::string& name);
         void removeScene(std::string id);
+
+        void clearScene();
     };
 
     struct Config
@@ -52,6 +53,8 @@ namespace Plutus
         Camera2D* mCamera;
 
         EditorProject mProject;
+
+        EditorProject mTempProject;
         //Current Open Project
         std::string currentProject = "";
         std::string workingDir;

@@ -41,6 +41,7 @@ namespace Plutus
         }
 
 
+        mSysManager.setProject(&mConfig->mTempProject);
         mSysManager.AddSystem<ScriptSystem>(&mConfig->mRender->mCamera);
         mSysManager.AddSystem<PhysicSystem>();
         mSysManager.AddSystem<AnimationSystem>();
@@ -227,21 +228,22 @@ namespace Plutus
 
                 if (ImGui::TransparentButton(isRunning ? ICON_FA_STOP : ICON_FA_PLAY)) {
                     if (isRunning) {
-                        mConfig->mRender->setScene(project.scene.get());
                         mConfig->state = Editing;
-                        project.mTempScene->clear();
-                        mSysManager.stop();
+                        mConfig->mRender->setScene(project.scene.get());
                         DebugRender::get()->setShouldDraw(mConfig->drawGrid);
+
+                        mSysManager.stop();
+                        mConfig->mTempProject.clearScene();
                     }
                     else {
                         mConfig->state = Running;
 
-                        project.mTempScene.get()->copyScene(project.scene.get());
+                        mConfig->mTempProject.Copy(mConfig->mProject);
+
                         DebugRender::get()->setShouldDraw(false);
 
-                        mSysManager.setProject(&mConfig->mProject);
                         mSysManager.init();
-                        mConfig->mRender->setScene(mConfig->mProject.mTempScene.get());
+                        mConfig->mRender->setScene(mConfig->mTempProject.scene.get());
                     }
                 }
                 ImGui::SameLine();

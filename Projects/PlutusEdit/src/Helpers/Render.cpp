@@ -44,7 +44,7 @@ namespace Plutus
 
         mFramePicker.init(w, h, true);
         mFrameBuffer.init(w, h);
-        mScene = config->mProject.scene.get();
+        mScene = mConfig->mProject.scene.get();
     }
 
 
@@ -76,7 +76,11 @@ namespace Plutus
 
     void Render::drawFixtures(PhysicBodyComponent* pbody, TransformComponent* trans) {
         for (auto& fixture : pbody->mFixtures) {
-            auto pos = trans->getPosition();//fromWorld(rbody.mBody->GetPosition());
+            vec2f pos;
+
+            if (trans) {
+                pos = trans->getPosition();//fromWorld(rbody.mBody->GetPosition());
+            }
 
             switch (fixture.type) {
             case BoxShape: {
@@ -110,9 +114,12 @@ namespace Plutus
             drawFixtures(&rbody, &trans);
         }
 
-        auto view2 = mScene->getRegistry()->view<TransformComponent, PhysicBodyComponent>();
-        for (auto [e, trans, pbody] : view2.each()) {
-            drawFixtures(&pbody, &trans);
+        auto view2 = mScene->getRegistry()->view<PhysicBodyComponent>();
+        for (auto [e, pbody] : view2.each()) {
+            Entity ent = { ent, mConfig->mProject.scene.get() };
+            auto trans = ent.getComponent<TransformComponent>();
+
+            drawFixtures(&pbody, trans);
         }
 
         if (view.size_hint()) {

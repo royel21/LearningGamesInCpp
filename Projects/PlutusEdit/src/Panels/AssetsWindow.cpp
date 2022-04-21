@@ -202,7 +202,7 @@ namespace Plutus
     }
 
     void AssetsWindow::viewAssets(bool& show) {
-        ImGui::BeginDialog("Asset Modal");
+        ImGui::BeginDialog("Asset Modal", false, { 450.0f, 0.0f });
         float width = ImGui::GetContentRegionAvailWidth() * 0.3f;
         ImGui::Row("Id", width);
         ImGui::Text(assetFile.name.c_str());
@@ -243,6 +243,7 @@ namespace Plutus
             break;
         }
         }
+        ImGui::Separator();
         ImGui::EndDialog(show);
         if (!show) {
             texture.destroy();
@@ -260,7 +261,7 @@ namespace Plutus
             float width = ImGui::GetContentRegionAvailWidth() * 0.3f;
 
 
-            ImGui::BeginDialog(("Asset Modal - " + assetFile.name).c_str());
+            ImGui::BeginDialog(("Asset Modal - " + assetFile.name).c_str(), false, { 450.0f, 0.0f });
             //Texure Or Font Id
             ImGui::Row("Asset Id", width);
             ImGui::InputText("##asset-modal", &assetFile.id);
@@ -316,6 +317,7 @@ namespace Plutus
 
             }
 
+            ImGui::Separator();
             ImGui::EndDialog(show, [&](bool save) {
                 if (save && assetFile.id.length() > 0)
                 {

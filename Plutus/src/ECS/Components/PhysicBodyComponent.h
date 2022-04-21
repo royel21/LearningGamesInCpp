@@ -79,7 +79,7 @@ namespace Plutus
 
         inline Fixture& addFixture(int type) {
             mFixtures.push_back({ type });
-            return mFixtures.front();
+            return mFixtures.back();
         };
 
         inline void addEdge(vec2f offset, vec2f size, float friction = 0.3f, float density = 1.0f, float restitution = 0, bool isSensor = false) {

@@ -20,8 +20,8 @@ namespace Plutus
 
     void DebugSystem::update(float dt)
     {
-        auto view = mProject->scene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
-        for (auto [e, trans, rbody] : view.each()) {
+        auto rigidview = mProject->scene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
+        for (auto [e, trans, rbody] : rigidview.each()) {
 
             for (auto& fixture : rbody.mFixtures) {
                 auto pos = fromWorld(rbody.mBody->GetPosition());
