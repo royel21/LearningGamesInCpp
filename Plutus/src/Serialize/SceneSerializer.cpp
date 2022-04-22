@@ -136,7 +136,6 @@ namespace Plutus
                         ser.addInt("fx", tile.flipX);
                         ser.addInt("fy", tile.flipY);
                         ser.addFloat("r", tile.rotate);
-                        ser.addInt("c", tile.color);
                     }
                     ser.EndObj();
                 }

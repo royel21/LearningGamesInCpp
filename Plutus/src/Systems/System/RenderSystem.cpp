@@ -49,6 +49,7 @@ namespace Plutus
             auto [tilemap] = viewMap.get(ent);
             if (tilemap.mTiles.size())
             {
+                ColorRGBA8 color;
                 for (auto& tile : tilemap.mTiles)
                 {
                     auto rect = tile.getRect();
@@ -60,7 +61,7 @@ namespace Plutus
                                 tex->mTexId, // Texure Id
                                 rect, // Desct Rectangle
                                 tex->getUV(tile.texcoord), // Texure Coords UV
-                                { tile.color }, // Color
+                                color, // Color
                                 tile.rotate, // Rotation
                                 tile.flipX, // Flip X
                                 tile.flipY, // Flip Y

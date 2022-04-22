@@ -57,9 +57,8 @@ namespace Plutus
             int t = tile["tc"].GetInt();
             int tx = tile["txi"].GetInt();
             float rotate = tile["r"].GetFloat();
-            int color = tile["c"].GetInt();
 
-            tmap->mTiles.emplace_back(x, y, t, tx, fx, fy, rotate, color);
+            tmap->mTiles.emplace_back(x, y, t, tx, fx, fy, rotate);
             tmap->mTiles.back().setParent(tmap);
         }
     }

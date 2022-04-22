@@ -164,8 +164,7 @@ namespace Plutus
                         auto texId = tex ? tex->mTexId : -1;
 
                         if (tex) {
-                            mRenderables[i++] = { texId, rect, tex->getUV(tile.texcoord),
-                                { tile.color }, tile.rotate, tile.flipX, tile.flipY, (int)entt::to_integral(ent), tilemap.mLayer, false };
+                            mRenderables[i++] = { texId, rect, tex->getUV(tile.texcoord), {}, tile.rotate, tile.flipX, tile.flipY, (int)entt::to_integral(ent), tilemap.mLayer, false };
                         }
                     }
                 }

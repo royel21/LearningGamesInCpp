@@ -601,6 +601,7 @@ namespace ImGui {
                             }
                         }
                         else {
+                            selected->clear();
                             selected->push_back({ 0,0,0 });
                         }
                     }

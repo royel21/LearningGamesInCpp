@@ -17,12 +17,11 @@ namespace Plutus
         bool flipX;
         bool flipY;
         float rotate;
-        unsigned int color;
         int texcoord = 0;
         int texture = 0;
         TileMapComponent* parent;
         Tile() = default;
-        Tile(int _x, int _y, int _texcoord, unsigned int _texture, bool fx = false, bool fy = false, float _rotate = 0, unsigned int _color = 0xffffffff)
+        Tile(int _x, int _y, int _texcoord, unsigned int _texture, bool fx = false, bool fy = false, float _rotate = 0)
         {
             x = _x;
             y = _y;
@@ -31,7 +30,6 @@ namespace Plutus
             texcoord = _texcoord;
             texture = _texture;
             rotate = _rotate;
-            color = _color;
         }
 
         void setParent(TileMapComponent* _parent) {
