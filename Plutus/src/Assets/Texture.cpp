@@ -1,6 +1,7 @@
 #include "Texture.h"
 #include <stb_image.h>
 #include <Utils/Utils.h>
+#include <Utils/FileIO.h>
 #include <Graphics/GLheaders.h>
 
 namespace Plutus
@@ -9,7 +10,17 @@ namespace Plutus
     {
         destroy();
 
-        mPath = path;
+        auto dir = Utils::getDirectory(path);
+        if (dir.compare("assets/textures") != 0) {
+            auto name = Utils::getFileName(path);
+            mPath = "assets/textures" + name;
+            FileIO::copyFile(path, baseDir + mPath);
+        }
+        else {
+            mPath = path;
+        }
+
+
         if (minFilter && magFilter) {
             mMinFilter = minFilter;
             mMagFilter = magFilter;
