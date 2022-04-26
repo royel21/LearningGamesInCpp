@@ -1,1 +1,8 @@
-{"fonts":[],"textures":[],"sounds":[],"entities":[]}
+{
+    "format": "Plutus",
+    "type": 0,
+    "fonts": [],
+    "textures": [],
+    "sounds": [],
+    "entities": []
+}

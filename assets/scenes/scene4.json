@@ -1,4 +1,6 @@
 {
+    "format": "Plutus",
+    "type": 0,
     "bg-color": 0,
     "fonts": [],
     "scripts": [

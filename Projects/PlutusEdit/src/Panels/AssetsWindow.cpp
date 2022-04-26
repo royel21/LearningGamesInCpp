@@ -71,6 +71,7 @@ namespace Plutus
 
     AssetsWindow::AssetsWindow()
     {
+        assetMang = AssetManager::get();
         icons["Textures"] = ICON_FA_IMAGE " ";
         icons["Fonts"] = ICON_FA_FONT " ";
         icons["Sounds"] = ICON_FA_MUSIC " ";
@@ -137,7 +138,6 @@ namespace Plutus
     void AssetsWindow::draw()
     {
         if (ImGui::Begin("Assets")) {
-            auto mAsset = AssetManager::get();
             if (std::filesystem::exists("./assets/")) {
 
                 ImGui::Row("Filter");
@@ -177,7 +177,7 @@ namespace Plutus
 
         std::string selectedAssetId = "";
         if (nodes2[name]) {
-            auto& assets = AssetManager::get()->getAssets<T>();
+            auto& assets = assetMang->getAssets<T>();
             static bool show;
             flags |= TreeNodeLeaf_NoPushOpen;
             for (auto asset : assets) {
@@ -221,7 +221,7 @@ namespace Plutus
         {
         case FONTS:
         {
-            auto font = AssetManager::get()->getAsset<Font>(assetFile.name);
+            auto font = assetMang->getAsset<Font>(assetFile.name);
             if (font) {
                 showFont(font, width);
             }
@@ -229,7 +229,7 @@ namespace Plutus
         }
         case TEXURES:
         {
-            auto tex = AssetManager::get()->getAsset<Texture>(assetFile.name);
+            auto tex = assetMang->getAsset<Texture>(assetFile.name);
             if (tex) {
                 showTexure(*tex);
             }
@@ -237,7 +237,7 @@ namespace Plutus
         }
         case SOUNDS:
         {
-            auto sound = AssetManager::get()->getAsset<Sound>(assetFile.name);
+            auto sound = assetMang->getAsset<Sound>(assetFile.name);
             if (sound) {
                 ImGui::Row("Type", width);
                 EnumTypeCombo("###sound-types", SoundTypeMaps, mSound.mType);
@@ -333,37 +333,36 @@ namespace Plutus
                 {
                     std::string baseDir = mConfig->mProject.workingDir;
                     std::string dest = FileIO::joinPath(baseDir, asset);
-
                     Utils::replaceAll(asset, '\\', '/');
                     if (FileIO::copyFile(assetFile.fullpath, dest))
                     {
                         switch (assetFile.type)
                         {
                         case FONTS: {
-                            AssetManager::get()->addAsset<Font>(assetFile.id, asset, mFont.mSize);
+                            assetMang->addAsset<Font>(assetFile.id, asset, mFont.mSize);
                             mFont.destroy();
                             break;
                         }
                         case TEXURES:
                         {
-                            AssetManager::get()->addAsset<Texture>(assetFile.id, asset, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
+                            assetMang->addAsset<Texture>(assetFile.id, asset, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
                             texture.destroy();
                             break;
                         }
                         case SOUNDS:
                         {
-                            AssetManager::get()->addAsset<Sound>(assetFile.id, asset, mSound.mType);
+                            assetMang->addAsset<Sound>(assetFile.id, asset, mSound.mType);
                             mSound.destroy();
                             break;
                         }
                         case SCRIPTS:
                         {
-                            AssetManager::get()->addAsset<Script>(assetFile.id, asset);
+                            assetMang->addAsset<Script>(assetFile.id, asset);
                             mScript.destroy();
                             break;
                         }
                         case SCENES: {
-                            AssetManager::get()->addAsset<SceneAsset>(assetFile.id, asset);
+                            assetMang->addAsset<SceneAsset>(assetFile.id, asset);
                             break;
                         }
                         }

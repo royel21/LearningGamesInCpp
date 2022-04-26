@@ -10,16 +10,7 @@ namespace Plutus
     {
         destroy();
 
-        auto dir = Utils::getDirectory(path);
-        if (dir.compare("assets/textures") != 0) {
-            auto name = Utils::getFileName(path);
-            mPath = "assets/textures" + name;
-            FileIO::copyFile(path, baseDir + mPath);
-        }
-        else {
-            mPath = path;
-        }
-
+        mPath = path;
 
         if (minFilter && magFilter) {
             mMinFilter = minFilter;

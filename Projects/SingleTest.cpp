@@ -15,6 +15,10 @@
 
 using namespace Plutus;
 
+constexpr uint32_t FLIPX = 0x2000000;
+constexpr uint32_t FLIPY = 0x4000000;
+constexpr uint32_t ROTATE = 0x8000000;
+
 void parseTexture(rapidjson::Value& value) {
     if (value.IsArray()) {
         auto manager = AssetManager::get();
@@ -53,23 +57,25 @@ void readMapData(const std::string& path, Scene* scene, int width = 0, int heigh
 
                     auto& data = layer["data"].GetArray();
 
-                    auto countX = layer["width"].GetInt();
-                    auto countY = layer["height"].GetInt();
+                    map->mWidth = layer["width"].GetInt();
+                    map->mHeight = layer["height"].GetInt();
 
                     for (size_t i = 0; i < data.Size(); i++)
                     {
-                        int x = (i % countX);
-                        int y = (countY - 1) - (i / countY);
-
                         uint32_t d = data[i].GetUint();
-                        uint32_t texId = 0xf & d;
-                        int uvIndex = 0xffff & (d >> 4);
-                        uint32_t transform = 0xf & d;
+                        if (d != 0) {
+                            int x = (i % map->mWidth);
+                            int y = (map->mHeight - 1) - (i / map->mHeight);
 
-                        bool flipX = 0x2000000 & d;
-                        bool flipY = 0x4000000 & d;
-                        float rotation = 0x8000000 & d ? 90.0f : 0;
-                        map->addTile(Tile{ x,y, uvIndex, texId, flipX, flipY, rotation });
+                            uint32_t texId = 0xf & d;
+                            int uvIndex = 0xffff & (d >> 4);
+                            uint32_t transform = 0xf & d;
+
+                            bool flipX = FLIPX & d;
+                            bool flipY = FLIPY & d;
+                            float rotation = ROTATE & d ? 90.0f : 0;
+                            map->addTile(Tile{ x,y, uvIndex, texId, flipX, flipY, rotation });
+                        }
                     }// end Tiles
                 }// end layer
             }// end layers

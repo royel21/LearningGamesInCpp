@@ -39,6 +39,7 @@ namespace Plutus
         std::string assetId;
 
         EnumFilter texfilter = { GL_NEAREST, "Nearest" };
+        AssetManager* assetMang = nullptr;
 
         AssetFile assetFile;
         std::string filter;
