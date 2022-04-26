@@ -45,10 +45,14 @@ namespace Plutus
             }
 
             float textWidth = ImGui::GetContentRegionAvailWidth() * 0.35f;
+            ImGui::Row("Width", textWidth);
+            ImGui::InputInt("##tm-w", &mTileMap->mWidth);
+            ImGui::Row("Height", textWidth);
+            ImGui::InputInt("##tm-h", &mTileMap->mHeight);
             ImGui::Row("Tile Width", textWidth);
-            ImGui::InputInt("##tm-w", &mTileMap->mTileWidth);
+            ImGui::InputInt("##tm-tw", &mTileMap->mTileWidth);
             ImGui::Row("Tile Heigth", textWidth);
-            ImGui::InputInt("##tm-h", &mTileMap->mTileHeight);
+            ImGui::InputInt("##tm-th", &mTileMap->mTileHeight);
             ImGui::Row("Layer", textWidth);
             ImGui::InputInt("##tm-l", &mTileMap->mLayer);
 

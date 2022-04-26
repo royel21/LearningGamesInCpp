@@ -102,11 +102,13 @@ namespace Plutus
         ser.EndObj();
     }
 
-    void TileMap_json(Serializer& ser, const TileMapComponent* tilemap)
+    void TileMap_json(Serializer& ser, TileMapComponent* tilemap)
     {
         ser.StartObj();
         {
             ser.addString("name", "TileMap");
+            ser.addInt("width", tilemap->mWidth);
+            ser.addInt("height", tilemap->mHeight);
             ser.addInt("tilewidth", tilemap->mTileWidth);
             ser.addInt("tileheight", tilemap->mTileHeight);
             ser.addInt("layer", tilemap->mLayer);
@@ -124,21 +126,48 @@ namespace Plutus
             //Tiles Array
             ser.StartArr("tiles");
             {
-                for (auto tile : tilemap->mTiles)
+                for (int y = 0; y < tilemap->mHeight; y++)
                 {
-                    //Tile OBJ
-                    ser.StartObj();
+                    for (int x = 0; x < tilemap->mWidth; x++)
                     {
-                        ser.addInt("tc", tile.texcoord);
-                        ser.addInt("txi", tile.texture);
-                        ser.addInt("x", tile.x);
-                        ser.addInt("y", tile.y);
-                        ser.addInt("fx", tile.flipX);
-                        ser.addInt("fy", tile.flipY);
-                        ser.addFloat("r", tile.rotate);
+                        auto tile = tilemap->getTile(vec2i{ x , y });
+                        if (tile) {
+                            int t = tile->texture + 1;
+                            t |= tile->texcoord << 4;
+                            t |= tile->flipX << 25;
+                            t |= tile->flipY << 26;
+                            t |= (tile->rotate != 0) << 27;
+                            ser.addInt(t);
+                            if (t > 2) {
+                                printf("test");
+                            }
+                        }
+                        else {
+                            ser.addInt(0);
+                        }
                     }
-                    ser.EndObj();
                 }
+                // for (auto tile : tilemap->mTiles)
+                // {
+                //     // int t = tile.texture;
+                //     // t |= tile.texcoord << 4;
+                //     // t |= tile.flipX << 25;
+                //     // t |= tile.flipY << 26;
+                //     // t |= (tile.rotate != 0) << 27;
+                //     // ser.addInt(t);
+                //     //Tile OBJ
+                //     ser.StartObj();
+                //     {
+                //         ser.addInt("tc", tile.texcoord);
+                //         ser.addInt("txi", tile.texture);
+                //         ser.addInt("x", tile.x);
+                //         ser.addInt("y", tile.y);
+                //         ser.addInt("fx", tile.flipX);
+                //         ser.addInt("fy", tile.flipY);
+                //         ser.addFloat("r", tile.rotate);
+                //     }
+                //     ser.EndObj();
+                // }
             }
             ser.EndArr();
         }
@@ -180,6 +209,9 @@ namespace Plutus
         Serializer ser;
         auto writer = ser.getWriter();
         ser.StartObj();
+
+        ser.addString("format", "Plutus");
+        ser.addInt("type", 0);
 
         ser.addInt("bg-color", scene->mBGColor);
 

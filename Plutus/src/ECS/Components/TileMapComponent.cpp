@@ -66,4 +66,18 @@ namespace Plutus
         return index > -1;
     }
 
+    void TileMapComponent::addTile(int pos, int tile) {
+
+        // uint32_t texId = 0xf & tile;
+        // int uvIndex = 0xffff & (tile >> 4);
+        // uint32_t transform = 0xf & tile;
+
+        // bool flipX = 0x2000000 & tile;
+        // bool flipY = 0x4000000 & tile;
+        // float rotation = 0x8000000 & tile ? 90.0f : 0;
+
+        // pos
+
+    }
+
 } // namespace Plutus

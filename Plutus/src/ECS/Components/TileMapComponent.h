@@ -52,8 +52,10 @@ namespace Plutus
 
     struct TileMapComponent
     {
-        int mTileWidth;
-        int mTileHeight;
+        int mWidth = 60;
+        int mHeight = 34;
+        int mTileWidth = 32;
+        int mTileHeight = 32;
         int mLayer = 0;
         std::vector<Tile> mTiles;
         std::unordered_map<int, std::string> mTextures;
@@ -68,6 +70,7 @@ namespace Plutus
         Texture* getTexture(int id);
 
         void addTile(Tile& tile);
+        void addTile(int pos, int tile);
         Tile* getTile(const vec2i& mCoords);
         int getIndex(const vec2i& mCoords);
         bool removeTile(const vec2i& mCoords);

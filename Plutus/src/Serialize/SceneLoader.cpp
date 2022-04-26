@@ -13,6 +13,10 @@
 
 namespace Plutus
 {
+    constexpr uint32_t FLIPX = 0x2000000;
+    constexpr uint32_t FLIPY = 0x4000000;
+    constexpr uint32_t ROTATE = 0x8000000;
+
     void loadAnimation(Entity& ent, const rapidjson::Value::Object& value)
     {
         auto anim = ent.addComponent<AnimationComponent>();
@@ -36,10 +40,14 @@ namespace Plutus
 
     void loadTileMap(Entity& ent, const rapidjson::Value::Object& value)
     {
-        int w = value["tilewidth"].GetInt();
-        int h = value["tileheight"].GetInt();
+        int w = value["width"].GetInt();
+        int h = value["height"].GetInt();
+        int tw = value["tilewidth"].GetInt();
+        int th = value["tileheight"].GetInt();
         int layer = value["layer"].GetInt();
-        auto tmap = ent.addComponent<TileMapComponent>(w, h, layer);
+        auto tmap = ent.addComponent<TileMapComponent>(tw, th, layer);
+        tmap->mWidth = w;
+        tmap->mHeight = h;
 
         for (auto& obj : value["textures"].GetArray())
         {
@@ -47,19 +55,20 @@ namespace Plutus
         }
 
         auto tiles = value["tiles"].GetArray();
-
-        for (auto& tile : value["tiles"].GetArray())
+        for (size_t i = 0; i < tiles.Size(); i++)
         {
-            int x = tile["x"].GetInt();
-            int y = tile["y"].GetInt();
-            int fx = tile["fx"].GetInt();
-            int fy = tile["fy"].GetInt();
-            int t = tile["tc"].GetInt();
-            int tx = tile["txi"].GetInt();
-            float rotate = tile["r"].GetFloat();
+            uint32_t d = tiles[i].GetUint();
+            if (d != 0) {
+                int x = (i % tmap->mWidth);
+                int y = i / tmap->mWidth;
 
-            tmap->mTiles.emplace_back(x, y, t, tx, fx, fy, rotate);
-            tmap->mTiles.back().setParent(tmap);
+                uint32_t texId = (0xf & d) - 1;
+                int uvIndex = 0xffff & (d >> 4);
+                bool flipX = FLIPX & d;
+                bool flipY = FLIPY & d;
+                float rotation = ROTATE & d ? 90.0f : 0;
+                tmap->addTile(Tile{ x, y, 0, texId, 0, 0, 0 });
+            }
         }
     }
 
@@ -154,8 +163,8 @@ namespace Plutus
                     auto path = jhelper.getString("path");
                     int tilewidth = jhelper.getInt("width");
                     int tileheight = jhelper.getInt("height");
-                    int minFilter = jhelper.getInt("min-filter");
-                    int magFilter = jhelper.getInt("mag-filter");
+                    int minFilter = jhelper.getInt("min-filter", GL_NEAREST);
+                    int magFilter = jhelper.getInt("mag-filter", GL_NEAREST);
                     AssetManager::get()->addAsset<Texture>(id, path, tilewidth, tileheight, minFilter, magFilter);
                 }
             }
