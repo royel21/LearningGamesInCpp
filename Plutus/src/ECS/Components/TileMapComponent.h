@@ -25,10 +25,11 @@ namespace Plutus
         {
             x = _x;
             y = _y;
-            flipX = fx;
-            flipY = fy;
+
             texcoord = _texcoord;
             texture = _texture;
+            flipX = fx;
+            flipY = fy;
             rotate = _rotate;
         }
 

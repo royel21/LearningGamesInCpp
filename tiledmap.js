@@ -1,13 +1,9 @@
 //https://www.mapeditor.org/docs/scripting/classes/Tile.html
 let tilesets = [];
 
-function encode({ x, y, fx, fy, r }) {
-  let tile = x | (y << 12) | (r << 20) | (fx << 21) | (fy << 22);
+function encode({ fx, fy, r }) {
+  let tile = fx | (fy << 1) | (r << 2); //x | (y << 12) | (r << 20) | (fx << 21) | (fy << 22);
   return tile;
-}
-
-function encodeTex({ i, tex }) {
-  return i | (tex << 12);
 }
 
 var customMapFormat = {
@@ -45,26 +41,14 @@ var customMapFormat = {
             let tile = layer.tileAt(x, y);
             let cell = layer.cellAt(x, y);
             if (tile) {
-              let id = tilesets[tile.tileset.name].id;
-              tiled.log(
-                `${x}, ${h - y}, ${id}, ${cell.flippedAntiDiagonally} ${cell.flippedHorizontally}, ${
-                  cell.flippedVertically
-                }`
-              );
-
-              tiles.push(
-                encode({
-                  x,
-                  y: h - y,
-                  fx: cell.flippedHorizontally,
-                  fy: cell.FlippedVertically,
-                  r: cell.flippedAntiDiagonally,
-                }),
-                encodeTex({
-                  i: id,
-                  tex: tile.id,
-                })
-              );
+              let item = tilesets[tile.tileset.name].id;
+              item |= tile.id << 4;
+              item |= cell.flippedHorizontally << 25;
+              item |= cell.FlippedVertically << 26;
+              item |= cell.flippedAntiDiagonally << 27;
+              tiles.push(item);
+            } else {
+              tiles.push(0);
             }
           }
         }
