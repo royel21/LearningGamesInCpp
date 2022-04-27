@@ -111,12 +111,10 @@ namespace Plutus
 			rotate(mBottomRight, center, r);
 		}
 
-		bufferVertices[mVertexCount + 0] = { mbottomLeft.x, mbottomLeft.y, uv.x, uv.w, c, id };
-		bufferVertices[mVertexCount + 1] = { mtopLeft.x, mtopLeft.y, uv.x, uv.y, c, id };
-		bufferVertices[mVertexCount + 2] = { mtopRight.x, mtopRight.y, uv.z, uv.y, c, id };
-		bufferVertices[mVertexCount + 3] = { mBottomRight.x, mBottomRight.y, uv.z, uv.w, c, id };
-
-		mVertexCount += 4;
+		bufferVertices[mVertexCount++] = { mbottomLeft.x, mbottomLeft.y, uv.x, uv.w, c, id };
+		bufferVertices[mVertexCount++] = { mtopLeft.x, mtopLeft.y, uv.x, uv.y, c, id };
+		bufferVertices[mVertexCount++] = { mtopRight.x, mtopRight.y, uv.z, uv.y, c, id };
+		bufferVertices[mVertexCount++] = { mBottomRight.x, mBottomRight.y, uv.z, uv.w, c, id };
 	}
 
 	void SpriteBatch2D::submit(GLuint texture, const vec4f& rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {

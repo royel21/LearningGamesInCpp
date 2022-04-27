@@ -84,7 +84,7 @@ namespace Plutus
             ImGui::Separator();
 
             AddTexureDialog(addTexture);
-            ImGui::Text("Tiles Count: %i", mTileMap->mTextures.size());
+            ImGui::Text("Tiles Count: %i", mTileMap->mTiles.size());
             ImGui::Separator();
             if (mTileMap->mTextures.size())
             {

@@ -48,34 +48,34 @@ namespace Plutus
 
     void Texture::calculateUV()
     {
-        if (mTileWidth > 0 && mTileHeight > 0)
+        if (mTileWidth > 0 && mTileHeight > 0 && mHeight && mWidth)
         {
             uvs.clear();
             int columns = mWidth / mTileWidth;
 
             auto totalTiles = columns * int(mHeight / mTileHeight);
 
-            float spacingX = ((float)mSpacing / (float)mWidth);
-            float spacingY = ((float)mSpacing / (float)mHeight);
-            if (mSpacing) {
-                // spacingX += 0.002f;
-                // spacingY += 0.009f;
-            }
+            int spacingY = mSpacing;
+
+            float tileWidth = (float)mTileWidth / (float)mWidth;
+            float tileheight = (float)mTileHeight / (float)mHeight;
 
             for (int y = 0; y < mHeight / mTileHeight; y++)
             {
+                int spacingX = mSpacing;
                 for (int x = 0; x < mWidth / mTileWidth; x++)
                 {
-                    // int y = i / columns;
-                    // int x = j % columns;
-                    vec4f UV;
-                    UV.x = ((float)(x * mTileWidth) / (float)mWidth) + (spacingX * (x + 1));
-                    UV.y = ((float)(y * mTileHeight) / (float)mHeight) + (spacingY * (y + 1));
-                    UV.z = ((float)(x * mTileWidth + mTileWidth) / (float)mWidth);
-                    UV.w = ((float)(y * mTileHeight + mTileHeight) / (float)mHeight);
-                    uvs.push_back(UV);
-                }
 
+                    vec4f UV;
+                    UV.x = ((float)(x * mTileWidth + spacingX) / (float)mWidth);
+                    UV.y = ((float)(y * mTileHeight + spacingY) / (float)mHeight);
+
+                    UV.z = UV.x + tileWidth; //float((float)(x * mTileWidth + mTileWidth) / (float)mWidth);
+                    UV.w = UV.y + tileheight;
+                    uvs.push_back(UV);
+                    spacingX += mSpacing;
+                }
+                spacingY += mSpacing;
             }
 
 

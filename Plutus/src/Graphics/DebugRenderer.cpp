@@ -205,35 +205,28 @@ namespace Plutus
 
 			vec2f cpos = { round(campos.x / tw) * tw, round(campos.y / th) * th };
 
-			float currentLine = -2 * tw;
-
-			for (float x = -2; currentLine <= size.x + tw; x++)
+			for (float currentLine = -3 * tw; currentLine <= size.x + tw; currentLine += tw)
 			{
-				currentLine = x * tw;
-
 				lineStart.x = cpos.x + currentLine;
-				lineStart.y = cpos.y;
+				lineStart.y = cpos.y - th;
 
 				lineEnd.x = cpos.x + (currentLine);
-				lineEnd.y = cpos.y + size.y;
+				lineEnd.y = cpos.y + size.y + th;
 				drawLine(lineStart, lineEnd, 0, mGridColor);
 			}
 
-			currentLine = -2 * th;
-			for (float y = -2; currentLine <= size.y + th; y++)
+			for (float currentLine = -3 * th; currentLine <= size.y + th; currentLine += th)
 			{
-				currentLine = y * th;
-
-				lineStart.x = cpos.x;
+				lineStart.x = cpos.x - tw;
 				lineStart.y = cpos.y + (currentLine);
 
-				lineEnd.x = cpos.x + size.x;
+				lineEnd.x = cpos.x + size.x + tw;
 				lineEnd.y = cpos.y + (currentLine);
 				drawLine(lineStart, lineEnd, 0, mGridColor);
 			}
 			end();
 
-			render(1.50f);
+			render(1.45f);
 		}
 	}
 
