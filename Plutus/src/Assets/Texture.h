@@ -58,6 +58,8 @@ namespace Plutus
         int mMagFilter = GL_NEAREST;
         int mWidth = 0;
         int mHeight = 0;
+        int mSpacing = 0;
+        int mMargin = 0;
         uint32_t mTexId = -1;
         std::vector<vec4f> uvs;
     };

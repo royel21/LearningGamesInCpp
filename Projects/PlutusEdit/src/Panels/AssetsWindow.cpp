@@ -384,6 +384,10 @@ namespace Plutus
 
         ImGui::Row("Tile Height", width);
         if (ImGui::InputInt("##Tile Height", &texture.mTileHeight)) texture.calculateUV();
+
+        ImGui::Row("Spacing", width);
+        if (ImGui::InputInt("##t-spacing", &texture.mSpacing)) texture.calculateUV();
+
         if (newTex) {
             static int selected = 0;
             ImGui::Row("Filters", width);

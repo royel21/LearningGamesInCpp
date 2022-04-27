@@ -6,6 +6,7 @@
 #include <Log/Logger.h>
 #include <Systems/Systems.h>
 #include <Serialize/SceneLoader.h>
+#include <Assets/AssetManager.h>
 
 
 GameScreen::GameScreen()
@@ -31,15 +32,35 @@ void GameScreen::Init()
 
 void GameScreen::Enter()
 {
-    Plutus::SceneLoader::loadFromPath("assets/scenes/Physics.json", &mScene);
+    Plutus::AssetManager::get()->setBaseDir("C:\\vscode-workspace\\Desktop\\ZombiesGame\\");
+    Plutus::SceneLoader::loadFromPath("assets/scenes/testing.json", mCore->mProject.scene.get());
     mSystemManager.init();
 }
 
 void GameScreen::Update(float dt)
 {
+    auto pos = mCamera->getPosition();
     if (mInput->onKeyPressed("PageDown"))
     {
         mCore->setNextScreen("Editor");
+    }
+    if (mInput->onKeyDown("Right"))
+    {
+        mCamera->setPosition({ pos.x - 5, pos.y });
+    }
+
+    if (mInput->onKeyDown("Left"))
+    {
+        mCamera->setPosition({ pos.x + 5, pos.y });
+    }
+    if (mInput->onKeyDown("Up"))
+    {
+        mCamera->setPosition({ pos.x, pos.y - 5 });
+    }
+
+    if (mInput->onKeyDown("Down"))
+    {
+        mCamera->setPosition({ pos.x, pos.y + 5 });
     }
 
     mSystemManager.update(dt);

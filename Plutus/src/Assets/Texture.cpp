@@ -55,17 +55,41 @@ namespace Plutus
 
             auto totalTiles = columns * int(mHeight / mTileHeight);
 
-            for (int i = 0; i < totalTiles; i++)
-            {
-                int y = i / columns;
-                int x = i % columns;
-                vec4f UV;
-                UV.x = ((float)(x * mTileWidth) / (float)mWidth);
-                UV.y = ((float)(y * mTileHeight) / (float)mHeight);
-                UV.z = ((float)(x * mTileWidth + mTileWidth) / (float)mWidth);
-                UV.w = ((float)(y * mTileHeight + mTileHeight) / (float)mHeight);
-                uvs.push_back(UV);
+            float spacingX = ((float)mSpacing / (float)mWidth);
+            float spacingY = ((float)mSpacing / (float)mHeight);
+            if (mSpacing) {
+                // spacingX += 0.002f;
+                // spacingY += 0.009f;
             }
+
+            for (int y = 0; y < mHeight / mTileHeight; y++)
+            {
+                for (int x = 0; x < mWidth / mTileWidth; x++)
+                {
+                    // int y = i / columns;
+                    // int x = j % columns;
+                    vec4f UV;
+                    UV.x = ((float)(x * mTileWidth) / (float)mWidth) + (spacingX * (x + 1));
+                    UV.y = ((float)(y * mTileHeight) / (float)mHeight) + (spacingY * (y + 1));
+                    UV.z = ((float)(x * mTileWidth + mTileWidth) / (float)mWidth);
+                    UV.w = ((float)(y * mTileHeight + mTileHeight) / (float)mHeight);
+                    uvs.push_back(UV);
+                }
+
+            }
+
+
+            // for (int i = 0; i < totalTiles; i++)
+            // {
+            //     int y = i / columns;
+            //     int x = i % columns;
+            //     vec4f UV;
+            //     UV.x = ((float)(x * mTileWidth) / (float)mWidth) + (spacingX * (x + 1));
+            //     UV.y = ((float)(y * mTileHeight) / (float)mHeight) + (spacingY * (y + 1));
+            //     UV.z = ((float)(x * mTileWidth + mTileWidth) / (float)mWidth);
+            //     UV.w = ((float)(y * mTileHeight + mTileHeight) / (float)mHeight);
+            //     uvs.push_back(UV);
+            // }
         }
     }
 

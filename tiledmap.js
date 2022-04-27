@@ -19,15 +19,17 @@ var customMapFormat = {
       var ts = map.tilesets[i];
       let name = FileInfo.fileName(ts.image);
       let ex = name.split(".").pop();
-
+      let nameex = `${ts.name}.${ex}`;
       m.textures.push({
-        id: `${ts.name}.${ex}`,
+        id: nameex,
         path: `assets/textures/${name}`,
         tileWidth: ts.tileWidth,
         tileHeight: ts.tileHeight,
+        spacing: ts.tileSpacing,
+        margin: ts.margin,
       });
 
-      tilesets[ts.name] = { id: i };
+      tilesets[ts.name] = { id: i, name: nameex };
     }
 
     tiled.log("testing2");
@@ -42,6 +44,8 @@ var customMapFormat = {
 
         let tilemap = {
           name: "TileMap",
+          width: map.width,
+          height: map.height,
           tileWidth: map.tileWidth,
           tileHeight: map.tileHeight,
           layer: i,
@@ -56,28 +60,16 @@ var customMapFormat = {
             let cell = layer.cellAt(x, y);
 
             if (tile) {
-              let item = tilesets[tile.tileset.name].id;
-              if (!tilemap.textures.find((t) => t.id == item)) {
-                tilemap.textures.push({
-                  id: item,
-                  name: tile.tileset.name,
-                });
+              let tex = tilesets[tile.tileset.name];
+              if (!tilemap.textures.find((t) => t.id == tex.id)) {
+                tilemap.textures.push(tex);
               }
+              let item = tex.id + 1;
               item |= tile.id << 4;
               item |= cell.flippedHorizontally << 25;
               item |= cell.FlippedVertically << 26;
               item |= cell.flippedAntiDiagonally << 27;
               tilemap.tiles.push(item);
-
-              // tilemap.tiles.push({
-              //   x,
-              //   y: h - y,
-              //   tc: tile.id,
-              //   txi: item,
-              //   fx: cell.flippedHorizontally ? 1 : 0,
-              //   fy: cell.FlippedVertically ? 1 : 0,
-              //   r: cell.flippedAntiDiagonally ? 90 : 0,
-              // });
             } else {
               tilemap.tiles.push(0);
             }
@@ -108,6 +100,16 @@ var customMapFormat = {
     var map = new TileMap();
     map.infinite = false;
 
+    map.width = m.width;
+    map.height = m.height;
+
+    for (let ent of m.entities) {
+      if (ent && ent.components) {
+        let tilemap = ent.components.fint((c) => c.name === "TileMap");
+        if (tilemap) {
+        }
+      }
+    }
     return map;
   },
 };

@@ -59,8 +59,10 @@ namespace Plutus
             {
                 ser.addString("id", tile.first);
                 ser.addString("path", tex->mPath);
-                ser.addInt("width", tex->mTileWidth);
-                ser.addInt("height", tex->mTileHeight);
+                ser.addInt("tileWidth", tex->mTileWidth);
+                ser.addInt("tileHeight", tex->mTileHeight);
+                ser.addInt("spacing", tex->mSpacing);
+                ser.addInt("margin", tex->mMargin);
                 ser.addInt("min-filter", tex->mMinFilter);
                 ser.addInt("mag-filter", tex->mMagFilter);
             }
@@ -109,8 +111,8 @@ namespace Plutus
             ser.addString("name", "TileMap");
             ser.addInt("width", tilemap->mWidth);
             ser.addInt("height", tilemap->mHeight);
-            ser.addInt("tilewidth", tilemap->mTileWidth);
-            ser.addInt("tileheight", tilemap->mTileHeight);
+            ser.addInt("tileWidth", tilemap->mTileWidth);
+            ser.addInt("tileHeight", tilemap->mTileHeight);
             ser.addInt("layer", tilemap->mLayer);
 
             //Array of textures
@@ -119,7 +121,7 @@ namespace Plutus
             {
                 ser.StartObj();
                 ser.addInt("id", tex.first);
-                ser.addString("tex", tex.second.c_str());
+                ser.addString("name", tex.second.c_str());
                 ser.EndObj();
             }
             ser.EndArr();
@@ -138,36 +140,12 @@ namespace Plutus
                             t |= tile->flipY << 26;
                             t |= (tile->rotate != 0) << 27;
                             ser.addInt(t);
-                            if (t > 2) {
-                                printf("test");
-                            }
                         }
                         else {
                             ser.addInt(0);
                         }
                     }
                 }
-                // for (auto tile : tilemap->mTiles)
-                // {
-                //     // int t = tile.texture;
-                //     // t |= tile.texcoord << 4;
-                //     // t |= tile.flipX << 25;
-                //     // t |= tile.flipY << 26;
-                //     // t |= (tile.rotate != 0) << 27;
-                //     // ser.addInt(t);
-                //     //Tile OBJ
-                //     ser.StartObj();
-                //     {
-                //         ser.addInt("tc", tile.texcoord);
-                //         ser.addInt("txi", tile.texture);
-                //         ser.addInt("x", tile.x);
-                //         ser.addInt("y", tile.y);
-                //         ser.addInt("fx", tile.flipX);
-                //         ser.addInt("fy", tile.flipY);
-                //         ser.addFloat("r", tile.rotate);
-                //     }
-                //     ser.EndObj();
-                // }
             }
             ser.EndArr();
         }

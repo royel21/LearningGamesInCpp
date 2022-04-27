@@ -42,8 +42,8 @@ namespace Plutus
     {
         int w = value["width"].GetInt();
         int h = value["height"].GetInt();
-        int tw = value["tilewidth"].GetInt();
-        int th = value["tileheight"].GetInt();
+        int tw = value["tileWidth"].GetInt();
+        int th = value["tileHeight"].GetInt();
         int layer = value["layer"].GetInt();
         auto tmap = ent.addComponent<TileMapComponent>(tw, th, layer);
         tmap->mWidth = w;
@@ -51,7 +51,7 @@ namespace Plutus
 
         for (auto& obj : value["textures"].GetArray())
         {
-            tmap->addTexture(obj["id"].GetInt(), obj["tex"].GetString());
+            tmap->addTexture(obj["id"].GetInt(), obj["name"].GetString());
         }
 
         auto tiles = value["tiles"].GetArray();
@@ -67,7 +67,7 @@ namespace Plutus
                 bool flipX = FLIPX & d;
                 bool flipY = FLIPY & d;
                 float rotation = ROTATE & d ? 90.0f : 0;
-                tmap->addTile(Tile{ x, y, 0, texId, 0, 0, 0 });
+                tmap->addTile(Tile{ x, y, uvIndex, texId, 0, 0, 0 });
             }
         }
     }
@@ -161,11 +161,16 @@ namespace Plutus
 
                     auto id = jhelper.getString("id");
                     auto path = jhelper.getString("path");
-                    int tilewidth = jhelper.getInt("width");
-                    int tileheight = jhelper.getInt("height");
+                    int tilewidth = jhelper.getInt("tileWidth");
+                    int tileheight = jhelper.getInt("tileHeight");
+                    int spacing = jhelper.getInt("spacing");
+                    int margin = jhelper.getInt("margin");
                     int minFilter = jhelper.getInt("min-filter", GL_NEAREST);
                     int magFilter = jhelper.getInt("mag-filter", GL_NEAREST);
-                    AssetManager::get()->addAsset<Texture>(id, path, tilewidth, tileheight, minFilter, magFilter);
+                    auto texture = AssetManager::get()->addAsset<Texture>(id, path, tilewidth, tileheight, minFilter, magFilter);
+                    texture->mSpacing = spacing;
+                    texture->mMargin = margin;
+                    texture->calculateUV();
                 }
             }
 

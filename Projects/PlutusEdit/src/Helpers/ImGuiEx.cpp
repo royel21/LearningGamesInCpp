@@ -508,12 +508,15 @@ namespace ImGui {
 
                         if (texture->mTileWidth && texture->mTileHeight)
                         {
+                            float sp = (float)texture->mSpacing * scale;
                             float tilWidth = texture->mTileWidth * scale;
                             float tilHeight = texture->mTileHeight * scale;
 
                             float textureHeight = h * scale;
                             float textureWidth = w * scale;
                             int columns = static_cast<int>(textureWidth / tilWidth);
+
+                            float accu = 0;
                             for (float y = 0; y < textureHeight; y += tilHeight)
                             {
                                 drawList->AddLine(ImVec2(cvPos.x, cvPos.y + y),
@@ -536,7 +539,7 @@ namespace ImGui {
 
                                     float x = floor(mpos_in_canvas.x / tilWidth);
                                     float y = floor(mpos_in_canvas.y / tilHeight);
-                                    ImVec2 start(x * tilWidth + cvPos.x, y * tilHeight + cvPos.y);
+                                    ImVec2 start(x * tilWidth + cvPos.x + (sp * (x + 1)), y * tilHeight + cvPos.y + (sp * (y + 1)));
                                     ImVec2 end(start.x + tilWidth, start.y + tilHeight);
 
                                     drawList->AddRect(start, end, IM_COL32(255, 0, 0, 255));
