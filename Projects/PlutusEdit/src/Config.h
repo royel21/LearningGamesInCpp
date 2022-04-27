@@ -22,9 +22,6 @@ namespace Plutus
         // Window Size
         std::string workingDir = "./";
 
-        int tileWidth = 64;
-        int tileHeight = 64;
-
         Entity mEnt;
         EditorProject() = default;
         void Copy(const EditorProject& proj);
@@ -52,7 +49,10 @@ namespace Plutus
         // Window height
         int winHeight = 768;
 
-        Camera2D* mCamera;
+        int tileWidth = 32;
+        int tileHeight = 32;
+
+        Camera2D* mCamera = nullptr;
 
         EditorProject mProject;
 

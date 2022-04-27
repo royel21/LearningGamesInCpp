@@ -54,7 +54,7 @@ namespace Plutus
 
                             ImGui::Row("BG Color", width);
                             vec4f color = mConfig->mProject.scene->mBGColor;
-                            if (ImGui::ColorEdit4("##vp-color", &color.x)) {
+                            if (ImGui::ColorEdit3("##vp-color", &color.x)) {
                                 mConfig->mProject.scene->mBGColor.setColor(color);
                             }
                         }
@@ -73,8 +73,11 @@ namespace Plutus
 
                             auto cellSize = mDebugRender->getCellSize();
                             ImGui::Row("Cell Size", width);
-                            if (ImGui::DragInt2("##Cell-Size", &cellSize.x))
+                            if (ImGui::DragInt2("##Cell-Size", &cellSize.x)) {
                                 mDebugRender->setCellSize(cellSize);
+                                mConfig->tileWidth = cellSize.x;
+                                mConfig->tileHeight = cellSize.y;
+                            }
 
                             static vec4f color = mDebugRender->getGridLineColor();
                             ImGui::Row("Line Color", width);

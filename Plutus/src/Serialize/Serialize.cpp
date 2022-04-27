@@ -21,7 +21,6 @@ namespace Plutus
 
     void Serializer::addInt(const std::string& id, int data)
     {
-
         writer.String(id.c_str());
         writer.Int(data);
     }

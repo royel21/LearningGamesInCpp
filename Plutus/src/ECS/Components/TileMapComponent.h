@@ -19,7 +19,7 @@ namespace Plutus
         float rotate;
         int texcoord = 0;
         int texture = 0;
-        TileMapComponent* parent;
+        TileMapComponent* parent = nullptr;
         Tile() = default;
         Tile(int _x, int _y, int _texcoord, unsigned int _texture, bool fx = false, bool fy = false, float _rotate = 0)
         {

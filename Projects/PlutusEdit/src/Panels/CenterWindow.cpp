@@ -21,6 +21,7 @@
 #include <ECS/Components/TransformComponent.h>
 
 #include <Log/Logger.h>
+#include <Time/Timer.h>
 
 #define mapIn(x, min_in, max_in, min_out, max_out) (x - min_in) * (max_out - min_out) / (max_in - min_in) + min_out
 
@@ -34,12 +35,6 @@ namespace Plutus
         mTextEditor.SetPalette(TextEditor::GetDarkPalette());
         mTextEditor.SetLanguageDefinition(lang);
         mTextEditor.SetShowWhitespaces(false);
-        auto scripts = AssetManager::get()->getAssets<Script>();
-        if (scripts.size()) {
-            currentScript = scripts.begin()->first;
-            mTextEditor.SetText(static_cast<Script*>(scripts.begin()->second)->mBuffer);
-        }
-
 
         mSysManager.setProject(&mConfig->mTempProject);
         mSysManager.AddSystem<ScriptSystem>(&mConfig->mRender->mCamera);
@@ -91,8 +86,6 @@ namespace Plutus
                     auto offset = newPos - scalePos;
                     mConfig->mProject.vpPos = camera.getPosition() - offset;
                 }
-
-                // mConfig->vpPos = { roundf(mConfig->vpPos.x), floor(mConfig->vpPos.y) };
 
                 camera.setPosition(mConfig->mProject.vpPos);
             }
@@ -201,7 +194,10 @@ namespace Plutus
             auto winSize = framebuffer.getSize();
             float aspectRation = framebuffer.getAspectRatio();
 
+            vec2f vpSize = mConfig->mRender->mCamera.getViewPortSize();
+
             auto winPos = ImGui::GetContentRegionAvail();
+            auto pos = ImGui::GetCursorPos();
 
             vec2f newSize((int)winPos.x, int(winPos.x / aspectRation));
             if (newSize.y > winPos.y)
@@ -217,10 +213,14 @@ namespace Plutus
             //set the new posotion
             ImGui::SetCursorPos({ x, y });
 
+            if ((int)winSize.x != (int)newSize.x && (int)winSize.y != (int)newSize.y) {
+                framebuffer.resize(newSize);
+            }
+
             ImVec2 canvas_pos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
 
-            float xPos = mapIn(ImGui::GetIO().MousePos.x - canvas_pos.x, 0, newSize.x, 0, winSize.x);
-            float yPos = winSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, winSize.y);
+            float xPos = mapIn(ImGui::GetIO().MousePos.x - canvas_pos.x, 0, newSize.x, 0, vpSize.x);
+            float yPos = vpSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, vpSize.y);
 
             ImGui::Image((void*)framebuffer.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
             if (mConfig->isHover = ImGui::IsItemHovered())
@@ -251,8 +251,8 @@ namespace Plutus
 
     void CenterWindow::draw()
     {
-
         auto& project = mConfig->mProject;
+        static uint64_t saveStart;
 
         ImGuiWindowClass window_class;
         window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
@@ -267,6 +267,17 @@ namespace Plutus
                 }
 
                 if (mConfig->state == Editing && ImGui::BeginTabItem("Script Editor")) {
+                    if (saveStart) {
+                        auto time = Timer::millis() - saveStart;
+
+                        if (Timer::millis() - saveStart > 5000) {
+                            saveStart = 0;
+                        }
+                        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.85f, 1.0f, 1.0f));
+                        ImGui::Text("%llu - Save %s", time / 1000, currentScript.c_str());
+                        ImGui::PopStyleColor();
+                    }
+
                     mTextEditor.Render("TextEditor");
                     isViewPort = false;
                     ImGui::EndTabItem();
@@ -310,26 +321,61 @@ namespace Plutus
             }
             else {
                 auto scripts = AssetManager::get()->getAssets<Script>();
-                auto script = static_cast<Script*>(scripts[currentScript]);
-                auto basePath = AssetManager::get()->getBaseDir() + scripts[currentScript]->mPath;
+                static Script* script = nullptr;
 
-                ImGui::TransparentButton(ICON_FA_FILE " New");
-                ImGui::SameLine();
-                if (ImGui::TransparentButton(ICON_FA_SAVE " Save")) {
-                    script->mBuffer = mTextEditor.GetText().c_str();
-                    FileIO::saveBufferToFile(basePath, mTextEditor.GetText().c_str());
+                if (scripts.size() && currentScript.empty()) {
+                    currentScript = scripts.begin()->first;
+                    script = static_cast<Script*>(scripts[currentScript]);
+                    mTextEditor.SetText(script->mBuffer);
                 }
 
-                ImGui::SameLine();
-                ImGui::PushItemWidth(200);
-                if (ImGui::ComboBox("##scr-list", scripts, currentScript)) {
-                    mTextEditor.SetText(static_cast<Script*>(scripts[currentScript])->mBuffer);
-                }
-                ImGui::PopItemWidth();
 
-                if (Input::get()->isCtrl && Input::get()->onKeyPressed("S") && ImGui::IsWindowFocused()) {
-                    script->mBuffer = mTextEditor.GetText().c_str();
-                    FileIO::saveBufferToFile(basePath, mTextEditor.GetText().c_str());
+                if (ImGui::TransparentButton(ICON_FA_FILE " New")) {
+                    ImGui::OpenPopup("New Script");
+                }
+
+                if (script) {
+                    ImGui::SameLine();
+                    if (ImGui::TransparentButton(ICON_FA_SAVE " Save")) {
+                        script->save(mTextEditor.GetText().c_str());
+                        saveStart = Timer::millis();
+                    }
+
+                    ImGui::SameLine();
+                    ImGui::PushItemWidth(200);
+                    if (ImGui::ComboBox("##scr-list", scripts, currentScript)) {
+                        mTextEditor.SetText(static_cast<Script*>(scripts[currentScript])->mBuffer);
+                    }
+                    ImGui::PopItemWidth();
+
+                    if (Input::get()->isCtrl && Input::get()->onKeyPressed("S")) {
+                        script->save(mTextEditor.GetText().c_str());
+                        saveStart = Timer::millis();
+                    }
+                }
+
+
+                ImGui::SetNextWindowSize({ 280, 0 });
+                static std::string name;
+                if (ImGui::BeginPopup("New Script"))
+                {
+                    ImGui::Row("Name");
+                    ImGui::InputText("##sc-name", &name);
+                    ImGui::Separator();
+                    ImGui::SetCursorPosX(100);
+                    if (ImGui::Button("Create")) {
+                        currentScript = name;
+                        AssetManager::get()->addAsset<Script>(name, "assets/scripts/" + name);
+                        ImGui::CloseCurrentPopup();
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Cancer")) {
+                        ImGui::CloseCurrentPopup();
+                    }
+                    ImGui::EndPopup();
+                }
+                else {
+                    name = "";
                 }
             }
 

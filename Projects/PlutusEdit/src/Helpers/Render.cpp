@@ -24,7 +24,7 @@ namespace Plutus
             mShader.init(GLSL::vertexShader, GLSL::fragShader);
             mDebugRender = Plutus::DebugRender::get();
             mDebugRender->init(&mCamera);
-            mDebugRender->setCellSize({ mConfig->mProject.tileWidth, mConfig->mProject.tileHeight });
+            mDebugRender->setCellSize({ mConfig->tileWidth, mConfig->tileHeight });
             isLoaded = true;
         }
     }
@@ -160,8 +160,14 @@ namespace Plutus
                     auto rect = tile.getRect();
                     if (mCamera.isBoxInView(rect, 200))
                     {
-                        auto tex = tilemap.getTexture(tile.texture);
-                        auto texId = tex ? tex->mTexId : -1;
+                        auto texIndex = -1;
+                        Texture* tex = nullptr;
+                        uint32_t texId;
+
+                        if (texIndex != tile.texture) {
+                            tex = tilemap.getTexture(tile.texture);
+                            texId = tex ? tex->mTexId : -1;
+                        }
 
                         if (tex) {
                             mRenderables[i++] = { texId, rect, tex->getUV(tile.texcoord), {}, tile.rotate, tile.flipX, tile.flipY, (int)entt::to_integral(ent), tilemap.mLayer, false };

@@ -55,7 +55,15 @@ namespace Plutus
                     auto rect = tile.getRect();
                     if (mCamera->isBoxInView(rect, 200))
                     {
-                        auto tex = tilemap.getTexture(tile.texture);
+                        auto texIndex = -1;
+                        Texture* tex = nullptr;
+                        uint32_t texId;
+
+                        if (texIndex != tile.texture) {
+                            tex = tilemap.getTexture(tile.texture);
+                            texId = tex ? tex->mTexId : -1;
+                        }
+
                         if (tex) {
                             mRenderables[i++] = {
                                 tex->mTexId, // Texure Id

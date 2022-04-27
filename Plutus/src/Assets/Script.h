@@ -12,7 +12,7 @@ namespace Plutus
         Script(const std::string& path) { init(path); }
 
         void init(const std::string& path);
-        void save();
+        void save(const std::string& buffe = "");
         void destroy();
     };
 } // namespace Plutus

@@ -7,14 +7,14 @@ namespace Plutus
 {
     struct CharData
     {
-        float ax; // advance x distance for the next letter
-        float ay; // advance y distance for the next letter
+        float ax = 0; // advance x distance for the next letter
+        float ay = 0; // advance y distance for the next letter
 
-        float bw; // width of the letter in pixel ;
-        float bh; // height of the letter in pixel;
+        float bw = 0; // width of the letter in pixel ;
+        float bh = 0; // height of the letter in pixel;
 
-        float bl; // bitmap left;
-        float bt; // bitmap top;
+        float bl = 0; // bitmap left;
+        float bt = 0; // bitmap top;
 
         vec4f uv; // x offset of glyph in texture coordinates
     };
@@ -29,7 +29,7 @@ namespace Plutus
     {
         unsigned int mTexId = -1;
         int mSize = 16;
-        CharData ch[128];
+        CharData ch[128] = {0};
 
         Font() = default;
         ~Font() { destroy(); }

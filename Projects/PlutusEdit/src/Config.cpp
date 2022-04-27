@@ -95,8 +95,6 @@ namespace Plutus
         timeStepInSec = proj.timeStepInSec;
         gravity = proj.gravity;
         autoClearForce = proj.autoClearForce;
-        tileWidth = proj.tileWidth;
-        tileHeight = proj.tileHeight;
 
         scene->clear();
         scene->mBGColor = proj.scene->mBGColor;

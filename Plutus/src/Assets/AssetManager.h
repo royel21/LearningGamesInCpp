@@ -17,9 +17,9 @@ namespace Plutus
     class AssetManager
     {
     private:
+        std::string baseDir = "";
         ma_engine* mAudioEngine = nullptr;
         umap<const std::type_info*, umap<std::string, Asset*>> mAssets;
-        std::string baseDir = "";
 
         friend Sound;
 
@@ -54,7 +54,7 @@ namespace Plutus
         }
 
         template<typename T>
-        void removeAsset(std::string id) {
+        void removeAsset(const std::string& id) {
             auto& repo = mAssets[&typeid(T)];
 
             auto it = repo.find(id);

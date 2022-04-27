@@ -62,6 +62,7 @@ namespace Plutus
         }
         return (int)pixels[0] - 1;
     }
+
     void FrameBuffer::bind()
     {
         if (isDirty)
@@ -73,7 +74,7 @@ namespace Plutus
             glClearColor(0, 0, 0, 0);
         }
         else {
-            glClearColor(mBGColor.x, mBGColor.y, mBGColor.z, mBGColor.w);
+            glClearColor(mBGColor.x, mBGColor.y, mBGColor.z, 1);
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }

@@ -13,6 +13,8 @@
 
 #include <Assets/Texture.h>
 
+#include <misc/cpp/imgui_stdlib.h>
+
 #define IM_F4_2_I32COLOR(color) static_cast<int>(color[3] * 255) << 24 | \
                                 static_cast<int>(color[2] * 255) << 16 | \
                                 static_cast<int>(color[1] * 255) << 8 | \
