@@ -17,8 +17,13 @@ namespace Plutus
     void main_loop2() { loop2(); }
 #endif
     void Core::init() {
-        mWindow.init(mName.c_str(), mWidth, mHeight);
-        mCamera.init(mWidth, mHeight);
+        mWindow.init(mName.c_str(), mProject.winWidth, mProject.winHeight);
+        mCamera.init(mProject.vpWidth, mProject.vpHeight);
+        mCamera.setScale(mProject.zoomLevel);
+
+        if (!mProject.currentScene.empty()) {
+            mProject.loadScene(mProject.currentScene);
+        }
 
         mWindow.onResize = [&](int w, int h) {
             mWidth = w;

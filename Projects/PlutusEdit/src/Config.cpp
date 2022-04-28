@@ -47,6 +47,7 @@ namespace Plutus
             mProject.workingDir = Utils::getDirectory(path);
             AssetManager::get()->setBaseDir(mProject.workingDir);
             mProject.load(path);
+            mProject.loadScene(mProject.currentScene);
         }
         mRender->init(this);
     }

@@ -2,6 +2,7 @@
 
 #include <ECS/Scene.h>
 #include <Utils/FileIO.h>
+#include <Utils/Utils.h>
 #include <Serialize/Serialize.h>
 
 #include <Assets/Assets.h>
@@ -44,6 +45,8 @@ namespace Plutus
         rapidjson::Document doc;
         bool isLoaded = loadJsonFromFile(path.c_str(), doc);
         if (isLoaded) {
+            Plutus::AssetManager::get()->setBaseDir(Utils::getDirectory(path));
+
             scene->clear();
             AssetManager::get()->destroy();
 
@@ -79,8 +82,6 @@ namespace Plutus
                     AssetManager::get()->addAsset<SceneAsset>(sc["name"].GetString(), sc["path"].GetString());
                 }
             }
-
-            loadScene(currentScene);
         }
     }
 

@@ -32,8 +32,7 @@ void GameScreen::Init()
 
 void GameScreen::Enter()
 {
-    Plutus::AssetManager::get()->setBaseDir("C:\\vscode-workspace\\Desktop\\ZombiesGame\\");
-    Plutus::SceneLoader::loadFromPath("assets/scenes/testing.json", mCore->mProject.scene.get());
+    // Plutus::SceneLoader::loadFromPath("assets/scenes/testing.json", mCore->mProject.scene.get());
     mSystemManager.init();
 }
 
@@ -61,6 +60,17 @@ void GameScreen::Update(float dt)
     if (mInput->onKeyDown("Down"))
     {
         mCamera->setPosition({ pos.x, pos.y + 5 });
+    }
+
+    auto scale = mCamera->getScale();
+    if (mInput->onKeyDown("+"))
+    {
+        mCamera->setScale(scale > 0.2f ? scale - 0.1f : 0.01f);
+    }
+
+    if (mInput->onKeyDown("-"))
+    {
+        mCamera->setScale(scale < 15.0f ? scale + 0.1f : 15.0f);
     }
 
     mSystemManager.update(dt);

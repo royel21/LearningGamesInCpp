@@ -208,8 +208,8 @@ namespace Plutus
             // add padding to the canvas
             newSize -= 10;
             //calculate the position centered oncanvas
-            float x = std::max((winPos.x - newSize.x), 0.0f) * 0.5f;
-            float y = std::max((winPos.y - newSize.y), 0.0f) * 0.5f;
+            float x = roundf(std::max((winPos.x - newSize.x), 0.0f) * 0.5f);
+            float y = roundf(std::max((winPos.y - newSize.y), 0.0f) * 0.5f);
             //set the new posotion
             ImGui::SetCursorPos({ x, y });
 
