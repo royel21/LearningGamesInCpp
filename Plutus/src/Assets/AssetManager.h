@@ -19,7 +19,7 @@ namespace Plutus
     private:
         std::string baseDir = "";
         ma_engine* mAudioEngine = nullptr;
-        umap<const std::type_info*, umap<std::string, Asset*>> mAssets;
+        std::vector<umap<std::string, Asset*>> mAssets;
 
         friend Sound;
 
@@ -35,7 +35,11 @@ namespace Plutus
         T* addAsset(const std::string& id, TArgs &&... args)
         {
             T* asset = new T();
-            auto& repo = mAssets[&typeid(T)];
+            auto listId = getListId<T>();
+            if (!hasAsset<T>()) mAssets.resize(listId + 1);
+
+            auto& repo = mAssets[listId];
+
             repo[id] = asset;
             asset->setDir(baseDir);
             asset->init(std::forward<TArgs>(args)...);
@@ -44,35 +48,58 @@ namespace Plutus
 
         template<typename T>
         T* getAsset(const std::string& id) {
-            return hasAsset<T>(id) ? static_cast<T*>(mAssets[&typeid(T)][id]) : nullptr;
+
+            if (hasAsset<T>()) {
+                auto listId = getListId<T>();
+                auto found = mAssets[listId].find(id);
+                if (found != mAssets[listId].end()) {
+                    return static_cast<T*>(found->second);
+                }
+            }
+            return nullptr;
         }
 
         template<typename T>
-        bool hasAsset(const std::string id) {
-            auto& repo = mAssets[&typeid(T)];
-            return repo.find(id) != repo.end();
+        inline bool hasAsset() {
+            return getListId<T>() < mAssets.size();
         }
 
         template<typename T>
         void removeAsset(const std::string& id) {
-            auto& repo = mAssets[&typeid(T)];
-
-            auto it = repo.find(id);
-            if (it != repo.end()) {
-                it->second->destroy();
-                delete it->second;
-                repo.erase(it);
+            if (hasAsset<T>()) {
+                auto& repo = mAssets[getListId<T>()];
+                auto it = repo.find(id);
+                if (it != repo.end()) {
+                    it->second->destroy();
+                    delete it->second;
+                    repo.erase(it);
+                }
             }
+
         }
 
         template<typename T>
         umap<std::string, Asset*>& getAssets() {
-            return mAssets[&typeid(T)];
+            auto listId = getListId<T>();
+            if (!hasAsset<T>()) mAssets.resize(listId + 1);
+            return mAssets[listId];
         }
 
         void destroy();
 
     private:
         AssetManager();
+
+        inline uint32_t getId() {
+            static int id = 0;
+            return id++;
+        }
+
+        template<typename T>
+        inline uint32_t getListId()
+        {
+            static int id = getId();
+            return id;
+        }
     };
 } // namespace Plutus

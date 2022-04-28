@@ -5,10 +5,6 @@ function init()
     rbody:setMaxVelocity(0.7)
 end
 
-local sound = assetManager:addSound("bg", "assets/sounds/shotgun.wav")
-
-print(sound)
-
 function update(dt)
     local vel = {x = 0, y = 0}
 

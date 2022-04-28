@@ -8,7 +8,10 @@ local stand = {
     down = "stand-down"
 }
 
-local sound = assetManager:addSound("bg", "assets/sounds/shotgun.wav")
+ print("player2 loaded")
+
+local sound = assetManager:addSound("shotgun", "assets/sounds/shotgun.wav")
+ print("sound loaded")
 
 local direction = "right";
 local state = ""
@@ -19,7 +22,7 @@ function init()
     local anim = Player2:getAnimate()
     if anim then anim:play(curAnime) end
     rbody = Player2:getRigidBody()
-    rbody:setMaxVelocity(1, 2)
+    rbody:setMaxVelocity(1,2)
 
     print("player2 init")
 end
@@ -50,15 +53,17 @@ function update(dt)
         vel = {x = 0, y = 0}
     end
 
-    -- if (input:onKeyDown("X")) then
-    -- sound:play(false)
-    --   print("play sound")
-    -- end
+     if (input:onKeyDown("X")) then
+		print("play sound")
+     	sound:play(false)
+    end
 
     if state ~= "attacking" and state ~= "jumping" then
         -- Move Up - Down
         if input:onKeyDown("Up") then
             direction = "up"
+			state = "running"
+			vel.y = SPEED
         elseif input:onKeyDown("Down") then
             direction = "down"
             state = "running"
@@ -97,4 +102,26 @@ function update(dt)
         state = "     "
     end
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

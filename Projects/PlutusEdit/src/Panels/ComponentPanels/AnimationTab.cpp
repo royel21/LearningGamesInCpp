@@ -6,6 +6,7 @@
 
 #include "ComponentUtil.h"
 #include <Assets/Assets.h>
+#include <misc/cpp/imgui_stdlib.h>
 
 namespace Plutus
 {
@@ -93,17 +94,16 @@ namespace Plutus
         if (showSeqWindow) {
             auto& mTextures = AssetManager::get()->getAssets<Texture>();
             auto found = mAnimation->mSequences.find(mCurSeq);
-            auto& seq = mMode ? found->second : newSeq;
+            auto& seq = mMode == EDIT ? found->second : newSeq;
 
             float width = ImGui::GetContentRegionAvailWidth() * .3f;
 
             ImGui::SetNextWindowSize({ 465, 650 });
             ImGui::BeginDialog("Sequence");
             {
-
                 {
                     ImGui::Row("Name", width);
-                    ImGui::ComboBox("##seq-name", mAnimation->mSequences, mCurSeq);
+                    ImGui::InputText("##seq-name", &mNewSeqId);
                     ImGui::Row("Time", width);
                     ImGui::InputFloat("##seq-time", &seq.mSeqTime, 0.001f);
                     ImGui::Row("Texure", width);
@@ -194,12 +194,13 @@ namespace Plutus
 
                 ImGui::EndDialog(showSeqWindow, [&](bool save) {
 
-                    if (save && mNewSeqId.empty()) {
+                    if (save && !mNewSeqId.empty()) {
                         if (!mNewSeqId.empty()) {
-                            if (mMode) {
-                                mAnimation->swapSeq(mNewSeqId, mCurSeq);
-                                mCurSeq = mNewSeqId;
-                                showSeqWindow = false;
+                            if (mMode == EDIT) {
+                                if (mNewSeqId.compare(mCurSeq) != 0) {
+                                    mAnimation->updateSeq(mCurSeq, mNewSeqId);
+                                    mCurSeq = mNewSeqId;
+                                }
                             }
                             else {
                                 mAnimation->addSequence(mNewSeqId, seq);
@@ -208,6 +209,7 @@ namespace Plutus
                                 newSeq.mFrame = 0;
                             }
                         }
+                        showSeqWindow = false;
                     }
                     newSeq = {};
                     mNewSeqId = "";

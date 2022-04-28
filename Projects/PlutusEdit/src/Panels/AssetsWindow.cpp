@@ -12,7 +12,6 @@
 #include "../Helpers/IconsFontAwesome5.h"
 
 #include "../Config.h"
-#include <Log/Logger.h>
 
 #include <misc/cpp/imgui_stdlib.h>
 

@@ -20,7 +20,6 @@
 #include <Assets/Assets.h>
 #include <ECS/Components/TransformComponent.h>
 
-#include <Log/Logger.h>
 #include <Time/Timer.h>
 
 #define mapIn(x, min_in, max_in, min_out, max_out) (x - min_in) * (max_out - min_out) / (max_in - min_in) + min_out

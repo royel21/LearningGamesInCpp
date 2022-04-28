@@ -13,8 +13,6 @@
 
 #include <Platforms/Windows/FileUtils.h>
 
-#include <Log/Logger.h>
-
 namespace Plutus
 {
     void createDirs(const std::string& workingDir) {

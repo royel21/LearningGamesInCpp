@@ -7,8 +7,6 @@
 
 #include <Assets/Assets.h>
 
-#include <Log/Logger.h>
-
 namespace Plutus
 {
     void SceneWindow::draw() {

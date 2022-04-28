@@ -155,6 +155,17 @@ namespace Plutus
                 {
                     mConfig->CreateProj();
                 }
+                ImGui::Separator();
+                if (ImGui::MenuItem(ICON_FA_FILE " Open Project", "Ctrl+N", noSplit))
+                {
+                    std::string path;
+                    if (windowDialog(OPEN_FILE, path, "Select Project")) {
+                        auto name = Utils::getFileName(path);
+                        mConfig->currentProject = name;
+                        mConfig->mProjects[name] = path;
+                        mConfig->mProject.load(path);
+                    }
+                }
 
                 if (ImGui::BeginMenu(ICON_FA_LIST " Projects"))
                 {

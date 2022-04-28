@@ -87,13 +87,19 @@ int main(int argc, char** argv)
 {
     Scene scene;
 
-    readMapData("assets/tilemaps/testing.json", &scene);
-    auto ent = scene.getEntityByName("bg1");
+    // readMapData("assets/tilemaps/testing.json", &scene);
+    // auto ent = scene.getEntityByName("bg1");
 
-    if (ent) {
-        auto map = ent.getComponent<TileMapComponent>();
-        printf("size: %i", map->mTiles.size());
-    }
+    // if (ent) {
+    //     auto map = ent.getComponent<TileMapComponent>();
+    //     printf("size: %i", map->mTiles.size());
+    // }
+
+    // printf("Sound: %i\n", getAssetListId<Sound>());
+    // printf("Sound: %i\n", getAssetListId<Sound>());
+    // printf("Sound: %i\n", getAssetListId<Texture>());
+    // printf("Sound: %i\n", getAssetListId<Font>());
+    // printf("Sound: %i\n", getAssetListId<Texture>());
 
     return 0;
 }

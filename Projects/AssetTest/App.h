@@ -28,7 +28,7 @@ namespace Plutus
         void Exit() override;
 
     private:
-        Ref<Scene> mScene;
+        Scene* mScene;
         Entity mPlayer;
         FrameBuffer mFBuffer;
         SpriteBatch2D* mBatch;

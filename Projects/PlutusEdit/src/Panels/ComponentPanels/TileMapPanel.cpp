@@ -10,9 +10,9 @@
 
 #include "ComponentUtil.h"
 
-#include <stdio.h>
-
 #include <Assets/Assets.h> 
+
+#include <Log/Logger.h>
 
 #define MODE_PLACE 0
 #define MODE_EDIT 1
@@ -148,12 +148,12 @@ namespace Plutus
                     }
                 }
             }
-            if (mMode == MODE_PLACE && mConfig->isHover) {
-                renderTemp();
+            if (mConfig->isHover) {
+                if (mMode == MODE_PLACE) {
+                    renderTemp();
+                }
             }
-            else {
-                mConfig->mRender->mTotalTemp = 0;
-            }
+            mConfig->mRender->mTotalTemp = 0;
         }
         else {
             mIsOpen = false;
@@ -162,20 +162,31 @@ namespace Plutus
     }
 
     void TileMapPanel::processMode() {
-        if (mIsOpen && mConfig->isHover && Input::get()->onKeyDown("MouseLeft")) {
-            switch (mMode)
-            {
-            case MODE_PLACE:
-                createTiles();
-                break;
-            case MODE_EDIT:
-                mCurrentTile = mTileMap->getTile(getCoords(mConfig));
-                break;
-            default:
-                if (mTileMap->removeTile(getCoords(mConfig))) {
-                    mCurrentTile = nullptr;
+        if (mIsOpen && mConfig->isHover) {
+            auto coord = getCoords(mConfig);
+            if (Input::get()->onKeyPressed("MouseLeft") && mMode == MODE_EDIT) {
+                mCurrentTile = mTileMap->getTile(coord);
+            }
+
+            if (Input::get()->onKeyDown("MouseLeft")) {
+                switch (mMode)
+                {
+                case MODE_PLACE:
+                    createTiles();
+                    break;
+                case MODE_EDIT: {
+                    if (mCurrentTile) {
+                        mCurrentTile->x = coord.x;
+                        mCurrentTile->y = coord.y;
+                    }
+                    break;
                 }
-                break;
+                default:
+                    if (mTileMap->removeTile(coord)) {
+                        mCurrentTile = nullptr;
+                    }
+                    break;
+                }
             }
         }
     }

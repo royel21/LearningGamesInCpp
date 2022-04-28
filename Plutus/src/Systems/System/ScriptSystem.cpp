@@ -90,11 +90,8 @@ namespace Plutus
     void ScriptSystem::registerAssets()
     {
         /*****************************Register AssetManager**********************************************/
-        auto assetManager_table = mGlobalLua.new_usertype<AssetManager>("AssetManager",
-            "addSound", sol::overload(
-                &AssetManager::addAsset<Sound, std::string>,
-                &AssetManager::addAsset<Sound, std::string, int>
-            ));
+        auto assetManager_table = mGlobalLua.new_usertype<AssetManager>("AssetManager");
+        assetManager_table["addSound"] = sol::overload(&AssetManager::addAsset < Sound, std::string>, &AssetManager::addAsset<Sound, std::string, int>);
         assetManager_table["removeSound"] = &AssetManager::removeAsset<Sound>;
 
         /**************************Register Sound Asset*************************************************/

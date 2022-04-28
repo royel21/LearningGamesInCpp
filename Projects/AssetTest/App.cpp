@@ -29,7 +29,8 @@ namespace Plutus
 
         // mCamera.setViewPosition({ 0, 0 });
 
-        mScene = CreateRef<Scene>();
+        mScene = mProject.scene.get();
+
         mFBuffer.init(mWidth, mHeight, true);
 
         mSystemManager.setProject(&mProject);
@@ -42,10 +43,11 @@ namespace Plutus
 
         mPlayer = mScene->createEntity("player");
         if (mPlayer) {
+            AssetManager::get()->addAsset<Script>("player.lua", "assets/script/player.lua");
             // mCamera.setTarget(mPlayer);
             mPlayer.addComponent<TransformComponent>(10.0f, 50.0f, 32, 32);
             mPlayer.addComponent<SpriteComponent>("", ColorRGBA8{ 255,0,0,255 });
-            mPlayer.addComponent<ScriptComponent>("assets/script/player.lua");
+            mPlayer.addComponent<ScriptComponent>("player.lua");
 
             auto pbody = mPlayer.addComponent<RigidBodyComponent>();
             // pbody->mLinearDamping = 1;
@@ -88,11 +90,9 @@ namespace Plutus
 
         mSystemManager.init();
 
-        auto data = SceneSerializer(mScene.get());
+        auto data = SceneSerializer(mScene);
 
-        Utils::saveFile("./scene.json", data.c_str());
-
-        auto chunky = AssetManager::get()->addAsset<Sound>("Chunky", "./Chunky.mp3", MUSIC);
+        auto chunky = AssetManager::get()->addAsset<Sound>("Chunky", "assets/sounds/XYZ2.ogg", MUSIC);
 
         chunky->play();
 
