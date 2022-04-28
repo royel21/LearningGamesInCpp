@@ -182,7 +182,7 @@ namespace Plutus
                             edit = true;
                         }
                         ImGui::SameLine();
-                        std::string item = ICON_FA_FILE_IMAGE + std::string(" ") + recent.first;
+                        std::string item = ICON_FA_FILE_IMAGE + std::string(" ") + recent.second;
                         if (ImGui::MenuItem(item.c_str()))
                         {
                             mConfig->LoadProject(recent.first.c_str());
