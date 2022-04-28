@@ -92,7 +92,7 @@ namespace Plutus
         }
     }
 
-    void CenterWindow::selectEntity()
+    void CenterWindow::selectEntity(float x, float y)
     {
         auto& project = mConfig->mProject;
         static Entity ent;
@@ -102,7 +102,7 @@ namespace Plutus
                 mMouseLastCoords = mConfig->mMouseCoords;
                 auto camPos = mConfig->mRender->mCamera.getPosition();
                 mCamCoords = { camPos.x, camPos.y };
-                ent = project.scene->getEntity(mConfig->mRender->mFramePicker.getEntId(mMouseLastCoords));
+                ent = project.scene->getEntity(mConfig->mRender->mFramePicker.getEntId({ x, y }));
 
                 if (ent) {
                     project.mEnt = ent;
@@ -214,14 +214,18 @@ namespace Plutus
             ImGui::SetCursorPos({ x, y });
 
             if ((int)winSize.x != (int)newSize.x && (int)winSize.y != (int)newSize.y) {
-                framebuffer.resize(newSize);
+                mConfig->mRender->resizeBuffers(newSize);
             }
 
             ImVec2 canvas_pos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
 
-            float xPos = mapIn(ImGui::GetIO().MousePos.x - canvas_pos.x, 0, newSize.x, 0, vpSize.x);
-            float yPos = vpSize.y - mapIn(ImGui::GetIO().MousePos.y - canvas_pos.y, 0, newSize.y, 0, vpSize.y);
+            float localX = ImGui::GetIO().MousePos.x - canvas_pos.x;
+            float localY = ImGui::GetIO().MousePos.y - canvas_pos.y;
 
+            float xPos = mapIn(localX, 0, newSize.x, 0, vpSize.x);
+            float yPos = vpSize.y - mapIn(localY, 0, newSize.y, 0, vpSize.y);
+
+            // ImGui::Image((void*)mConfig->mRender->mFramePicker.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, { 0,0,0,1 }, { 0.0, 0.0, 0.0, 1.0 });
             ImGui::Image((void*)framebuffer.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
             if (mConfig->isHover = ImGui::IsItemHovered())
             {
@@ -230,7 +234,7 @@ namespace Plutus
                 CameraControl();
 
                 if (mConfig->state != Running)
-                    selectEntity();
+                    selectEntity(localX, newSize.y - localY);
             }
 
             auto curPos = ImGui::GetWindowSize();

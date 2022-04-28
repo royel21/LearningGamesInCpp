@@ -18,7 +18,7 @@ namespace Plutus
     private:
         void drawViewPort();
         void CameraControl();
-        void selectEntity();
+        void selectEntity(float x, float y);
         vec2f getMousePos();
         void showConfig();
 
