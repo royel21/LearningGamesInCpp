@@ -47,7 +47,10 @@ namespace Plutus
         mScene = mConfig->mProject.scene.get();
     }
 
-
+    void Render::resizeBuffers(const vec2f& size) {
+        mFrameBuffer.resize(size);
+        mFramePicker.resize(size);
+    }
 
     void Render::draw()
     {
