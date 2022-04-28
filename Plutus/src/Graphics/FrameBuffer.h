@@ -15,7 +15,7 @@ namespace Plutus
         void bind();
         void unBind();
 
-        int getEntId(vec2f pos);
+        int getEntId(const vec2f& pos);
 
         void resize(const vec2i& size)
         {
