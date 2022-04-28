@@ -14,26 +14,23 @@ namespace Plutus
         mTextures[id] = texture;
     }
 
-    void TileMapComponent::removeTexture(int index)
-    {
-        if (mTiles.size()) {
-            for (int i = (int)mTiles.size() - 1; i > -1; i--) {
-                if (mTiles[i].texture == index) {
-                    mTiles.erase(mTiles.begin() + i);
-                }
+    void TileMapComponent::addTexture(const std::string& texture) {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if (mTextures[i].empty()) {
+                mTextures[i] = texture;
+                break;
             }
-        }
-
-        auto it = mTextures.find(index);
-        if (it != mTextures.end()) {
-            mTextures.erase(it);
         }
     }
 
+    void TileMapComponent::removeTexture(int index)
+    {
+        mTextures[index] = "";
+    }
+
     Texture* TileMapComponent::getTexture(int id) {
-        auto it = mTextures.find(id);
-        auto texId = it != mTextures.end() ? it->second : "";
-        return  AssetManager::get()->getAsset<Texture>(texId);
+        return  AssetManager::get()->getAsset<Texture>(mTextures[id]);
     }
 
     void TileMapComponent::addTile(Tile& tile)

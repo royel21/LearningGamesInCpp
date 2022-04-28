@@ -3,11 +3,12 @@
 #include <vector>
 #include <imgui.h>
 #include <iostream>
+#include <array>
 #include <unordered_map>
 
 #include <entt.hpp>
-#include <Utils/Pointer.h>
 #include <ECS/Scene.h>
+#include <Utils/Pointer.h>
 
 #include <Math/Vectors.h>
 
@@ -78,6 +79,36 @@ namespace ImGui
             {
                 bool is_selected = m->name.compare(data[selected]->name) == 0;
                 if (ImGui::Selectable(m->name.c_str(), is_selected))
+                {
+                    isSelected = true;
+                    selected = i;
+                    if (is_selected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                i++;
+            }
+            ImGui::EndCombo();
+        }
+
+        return isSelected;
+    }
+
+    inline bool ComboBox(const char* label, const std::array<std::string, 16>& data, int& selected) {
+        std::string name;
+        if (data.size()) {
+            name = data[selected];
+        }
+
+        bool isSelected = false;
+
+        if (ImGui::BeginCombo(label, name.c_str()))
+        {
+            int i = 0;
+            for (auto m : data)
+            {
+                if (!m.empty()) return false;
+                bool is_selected = m.compare(data[selected]) == 0;
+                if (ImGui::Selectable(m.c_str(), is_selected))
                 {
                     isSelected = true;
                     selected = i;

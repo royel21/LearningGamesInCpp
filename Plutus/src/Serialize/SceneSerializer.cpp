@@ -117,12 +117,14 @@ namespace Plutus
 
             //Array of textures
             ser.StartArr("textures");
-            for (auto tex : tilemap->mTextures)
+            for (size_t i = 0; i < 16; i++)
             {
-                ser.StartObj();
-                ser.addInt("id", tex.first);
-                ser.addString("name", tex.second.c_str());
-                ser.EndObj();
+                if (!tilemap->mTextures[i].empty()) {
+                    ser.StartObj();
+                    ser.addInt("id", i);
+                    ser.addString("name", tilemap->mTextures[i].c_str());
+                    ser.EndObj();
+                }
             }
             ser.EndArr();
             //Tiles Array

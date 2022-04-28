@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include <unordered_map>
+#include <array>
 #include <Math/Vectors.h>
 
 namespace Plutus
@@ -58,13 +58,14 @@ namespace Plutus
         int mTileHeight = 32;
         int mLayer = 0;
         std::vector<Tile> mTiles;
-        std::unordered_map<int, std::string> mTextures;
+        std::array<std::string, 16> mTextures;
 
         TileMapComponent() = default;
         // TileMap(const TileMap& tilemap);
         TileMapComponent(int tileWidth, int tileHeight, int _layer = 0) : mTileWidth(tileWidth), mTileHeight(tileHeight) {}
 
         void addTexture(int id, const std::string& texture);
+        void addTexture(const std::string& texture);
         void removeTexture(int index);
 
         Texture* getTexture(int id);

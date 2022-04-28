@@ -39,9 +39,11 @@ namespace Plutus
             mIsOpen = true;
             mTileMap = mConfig->mProject.mEnt.getComponent<TileMapComponent>();
 
-            auto found = mTileMap->mTextures.find(mCurrentTexture);
-            if (mTileMap->mTextures.size() && found == mTileMap->mTextures.end()) {
-                mCurrentTexture = mTileMap->mTextures.begin()->first;
+            for (int i = 0; i < 16; i++) {
+                if (!mTileMap->mTextures[i].empty()) {
+                    mCurrentTexture = i;
+                    break;
+                }
             }
 
             float textWidth = ImGui::GetContentRegionAvailWidth() * 0.35f;
@@ -254,16 +256,7 @@ namespace Plutus
             ImGui::Separator();
             if (ImGui::Button("Add Texture##mt-modal"))
             {
-                int i = 0;
-                auto it = std::find_if(mTileMap->mTextures.begin(), mTileMap->mTextures.end(), [&](auto&& val)->bool {
-                    i = std::max(i, val.first);
-                    return val.second.compare(current) == 0;
-                    });
-
-                if (it == mTileMap->mTextures.end()) {
-                    mTileMap->mTextures[i + 1] = current;
-                    mCurrentTexture = i + 1;
-                }
+                mTileMap->addTexture(current);
                 show = false;
             }
             ImGui::EndDialog(show);
