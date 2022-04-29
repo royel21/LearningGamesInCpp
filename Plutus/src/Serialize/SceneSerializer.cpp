@@ -268,6 +268,7 @@ namespace Plutus
                         ser.addFloat("gravScale", rbody->mGravityScale);
                         ser.addInt("bodyType", rbody->mBodyType);
                         ser.add2Float("max-vel", rbody->mMaxVel);
+                        ser.addFloat("spd-rfact", rbody->mSpeedReducctionFactor);
                         addFixtures(ser, rbody);
 
                     }

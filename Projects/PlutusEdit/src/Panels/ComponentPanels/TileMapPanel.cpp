@@ -148,12 +148,12 @@ namespace Plutus
                     }
                 }
             }
-            if (mConfig->isHover) {
-                if (mMode == MODE_PLACE) {
-                    renderTemp();
-                }
+            if (mMode == MODE_PLACE && mConfig->isHover) {
+                renderTemp();
             }
-            mConfig->mRender->mTotalTemp = 0;
+            else {
+                mConfig->mRender->mTotalTemp = 0;
+            }
         }
         else {
             mIsOpen = false;

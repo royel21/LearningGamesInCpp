@@ -193,6 +193,8 @@ namespace Plutus
             ImGui::DragFloat("##l-damping", &mRigidBody->mLinearDamping, 1, 0, 30, "%.2f");
             ImGui::Row("Gravity Scale", textWidth);
             ImGui::DragFloat("##g-scale", &mRigidBody->mGravityScale, 1, 0, 30, "%.2f");
+            ImGui::Row("Speed Reduction", textWidth);
+            ImGui::DragFloat("##g-speed-redu", &mRigidBody->mSpeedReducctionFactor, 0.1f, 0, 1, "%.2f");
 
             auto found = std::find_if(rigidBodyTypes.begin(), rigidBodyTypes.end(),
                 [=](auto&& rbtype)-> bool { return rbtype.second == mRigidBody->mBodyType;});
