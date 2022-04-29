@@ -145,7 +145,6 @@ namespace Plutus
 
                 if (ImGui::BeginChild("##assets-files", { 0,0 }, false)) {
                     drawTreeNode<Font>("Fonts");
-                    drawTreeNode<SceneAsset>("Scenes");
                     drawTreeNode<Script>("Scripts");
                     drawTreeNode<Sound>("Sounds");
                     drawTreeNode<Texture>("Textures");
@@ -189,6 +188,8 @@ namespace Plutus
                 {
                     assetFile.name = asset.first;
                     assetFile.type = fileTypes[Utils::getExtension(asset.second->mPath)];
+                    assetFile.fullpath = asset.second->mPath;
+                    assetFile.isNew = false;
                     show = true;
                 }
                 if (ImGui::BeginPopupContextItem())
@@ -212,7 +213,7 @@ namespace Plutus
 
     void AssetsWindow::viewAssets(bool& show) {
         ImGui::BeginDialog("Asset Modal", false, { 450.0f, 0.0f });
-        float width = ImGui::GetContentRegionAvailWidth() * 0.3f;
+        float width = ImGui::GetContentRegionAvailWidth() * 0.15f;
         ImGui::Row("Id", width);
         ImGui::Text(assetFile.name.c_str());
         ImGui::Separator();
@@ -245,14 +246,13 @@ namespace Plutus
             break;
         }
         case SCRIPTS:
-        {
-            break;
-        }
         case SCENES: {
+            ImGui::Row("Path", width);
+            ImGui::Text(assetFile.fullpath.c_str());
             break;
         }
         }
-        ImGui::Separator();
+
         ImGui::EndDialog(show);
         if (!show) {
             texture.destroy();
@@ -264,11 +264,10 @@ namespace Plutus
     void AssetsWindow::processFile()
     {
         bool show = true;
-        if (!assetFile.fullpath.empty()) {
+        if (!assetFile.fullpath.empty() && assetFile.isNew) {
             std::string asset = "";
 
             float width = ImGui::GetContentRegionAvailWidth() * 0.3f;
-
 
             ImGui::BeginDialog(("Asset Modal - " + assetFile.name).c_str(), false, { 450.0f, 0.0f });
             //Texure Or Font Id
@@ -315,18 +314,9 @@ namespace Plutus
                 asset = "assets\\scripts\\" + assetFile.name;
                 break;
             }
-            case SCENES:
-            {
-                if (!mSceneAsset.mPath.length())
-                    mSceneAsset.init(assetFile.fullpath);
-
-                asset = "assets\\scenes\\" + assetFile.name;
-                break;
-            }
 
             }
 
-            ImGui::Separator();
             ImGui::EndDialog(show, [&](bool save) {
                 if (save && assetFile.id.length() > 0)
                 {
@@ -358,10 +348,6 @@ namespace Plutus
                         {
                             assetMang->addAsset<Script>(assetFile.id, asset);
                             mScript.destroy();
-                            break;
-                        }
-                        case SCENES: {
-                            assetMang->addAsset<SceneAsset>(assetFile.id, asset);
                             break;
                         }
                         }

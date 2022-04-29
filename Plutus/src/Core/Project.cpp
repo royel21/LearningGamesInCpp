@@ -19,25 +19,27 @@ namespace Plutus
 
     void Project::clear()
     {
-        winTitle = "Plutus App";
-        winWidth = 1280;
-        winHeight = 768;
-        vpWidth = 1280;
-        vpHeight = 768;
-        vpPos = { 0, 0 };
+        if (!currentScene.empty()) {
+            winTitle = "Plutus App";
+            winWidth = 1280;
+            winHeight = 768;
+            vpWidth = 1280;
+            vpHeight = 768;
+            vpPos = { 0, 0 };
 
-        zoomLevel = 1.0f;
-        maxFPS = 60.0f;
-        velIter = 8;
-        positionIter = 3;
-        timeStepInSec = 1.0f / maxFPS;
-        gravity = { 0.0f, -9.8f };
-        autoClearForce = true;
+            zoomLevel = 1.0f;
+            maxFPS = 60.0f;
+            velIter = 8;
+            positionIter = 3;
+            timeStepInSec = 1.0f / maxFPS;
+            gravity = { 0.0f, -9.8f };
+            autoClearForce = true;
 
-        scene->clear();
-        currentScene = "";
-        currentScenePath = "";
-        AssetManager::get()->destroy();
+            scene->clear();
+            currentScene = "";
+            currentScenePath = "";
+            AssetManager::get()->destroy();
+        }
     }
 
     void Project::load(const std::string& path)
@@ -48,7 +50,6 @@ namespace Plutus
             Plutus::AssetManager::get()->setBaseDir(Utils::getDirectory(path));
 
             scene->clear();
-            AssetManager::get()->destroy();
 
             JsonHelper jhelper;
             auto obj = doc.GetJsonObject();
@@ -79,7 +80,7 @@ namespace Plutus
 
             if (doc.HasMember("scenes")) {
                 for (auto& sc : doc["scenes"].GetArray()) {
-                    AssetManager::get()->addAsset<SceneAsset>(sc["name"].GetString(), sc["path"].GetString());
+                    scenes[sc["name"].GetString()] = sc["path"].GetString();
                 }
             }
         }
@@ -108,11 +109,11 @@ namespace Plutus
 
             ser.StartArr("scenes");
             {
-                for (auto sc : AssetManager::get()->getAssets<SceneAsset>()) {
+                for (auto sc : scenes) {
                     ser.StartObj();
                     {
                         ser.addString("name", sc.first);
-                        ser.addString("path", sc.second->mPath);
+                        ser.addString("path", sc.second);
                     }
                     ser.EndObj();
                 }
@@ -126,12 +127,20 @@ namespace Plutus
 
     void Project::loadScene(const std::string& name)
     {
-        auto assetScene = AssetManager::get()->getAsset<SceneAsset>(name);
-        if (assetScene) {
+        auto tscene = scenes.find(name);
+        if (tscene != scenes.end()) {
             scene->clear();
-            currentScenePath = AssetManager::get()->getBaseDir() + assetScene->mPath;
-            SceneLoader::loadFromPath(assetScene->mPath.c_str(), scene.get());
+            AssetManager::get()->destroy();
+            currentScenePath = AssetManager::get()->getBaseDir() + tscene->second;
+            SceneLoader::loadFromPath(tscene->second.c_str(), scene.get());
         }
+    }
+
+    void Project::unLoadScene() {
+        scene->clear();
+        currentScene = "";
+        currentScenePath = "";
+        AssetManager::get()->destroy();
     }
 
     void Project::saveScene()

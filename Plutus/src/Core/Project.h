@@ -39,6 +39,7 @@ namespace Plutus
         Ref<Scene> scene;
         std::string currentScene;
         std::string currentScenePath;
+        std::unordered_map<std::string, std::string> scenes;
 
         Project();
 
@@ -48,6 +49,7 @@ namespace Plutus
         void save(const std::string& path);
 
         void loadScene(const std::string& path);
+        void unLoadScene();
         void saveScene();
     };
 } // namespace Plutus
