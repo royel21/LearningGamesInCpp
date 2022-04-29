@@ -57,6 +57,7 @@ namespace ImGui
         }
         ImGui::Text(text);
         ImGui::SameLine(textWidth);
+        ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth());
     }
 
     inline int checkLimit(int& v, int min, int max) {
@@ -155,7 +156,7 @@ namespace ImGui
 
     bool ComboBox(const char* label, const std::vector<std::string>& data, int& selected);
 
-    bool TransparentButton(const char* label, bool isIcon = false, ImVec4 color = { 1,1,1,1 });
+    bool TransparentButton(const char* label, bool isIcon = false, ImVec4 color = { 1,1,1,1 }, bool sameLine = true);
 
     bool ListBox(const char* label, std::vector<Plutus::Entity*> data, Plutus::Entity* selected);
 

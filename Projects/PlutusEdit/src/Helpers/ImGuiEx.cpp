@@ -12,7 +12,7 @@ namespace ImGui {
     const uint32_t color2 = IM_COL32(50, 50, 60, 255);
     const uint32_t color3 = IM_COL32(60, 60, 70, 255);
 
-    bool TransparentButton(const char* label, bool isIcon, ImVec4 color) {
+    bool TransparentButton(const char* label, bool isIcon, ImVec4 color, bool sameline) {
         ImVec2 buttonSize = { 0,0 };
         if (isIcon) {
             float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.0f;
@@ -31,7 +31,8 @@ namespace ImGui {
         ImGui::PopStyleColor(3);
         if (isIcon) {
             ImGui::PopStyleVar();
-            ImGui::SameLine();
+            if (sameline)
+                ImGui::SameLine();
         }
         return isActive;
     }
@@ -281,14 +282,22 @@ namespace ImGui {
 
     void EndDialog(bool& show, std::function<void(bool)> callback)
     {
+        float width = ImGui::GetContentRegionAvailWidth() * 0.5f;
+        ImVec2 btnSize = { 65, 25 };
+        ImGui::Separator();
+        ImGui::InvisibleButton("##placehorder", { 1, 1 });
         if (callback) {
-            if (ImGui::Button("save##modal")) {
+            ImGui::SetCursorPosX(width - 70);
+            if (ImGui::Button("Save##modal", btnSize)) {
                 show = false;
                 callback(true);
             }
             ImGui::SameLine();
         }
-        if (ImGui::Button("Cancel##modal-1"))
+        else {
+            ImGui::SetCursorPosX(width - 50);
+        }
+        if (ImGui::Button("Cancel##modal-1", btnSize))
         {
             if (callback) callback(false);
             show = false;

@@ -198,13 +198,17 @@ namespace Plutus
                 ImGui::EndMenu();
             }
             static bool mShowDemo;
-            if (ImGui::BeginMenu("Tools"))
+            if (ImGui::BeginMenu("View"))
             {
-                ImGui::MenuItem("Show Demo", NULL, &mShowDemo);
                 static bool isAlwaysOnTop = false;
                 ImGui::MenuItem("Always On Top", NULL, &isAlwaysOnTop);
                 mApp->setAlwaysOnTop(isAlwaysOnTop);
 
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Help"))
+            {
+                ImGui::MenuItem("Show Demo", NULL, &mShowDemo);
                 ImGui::EndMenu();
             }
             ImGui::EndMenuBar();

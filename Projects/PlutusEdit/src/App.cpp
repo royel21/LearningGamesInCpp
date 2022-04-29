@@ -75,21 +75,6 @@ namespace Plutus
             }
         }
 
-        // ImGui::Begin("Test-Wind2");
-        // auto size = mRender.mFrameBuffer.getSize();
-        // ImGui::SetCursorPos({ 10,10 });
-
-        // // A boolean to allow me to stop the game rendering
-
-        // // Get the texture associated to the FBO
-        // auto tex = mRender.mFrameBuffer.getTextureId();
-
-        // // Ask ImGui to draw it as an image:
-        // // Under OpenGL the ImGUI image type is GLuint
-        // // So make sure to use "(void *)tex" but not "&tex"
-        // ImGui::Image((void*)tex, { size.x, size.y }, ImVec2(0, 1), ImVec2(1, 0));
-        // ImGui::End();
-
         mMainWin.End();
         if (isInitialize) {
             mRender.draw();

@@ -46,7 +46,7 @@ namespace Plutus
                 }
             }
 
-            mBody->SetLinearVelocity({ vel.x * mSpeedReducctionFactor, vel.y * mSpeedReducctionFactor });
+            mBody->SetLinearVelocity({ vel.x * mSpeedReducctionFactor.x, vel.y * mSpeedReducctionFactor.y });
         }
     }
 } // namespace Plutus

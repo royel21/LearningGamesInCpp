@@ -236,7 +236,7 @@ namespace Plutus
                             rbody->mGravityScale = jhelper.getFloat("gravScale");
                             rbody->mBodyType = (BodyType)jhelper.getInt("bodyType");
                             rbody->mMaxVel = jhelper.getFloat2("max-vel");
-                            rbody->mSpeedReducctionFactor = jhelper.getFloat("spd-rfact", 0.95f);
+                            rbody->mSpeedReducctionFactor = jhelper.getFloat2("spd-refact", { 0.95f });
 
                             loadFixtures(rbody, component, jhelper);
                         }

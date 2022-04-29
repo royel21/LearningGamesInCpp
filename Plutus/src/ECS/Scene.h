@@ -86,9 +86,9 @@ namespace Plutus
 
         inline bool isValid(Entity ent) { return mRegistry.valid(ent); }
 
-        entt::registry* getRegistry() { return &mRegistry; }
+        inline entt::registry* getRegistry() { return &mRegistry; }
         // remove all entity from scene
-        void clear() { mRegistry.clear(); }
+        inline void clear() { mRegistry.clear(); mBGColor = {}; }
 
     private:
         entt::registry mRegistry;

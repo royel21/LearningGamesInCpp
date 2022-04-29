@@ -24,11 +24,12 @@ namespace Plutus
             ImGui::SameLine();
             if (ImGui::TransparentButton(ICON_FA_COG "##config-scene")) showConfig = true;
             ImGui::Separator();
-            for (auto sc : AssetManager::get()->getAssets<SceneAsset>()) {
+            bool isNodeOpen;
+            for (auto sc : project.scenes) {
 
                 bool isOpen = project.currentScene.compare(sc.first) == 0;
                 ImGui::SetNextItemOpen(isOpen);
-                bool isNodeOpen = ImGui::TreeNode((ICON_FA_PHOTO_VIDEO " " + sc.first).c_str());
+                isNodeOpen = ImGui::TreeNode((ICON_FA_PHOTO_VIDEO " " + sc.first).c_str());
 
                 if (isNodeOpen)
                 {
@@ -56,9 +57,23 @@ namespace Plutus
                     ImGui::TreePop();
                 }
                 else  if (isOpen) {
-                    project.currentScene = "";
+                    project.unLoadScene();
                 }
             }
+            if (!isNodeOpen) {
+                if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                    ImGui::OpenPopup("SceneMenu");
+                }
+
+                if (ImGui::BeginPopup("SceneMenu"))
+                {
+                    if (ImGui::MenuItem("Create Scene")) {
+
+                    }
+                    ImGui::EndPopup();
+                }
+            }
+
         }
         ImGui::End();
 
