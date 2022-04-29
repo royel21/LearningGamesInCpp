@@ -1,5 +1,5 @@
-local SPEED = 1
-local curAnime = "stand-r"
+local SPEED = 0.3
+local curAnime = "stand-right"
 
 local stand = {
     right = "stand-right",
@@ -19,7 +19,7 @@ function init()
     local anim = Player2:getAnimate()
     if anim then anim:play(curAnime) end
     rbody = Player2:getRigidBody()
-    rbody:setMaxVelocity(1,1)
+    rbody:setMaxVelocity(1, 2)
 
     print("player2 init")
 end
@@ -36,7 +36,7 @@ function roll()
     rbody:applyForce(vel.x, vel.y)
 end
 
-function jump() rbody:applyImpulse(0, 1.5) end
+function jump() rbody:applyImpulse(0, 0.3) end
 
 function update(dt)
     local anim = Player2:getAnimate()
@@ -59,8 +59,6 @@ function update(dt)
         -- Move Up - Down
         if input:onKeyDown("Up") then
             direction = "up"
-            state = "running"
-            vel.y = SPEED
         elseif input:onKeyDown("Down") then
             direction = "down"
             state = "running"
@@ -99,5 +97,4 @@ function update(dt)
         state = "     "
     end
 end
-
 

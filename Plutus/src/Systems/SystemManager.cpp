@@ -1,7 +1,6 @@
 #include "SystemManager.h"
-#include "Systems.h"
 
-#include "System/System.h"
+#include "Systems.h"
 
 namespace Plutus
 {
@@ -17,7 +16,7 @@ namespace Plutus
     void SystemManager::init()
     {
         for (auto& sys : mSystems) {
-            if (sys.second)sys.second->init();
+            if (sys.second)sys.second->init(mProject);
         }
     }
 

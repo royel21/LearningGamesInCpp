@@ -24,16 +24,19 @@ inline void setBackgoundColor(float r = 1, float g = 1, float b = 1, float a = 1
     glClearColor(r, g, b, a);
 }
 
-/*
-    create a texure with default format view OpenGL genTexture
-    @param w width of the texture
-    @param h height of the texture
-    @param buff image buffer type unsigned char
-    @param intFormat internal format default to GL_RGB
-    @param format format default to GL_RGB
-    @param type defualt to GL_UNSIGNED_BYTE
-
-*/
+/**
+ * @brief  create a texure with default format view OpenGL genTexture
+ *
+ * @param w width of the texture
+ * @param h height of the texture
+ * @param buff buff image buffer type unsigned char
+ * @param intFormat intFormat internal format default to GL_RGB
+ * @param format format default to GL_RGB
+ * @param type defualt to GL_UNSIGNED_BYTE
+ * @param minFilter default GL_NEAREST
+ * @param magFilter default GL_NEAREST
+ * @return GLuint glTextureID
+ */
 inline GLuint createTexture(int w, int h, unsigned char* buff, GLuint intFormat = GL_RGB,
     GLuint format = GL_RGB, GLint type = GL_UNSIGNED_BYTE,
     GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST)

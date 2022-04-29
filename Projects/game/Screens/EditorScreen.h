@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Core/IGameScreen.h>
 
 #include <Graphics/Shader.h>
 #include <Graphics/Camera2D.h>
@@ -8,32 +7,28 @@
 #include <Graphics/SpriteBatch2D.h>
 #include <Graphics/DebugRenderer.h>
 
+#include <Core/IScreen.h>
 #include <Assets/Assets.h>
 
-class EditorScreen : public Plutus::IGameScreen
+
+class EditorScreen : public Plutus::IScreen
 {
 public:
     EditorScreen();
     ~EditorScreen();
 
-    int getNextScreenIndex() const override;
-    int getPrevScreentIndex() const override;
-
     // called at beginning and end of the application
-    void build() override;
-    void destroy() override;
+    void Init() override;
     // Called when a screen enter and exit focus
-    void onEntry() override;
-    void onExit() override;
+    void Enter() override;
     // Called in the main game loop
-    void update(float deltaTime) override;
-    void draw() override;
-    void onScreenResize(int w, int h) override;
+    void Update(float dt) override;
+    void Draw() override;
 
 private:
-    Plutus::AssetManager* mAssets;
-    Plutus::DebugRender* mDebug;
     Plutus::FrameBuffer mFB;
+    Plutus::DebugRender* mDebug;
+    Plutus::AssetManager* mAssets;
 
     Plutus::Shader mShader;
     Plutus::Camera2D mCamera;

@@ -6,14 +6,15 @@
 
 #include "ComponentUtil.h"
 #include <Assets/Assets.h>
+#include <misc/cpp/imgui_stdlib.h>
 
 namespace Plutus
 {
-    void AnimationTab::DrawAnimation(Entity* ent)
+    void AnimationTab::draw(Config* config)
     {
-        mAnimation = ent->getComponent<AnimationComponent>();
+        mAnimation = config->mProject.mEnt.getComponent<AnimationComponent>();
         auto& mTextures = AssetManager::get()->getAssets<Texture>();
-        if (CollapseComponent<AnimationComponent>("Animation##tilemap-comp", 3))
+        if (CollapseComponent<AnimationComponent>("Animation##tilemap-comp", 3, config))
         {
             auto& sequences = mAnimation->mSequences;
             auto it = sequences.begin();
@@ -49,7 +50,40 @@ namespace Plutus
                     mCurSeq = "";
                 }
             }
+
+
             ImGui::ComboBox("##a-seq", sequences, mCurSeq, defItem);
+
+            auto found = sequences.find(mCurSeq);
+            if (found != sequences.end()) {
+                auto& seq = found->second;
+                auto tex = AssetManager::get()->getAsset<Texture>(seq.mTexId);
+
+                if (tex) {
+                    ImGui::Row("Time");
+                    ImGui::InputFloat("##seq-time", &seq.mSeqTime, 0.001f);
+                    ImGui::Separator();
+
+                    ImGui::BeginChild("Anim", { 0, 224 });
+                    {
+                        float tileSize = 128;
+
+                        float center = ImGui::GetContentRegionAvailWidth() * 0.5f - tileSize / 2.0f;
+                        ImGui::SetCursorPos({ center, tileSize / 2.0f });
+
+                        if (seq.mFrames.size()) {
+                            time += (1000.0f / ImGui::GetIO().Framerate) / 1000.0f;
+                            if (time > seq.mSeqTime) {
+                                seq.mFrame = ++seq.mFrame % seq.mFrames.size();
+                                time = 0;
+                            }
+                            auto uv = tex->getUV(seq.mFrames[seq.mFrame]);
+                            ImGui::Image((ImTextureID)tex->mTexId, { tileSize, tileSize }, { uv.x, uv.y }, { uv.z, uv.w });
+                        }
+                    }
+                    ImGui::EndChild();
+                }
+            }
             ImGui::PopStyleVar();
 
             SeqWindow();
@@ -60,21 +94,20 @@ namespace Plutus
         if (showSeqWindow) {
             auto& mTextures = AssetManager::get()->getAssets<Texture>();
             auto found = mAnimation->mSequences.find(mCurSeq);
-            auto& seq = mMode ? found->second : newSeq;
+            auto& seq = mMode == EDIT ? found->second : newSeq;
+
+            float width = ImGui::GetContentRegionAvailWidth() * .3f;
 
             ImGui::SetNextWindowSize({ 465, 650 });
             ImGui::BeginDialog("Sequence");
             {
-
-                if (ImGui::BeginUIGroup())
                 {
-                    ImGui::BeginCol("Name", 300);
-                    ImGui::InputString("##seq-name", mNewSeqId);
-                    ImGui::BeginCol("Time", 300);
+                    ImGui::Row("Name", width);
+                    ImGui::InputText("##seq-name", &mNewSeqId);
+                    ImGui::Row("Time", width);
                     ImGui::InputFloat("##seq-time", &seq.mSeqTime, 0.001f);
-                    ImGui::BeginCol("Texure", 300);
+                    ImGui::Row("Texure", width);
                     ImGui::ComboBox("##tex-seq", mTextures, seq.mTexId);
-                    ImGui::EndUIGroup();
                 }
 
                 ImGui::Separator();
@@ -82,8 +115,8 @@ namespace Plutus
                 ImGui::Separator();
 
                 auto curPos = ImGui::GetWindowSize();
-                if (!seq.mTexId.empty()) {
-                    auto tex = static_cast<Texture*>(mTextures[seq.mTexId]);
+                auto tex = AssetManager::get()->getAsset<Texture>(seq.mTexId);
+                if (tex) {
                     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 1, 2 });
                     if (ImGui::BeginChild("##tex-img", { curPos.x, 217 })) {
                         for (size_t i = 0; i < tex->uvs.size(); i++) {
@@ -159,26 +192,29 @@ namespace Plutus
                     }
                 }
 
-                ImGui::SetCursorPos({ curPos.x * 0.5f - 50.0f, curPos.y - 34.0f });
-                if (ImGui::Button("Save##s-seq") && !mNewSeqId.empty()) {
-                    if (!mNewSeqId.empty()) {
-                        if (mMode) {
-                            mAnimation->swapSeq(mNewSeqId, mCurSeq);
-                            mCurSeq = mNewSeqId;
-                            showSeqWindow = false;
+                ImGui::EndDialog(showSeqWindow, [&](bool save) {
+
+                    if (save && !mNewSeqId.empty()) {
+                        if (!mNewSeqId.empty()) {
+                            if (mMode == EDIT) {
+                                if (mNewSeqId.compare(mCurSeq) != 0) {
+                                    mAnimation->updateSeq(mCurSeq, mNewSeqId);
+                                    mCurSeq = mNewSeqId;
+                                }
+                            }
+                            else {
+                                mAnimation->addSequence(mNewSeqId, seq);
+                                mNewSeqId = "";
+                                newSeq.mFrames = {};
+                                newSeq.mFrame = 0;
+                            }
                         }
-                        else {
-                            mAnimation->addSequence(mNewSeqId, seq);
-                            mNewSeqId = "";
-                            newSeq.mFrames = {};
-                            newSeq.mFrame = 0;
-                        }
+                        showSeqWindow = false;
                     }
-                }}
-            ImGui::EndDialog(showSeqWindow);
-            if (!showSeqWindow) {
-                newSeq = {};
-                mNewSeqId = "";
+                    newSeq = {};
+                    mNewSeqId = "";
+
+                    });
             }
         }
     }

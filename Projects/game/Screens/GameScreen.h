@@ -1,35 +1,23 @@
 #pragma once
 
-#include <Core/IGameScreen.h>
-#include <Graphics/Camera2D.h>
+#include <Core/IScreen.h>
 #include <Systems/SystemManager.h>
-#include <ECS/Scene.h>
-#include <Utils/Pointer.h>
 
-class GameScreen : public Plutus::IGameScreen
+
+class GameScreen : public Plutus::IScreen
 {
 public:
     GameScreen();
 
     ~GameScreen();
-
-    int getNextScreenIndex() const override;
-    int getPrevScreentIndex() const override;
-
     // called at beginning and end of the application
-    void build() override;
-    void destroy() override;
+    void Init() override;
+    void Enter() override;
+    void Draw();
     // Called when a screen enter and exit focus
-    void onEntry() override;
-    void onExit() override;
-    // Called in the main game loop
-    void update(float deltaTime) override;
-    void draw() override;
-    void onScreenResize(int w, int h) override;
+    void Update(float dt) override;
+    void Exit() override;
 
 private:
-    Ref<Plutus::Scene> mScene;
-    Plutus::Camera2D mWorldCamera;
     Plutus::SystemManager mSystemManager;
-    Plutus::Entity Player;
 };

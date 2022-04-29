@@ -3,15 +3,18 @@
 #include <vector>
 #include <imgui.h>
 #include <iostream>
+#include <array>
 #include <unordered_map>
 
 #include <entt.hpp>
-#include <Utils/Pointer.h>
 #include <ECS/Scene.h>
+#include <Utils/Pointer.h>
 
 #include <Math/Vectors.h>
 
 #include <Assets/Texture.h>
+
+#include <misc/cpp/imgui_stdlib.h>
 
 #define IM_F4_2_I32COLOR(color) static_cast<int>(color[3] * 255) << 24 | \
                                 static_cast<int>(color[2] * 255) << 16 | \
@@ -90,6 +93,36 @@ namespace ImGui
         return isSelected;
     }
 
+    inline bool ComboBox(const char* label, const std::array<std::string, 16>& data, int& selected) {
+        std::string name;
+        if (data.size()) {
+            name = data[selected];
+        }
+
+        bool isSelected = false;
+
+        if (ImGui::BeginCombo(label, name.c_str()))
+        {
+            int i = 0;
+            for (auto m : data)
+            {
+                if (!m.empty()) return false;
+                bool is_selected = m.compare(data[selected]) == 0;
+                if (ImGui::Selectable(m.c_str(), is_selected))
+                {
+                    isSelected = true;
+                    selected = i;
+                    if (is_selected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                i++;
+            }
+            ImGui::EndCombo();
+        }
+
+        return isSelected;
+    }
+
     template <typename T>
     inline bool ComboBox(const char* label, const std::unordered_map<std::string, T>& data, std::string& selected, const std::string& defaultItem = "")
     {
@@ -128,24 +161,19 @@ namespace ImGui
 
     bool ColorInt(const char* label, unsigned int& color);
 
-    void BeginDialog(const char* name, bool fixedPos = false);
+    void BeginDialog(const char* name, bool fixedPos = false, Plutus::vec2f size = { 0, 0 });
 
-    void EndDialog(bool& show);
-
-    bool BeginUIGroup(ImGuiTableFlags flags = 0);
-    void EndUIGroup();
-
-    void BeginCol(const char* label, float width = -1);
+    void EndDialog(bool& show, std::function<void(bool)> callback = nullptr);
 
     bool Draw2Float(char* id, Plutus::vec2f& value, float step = 1.0f, const char* btntag1 = "X", const char* btntag2 = "Y");
 
     bool InputString(const char* label, std::string& text);
 
-    bool Texture(Plutus::Texture* tileset, float scale, std::vector<Plutus::vec3i>& selected);
+    bool Texture(const Plutus::Texture* tileset, float scale, std::vector<Plutus::vec3i>& selected);
 
-    bool DrawTextureOne(Plutus::Texture* tileset, int& selected);
+    bool DrawTextureOne(const Plutus::Texture* tileset, int& selected);
 
-    bool DrawTexture(Plutus::Texture* tileset, int winWidth = 0, int winHeight = 0, float scale = 1.0f, std::vector<Plutus::vec3i>* selected = nullptr, bool onlyOne = false);
+    bool DrawTexture(const Plutus::Texture* tileset, int winWidth = 0, int winHeight = 0, float scale = 1.0f, std::vector<Plutus::vec3i>* selected = nullptr, bool onlyOne = false);
 
-    void DrawTexCoords(Plutus::Texture* tileset, Plutus::vec4f& coords);
+    void DrawTexCoords(const Plutus::Texture* tileset, Plutus::vec4f& coords);
 } // namespace ImGui

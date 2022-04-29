@@ -5,78 +5,78 @@
 
 #include <ECS/Scene.h>
 #include <Math/Vectors.h>
-
 #include <Utils/Pointer.h>
+#include <Core/Project.h>
 
 namespace Plutus
 {
+    class Render;
+    class Camera2D;
+
     enum State {
         Editing,
         Running
     };
 
-    struct FloatColor {
-        float r = 1;
-        float g = 1;
-        float b = 1;
-        float a = 1;
-    };
-
-    struct Project {
-        int vpWidth = 1280;
-        int vpHeight = 768;
+    struct EditorProject : public Project {
+        // Window Size
+        std::string workingDir = "./";
 
         Entity mEnt;
-        Ref<Scene> mScene;
-        Ref<Scene> mTempScene;
-        std::string mOpenScene;
+        EditorProject() = default;
+        void Copy(const EditorProject& proj);
 
-        std::unordered_map<std::string, std::string> mScenes = {};
+        operator bool() const { return currentScene.empty(); }
 
-        std::unordered_map<std::string, std::string>& getItems() { return mScenes; }
-        Project();
+        std::string getDir(const std::string& part);
 
-        void Create(const std::string& name);
-        void add(const std::string& path);
-        void Load(const std::string& path);
-        void Save();
-        void remove(std::string id) { mScenes.erase(id); }
+        void CreateScene(const std::string& name);
+        void removeScene(std::string id);
+
+        void clearScene();
     };
 
     struct Config
     {
-        float vpZoom = 1.0f;
-        vec4f vpColor = { 1.0f };
-        vec2f vpPos;
         //Mouse Coords in view port
         vec2f mMouseCoords;
         // Is Viewport hovered
         bool isHover;
+
+        bool drawGrid = true;
         // Window Width
         int winWidth = 1280;
         // Window height
         int winHeight = 768;
-        Project* mProject;
+
+        int tileWidth = 32;
+        int tileHeight = 32;
+
+        Camera2D* mCamera = nullptr;
+
+        EditorProject mProject;
+
+        EditorProject mTempProject;
         //Current Open Project
-        std::string OpenProject = "";
+        std::string currentProject = "";
+        std::string workingDir;
         //List Of Project
-        std::unordered_map<std::string, Project> mProjects = {};
+        std::unordered_map<std::string, std::string> mProjects;
         bool isLoaded = false;
 
         State state = Editing;
+        Render* mRender;
+
+        Config() { load(); }
+        void init(Render* render);
 
         ~Config();
 
         // Create a Blank Project
-        void CreateProj(const char* filePath);
+        void CreateProj();
         void LoadProject(const std::string& name);
-        void RenameProj(const std::string& oldname, const std::string newName);
-
-        static Config& get();
 
     private:
-        Config() { Init(); };
-        void Init();
         void save();
         void load();
     };

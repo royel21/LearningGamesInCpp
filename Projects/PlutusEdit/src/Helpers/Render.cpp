@@ -11,27 +11,32 @@
 
 namespace Plutus
 {
-    Render& Render::get()
-    {
-        static Render render;
-        return render;
-    }
-
     Render::~Render() {
         mShader.destroy();
     }
 
-    void Render::Init()
+    void Render::init(Config* config)
     {
-        auto& config = Config::get();
-        int w = config.mProject->vpWidth;
-        int h = config.mProject->vpHeight;
+        mConfig = config;
+        reload(config);
+
+        if (!isLoaded) {
+            mShader.init(GLSL::vertexShader, GLSL::fragShader);
+            mDebugRender = Plutus::DebugRender::get();
+            mDebugRender->init(&mCamera);
+            mDebugRender->setCellSize({ mConfig->tileWidth, mConfig->tileHeight });
+            isLoaded = true;
+        }
+    }
+
+    void Render::reload(Config* config)
+    {
+        int w = config->mProject.vpWidth;
+        int h = config->mProject.vpHeight;
 
         mCamera.init(w, h);
-        mCamera.setPosition(config.vpPos);
-        mCamera.setScale(config.vpZoom);
-
-        mShader.init(GLSL::vertexShader, GLSL::fragShader);
+        mCamera.setPosition(config->mProject.vpPos);
+        mCamera.setScale(config->mProject.zoomLevel);
 
         mSpriteBatch.init();
         mSpriteBatch.setShader(&mShader);
@@ -39,37 +44,45 @@ namespace Plutus
 
         mFramePicker.init(w, h, true);
         mFrameBuffer.init(w, h);
-
-        mDebugRender = Plutus::DebugRender::get();
-        mDebugRender->init(&mCamera);
-        mDebugRender->setCellSize({ 64,64 });
+        mScene = mConfig->mProject.scene.get();
     }
 
-
+    void Render::resizeBuffers(const vec2f& size) {
+        mFrameBuffer.resize(size);
+        mFramePicker.resize(size);
+    }
 
     void Render::draw()
     {
-        // auto start = Timer::millis();
-        mFrameBuffer.setColor(Config::get().vpColor);
-        prepare();
-        mSpriteBatch.begin();
+        if (mScene && mConfig) {
+            // auto start = Timer::millis();
+            mFrameBuffer.setColor(mScene->mBGColor);
+            prepare();
+            mSpriteBatch.begin();
 
-        mFramePicker.bind();
-        mSpriteBatch.draw(BATCH_PICKING);
-        mFramePicker.unBind();
+            mFramePicker.bind();
+            mSpriteBatch.draw(BATCH_PICKING);
+            mFramePicker.unBind();
 
-        mFrameBuffer.bind();
-        mSpriteBatch.draw();
-        mSpriteBatch.end();
+            mFrameBuffer.bind();
+            mSpriteBatch.draw();
+            mSpriteBatch.end();
 
-        mDebugRender->drawGrid();
-        drawPhysicBodies();
+            mDebugRender->drawGrid();
 
-        mFrameBuffer.unBind();
+            drawPhysicBodies();
+
+            mFrameBuffer.unBind();
+        }
     }
+
     void Render::drawFixtures(PhysicBodyComponent* pbody, TransformComponent* trans) {
         for (auto& fixture : pbody->mFixtures) {
-            auto pos = trans->getPosition();//fromWorld(rbody.mBody->GetPosition());
+            vec2f pos;
+
+            if (trans) {
+                pos = trans->getPosition();//fromWorld(rbody.mBody->GetPosition());
+            }
 
             switch (fixture.type) {
             case BoxShape: {
@@ -93,7 +106,6 @@ namespace Plutus
                 break;
             }
             }
-
         }
     }
 
@@ -104,9 +116,12 @@ namespace Plutus
             drawFixtures(&rbody, &trans);
         }
 
-        auto view2 = mScene->getRegistry()->view<TransformComponent, PhysicBodyComponent>();
-        for (auto [e, trans, pbody] : view2.each()) {
-            drawFixtures(&pbody, &trans);
+        auto view2 = mScene->getRegistry()->view<PhysicBodyComponent>();
+        for (auto [e, pbody] : view2.each()) {
+            Entity ent = { ent, mConfig->mProject.scene.get() };
+            auto trans = ent.getComponent<TransformComponent>();
+
+            drawFixtures(&pbody, trans);
         }
 
         if (view.size_hint()) {
@@ -147,10 +162,17 @@ namespace Plutus
                     auto rect = tile.getRect();
                     if (mCamera.isBoxInView(rect, 200))
                     {
-                        auto tex = tilemap.getTexture(tile.texture);
+                        auto texIndex = -1;
+                        Texture* tex = nullptr;
+                        uint32_t texId;
+
+                        if (texIndex != tile.texture) {
+                            tex = tilemap.getTexture(tile.texture);
+                            texId = tex ? tex->mTexId : -1;
+                        }
+
                         if (tex) {
-                            mRenderables[i++] = { tex->mTexId, rect, tex->getUV(tile.texcoord),
-                                { tile.color }, tile.rotate, tile.flipX, tile.flipY, (int)entt::to_integral(ent), tilemap.mLayer, false };
+                            mRenderables[i++] = { texId, rect, tex->getUV(tile.texcoord), {}, tile.rotate, tile.flipX, tile.flipY, (int)entt::to_integral(ent), tilemap.mLayer, false };
                         }
                     }
                 }
@@ -163,7 +185,10 @@ namespace Plutus
             auto rect = trans.getRect();
             if (mCamera.isBoxInView(rect, 200))
             {
-                auto texId = AssetManager::get()->getAsset<Texture>(sprite.mTextureId)->mTexId;
+                auto tex = AssetManager::get()->getAsset<Texture>(sprite.mTextureId);
+
+                auto texId = tex ? tex->mTexId : -1;
+
                 mRenderables[i++] = { texId, rect, sprite.mUVCoord, sprite.mColor,
                     trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
             }

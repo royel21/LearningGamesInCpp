@@ -21,7 +21,6 @@ namespace Plutus
 
     void Serializer::addInt(const std::string& id, int data)
     {
-
         writer.String(id.c_str());
         writer.Int(data);
     }
@@ -132,7 +131,7 @@ namespace Plutus
         std::string ex = Utils::getExtension(filePath);
         if (ex == "json")
         {
-            auto buffer = readFileAsString(filePath);
+            auto buffer = FileIO::readFileAsString(filePath);
             if (!buffer.empty())
             {
                 bool result = document->Parse(buffer.c_str()).HasParseError() == false;
@@ -142,31 +141,16 @@ namespace Plutus
         return false;
     }
 
-    void toJsonFile(const std::string& path, const char* buffer)
-    {
-        std::ofstream outfile;
-        outfile.open(path.c_str(), std::ios_base::out); //std::ios_base::app
-        outfile << buffer;
-        outfile.close();
-    }
-
     bool loadJsonFromFile(const char* filePath, rapidjson::Document& document) {
         std::string ex = Utils::getExtension(filePath);
         if (ex == "json")
         {
-            auto buffer = readFileAsString(filePath);
+            auto buffer = FileIO::readFileAsString(filePath);
             if (!buffer.empty())
             {
                 return document.Parse(buffer.c_str()).HasParseError() == false;
             }
         }
         return false;
-    }
-
-    void saveJsonToFile(const char* filePath, const char* buffer) {
-        std::ofstream outfile;
-        outfile.open(filePath, std::ios_base::out); //std::ios_base::app
-        outfile << buffer;
-        outfile.close();
     }
 } // namespace Plutus

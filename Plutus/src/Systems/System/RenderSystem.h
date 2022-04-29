@@ -6,18 +6,23 @@
 
 namespace Plutus
 {
+    class FrameBuffer;
+
     class RenderSystem : public ISystem
     {
     public:
-        RenderSystem(Scene* scene, Camera2D* camera) : ISystem(scene, camera) {}
+        RenderSystem(Camera2D* camera);
         ~RenderSystem() { destroy(); }
-        void init() override;
+        void init(Project* project) override;
         void update(float dt) override;
         void destroy() override;
+        inline void setFrameBuffer(FrameBuffer* fbuffer) { mFrameBuff = fbuffer; }
+        SpriteBatch2D* getSpritebath() { return &mRenderer; }
 
     private:
         Shader mShader;
         SpriteBatch2D mRenderer;
+        FrameBuffer* mFrameBuff = nullptr;
         std::vector<Renderable> mRenderables;
     };
 } // namespace Plutus

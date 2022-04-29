@@ -2,7 +2,6 @@
 
 #include <vector>
 
-#include "../Scene.h"
 #include <Math/Vectors.h>
 
 
@@ -68,18 +67,16 @@ namespace Plutus
 
     struct PhysicBodyComponent
     {
-        Entity mEnt;
         b2Body* mBody;
 
         std::vector<Fixture> mFixtures;
         BodyType mBodyType = StaticBody;
 
-        PhysicBodyComponent() = default;
-        PhysicBodyComponent(Entity ent, BodyType type = StaticBody) : mEnt(ent), mBodyType(type) {};
+        PhysicBodyComponent(BodyType type = StaticBody) : mBodyType(type) {};
 
         inline Fixture& addFixture(int type) {
             mFixtures.push_back({ type });
-            return mFixtures.front();
+            return mFixtures.back();
         };
 
         inline void addEdge(vec2f offset, vec2f size, float friction = 0.3f, float density = 1.0f, float restitution = 0, bool isSensor = false) {

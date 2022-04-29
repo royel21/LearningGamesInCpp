@@ -15,7 +15,7 @@ namespace Plutus
         void bind();
         void unBind();
 
-        int getEntId(vec2f pos);
+        int getEntId(const vec2f& pos);
 
         void resize(const vec2i& size)
         {
@@ -31,13 +31,13 @@ namespace Plutus
 
         vec2f getSize() { return { mSize.x, mSize.y }; }
 
-        float getAspectRatio() { return static_cast<float>(mSize.x) / static_cast<float>(mSize.y); }
+        float getAspectRatio() { return 1.77777778f; }
 
         void setDirty() { isDirty = true; };
 
         unsigned int getTextureId() const { return mTexId; }
 
-        void setColor(vec4f bgColor) { mBGColor = { bgColor.x,bgColor.y,bgColor.z,bgColor.w }; }
+        void setColor(const vec4f& bgColor) { mBGColor = bgColor; }
 
         void cleanUp();
     private:

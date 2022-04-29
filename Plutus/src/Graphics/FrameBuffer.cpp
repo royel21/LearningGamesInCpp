@@ -49,7 +49,7 @@ namespace Plutus
         cleanUp();
     }
 
-    int FrameBuffer::getEntId(vec2f pos)
+    int FrameBuffer::getEntId(const vec2f& pos)
     {
         float pixels[] = { 0, 0, 0, 0 };
         if (mIsPicking) {
@@ -60,12 +60,14 @@ namespace Plutus
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
+
         return (int)pixels[0] - 1;
     }
+
     void FrameBuffer::bind()
     {
         if (isDirty)
-            init(mSize.x, mSize.y);
+            init(mSize.x, mSize.y, mIsPicking);
 
         glBindFramebuffer(GL_FRAMEBUFFER, mFbId);
         if (mIsPicking) {
@@ -73,7 +75,7 @@ namespace Plutus
             glClearColor(0, 0, 0, 0);
         }
         else {
-            glClearColor(mBGColor.x, mBGColor.y, mBGColor.z, mBGColor.w);
+            glClearColor(mBGColor.x, mBGColor.y, mBGColor.z, 1);
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }

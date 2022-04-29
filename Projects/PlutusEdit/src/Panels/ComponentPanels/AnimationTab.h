@@ -4,6 +4,8 @@
 
 namespace Plutus
 {
+    struct Config;
+
     enum Mode {
         NEW,
         EDIT
@@ -14,7 +16,7 @@ namespace Plutus
     class AnimationTab
     {
     public:
-        void DrawAnimation(Entity* mEnt);
+        void draw(Config* config);
 
     private:
         void SeqWindow();

@@ -1,6 +1,6 @@
 #include "Utils.h"
+
 #include <fstream>
-#include <cmath>
 #include <filesystem>
 
 #define PI 3.141592653589793238463
@@ -12,6 +12,11 @@ namespace Plutus
 {
     namespace Utils
     {
+        std::string getDirectory(const std::string& filePath)
+        {
+            return std::filesystem::path(filePath).remove_filename().string();
+        }
+
         std::string getFileName(const std::string& filePath)
         {
             return std::filesystem::path(filePath).filename().string();
@@ -70,6 +75,21 @@ namespace Plutus
             outfile.open(filePath, std::ios_base::out); //std::ios_base::app
             outfile << buffer;
             outfile.close();
+        }
+
+        void replaceAll(std::string& str, char what, char with)
+        {
+            size_t i = 0;
+            while (i++ < str.length()) {
+                if (str[i] == what) str[i] = with;
+            }
+        }
+
+        std::string ToLowerCase(const std::string& str)
+        {
+            auto str2 = str;
+            for (auto& s : str2) if (s < 91) s = s + 32;
+            return str2;
         }
     } // namespace Utils
 } // namespace Plutus

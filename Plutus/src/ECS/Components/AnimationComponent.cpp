@@ -30,7 +30,7 @@ namespace Plutus
         tempSprite = texId;
     }
 
-    void AnimationComponent::swapSeq(const std::string& oldid, const std::string& newid) {
+    void AnimationComponent::updateSeq(const std::string& oldid, const std::string& newid) {
         if (oldid == newid) return;
 
         auto it = mSequences.find(oldid);

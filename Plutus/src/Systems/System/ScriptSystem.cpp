@@ -13,27 +13,29 @@
 
 #include <Math/Vectors.h>
 
+#include <Core/Project.h>
+
 namespace Plutus
 {
     int my_exception_handler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description)
     {
-        std::cout << "An exception occurred in a function, here's what it says ";
-        if (maybe_exception)
-        {
-            std::cout << "(straight from the exception): ";
-            const std::exception& ex = *maybe_exception;
-            std::cout << ex.what() << std::endl;
-        }
-        else
-        {
-            std::cout << "(from the description parameter): ";
-            std::cout.write(description.data(), static_cast<std::streamsize>(description.size()));
-            std::cout << std::endl;
-        }
+        /* std::cout << "An exception occurred in a function, here's what it says ";
+         if (maybe_exception)
+         {
+             std::cout << "(straight from the exception): ";
+             const std::exception& ex = *maybe_exception;
+             std::cout << ex.what() << std::endl;
+         }
+         else
+         {
+             std::cout << "(from the description parameter): ";
+             std::cout.write(description.data(), static_cast<std::streamsize>(description.size()));
+             std::cout << std::endl;
+         }*/
         return sol::stack::push(L, description);
     }
 
-    ScriptSystem::ScriptSystem(Scene* scene, Camera2D* camera) : ISystem(scene, camera) {
+    ScriptSystem::ScriptSystem(Camera2D* camera) {
         mGlobalLua.open_libraries(
             sol::lib::base,
             sol::lib::math
@@ -49,9 +51,6 @@ namespace Plutus
         auto scene_table = mGlobalLua.new_usertype<Scene>("Scene");
         scene_table["getEntity"] = &Scene::getEntityByName;
 
-        //Scene References
-        mGlobalLua.set("scene", scene);
-
         /*****************************Register Input manager**********************************************/
         auto input = mGlobalLua.new_usertype<Input>("Input");
         input["onKeyDown"] = &Input::onKeyDown;
@@ -66,18 +65,22 @@ namespace Plutus
         registerComponents();
     }
 
-    void ScriptSystem::init()
+    void ScriptSystem::init(Project* project)
     {
-        auto view = mScene->getRegistry()->view<ScriptComponent>();
+        mProject = project;
+        //Scene References
+        mGlobalLua.set("scene", project->scene.get());
+
+        auto view = project->scene->getRegistry()->view<ScriptComponent>();
 
         for (auto [ent, script] : view.each()) {
-            script.init(mGlobalLua, { ent, mScene });
+            script.init(mGlobalLua, { ent, project->scene.get() });
         }
     }
 
     void ScriptSystem::update(float dt)
     {
-        auto view = mScene->getRegistry()->view<ScriptComponent>();
+        auto view = mProject->scene->getRegistry()->view<ScriptComponent>();
 
         for (auto [ent, script] : view.each()) {
             script.update(dt);
@@ -87,11 +90,8 @@ namespace Plutus
     void ScriptSystem::registerAssets()
     {
         /*****************************Register AssetManager**********************************************/
-        auto assetManager_table = mGlobalLua.new_usertype<AssetManager>("AssetManager",
-            "addSound", sol::overload(
-                &AssetManager::addAsset<Sound, std::string>,
-                &AssetManager::addAsset<Sound, std::string, int>
-            ));
+        auto assetManager_table = mGlobalLua.new_usertype<AssetManager>("AssetManager");
+        assetManager_table["addSound"] = sol::overload(&AssetManager::addAsset < Sound, std::string>, &AssetManager::addAsset<Sound, std::string, int>);
         assetManager_table["removeSound"] = &AssetManager::removeAsset<Sound>;
 
         /**************************Register Sound Asset*************************************************/
@@ -110,8 +110,8 @@ namespace Plutus
         /**************************Register Texture Asset*************************************************/
         auto texture_table = mGlobalLua.new_usertype<Texture>("Texture",
             sol::constructors<Texture(const std::string&),
-            Texture(const std::string&, int, int, int),
-            Texture(const std::string&, int, int, int, GLint, GLint)>()
+            Texture(const std::string&, int, int),
+            Texture(const std::string&, int, int, GLint, GLint)>()
             );
         texture_table["getUV"] = sol::overload(&Texture::getUV<int>, &Texture::getUV<float, float, float, float>);
 
@@ -180,13 +180,5 @@ namespace Plutus
 
         velocity["velocity"] = &VelocityComponent::mVelocity;
         velocity["setVel"] = &VelocityComponent::setVel;
-    }
-
-    void ScriptSystem::destroy() {
-        auto view = mScene->getRegistry()->view<ScriptComponent>();
-
-        for (auto [ent, script] : view.each()) {
-            script.destroy();
-        }
     }
 }

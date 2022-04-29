@@ -2,8 +2,8 @@
 
 #include <Log/Logger.h>
 
-#include <Graphics/GLheaders.h>
 #include <Utils/FileIO.h>
+#include <Graphics/GLheaders.h>
 // FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -12,7 +12,7 @@ constexpr int BITMAPSIZE = 500;
 
 namespace Plutus
 {
-    Font::Font(const std::string& path, unsigned int fontSize)
+    void Font::init(const std::string& path, int fontSize)
     {
         mPath = path;
         mSize = fontSize;
@@ -24,7 +24,7 @@ namespace Plutus
             return;
         }
 
-        auto buffer = readFile(path.c_str());
+        auto buffer = FileIO::readFile((baseDir + mPath).c_str());
         // Load font as face
         FT_Face face;
         if (FT_New_Memory_Face(ft, buffer.data(), (long)buffer.size(), 0, &face)) {
@@ -32,7 +32,7 @@ namespace Plutus
             return;
         }
         //Set font height in pixel
-        FT_Set_Pixel_Sizes(face, 0, fontSize);
+        FT_Set_Pixel_Sizes(face, 0, (FT_UInt)fontSize);
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -87,6 +87,9 @@ namespace Plutus
 
     void Font::destroy()
     {
-        glDeleteTextures(1, &mTexId);
+        if (mTexId != -1)
+            glDeleteTextures(1, &mTexId);
+
+        mTexId = -1;
     }
 }

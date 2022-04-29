@@ -2,6 +2,7 @@
 
 #include <Graphics/GLSL.h>
 #include <Graphics/Camera2D.h>
+#include <Graphics/FrameBuffer.h>
 
 #include <ECS/Scene.h>
 #include <ECS/Components/SpriteComponent.h>
@@ -10,11 +11,17 @@
 
 #include <Assets/Assets.h>
 
+#include <Core/Project.h>
+
 namespace Plutus
 {
-    void RenderSystem::init() {
+    RenderSystem::RenderSystem(Camera2D* camera) : ISystem(camera) {
         mShader.init(GLSL::vertexShader, GLSL::fragShader);
         mRenderer.init();
+    }
+
+    void RenderSystem::init(Project* project) {
+        mProject = project;
         mRenderer.setShader(&mShader);
         mRenderer.setCamera(mCamera);
     }
@@ -23,8 +30,8 @@ namespace Plutus
     {
         // auto start = Timer::millis();
 
-        auto viewMap = mScene->getRegistry()->view<TileMapComponent>();
-        auto view = mScene->getRegistry()->view<TransformComponent, SpriteComponent>();
+        auto viewMap = mProject->scene->getRegistry()->view<TileMapComponent>();
+        auto view = mProject->scene->getRegistry()->view<TransformComponent, SpriteComponent>();
 
         /******************Resize temp buffer************************/
         auto size = view.size_hint();
@@ -42,18 +49,27 @@ namespace Plutus
             auto [tilemap] = viewMap.get(ent);
             if (tilemap.mTiles.size())
             {
+                ColorRGBA8 color;
                 for (auto& tile : tilemap.mTiles)
                 {
                     auto rect = tile.getRect();
                     if (mCamera->isBoxInView(rect, 200))
                     {
-                        auto tex = tilemap.getTexture(tile.texture);
+                        auto texIndex = -1;
+                        Texture* tex = nullptr;
+                        uint32_t texId;
+
+                        if (texIndex != tile.texture) {
+                            tex = tilemap.getTexture(tile.texture);
+                            texId = tex ? tex->mTexId : -1;
+                        }
+
                         if (tex) {
                             mRenderables[i++] = {
                                 tex->mTexId, // Texure Id
                                 rect, // Desct Rectangle
                                 tex->getUV(tile.texcoord), // Texure Coords UV
-                                { tile.color }, // Color
+                                color, // Color
                                 tile.rotate, // Rotation
                                 tile.flipX, // Flip X
                                 tile.flipY, // Flip Y
@@ -82,8 +98,15 @@ namespace Plutus
         // sort by layer, y position, texture
         // std::sort(mRenderables.begin(), mRenderables.end());
         mRenderer.submit(mRenderables);
+        if (mFrameBuff) {
+            mFrameBuff->bind();
+            mRenderer.finish(BATCH_PICKING);
+            mFrameBuff->unBind();
+        }
+        else {
+            mRenderer.finish();
+        }
 
-        mRenderer.finish();
     }
 
     void RenderSystem::destroy()

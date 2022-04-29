@@ -1,14 +1,17 @@
 #pragma once
-#include <Core.h>
+#include <Core/Core.h>
 
 #include <ECS/Scene.h>
 #include <Utils/Pointer.h>
 #include <Systems/SystemManager.h>
+#include <Graphics/FrameBuffer.h>
 
 
 namespace Plutus
 {
     class DebugRender;
+    class SpriteBatch2D;
+
     class App : public Core
     {
     public:
@@ -25,9 +28,10 @@ namespace Plutus
         void Exit() override;
 
     private:
-        Ref<Scene> mScene;
+        Scene* mScene;
         Entity mPlayer;
-
+        FrameBuffer mFBuffer;
+        SpriteBatch2D* mBatch;
         SystemManager mSystemManager;
     };
 } // namespace Plutus

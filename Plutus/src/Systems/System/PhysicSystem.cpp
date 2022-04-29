@@ -8,6 +8,8 @@
 
 #include <Math/Vectors.h>
 
+#include <Core/Project.h>
+
 constexpr float PIXEL_SIZE = 100.0f;
 //Pixel Per Meter
 constexpr float PPM = 1 / PIXEL_SIZE;
@@ -75,12 +77,12 @@ namespace Plutus
         } // end fixture forloop
     }
 
-    void PhysicSystem::init() {
-        auto gravity = mScene->getGravity();
-        mWorld = new b2World({ gravity.x, gravity.y });
-        mWorld->SetAutoClearForces(mScene->getAutoClearForce());
+    void PhysicSystem::init(Project* project) {
+        mProject = project;
+        mWorld = new b2World({ mProject->gravity.x, mProject->gravity.y });
+        mWorld->SetAutoClearForces(mProject->autoClearForce);
 
-        auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
+        auto view = mProject->scene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
         for (auto [ent, trans, rbody] : view.each()) {
             auto pos = toWorld(trans.getPosition());
 
@@ -97,23 +99,28 @@ namespace Plutus
             createFixture(rbody, trans.getPosition());
         } // end body forloop
 
-        auto view2 = mScene->getRegistry()->view<TransformComponent, PhysicBodyComponent>();
+        auto staticView = mProject->scene->getRegistry()->view<PhysicBodyComponent>();
 
-        for (auto [ent, trans, pbody] : view2.each()) {
-            auto pos = toWorld(trans.getPosition());
+        for (auto [ent, pbody] : staticView.each()) {
+            Entity ent = { ent, mProject->scene.get() };
+            auto trans = ent.getComponent<TransformComponent>();
+            b2Vec2 pos = { 0, 0 };
+            if (trans) {
+                pos = toWorld(trans->getPosition());
+            }
 
             b2BodyDef body;
             body.type = (b2BodyType)pbody.mBodyType;
             body.position = pos;
             pbody.mBody = mWorld->CreateBody(&body);
-            createFixture(pbody, trans.getPosition());
+            createFixture(pbody, { pos.x, pos.y });
         }
     }
 
     void PhysicSystem::update(float dt) {
-        mWorld->Step(mScene->getTimeIterSec(), mScene->getVelIter(), mScene->getPositionIter());
+        mWorld->Step(mProject->timeStepInSec, mProject->velIter, mProject->positionIter);
 
-        auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
+        auto view = mProject->scene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
         for (auto [ent, trans, rbody] : view.each()) {
             auto pos = fromWorld(rbody.mBody->GetPosition());
             trans.x = pos.x;

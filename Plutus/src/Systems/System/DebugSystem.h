@@ -9,8 +9,8 @@ namespace Plutus
     class DebugSystem : public ISystem
     {
     public:
-        DebugSystem(Scene* scene, Camera2D* camera) : ISystem(scene, camera) {};
-        void init();
+        DebugSystem(Camera2D* camera) : ISystem(camera) {};
+        void init(Project* project);
         void update(float dt);
         void drawGrid(bool isDraw, int cellW = 32, int cellH = 32);
     private:

@@ -3,7 +3,7 @@
 #include <imgui.h>
 #include "Config.h"
 #include "Helpers/Render.h"
-#include "Panels/ScenesList.h"
+#include "Panels/SceneWindow.h"
 
 #include <Serialize/Serialize.h>
 #include <Systems/Systems.h>
@@ -15,10 +15,9 @@ namespace Plutus
         mWidth = width;
         mHeight = height;
 
-        auto& config = Config::get();
-        if (config.isLoaded) {
-            mWidth = config.winWidth;
-            mHeight = config.winHeight;
+        if (mConfig.isLoaded) {
+            mWidth = mConfig.winWidth;
+            mHeight = mConfig.winHeight;
         }
     };
 
@@ -26,31 +25,75 @@ namespace Plutus
 
     }
 
+    void App::initialize()
+    {
+        if (!mConfig.currentProject.empty() && !isInitialize) {
+            mConfig.init(&mRender);
+            mAssetsWin.init(&mConfig);
+            mCenterWin.init(&mConfig);
+            mCompWin.init(&mConfig);
+            mConfigWin.init(&mConfig, &mRender);
+            mSceneWindow.init(&mConfig, &mRender);
+            isInitialize = true;
+        }
+
+        isInitialize = !mConfig.currentProject.empty();
+    }
+
     void App::Init() {
-        Config::get().LoadProject("");
-        Render::get().Init();
-        mMainGui.Init();
-        Render::get().setScene(Config::get().mProject->mScene.get());
-        mCentralPanel.init();
+        mMainWin.init(&mConfig, this);
     }
 
     void App::Update(float dt) {
-        mExit = mMainGui.mExit;
-        mCentralPanel.update(dt);
+        initialize();
+
+        mExit = mMainWin.mExit;
+        if (isInitialize) {
+            mCenterWin.update(dt);
+        }
+    }
+
+    void App::Dropfile(const char* file)
+    {
+        if (isInitialize) {
+            mAssetsWin.fileDrop(file);
+        }
     }
 
     void App::Draw() {
-        mMainGui.Begin();
-        mCentralPanel.drawCenterPanel();
-        if (Config::get().state != Running) {
-            AssetsTab.drawAssets();
-            DrawScenes();
-            mCompPanel.DrawComponentsPanel();
-            mConfigPanel.DrawConfigPanel();
-        }
-        mMainGui.End();
 
-        Render::get().draw();
+        mMainWin.Begin();
+        {
+            if (isInitialize) {
+                mCenterWin.draw();
+                if (mConfig.state != Running) {
+                    mAssetsWin.draw();
+                    mSceneWindow.draw();
+                    mCompWin.draw();
+                    mConfigWin.draw();
+                }
+            }
+        }
+
+        // ImGui::Begin("Test-Wind2");
+        // auto size = mRender.mFrameBuffer.getSize();
+        // ImGui::SetCursorPos({ 10,10 });
+
+        // // A boolean to allow me to stop the game rendering
+
+        // // Get the texture associated to the FBO
+        // auto tex = mRender.mFrameBuffer.getTextureId();
+
+        // // Ask ImGui to draw it as an image:
+        // // Under OpenGL the ImGUI image type is GLuint
+        // // So make sure to use "(void *)tex" but not "&tex"
+        // ImGui::Image((void*)tex, { size.x, size.y }, ImVec2(0, 1), ImVec2(1, 0));
+        // ImGui::End();
+
+        mMainWin.End();
+        if (isInitialize) {
+            mRender.draw();
+        }
     }
     void App::Exit() {
 

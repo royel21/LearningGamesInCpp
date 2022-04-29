@@ -12,9 +12,7 @@ namespace Plutus
     /*
      *   Texture Replesenting a single Texture or a Spritesheet
      *
-     *   @param TextureID Asset Id
      *   @param Path Path in asset folder
-     *   @param TileCount default = 0
      *   @param TileWith default = 0
      *   @param TileHeight default = 0
      *   @param minFilter Minify Filter default = GL_NEAREST
@@ -24,7 +22,13 @@ namespace Plutus
     {
     public:
         Texture() = default;
-        Texture(const std::string& path, int c = 0, int w = 0, int h = 0, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
+        Texture(const std::string& path, int w = 0, int h = 0, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST) {
+            init(path, w, h, minFilter, magFilter);
+        }
+
+        void init(const std::string& path, int w = 0, int h = 0, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
+
+        void setTilesSize(int w, int h);
 
         ~Texture() { destroy(); }
 
@@ -45,15 +49,18 @@ namespace Plutus
         }
 
     private:
-        void loadTexture(GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
+        void loadTexture();
 
     public:
-        int mColumns = 0;
         int mTileWidth = 0;
         int mTileHeight = 0;
+        int mMinFilter = GL_NEAREST;
+        int mMagFilter = GL_NEAREST;
         int mWidth = 0;
         int mHeight = 0;
-        uint32_t mTexId = 0;
+        int mSpacing = 0;
+        int mMargin = 0;
+        uint32_t mTexId = -1;
         std::vector<vec4f> uvs;
     };
 } // namespace Plutus

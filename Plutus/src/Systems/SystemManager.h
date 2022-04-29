@@ -1,15 +1,13 @@
 #pragma once
 
 #include <vector>
-#include <memory>
-#include <unordered_map>
-#include <algorithm>
 #include <typeinfo>
+#include <unordered_map>
 
 namespace Plutus
 {
-    class Scene;
     class ISystem;
+    struct Project;
 
     class SystemManager
     {
@@ -18,7 +16,7 @@ namespace Plutus
         SystemManager();
         ~SystemManager() { cleanup(); };
 
-        void setScene(Scene* scene) { mScene = scene; }
+        void setProject(Project* project) { mProject = project; }
 
         void init();
         void stop();
@@ -29,7 +27,8 @@ namespace Plutus
         template <typename T, typename... TArgs>
         T* AddSystem(TArgs &&... args)
         {
-            T* newSystem = new T(mScene, std::forward<TArgs>(args)...);
+
+            T* newSystem = new T(std::forward<TArgs>(args)...);
             mSystems[&typeid(T)] = newSystem;
             return newSystem;
         }
@@ -37,27 +36,19 @@ namespace Plutus
         template <typename T>
         T* getSystem()
         {
-            auto it = mSystems.find(&typeid(T));
-            if (it != mSystems.end()) {
-                return static_cast<T*>(it->second);
-            }
-            else {
-                return nullptr;
-            }
+            return hasSystem<T>() ? static_cast<T*>(it->second) : nullptr;
         }
 
         template <typename T>
         bool hasSystem()
         {
-            return mSystems.find(&typeid(T)) != mSystems.end();
+            return mSystems[&typeid(T)] != nullptr;
         }
 
         void cleanup();
 
     private:
-        Scene* mScene;
+        Project* mProject;
         std::unordered_map<const std::type_info*, ISystem*> mSystems;
-
-        friend class ISystem;
     };
 } // namespace Plutus

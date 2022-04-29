@@ -10,9 +10,9 @@
 
 #include "ComponentUtil.h"
 
-#include <stdio.h>
-
 #include <Assets/Assets.h> 
+
+#include <Log/Logger.h>
 
 #define MODE_PLACE 0
 #define MODE_EDIT 1
@@ -20,8 +20,8 @@
 
 namespace Plutus
 {
-    vec2i getCoords() {
-        auto pos = Config::get().mMouseCoords;
+    vec2i getCoords(Config* config) {
+        auto pos = config->mMouseCoords;
         return DebugRender::get()->getSquareCoords({ pos.x, pos.y });
     }
 
@@ -30,19 +30,31 @@ namespace Plutus
         Input::get()->addEventListener(this);
     }
 
-    void TileMapPanel::DrawTileMapComponet()
+    void TileMapPanel::draw(Config* config)
     {
-        if (CollapseComponent<TileMapComponent>("TileMap##tilemap-comp", 4))
+        mConfig = config;
+        if (CollapseComponent<TileMapComponent>("TileMap##tilemap-comp", 4, mConfig))
         {
             static bool addTexture = false;
             mIsOpen = true;
-            mTileMap = Config::get().mProject->mEnt.getComponent<TileMapComponent>();
+            mTileMap = mConfig->mProject.mEnt.getComponent<TileMapComponent>();
+
+            for (int i = 0; i < 16; i++) {
+                if (!mTileMap->mTextures[i].empty()) {
+                    mCurrentTexture = i;
+                    break;
+                }
+            }
 
             float textWidth = ImGui::GetContentRegionAvailWidth() * 0.35f;
+            ImGui::Row("Width", textWidth);
+            ImGui::InputInt("##tm-w", &mTileMap->mWidth);
+            ImGui::Row("Height", textWidth);
+            ImGui::InputInt("##tm-h", &mTileMap->mHeight);
             ImGui::Row("Tile Width", textWidth);
-            ImGui::InputInt("##tm-w", &mTileMap->mTileWidth);
+            ImGui::InputInt("##tm-tw", &mTileMap->mTileWidth);
             ImGui::Row("Tile Heigth", textWidth);
-            ImGui::InputInt("##tm-h", &mTileMap->mTileHeight);
+            ImGui::InputInt("##tm-th", &mTileMap->mTileHeight);
             ImGui::Row("Layer", textWidth);
             ImGui::InputInt("##tm-l", &mTileMap->mLayer);
 
@@ -74,7 +86,8 @@ namespace Plutus
             ImGui::Separator();
 
             AddTexureDialog(addTexture);
-
+            ImGui::Text("Tiles Count: %i", mTileMap->mTiles.size());
+            ImGui::Separator();
             if (mTileMap->mTextures.size())
             {
                 ImGui::RadioButton("Place", &mMode, MODE_PLACE);
@@ -135,11 +148,11 @@ namespace Plutus
                     }
                 }
             }
-            if (mMode == MODE_PLACE && Config::get().isHover) {
+            if (mMode == MODE_PLACE && mConfig->isHover) {
                 renderTemp();
             }
             else {
-                Render::get().mTotalTemp = 0;
+                mConfig->mRender->mTotalTemp = 0;
             }
         }
         else {
@@ -147,21 +160,33 @@ namespace Plutus
         }
 
     }
+
     void TileMapPanel::processMode() {
-        if (mIsOpen && Config::get().isHover && Input::get()->onKeyDown("MouseLeft")) {
-            switch (mMode)
-            {
-            case MODE_PLACE:
-                createTiles();
-                break;
-            case MODE_EDIT:
-                mCurrentTile = mTileMap->getTile(getCoords());
-                break;
-            default:
-                if (mTileMap->removeTile(getCoords())) {
-                    mCurrentTile = nullptr;
+        if (mIsOpen && mConfig->isHover) {
+            auto coord = getCoords(mConfig);
+            if (Input::get()->onKeyPressed("MouseLeft") && mMode == MODE_EDIT) {
+                mCurrentTile = mTileMap->getTile(coord);
+            }
+
+            if (Input::get()->onKeyDown("MouseLeft")) {
+                switch (mMode)
+                {
+                case MODE_PLACE:
+                    createTiles();
+                    break;
+                case MODE_EDIT: {
+                    if (mCurrentTile) {
+                        mCurrentTile->x = coord.x;
+                        mCurrentTile->y = coord.y;
+                    }
+                    break;
                 }
-                break;
+                default:
+                    if (mTileMap->removeTile(coord)) {
+                        mCurrentTile = nullptr;
+                    }
+                    break;
+                }
             }
         }
     }
@@ -176,7 +201,7 @@ namespace Plutus
     }
 
     void TileMapPanel::createTiles() {
-        auto coords = getCoords();
+        auto coords = getCoords(mConfig);
         auto& tiles = mTileMap->mTiles;
         for (auto tile : mTempTiles)
         {
@@ -199,17 +224,17 @@ namespace Plutus
 
     void TileMapPanel::renderTemp()
     {
-        auto gridCoords = getCoords();
+        auto gridCoords = getCoords(mConfig);
         int w = mTileMap->mTileWidth;
         int h = mTileMap->mTileHeight;
 
         auto tex = mTileMap->getTexture(mCurrentTexture);
 
-        std::vector<Renderable>& renderables = Render::get().mRenderables;
+        std::vector<Renderable>& renderables = mConfig->mRender->mRenderables;
         if (renderables.size() < mTempTiles.size()) {
             renderables.resize(mTempTiles.size());
         }
-        Render::get().mTotalTemp = (int)mTempTiles.size();
+        mConfig->mRender->mTotalTemp = (int)mTempTiles.size();
 
         int i = 0;
         for (auto tile : mTempTiles)
@@ -228,30 +253,21 @@ namespace Plutus
             static std::string current = textures.begin()->first;
             int index = (int)mTileMap->mTextures.size();
 
+            float width = ImGui::GetContentRegionAvailWidth() * 0.3f;
+
             ImGui::BeginDialog("Texture Modal");
-            if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingStretchProp))
-            {
-                ImGui::BeginCol("Textures");
-                ImGui::ComboBox("##mt-add-tex", textures, current);
-                ImGui::BeginCol("Scale");
-                ImGui::DragFloat("##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
-                ImGui::EndUIGroup();
-            }
+
+            ImGui::Row("Textures", width);
+            ImGui::ComboBox("##mt-add-tex", textures, current);
+            ImGui::Row("Scale", width);
+            ImGui::DragFloat("##tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
+
             auto texture = static_cast<Texture*>(textures[current]);
             ImGui::DrawTexture(texture, 400, 350, scale);
             ImGui::Separator();
             if (ImGui::Button("Add Texture##mt-modal"))
             {
-                int i = 0;
-                auto it = std::find_if(mTileMap->mTextures.begin(), mTileMap->mTextures.end(), [&](auto&& val)->bool {
-                    i = std::max(i, val.first);
-                    return val.second.compare(current) == 0;
-                    });
-
-                if (it == mTileMap->mTextures.end()) {
-                    mTileMap->mTextures[i + 1] = current;
-                    mCurrentTexture = i + 1;
-                }
+                mTileMap->addTexture(current);
                 show = false;
             }
             ImGui::EndDialog(show);

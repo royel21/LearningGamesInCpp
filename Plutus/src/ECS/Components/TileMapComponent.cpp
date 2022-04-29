@@ -14,26 +14,23 @@ namespace Plutus
         mTextures[id] = texture;
     }
 
-    void TileMapComponent::removeTexture(int index)
-    {
-        if (mTiles.size()) {
-            for (int i = (int)mTiles.size() - 1; i > -1; i--) {
-                if (mTiles[i].texture == index) {
-                    mTiles.erase(mTiles.begin() + i);
-                }
+    void TileMapComponent::addTexture(const std::string& texture) {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if (mTextures[i].empty()) {
+                mTextures[i] = texture;
+                break;
             }
-        }
-
-        auto it = mTextures.find(index);
-        if (it != mTextures.end()) {
-            mTextures.erase(it);
         }
     }
 
+    void TileMapComponent::removeTexture(int index)
+    {
+        mTextures[index] = "";
+    }
+
     Texture* TileMapComponent::getTexture(int id) {
-        auto it = mTextures.find(id);
-        auto texId = it != mTextures.end() ? it->second : "";
-        return  AssetManager::get()->getAsset<Texture>(texId);
+        return  AssetManager::get()->getAsset<Texture>(mTextures[id]);
     }
 
     void TileMapComponent::addTile(Tile& tile)
@@ -64,6 +61,20 @@ namespace Plutus
             mTiles.erase(mTiles.begin() + index);
         }
         return index > -1;
+    }
+
+    void TileMapComponent::addTile(int pos, int tile) {
+
+        // uint32_t texId = 0xf & tile;
+        // int uvIndex = 0xffff & (tile >> 4);
+        // uint32_t transform = 0xf & tile;
+
+        // bool flipX = 0x2000000 & tile;
+        // bool flipY = 0x4000000 & tile;
+        // float rotation = 0x8000000 & tile ? 90.0f : 0;
+
+        // pos
+
     }
 
 } // namespace Plutus

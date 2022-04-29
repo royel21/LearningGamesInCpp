@@ -4,6 +4,7 @@
 #include <string>
 #include <entt.hpp>
 #include <Math/Vectors.h>
+#include <Utils/ColorRGBA8.h>
 
 class b2World;
 
@@ -69,7 +70,8 @@ namespace Plutus
     class Scene
     {
     public:
-        Scene() = default;
+        ColorRGBA8 mBGColor;
+
         ~Scene() { mRegistry.clear(); }
 
         Entity createEntity(const std::string& name);
@@ -88,32 +90,11 @@ namespace Plutus
         // remove all entity from scene
         void clear() { mRegistry.clear(); }
 
-        vec2f getGravity() { return mGravity; }
-        // set gravity for box2d world 
-        void setGravity(const vec2f& g = { 0.0f, -9.8f }) { mGravity = g; }
-        // get timeiter in milis seconds
-        float getTimeIterSec() { return 1.0f / mTimeStepInSec; }
-        // set time iter in fps itetation for box2d world, default 60 = 0.01667ms
-        void setTimeIterSec(float fps = 60.0f) { mTimeStepInSec = fps; }
-        //set velocity itetation for box2d world
-        int getVelIter() { return mVelIter; }
-        void setVelIter(int time) { mVelIter = time; }
-        // set position itetation for box2d world
-        int getPositionIter() { return mPositionIter; }
-        void setPositionIter(int time) { mPositionIter = time; }
-
-        bool getAutoClearForce() { return mAutoClearForce; }
-        void setAutoClearForce(bool val) { mAutoClearForce = val; }
-
     private:
+        entt::registry mRegistry;
+
         friend class Entity;
         friend class System;
-        float mTimeStepInSec = 60.0f;
-        int mVelIter = 8;
-        int mPositionIter = 3;
-        bool mAutoClearForce = true;
-        entt::registry mRegistry;
-        vec2f mGravity = { 0.0f, -9.8f };
     };
 
     /**********************Entity definitions***************/

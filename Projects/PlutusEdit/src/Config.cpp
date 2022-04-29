@@ -1,228 +1,123 @@
 #include "Config.h"
-#include <rapidjson/document.h>
 
-#include <math.h>
-#include <fstream>  
-#include <iostream>
 #include <filesystem>
 
-#include <Serialize/Serialize.h>
-#include <Serialize/SceneLoader.h>
-#include <Serialize/SceneSerializer.h>
-
 #include <Utils/Utils.h>
+#include <Utils/FileIO.h>
 #include <Assets/AssetManager.h>
-#include <Platforms/Windows/FileUtils.h>
 
+#include <ECS/Scene.h>
+
+#include "Helpers/Render.h"
+#include "Helpers/ConfigHelper.h"
+
+#include <Platforms/Windows/FileUtils.h>
 
 namespace Plutus
 {
-
-    void Config::Init()
-    {
-        if (!isLoaded) {
-            if (!std::filesystem::exists("assets"))
-            {
-                std::filesystem::create_directories("assets/textures");
-                std::filesystem::create_directories("assets/audios");
-                std::filesystem::create_directories("assets/fonts");
-            }
-            isLoaded = true;
+    void createDirs(const std::string& workingDir) {
+        auto dir = FileIO::joinPath(workingDir, "assets");
+        if (!FileIO::exists(dir))
+        {
+            FileIO::mkdirs(FileIO::joinPath(dir, "fonts"));
+            FileIO::mkdirs(FileIO::joinPath(dir, "scenes"));
+            FileIO::mkdirs(FileIO::joinPath(dir, "script"));
+            FileIO::mkdirs(FileIO::joinPath(dir, "sounds"));
+            FileIO::mkdirs(FileIO::joinPath(dir, "textures"));
         }
-
-    }
-
-    void Config::CreateProj(const char* name)
-    {
-        mProject = &mProjects[name];
-        OpenProject = name;
-    }
-
-    Config& Config::get() {
-        static Config config;
-        return config;
     }
 
     Config::~Config() {
         save();
     }
 
-    void Config::RenameProj(const std::string& oldname, const std::string newName) {
-        mProjects[newName] = mProjects[oldname];
-        mProjects.erase(oldname);
-        if (OpenProject.compare(oldname) == 0) {
-            mProject = &mProjects[newName];
-            OpenProject = newName;
+    void Config::load() {
+        loadConfig(this);
+    }
+
+    void Config::save() { SaveConfig(this); }
+
+    void Config::init(Render* render)
+    {
+        mRender = render;
+        if (!currentProject.empty()) {
+            auto path = mProjects[currentProject];
+            mProject.workingDir = Utils::getDirectory(path);
+            AssetManager::get()->setBaseDir(mProject.workingDir);
+            mProject.load(path);
+            mProject.loadScene(mProject.currentScene);
+        }
+        mRender->init(this);
+    }
+
+    void Config::CreateProj()
+    {
+        std::string filePath;
+
+        if (windowDialog(SAVE_FILE, filePath, "Select Directory")) {
+            auto path = Utils::getDirectory(filePath);
+            auto name = Utils::getFileName(filePath);
+
+            createDirs(path);
+
+            mProject.save(filePath);
+            mProject.workingDir = path;
+
+            currentProject = name;
+            mProjects[name] = filePath;
         }
     }
 
     void Config::LoadProject(const std::string& name) {
-        if (name.empty()) {
-            load();
-            if (mProject && mProject->mScenes.size())
-                mProject->Load(mProject->mScenes[mProject->mOpenScene]);
-        }
-        else {
-            mProjects[name] = Project();
-            mProject = &mProjects[name];
-        }
 
-    }
-
-    void Config::load() {
-        rapidjson::Document doc;
-
-        bool isLoaded = loadJsonFromFile("Config.json", doc);
-
-        if (isLoaded) {
-            JsonHelper jhelper;
-            jhelper.value = &doc.GetJsonObject();
-
-            winWidth = jhelper.getInt("win-width", 1280);
-            winHeight = jhelper.getInt("win-height", 768);
-            OpenProject = jhelper.getString("open-project");
-            vpZoom = jhelper.getFloat("vp-zoom", 1);
-            vpPos = jhelper.getFloat2("vp-pos");
-            vpColor = jhelper.getFloat4("vp-color", { 1,1,1,1 });
-
-            for (auto& obj : doc["projects"].GetArray()) {
-
-                auto& p = mProjects[obj["name"].GetString()];
-                p.mOpenScene = obj["open-scene"].GetString();
-                p.vpWidth = obj["width"].GetInt();
-                p.vpHeight = obj["height"].GetInt();
-                //List of scene
-                for (auto& scene : obj["scenes"].GetArray()) {
-                    p.mScenes[scene["name"].GetString()] = scene["path"].GetString();
-                }
+        auto found = mProjects.find(name);
+        if (found != mProjects.end()) {
+            if (FileIO::exists(found->second)) {
+                mProject.workingDir = Utils::getDirectory(found->second);
+                mProject.load(found->second);
+                mRender->reload(this);
             }
-        }
-
-        if (OpenProject.empty()) {
-            mProject = &mProjects["Project1"];
-            OpenProject = "Project1";
-        }
-        else {
-            mProject = &mProjects[OpenProject];
         }
     }
 
-    void Config::save() {
-        Serializer ser;
-        ser.StartObj();
-        {
-            ser.addInt("win-width", winWidth ? winWidth : 1280);
-            ser.addInt("win-height", winHeight ? winHeight : 1280);
-            ser.addString("open-project", OpenProject);
-            ser.addFloat("vp-zoom", roundf(vpZoom * 100) / 100);
-            ser.StartArr("vp-pos");
-            {
-                ser.addFloat(vpPos.x);
-                ser.addFloat(vpPos.y);
-            }
-            ser.EndArr();
-            ser.StartArr("vp-color");
-            {
-                ser.addFloat(roundf(vpColor.x * 100) / 100);
-                ser.addFloat(roundf(vpColor.y * 100) / 100);
-                ser.addFloat(roundf(vpColor.z * 100) / 100);
-                ser.addFloat(roundf(vpColor.w * 100) / 100);
-            }
-            ser.EndArr();
-            ser.StartArr("projects");
-            {
-                for (auto& p : mProjects) {
-                    ser.StartObj();
-                    {
-                        ser.addString("name", p.first);
-                        ser.addString("open-scene", p.second.mOpenScene);
-                        ser.addInt("width", p.second.vpWidth);
-                        ser.addInt("height", p.second.vpHeight);
-                        ser.StartArr("scenes");
-                        { for (auto& p : p.second.mScenes) {
-                            ser.StartObj();
-                            {
-                                ser.addString("name", p.first);
-                                ser.addString("path", p.second);
-                            }
-                            ser.EndObj();
-                        }
-                        }
-                        ser.EndArr();
-                    }
-                    ser.EndObj();
-
-                }
-            }
-            ser.EndArr();
-        }
-        ser.EndObj();
-
-        saveJsonToFile("config.json", ser.getString());
-    }
-
-    Project::Project()
+    void EditorProject::Copy(const EditorProject& proj)
     {
-        mScene = CreateRef<Scene>();
-        mTempScene = CreateRef<Scene>();
+        winWidth = proj.winWidth;
+        winHeight = proj.winHeight;
+        vpWidth = proj.vpWidth;
+        vpHeight = proj.vpHeight;
+        vpPos = proj.vpPos;
+        zoomLevel = proj.zoomLevel;
+        maxFPS = proj.maxFPS;
+        velIter = proj.velIter;
+        positionIter = proj.positionIter;
+        timeStepInSec = proj.timeStepInSec;
+        gravity = proj.gravity;
+        autoClearForce = proj.autoClearForce;
+
+        scene->clear();
+        scene->mBGColor = proj.scene->mBGColor;
+        scene->copyScene(proj.scene.get());
     }
 
-    void Project::Create(const std::string& name)
+    std::string EditorProject::getDir(const std::string& part)
     {
-        auto nName = name + ".json";
-        auto found = Config::get().mProject->mScenes.find(name);
-
-        if (found == mScenes.end()) {
-            auto newScene = "assets/scenes/" + name;
-            if (Utils::createFile(newScene.c_str(), "{}")) {
-                mScenes[nName] = newScene;
-                mOpenScene = nName;
-
-                mEnt = {};
-                mScene->clear();
-                AssetManager::get()->destroy();
-            }
-        }
+        return workingDir + "assets\\" + Utils::ToLowerCase(part);
     }
 
-    void Project::add(const std::string& path)
+    void EditorProject::CreateScene(const std::string& name)
     {
-        auto name = Utils::getFileName(path);
-        auto found = mScenes.find(name);
-        if (found == mScenes.end()) {
-            auto newScene = "assets/scenes/" + name;
-            mEnt = {};
-            mScene->clear();
-            AssetManager::get()->destroy();
-            if (SceneLoader::loadFromPath(newScene.c_str(), mScene.get())) {
-                mScenes[name] = newScene;
-                mOpenScene = name;
-            }
-        }
+
     }
 
-    void Project::Load(const std::string& path)
+    void EditorProject::removeScene(std::string id)
     {
-        auto name = Utils::getFileName(path);
-        auto found = mScenes.find(name);
-        if (found != mScenes.end()) {
 
-            mEnt = {};
-            mScene->clear();
-            AssetManager::get()->destroy();
-            if (SceneLoader::loadFromPath(path.c_str(), mScene.get())) {
-                found->second = path;
-                std::replace(found->second.begin(), found->second.end(), '\\', '/');
-                mOpenScene = name;
-            }
-        }
     }
 
-    void Project::Save()
+    void EditorProject::clearScene()
     {
-        std::string json = Plutus::SceneSerializer(mScene.get());
-        auto found = mScenes.find(mOpenScene);
-        if (found != mScenes.end())
-            toJsonFile(found->second, json.c_str());
+        scene->clear();
     }
+
 } // namespace Plutus

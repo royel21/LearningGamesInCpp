@@ -13,6 +13,10 @@
 
 namespace Plutus
 {
+    constexpr uint32_t FLIPX = 0x2000000;
+    constexpr uint32_t FLIPY = 0x4000000;
+    constexpr uint32_t ROTATE = 0x8000000;
+
     void loadAnimation(Entity& ent, const rapidjson::Value::Object& value)
     {
         auto anim = ent.addComponent<AnimationComponent>();
@@ -36,40 +40,45 @@ namespace Plutus
 
     void loadTileMap(Entity& ent, const rapidjson::Value::Object& value)
     {
-        int w = value["tilewidth"].GetInt();
-        int h = value["tileheight"].GetInt();
+        int w = value["width"].GetInt();
+        int h = value["height"].GetInt();
+        int tw = value["tileWidth"].GetInt();
+        int th = value["tileHeight"].GetInt();
         int layer = value["layer"].GetInt();
-        auto tmap = ent.addComponent<TileMapComponent>(w, h, layer);
+        auto tmap = ent.addComponent<TileMapComponent>(tw, th, layer);
+        tmap->mWidth = w;
+        tmap->mHeight = h;
 
         for (auto& obj : value["textures"].GetArray())
         {
-            tmap->addTexture(obj["id"].GetInt(), obj["tex"].GetString());
+            tmap->addTexture(obj["id"].GetInt(), obj["name"].GetString());
         }
 
         auto tiles = value["tiles"].GetArray();
-
-        for (auto& tile : value["tiles"].GetArray())
+        for (size_t i = 0; i < tiles.Size(); i++)
         {
-            int x = tile["x"].GetInt();
-            int y = tile["y"].GetInt();
-            int fx = tile["fx"].GetInt();
-            int fy = tile["fy"].GetInt();
-            int t = tile["tc"].GetInt();
-            int tx = tile["txi"].GetInt();
-            float rotate = tile["r"].GetFloat();
-            int color = tile["c"].GetInt();
+            uint32_t d = tiles[i].GetUint();
+            if (d != 0) {
+                int x = (i % tmap->mWidth);
+                int y = i / tmap->mWidth;
 
-            tmap->mTiles.emplace_back(x, y, t, tx, fx, fy, rotate, color);
-            tmap->mTiles.back().setParent(tmap);
+                uint32_t texId = (0xf & d) - 1;
+                int uvIndex = 0xffff & (d >> 4);
+                bool flipX = FLIPX & d;
+                bool flipY = FLIPY & d;
+                float rotation = ROTATE & d ? 90.0f : 0;
+                tmap->addTile(Tile{ x, y, uvIndex, texId, 0, 0, 0 });
+            }
         }
     }
 
     bool SceneLoader::loadFromPath(const char* path, Scene* scene)
     {
+        auto basedir = AssetManager::get()->getBaseDir();
         std::string ex = Utils::getExtension(path);
         if (ex == "json")
         {
-            auto data = readFileAsString(path);
+            auto data = FileIO::readFileAsString((basedir + path).c_str());
             if (!data.empty()) {
                 return loadFromString(data, scene);
             }
@@ -105,11 +114,7 @@ namespace Plutus
             auto docObj = doc.GetJsonObject();
             jhelper.value = &docObj;
 
-            scene->setGravity(jhelper.getFloat2("grv", { 0.0f, -9.8f }));
-            scene->setTimeIterSec(jhelper.getFloat("fps", 60));
-            scene->setVelIter(jhelper.getInt("vel-itel", 8));
-            scene->setPositionIter(jhelper.getInt("pos-itel", 3));
-            scene->setAutoClearForce(jhelper.getBool("cls-forc", true));
+            scene->mBGColor = jhelper.getInt("bg-color");
 
             if (doc.HasMember("fonts") && doc["fonts"].IsArray())
             {
@@ -124,6 +129,27 @@ namespace Plutus
                 }
             }
 
+            if (doc.HasMember("scripts") && doc["scripts"].IsArray())
+            {
+                for (auto& script : doc["scripts"].GetArray())
+                {
+                    auto name = script["id"].GetString();
+                    auto path = script["path"].GetString();
+                    AssetManager::get()->addAsset<Script>(name, path);
+                }
+            }
+
+            if (doc.HasMember("sounds") && doc["sounds"].IsArray())
+            {
+                for (auto& sound : doc["sounds"].GetArray())
+                {
+                    auto id = sound["id"].GetString();
+                    auto path = sound["path"].GetString();
+                    int type = sound["type"].GetInt();
+                    AssetManager::get()->addAsset<Sound>(id, path, type);
+                }
+            }
+
             //Load All Textures
             if (doc.HasMember("textures") && doc["textures"].IsArray())
             {
@@ -131,25 +157,20 @@ namespace Plutus
                 for (uint32_t i = 0; i < textures.Size(); i++)
                 {
                     auto tex = textures[i].GetJsonObject();
-                    auto id = tex["id"].GetString();
-                    auto path = tex["path"].GetString();
-                    int columns = tex["columns"].GetInt();
-                    int tilewidth = tex["width"].GetInt();
-                    int tileheight = tex["height"].GetInt();
-                    AssetManager::get()->addAsset<Texture>(id, path, columns, tilewidth, tileheight);
-                }
-            }
+                    jhelper.value = &tex;
 
-            if (doc.HasMember("sounds") && doc["sounds"].IsArray())
-            {
-                auto sounds = doc["sounds"].GetArray();
-                for (uint32_t i = 0; i < sounds.Size(); i++)
-                {
-                    auto tex = sounds[i].GetJsonObject();
-                    auto id = tex["id"].GetString();
-                    auto path = tex["path"].GetString();
-                    int type = tex["type"].GetInt();
-                    AssetManager::get()->addAsset<Sound>(id, path, type);
+                    auto id = jhelper.getString("id");
+                    auto path = jhelper.getString("path");
+                    int tilewidth = jhelper.getInt("tileWidth");
+                    int tileheight = jhelper.getInt("tileHeight");
+                    int spacing = jhelper.getInt("spacing");
+                    int margin = jhelper.getInt("margin");
+                    int minFilter = jhelper.getInt("min-filter", GL_NEAREST);
+                    int magFilter = jhelper.getInt("mag-filter", GL_NEAREST);
+                    auto texture = AssetManager::get()->addAsset<Texture>(id, path, tilewidth, tileheight, minFilter, magFilter);
+                    texture->mSpacing = spacing;
+                    texture->mMargin = margin;
+                    texture->calculateUV();
                 }
             }
 
@@ -207,7 +228,7 @@ namespace Plutus
                         }
                         if (compType == "RigidBody") {
                             jhelper.value = &component;
-                            auto rbody = entity.addComponent<RigidBodyComponent>(entity, (BodyType)jhelper.getInt("type"));
+                            auto rbody = entity.addComponent<RigidBodyComponent>((BodyType)jhelper.getInt("type"));
 
                             rbody->mBullet = jhelper.getInt("isbullet");
                             rbody->mFixedRotation = jhelper.getInt("fixedRotation");
@@ -215,12 +236,13 @@ namespace Plutus
                             rbody->mGravityScale = jhelper.getFloat("gravScale");
                             rbody->mBodyType = (BodyType)jhelper.getInt("bodyType");
                             rbody->mMaxVel = jhelper.getFloat2("max-vel");
+                            rbody->mSpeedReducctionFactor = jhelper.getFloat("spd-rfact", 0.95f);
 
                             loadFixtures(rbody, component, jhelper);
                         }
 
                         if (compType == "PhysicBody") {
-                            auto phybody = entity.addComponent<PhysicBodyComponent>(entity);
+                            auto phybody = entity.addComponent<PhysicBodyComponent>();
                             loadFixtures(phybody, component, jhelper);
                         }
                     }

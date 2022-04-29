@@ -121,7 +121,7 @@ namespace ImGui {
         return isSelected;
     }
 
-    bool Texture(Plutus::Texture* tileset, float scale, std::vector<Plutus::vec3i>& selected)
+    bool Texture(const Plutus::Texture* tileset, float scale, std::vector<Plutus::vec3i>& selected)
     {
         bool isSelected = false;
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
@@ -262,11 +262,14 @@ namespace ImGui {
         return change;
     }
 
-    void BeginDialog(const char* name, bool fixedPos)
+    void BeginDialog(const char* name, bool fixedPos, Plutus::vec2f size)
     {
         if (fixedPos) {
             auto pos = ImGui::GetWindowPos();
             ImGui::SetNextWindowPos({ pos.x + 5, pos.y + 60 });
+        }
+        if (size.x || size.y) {
+            ImGui::SetNextWindowSize({ size.x, size.y });
         }
         ImVec2 center = ImGui::GetMainViewport()->GetCenter();
         ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
@@ -276,35 +279,23 @@ namespace ImGui {
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.33f, 0.33f, 0.33f, 0.8f));
     }
 
-    void EndDialog(bool& show)
+    void EndDialog(bool& show, std::function<void(bool)> callback)
     {
-        ImGui::SameLine();
+        if (callback) {
+            if (ImGui::Button("save##modal")) {
+                show = false;
+                callback(true);
+            }
+            ImGui::SameLine();
+        }
         if (ImGui::Button("Cancel##modal-1"))
+        {
+            if (callback) callback(false);
             show = false;
+        }
         ImGui::PopStyleColor();
         ImGui::EndPopup();
     }
-
-    bool BeginUIGroup(ImGuiTableFlags flags) {
-        static int id = 0;
-        return ImGui::BeginTable(("##ground" + std::to_string(id)).c_str(), 2, flags);
-    }
-
-    void EndUIGroup() {
-        ImGui::EndTable();
-    }
-
-    void BeginCol(const char* label, float width) {
-
-        float freeWidthSpace = ImGui::GetContentRegionAvailWidth();
-        ImGui::TableNextColumn();
-        PushItemWidth(freeWidthSpace * 0.3f);
-        ImGui::TextUnformatted(label);
-        ImGui::PopItemWidth();
-        ImGui::TableNextColumn();
-        ImGui::SetNextItemWidth(freeWidthSpace * 0.7f);
-    }
-
 
     bool LabelButton(const char* tag, ImVec2 size, int color = 0) {
         bool clicked = false;
@@ -380,7 +371,7 @@ namespace ImGui {
         return false;
     }
 
-    void DrawTexCoords(Plutus::Texture* tileset, Plutus::vec4f& coords) {
+    void DrawTexCoords(const Plutus::Texture* tileset, Plutus::vec4f& coords) {
         auto mInput = Plutus::Input::get();
         const int w = tileset->mWidth;
         const int h = tileset->mHeight;
@@ -482,7 +473,7 @@ namespace ImGui {
         ImGui::EndChild();
     }
 
-    bool DrawTextureOne(Plutus::Texture* texture, int& selected) {
+    bool DrawTextureOne(const Plutus::Texture* texture, int& selected) {
         std::vector<Plutus::vec3i> selecteds;
         if (DrawTexture(texture, 0, 200, 1.0f, &selecteds, true)) {
             selected = selecteds[0].z;
@@ -492,10 +483,10 @@ namespace ImGui {
     }
 
 
-    bool DrawTexture(Plutus::Texture* texture, int winWidth, int winHeight, float scale, std::vector<Plutus::vec3i>* selected, bool onlyOne)
+    bool DrawTexture(const Plutus::Texture* texture, int winWidth, int winHeight, float scale, std::vector<Plutus::vec3i>* selected, bool onlyOne)
     {
         if (texture != nullptr) {
-            if (ImGui::BeginChild("##texture-map", { (float)winWidth, (float)winHeight }, false, ImGuiWindowFlags_HorizontalScrollbar)) {
+            if (ImGui::BeginChild("##texture-map", { (float)0, (float)winHeight }, false, ImGuiWindowFlags_HorizontalScrollbar)) {
                 auto mInput = Plutus::Input::get();
                 ImDrawList* drawList = ImGui::GetWindowDrawList();
                 auto size = ImGui::GetContentRegionAvail();
@@ -517,12 +508,15 @@ namespace ImGui {
 
                         if (texture->mTileWidth && texture->mTileHeight)
                         {
+                            float sp = (float)texture->mSpacing * scale;
                             float tilWidth = texture->mTileWidth * scale;
                             float tilHeight = texture->mTileHeight * scale;
 
                             float textureHeight = h * scale;
                             float textureWidth = w * scale;
                             int columns = static_cast<int>(textureWidth / tilWidth);
+
+                            float accu = 0;
                             for (float y = 0; y < textureHeight; y += tilHeight)
                             {
                                 drawList->AddLine(ImVec2(cvPos.x, cvPos.y + y),
@@ -545,7 +539,7 @@ namespace ImGui {
 
                                     float x = floor(mpos_in_canvas.x / tilWidth);
                                     float y = floor(mpos_in_canvas.y / tilHeight);
-                                    ImVec2 start(x * tilWidth + cvPos.x, y * tilHeight + cvPos.y);
+                                    ImVec2 start(x * tilWidth + cvPos.x + (sp * (x + 1)), y * tilHeight + cvPos.y + (sp * (y + 1)));
                                     ImVec2 end(start.x + tilWidth, start.y + tilHeight);
 
                                     drawList->AddRect(start, end, IM_COL32(255, 0, 0, 255));
@@ -610,6 +604,7 @@ namespace ImGui {
                             }
                         }
                         else {
+                            selected->clear();
                             selected->push_back({ 0,0,0 });
                         }
                     }

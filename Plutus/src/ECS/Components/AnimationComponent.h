@@ -32,7 +32,7 @@ namespace Plutus
 
         void setTexture(const std::string& texId);
 
-        void swapSeq(const std::string& oldid, const std::string& newid);
+        void updateSeq(const std::string& oldid, const std::string& newid);
 
         void setLoop(bool _loop) { loop = _loop; }
         void play(const std::string& id);

@@ -13,16 +13,12 @@ file(GLOB TIME src/Time/*.h src/Time/*.cpp)
 file(GLOB UTILS src/Utils/*.h src/Utils/*.cpp)
 file(GLOB MATH src/Math/*.h src/Math/*.cpp)
 file(GLOB LOG src/Log/*.h src/Log/*.cpp)
-set(BASE_SRCS ${ASSETS} ${CORE} ${ECS} ${GRAPHICS} ${INPUT} ${PARTICLES} ${SERIALIZE} ${SYSTEMS} ${TIME} ${UTILS} ${PHYSICS} ${MATH} ${LOG} src/Core.h src/Core.cpp)
-
-file(GLOB PLATFORMS_WIN src/Platforms/Windows/*.h src/Platforms/Windows/*.cpp)
-file(GLOB PLATFORMS_ANDROID src/Platforms/Android/*.h src/Platforms/Android/*.cpp)
+set(BASE_SRCS ${ASSETS} ${CORE} ${ECS} ${GRAPHICS} ${INPUT} ${PARTICLES} ${SERIALIZE} ${SYSTEMS} ${TIME} ${UTILS} ${PHYSICS} ${MATH} ${LOG})
 
 if (WIN32)
-  list(APPEND BASE_SRCS ${PLATFORMS_WIN})
-elseif (ANDROID )
-  list(APPEND BASE_SRCS ${PLATFORMS_ANDROID})
+  list(APPEND BASE_SRCS src/Platforms/Windows/FileUtils.cpp)
 endif ()
+
 
 add_subdirectory(libs)
 

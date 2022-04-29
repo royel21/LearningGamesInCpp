@@ -25,17 +25,13 @@ namespace Plutus
         }
         ser.EndArr();
 
-        ser.StartArr("textures");
-        for (auto& tile : AssetManager::get()->getAssets<Texture>())
+        ser.StartArr("scripts");
+        for (auto& script : AssetManager::get()->getAssets<Script>())
         {
-            auto tex = static_cast<Texture*>(tile.second);
             ser.StartObj();
             {
-                ser.addString("id", tile.first);
-                ser.addString("path", tex->mPath);
-                ser.addInt("columns", tex->mColumns);
-                ser.addInt("width", tex->mTileWidth);
-                ser.addInt("height", tex->mTileHeight);
+                ser.addString("id", script.first);
+                ser.addString("path", script.second->mPath);
             }
             ser.EndObj();
         }
@@ -54,6 +50,26 @@ namespace Plutus
             ser.EndObj();
         }
         ser.EndArr();
+
+        ser.StartArr("textures");
+        for (auto& tile : AssetManager::get()->getAssets<Texture>())
+        {
+            auto tex = static_cast<Texture*>(tile.second);
+            ser.StartObj();
+            {
+                ser.addString("id", tile.first);
+                ser.addString("path", tex->mPath);
+                ser.addInt("tileWidth", tex->mTileWidth);
+                ser.addInt("tileHeight", tex->mTileHeight);
+                ser.addInt("spacing", tex->mSpacing);
+                ser.addInt("margin", tex->mMargin);
+                ser.addInt("min-filter", tex->mMinFilter);
+                ser.addInt("mag-filter", tex->mMagFilter);
+            }
+            ser.EndObj();
+        }
+        ser.EndArr();
+
     }
 
 
@@ -88,43 +104,49 @@ namespace Plutus
         ser.EndObj();
     }
 
-    void TileMap_json(Serializer& ser, const TileMapComponent* tilemap)
+    void TileMap_json(Serializer& ser, TileMapComponent* tilemap)
     {
         ser.StartObj();
         {
             ser.addString("name", "TileMap");
-            ser.addInt("tilewidth", tilemap->mTileWidth);
-            ser.addInt("tileheight", tilemap->mTileHeight);
+            ser.addInt("width", tilemap->mWidth);
+            ser.addInt("height", tilemap->mHeight);
+            ser.addInt("tileWidth", tilemap->mTileWidth);
+            ser.addInt("tileHeight", tilemap->mTileHeight);
             ser.addInt("layer", tilemap->mLayer);
 
             //Array of textures
             ser.StartArr("textures");
-            for (auto tex : tilemap->mTextures)
+            for (size_t i = 0; i < 16; i++)
             {
-                ser.StartObj();
-                ser.addInt("id", tex.first);
-                ser.addString("tex", tex.second.c_str());
-                ser.EndObj();
+                if (!tilemap->mTextures[i].empty()) {
+                    ser.StartObj();
+                    ser.addInt("id", i);
+                    ser.addString("name", tilemap->mTextures[i].c_str());
+                    ser.EndObj();
+                }
             }
             ser.EndArr();
             //Tiles Array
             ser.StartArr("tiles");
             {
-                for (auto tile : tilemap->mTiles)
+                for (int y = 0; y < tilemap->mHeight; y++)
                 {
-                    //Tile OBJ
-                    ser.StartObj();
+                    for (int x = 0; x < tilemap->mWidth; x++)
                     {
-                        ser.addInt("tc", tile.texcoord);
-                        ser.addInt("txi", tile.texture);
-                        ser.addInt("x", tile.x);
-                        ser.addInt("y", tile.y);
-                        ser.addInt("fx", tile.flipX);
-                        ser.addInt("fy", tile.flipY);
-                        ser.addFloat("r", tile.rotate);
-                        ser.addInt("c", tile.color);
+                        auto tile = tilemap->getTile(vec2i{ x , y });
+                        if (tile) {
+                            int t = tile->texture + 1;
+                            t |= tile->texcoord << 4;
+                            t |= tile->flipX << 25;
+                            t |= tile->flipY << 26;
+                            t |= (tile->rotate != 0) << 27;
+                            ser.addInt(t);
+                        }
+                        else {
+                            ser.addInt(0);
+                        }
                     }
-                    ser.EndObj();
                 }
             }
             ser.EndArr();
@@ -168,11 +190,10 @@ namespace Plutus
         auto writer = ser.getWriter();
         ser.StartObj();
 
-        ser.add2Float("grv", scene->getGravity());
-        ser.addFloat("fps", 1.0f / scene->getTimeIterSec());
-        ser.addInt("vel-itel", scene->getVelIter());
-        ser.addInt("pos-iter", scene->getPositionIter());
-        ser.addBool("cls-forc", scene->getAutoClearForce());
+        ser.addString("format", "Plutus");
+        ser.addInt("type", 0);
+
+        ser.addInt("bg-color", scene->mBGColor);
 
         Textures_JSON(ser);
 
@@ -247,6 +268,7 @@ namespace Plutus
                         ser.addFloat("gravScale", rbody->mGravityScale);
                         ser.addInt("bodyType", rbody->mBodyType);
                         ser.add2Float("max-vel", rbody->mMaxVel);
+                        ser.addFloat("spd-rfact", rbody->mSpeedReducctionFactor);
                         addFixtures(ser, rbody);
 
                     }
