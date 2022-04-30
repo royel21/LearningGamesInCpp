@@ -158,6 +158,8 @@ namespace ImGui
 
     bool TransparentButton(const char* label, bool isIcon = false, ImVec4 color = { 1,1,1,1 }, bool sameLine = true);
 
+    bool ButtonIcon(const char* label, ImVec4 color = { 1,1,1,1 });
+
     bool ListBox(const char* label, std::vector<Plutus::Entity*> data, Plutus::Entity* selected);
 
     bool ColorInt(const char* label, unsigned int& color);
@@ -177,4 +179,9 @@ namespace ImGui
     bool DrawTexture(const Plutus::Texture* tileset, int winWidth = 0, int winHeight = 0, float scale = 1.0f, std::vector<Plutus::vec3i>* selected = nullptr, bool onlyOne = false);
 
     void DrawTexCoords(const Plutus::Texture* tileset, Plutus::vec4f& coords);
+
+    /*********************************Modals **********************************/
+    bool BeginModal(const char* label, ImVec2 size = { 0,0 });
+
+    void EndModal(std::function<void(bool save)> callback = nullptr);
 } // namespace ImGui

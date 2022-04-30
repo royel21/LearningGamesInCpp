@@ -37,6 +37,25 @@ namespace ImGui {
         return isActive;
     }
 
+    bool ButtonIcon(const char* label, ImVec4 color) {
+        ImVec2 buttonSize = { 0,0 };
+        float lineHeight = ImGui::GetFontSize() + ImGui::GetStyle().FramePadding.y * 2.0f;
+        buttonSize = { lineHeight, lineHeight };
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+
+        bool isActive = false;
+        ImGui::PushStyleColor(ImGuiCol_Text, color);
+        ImGui::PushStyleColor(ImGuiCol_Button, { 0,0,0,0 });
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0,0,0,0 });
+
+        if (ImGui::Button(label, buttonSize)) {
+            isActive = true;
+        }
+        ImGui::PopStyleColor(3);
+        ImGui::PopStyleVar();
+        return isActive;
+    }
+
     bool ComboBox(const char* label, const std::unordered_map<int, std::string>& data, int& selected) {
         std::string name;
         auto it = data.find(selected);
@@ -623,5 +642,25 @@ namespace ImGui {
         }
         return selected ? selected->size() : true;
     }
+    bool BeginModal(const char* label, ImVec2 size) {
+        ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+        ImGui::SetNextWindowSize(size);
+        return ImGui::BeginPopupModal(label);
+    }
 
+    void EndModal(std::function<void(bool save)> callback) {
+        ImGui::Separator();
+        ImGui::InvisibleButton("##rn", { 1,1 });
+        ImGui::SameLine(ImGui::GetContentRegionAvailWidth() * 0.5f - 45);
+        if (ImGui::Button("Save", {})) {
+            if (callback) callback(true);
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel", {})) {
+            if (callback) callback(false);
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
 }

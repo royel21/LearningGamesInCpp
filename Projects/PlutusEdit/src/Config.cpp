@@ -12,6 +12,8 @@
 #include "Helpers/ConfigHelper.h"
 
 #include <Platforms/Windows/FileUtils.h>
+#include <Serialize/SceneSerializer.h>
+#include "Helpers/data.h"
 
 namespace Plutus
 {
@@ -105,14 +107,28 @@ namespace Plutus
         return workingDir + "assets\\" + Utils::ToLowerCase(part);
     }
 
-    void EditorProject::CreateScene(const std::string& name)
+    bool EditorProject::CreateScene(const std::string& name)
     {
+        auto curPath = currentScenePath;
+        currentScenePath = workingDir + "assets\\scenes\\" + name + ".json";
+        if (FileIO::exists(currentScenePath)) {
+            currentScenePath = curPath;
+            return false;
+        }
+
+        scene = CreateRef<Scene>();
+        currentScene = name + ".json";
+
+        FileIO::saveBufferToFile(currentScenePath.c_str(), Data::EmptyScene);
+        return true;
+    }
+
+    void RenameScene(const std::string& oldName, const std::string& newName) {
 
     }
 
     void EditorProject::removeScene(std::string id)
     {
-
     }
 
     void EditorProject::clearScene()

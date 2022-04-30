@@ -5,6 +5,8 @@
 #include "../Helpers/ImGuiDialog.h"
 #include "../Helpers/IconsFontAwesome5.h"
 
+#include <misc/cpp/imgui_stdlib.h>
+
 #include <Assets/Assets.h>
 
 namespace Plutus
@@ -15,36 +17,38 @@ namespace Plutus
         static bool showConfig = false;
         if (ImGui::Begin("Scene Editor"))
         {
+            float width = ImGui::GetContentRegionAvailWidth();
             // ImGui::Push
             ImGui::Text("Scenes");
             ImGui::SameLine();
             if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE "##new-scene"))  openNew = true;
             ImGui::SameLine();
             if (ImGui::TransparentButton(ICON_FA_SAVE "##save-scene"))  project.saveScene();
-            ImGui::SameLine();
-            if (ImGui::TransparentButton(ICON_FA_COG "##config-scene")) showConfig = true;
-            ImGui::Separator();
-            bool isNodeOpen;
-            for (auto sc : project.scenes) {
+
+            bool isNodeOpen = false;
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+            for (auto& sc : project.scenes) {
 
                 bool isOpen = project.currentScene.compare(sc.first) == 0;
-                ImGui::SetNextItemOpen(isOpen);
-                isNodeOpen = ImGui::TreeNode((ICON_FA_PHOTO_VIDEO " " + sc.first).c_str());
 
-                if (isNodeOpen)
+                ImGui::SetNextItemOpen(isOpen);
+                bool showContent = ImGui::TreeNodeEx(sc.first.c_str(), ImGuiTreeNodeFlags_AllowItemOverlap, (ICON_FA_PHOTO_VIDEO " " + sc.first).c_str());
+                ImGui::SameLine(width - 50);
+                if (ImGui::ButtonIcon((ICON_FA_EDIT " ##ren-" + sc.first).c_str(), { 0,0,1,1 })) {
+                    newName = sceneName = sc.first;
+                    ImGui::OpenPopup("Rename Scene");
+                }
+                ImGui::SameLine();
+                if (ImGui::ButtonIcon((ICON_FA_TRASH " ##rm-" + sc.first).c_str(), { 1,0,0,1 })) {
+                    sceneName = sc.first;
+                }
+
+                if (showContent)
                 {
+                    isNodeOpen = true;
                     //Load Scene only once
                     if (!isOpen) {
                         project.loadScene(sc.first);
-                    }
-
-                    // Right-click on scene
-                    if (ImGui::BeginPopupContextItem())
-                    {
-                        if (ImGui::MenuItem("Create Entity")) {
-                            project.mEnt = project.scene->createEntity("New Entity");
-                        }
-                        ImGui::EndPopup();
                     }
 
                     if (isOpen) {
@@ -60,29 +64,43 @@ namespace Plutus
                     project.unLoadScene();
                 }
             }
-            if (!isNodeOpen) {
-                if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-                    ImGui::OpenPopup("SceneMenu");
-                }
+            ImGui::PopStyleVar();
 
-                if (ImGui::BeginPopup("SceneMenu"))
-                {
-                    if (ImGui::MenuItem("Create Scene")) {
-
-                    }
-                    ImGui::EndPopup();
-                }
+            if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                ImGui::OpenPopup("AssetMenu");
             }
 
+            if (ImGui::BeginPopup("AssetMenu"))
+            {
+                if (!isNodeOpen) {
+                    if (ImGui::MenuItem("Create Scene")) {
+                        auto count = std::to_string(project.scenes.size());
+                        project.CreateScene("New Scene  - " + count);
+                    }
+                }
+                else {
+                    if (ImGui::MenuItem("Create Entity")) {
+                        auto count = std::to_string(project.scene->getRegistry()->size());
+                        project.mEnt = project.scene->createEntity("New Entity - " + count);
+                    }
+                }
+                ImGui::EndPopup();
+            }
+
+            if (ImGui::BeginModal("Rename Scene", { 300, 0 })) {
+                ImGui::Row("Name");
+                ImGui::InputText("##label-rn-sc", &newName);
+                ImGui::EndModal([&](bool save) {
+                    if (save) {
+                        if (newName.compare(sceneName) != 0) {
+                            project.RenameScene(sceneName, newName);
+                        }
+                    }
+                    });
+            }
         }
         ImGui::End();
 
-        if (openNew) ImGui::NewFileDialig("New Project", [&](const std::string& name) {
-            if (!name.empty())  project.CreateScene(name);
-            openNew = false;
-            });
-
-        if (showConfig) showConfigScene(showConfig, project.scene);
     }
 
     void SceneWindow::drawEntity(Entity ent)
