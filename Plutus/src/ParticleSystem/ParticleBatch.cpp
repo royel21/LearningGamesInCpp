@@ -42,7 +42,7 @@ namespace Plutus
 
 	void ParticleBatch::draw(SpriteBatch2D* sp)
 	{
-		vec4f uv(0.0f, 0.0f, 1.0f, 1.0f);
+		Vec4f uv(0.0f, 0.0f, 1.0f, 1.0f);
 		for (int i = 0; i < m_maxParticles; i++)
 		{
 			auto& p = m_particles[i];
@@ -54,8 +54,8 @@ namespace Plutus
 	}
 
 	void ParticleBatch::addParticles(
-		const vec2f& position,
-		const vec2f& velocity,
+		const Vec2f& position,
+		const Vec2f& velocity,
 		const ColorRGBA8& color,
 		float width)
 	{

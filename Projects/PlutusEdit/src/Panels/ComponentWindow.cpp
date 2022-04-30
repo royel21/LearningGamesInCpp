@@ -84,13 +84,13 @@ namespace Plutus
 
             float textWidth = ImGui::GetContentRegionAvailWidth() * mTextColumnWidth;
             ImGui::Row("Position", textWidth);
-            vec2f pos = { trans->x, trans->y };
+            Vec2f pos = { trans->x, trans->y };
             if (ImGui::Draw2Float("Position##ent-pos", pos)) {
                 trans->x = pos.x;
                 trans->y = pos.y;
             }
             ImGui::Row("Size");
-            vec2f size = { trans->w, trans->h };
+            Vec2f size = { trans->w, trans->h };
             if (ImGui::Draw2Float("Size##ent-size", size, 1, "W", "H")) {
                 trans->w = (int)size.x;
                 trans->h = (int)size.y;
@@ -213,7 +213,7 @@ namespace Plutus
             ImGui::Row("Gravity Scale", textWidth);
             ImGui::DragFloat("##g-scale", &mRigidBody->mGravityScale, 1, 0, 30, "%.2f");
             ImGui::Row("Speed Reduction", textWidth);
-            ImGui::Draw2Float("##g-speed-redu", mRigidBody->mSpeedReducctionFactor, 0.5f);
+            ImGui::Draw2Float("##g-speed-redu", mRigidBody->mSpeedReducctionFactor, 0.01f);
 
             auto found = std::find_if(rigidBodyTypes.begin(), rigidBodyTypes.end(),
                 [=](auto&& rbtype)-> bool { return rbtype.second == mRigidBody->mBodyType;});

@@ -17,14 +17,14 @@ namespace Plutus
         type = EdgeShape;
     }
 
-    Line2d::Line2d(const vec2f& _start, const vec2f& _end, float r) {
+    Line2d::Line2d(const Vec2f& _start, const Vec2f& _end, float r) {
         rotation = r;
         type = EdgeShape;
         pos = _start;
         end = _end;
     }
 
-    vec2f Line2d::getCenter() {
+    Vec2f Line2d::getCenter() {
         return (pos + end) * 0.5;
     }
 
@@ -53,7 +53,7 @@ namespace Plutus
         getVertices();
     }
 
-    Box2d::Box2d(const vec2f& pos, const vec2f& _size, float r) : Shape(pos), size(_size)
+    Box2d::Box2d(const Vec2f& pos, const Vec2f& _size, float r) : Shape(pos), size(_size)
     {
         type = BoxShape;
         rotation = r;

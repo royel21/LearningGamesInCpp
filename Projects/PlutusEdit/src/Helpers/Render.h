@@ -34,7 +34,7 @@ namespace Plutus
 
         void draw();
 
-        void resizeBuffers(const vec2f& size);
+        void resizeBuffers(const Vec2f& size);
 
         void setScene(Scene* scene) { mScene = scene; }
 

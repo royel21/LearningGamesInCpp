@@ -53,7 +53,7 @@ namespace Plutus
                                 camera.setPosition(mConfig->mProject.vpPos);
 
                             ImGui::Row("BG Color", width);
-                            vec4f color = mConfig->mProject.scene->mBGColor;
+                            Vec4f color = mConfig->mProject.scene->mBGColor;
                             if (ImGui::ColorEdit3("##vp-color", &color.x)) {
                                 mConfig->mProject.scene->mBGColor.setColor(color);
                             }
@@ -79,7 +79,7 @@ namespace Plutus
                                 mConfig->tileHeight = cellSize.y;
                             }
 
-                            static vec4f color = mDebugRender->getGridLineColor();
+                            static Vec4f color = mDebugRender->getGridLineColor();
                             ImGui::Row("Line Color", width);
                             if (ImGui::ColorEdit3("##Grid-Color", &color.x))
                             {

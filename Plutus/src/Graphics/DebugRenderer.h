@@ -19,7 +19,7 @@ namespace Plutus
 
 	struct DebugVertex
 	{
-		vec2f position;
+		Vec2f position;
 		ColorRGBA8 color;
 	};
 
@@ -36,14 +36,14 @@ namespace Plutus
 		void end();
 		void dispose();
 		//Grid Cell Size w = Width, h = Height
-		void setCellSize(const vec2i& cellSize);
-		vec4f getGridLineColor() { return mGridColor; }
+		void setCellSize(const Vec2i& cellSize);
+		Vec4f getGridLineColor() { return mGridColor; }
 
 		//Draw Shapes
 
-		void drawLine(const vec2f& a, const vec2f& b, float angle = 0, const ColorRGBA8& color = {});
-		void drawBox(const vec4f& destRect, float angle = 0, const ColorRGBA8& color = {});
-		void drawCircle(const vec2f& center, float radius, const ColorRGBA8& color = {});
+		void drawLine(const Vec2f& a, const Vec2f& b, float angle = 0, const ColorRGBA8& color = {});
+		void drawBox(const Vec4f& destRect, float angle = 0, const ColorRGBA8& color = {});
+		void drawCircle(const Vec2f& center, float radius, const ColorRGBA8& color = {});
 
 		void drawBox(Box2d& box, const ColorRGBA8& color = {});
 
@@ -56,11 +56,11 @@ namespace Plutus
 			drawCircle({ c.pos.x, c.pos.y }, c.radius, color);
 		}
 
-		vec2i getCellSize() { return mCellSize; };
+		Vec2i getCellSize() { return mCellSize; };
 
 		inline void resizeBuffer(unsigned int size) { mVertexs.reserve(size); }
 
-		vec2i getSquareCoords(vec2f mousePos);
+		Vec2i getSquareCoords(Vec2f mousePos);
 
 		void setShouldDraw(bool shouldDraw) { isDraw = shouldDraw; }
 		bool getShouldDraw() { return isDraw; }
@@ -71,7 +71,7 @@ namespace Plutus
 		void addIndices(int index);
 
 	private:
-		vec2i mCellSize;
+		Vec2i mCellSize;
 
 		bool isDraw = true;
 

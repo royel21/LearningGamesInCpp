@@ -13,8 +13,8 @@ namespace Plutus
 
 	struct Particle2D
 	{
-		vec2f m_position;
-		vec2f m_velocity;
+		Vec2f m_position;
+		Vec2f m_velocity;
 		ColorRGBA8 m_color;
 		float m_life;
 		float m_width;
@@ -50,8 +50,8 @@ namespace Plutus
 		void draw(SpriteBatch2D* sp);
 
 		void addParticles(
-			const vec2f& position,
-			const vec2f& velocity,
+			const Vec2f& position,
+			const Vec2f& velocity,
 			const ColorRGBA8& color, float width);
 
 	private:

@@ -19,8 +19,8 @@ namespace Plutus
 		bool mNeedsMatrixUpdate = true;
 		float mScale = 1.0f;
 		Entity mEntity;
-		vec2f mOffset = { 0, 0 };
-		vec2f mCamPos = { 0, 0 };
+		Vec2f mOffset = { 0, 0 };
+		Vec2f mCamPos = { 0, 0 };
 		glm::mat4 mOrtho = glm::mat4(0);
 		glm::mat4 mCameraMatrix = glm::mat4(0);
 
@@ -45,45 +45,45 @@ namespace Plutus
 			update();
 		}
 
-		inline void setTarget(Entity entity, const vec2f& offset = { 0 }) { mEntity = entity; mOffset = offset; }
+		//set camera position and shedule a update
+		//@param newPosition glm vec2 position
+		inline void setPosition(const Vec2f& pos) { setPosition(pos.x, pos.y); }
 
-		inline void setViewPosition(float x, float y) { setViewPosition(vec2f{ x, y }); };
-		void setViewPosition(const vec2f& v);
+		inline void setTarget(Entity entity, const Vec2f& offset = { 0 }) { mEntity = entity; mOffset = offset; }
+
+		inline void setViewPosition(float x, float y) { setViewPosition(Vec2f{ x, y }); };
+		void setViewPosition(const Vec2f& v);
 		/*
 			change the camera to a new with and height
 			@param w Width of the camera in pixel
 			@param h height of the camera in pixel
 		*/
 		inline void setWindowSize(int w, int h) { mWindowWidth = w; mWindowHeight = h; }
-
-		//set camera position and shedule a update
-		//@param newPosition glm vec2 position
-		inline void setPosition(const vec2f& pos) { setPosition(pos.x, pos.y); }
 		/*
 			change the camera to a new with and height
 			@param size vec2i size
 		*/
-		inline void setWindowSize(const vec2i& size) { mWindowWidth = size.x; mWindowHeight = size.y; }
+		inline void setWindowSize(const Vec2i& size) { mWindowWidth = size.x; mWindowHeight = size.y; }
 		// return the current scale value
 		inline float getScale() { return mScale; }
 		// zoom the view port
 		inline void setScale(float scale) { mScale = scale > 0 ? scale : 1.0f; init(mScreenWidth, mScreenHeight); }
 
-		vec4f getViewPortDim();
+		Vec4f getViewPortDim();
 		// return the view port size in pixels
-		vec2f getViewPortSize() { return vec2f(mScreenWidth, mScreenHeight); }
+		Vec2f getViewPortSize() { return Vec2f(mScreenWidth, mScreenHeight); }
 		//Getters
-		inline vec2f getPosition() { return mCamPos; }
+		inline Vec2f getPosition() { return mCamPos; }
 		// return the 4x4 camera matrix
 		inline glm::mat4 getCameraMatrix() { return mCameraMatrix; }
 		//Convert screen coordination to camera coordination and return it
-		inline vec2f convertScreenToWold(float x, float y, bool invertY = false) { return convertScreenToWold({ x, y }, invertY); };
+		inline Vec2f convertScreenToWold(float x, float y, bool invertY = false) { return convertScreenToWold({ x, y }, invertY); };
 		//Convert screen coordination to camera coordination and return it
-		vec2f convertScreenToWold(vec2f screenCoords, bool invertY = false);
+		Vec2f convertScreenToWold(Vec2f screenCoords, bool invertY = false);
 
-		const vec2f getScaleScreen() { return vec2f(mScreenWidth, mScreenHeight) / mScale; }
+		const Vec2f getScaleScreen() { return Vec2f(mScreenWidth, mScreenHeight) / mScale; }
 
-		bool isBoxInView(const vec4f& box, int offset = 0);
+		bool isBoxInView(const Vec4f& box, int offset = 0);
 	};
 } // namespace Plutus
 

@@ -21,18 +21,18 @@ constexpr float HMPP = PPM / 2.0f;
 
 namespace Plutus
 {
-    inline b2Vec2 toWorld(const vec2f& value) {
+    inline b2Vec2 toWorld(const Vec2f& value) {
         return { value.x * PPM, value.y * PPM };
     }
 
-    inline vec2f fromWorld(b2Vec2 value) {
+    inline Vec2f fromWorld(b2Vec2 value) {
         return { value.x * MPP, value.y * MPP };
     }
 
-    inline b2Vec2 tobVec2(const vec2f& vec) { return { vec.x, vec.y }; }
-    inline vec2f toVec2f(const b2Vec2& vec) { return { vec.x, vec.y }; }
+    inline b2Vec2 tobVec2(const Vec2f& vec) { return { vec.x, vec.y }; }
+    inline Vec2f toVec2f(const b2Vec2& vec) { return { vec.x, vec.y }; }
 
-    void createFixture(PhysicBodyComponent& pbody, const vec2f& pos) {
+    void createFixture(PhysicBodyComponent& pbody, const Vec2f& pos) {
 
         for (auto& fixture : pbody.mFixtures) {
             auto offset = toWorld(fixture.offset);

@@ -22,7 +22,7 @@ namespace Plutus
     //     mat[3][1] = -(top + bottom) / (top - bottom);
     // }
 
-    // Mat4 translate(const Mat4& m, const vec3f& v)
+    // Mat4 translate(const Mat4& m, const Vec3f& v)
     // {
     //     Mat4 mat = m;
 
@@ -30,12 +30,12 @@ namespace Plutus
     //     return mat;
     // }
 
-    // Mat4 rotate(const Mat4& m, const vec3f& v)
+    // Mat4 rotate(const Mat4& m, const Vec3f& v)
     // {
     //     Mat4 mat = m;
     // }
 
-    // Mat4 scale(const Mat4& m, const vec3f& v)
+    // Mat4 scale(const Mat4& m, const Vec3f& v)
     // {
     //     Mat4 mat = m;
     // }

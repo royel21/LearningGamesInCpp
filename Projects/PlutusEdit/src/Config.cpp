@@ -15,6 +15,8 @@
 #include <Serialize/SceneSerializer.h>
 #include "Helpers/data.h"
 
+#include <Log/Logger.h>
+
 namespace Plutus
 {
     void createDirs(const std::string& workingDir) {
@@ -123,8 +125,18 @@ namespace Plutus
         return true;
     }
 
-    void RenameScene(const std::string& oldName, const std::string& newName) {
+    void EditorProject::RenameScene(const std::string& oldName, const std::string& newName) {
 
+        auto sc = scenes.find(oldName);
+
+        auto dir = Utils::getDirectory(sc->second);
+
+        auto oldPath = workingDir + sc->second;
+        auto newPath = workingDir + dir + newName;
+        if (FileIO::moveFile(oldPath, newPath)) {
+            scenes[newName] = dir + newName;
+            scenes.erase(oldName);
+        }
     }
 
     void EditorProject::removeScene(std::string id)

@@ -66,7 +66,7 @@ namespace Plutus
             {
                 if (Input::get()->onKeyDown("MouseLeft"))
                 {
-                    vec2f result = pos - mMouseLastCoords;
+                    Vec2f result = pos - mMouseLastCoords;
                     result /= camera.getScale();
                     mConfig->mProject.vpPos = mCamCoords - result;
                 }
@@ -94,29 +94,26 @@ namespace Plutus
     void CenterWindow::selectEntity(float x, float y)
     {
         auto& project = mConfig->mProject;
-        static Entity ent;
+
         if (!Input::get()->isCtrl) {
             if (Input::get()->onKeyPressed("MouseLeft"))
             {
                 mMouseLastCoords = mConfig->mMouseCoords;
-                auto camPos = mConfig->mRender->mCamera.getPosition();
-                mCamCoords = { camPos.x, camPos.y };
-                ent = project.scene->getEntity(mConfig->mRender->mFramePicker.getEntId({ x, y }));
+                Entity ent = { mConfig->mRender->mFramePicker.getEntId({ x, y }) };
 
                 if (ent) {
                     project.mEnt = ent;
-                    if (ent.hasComponent<TransformComponent>()) {
-                        auto pos = ent.getComponent<TransformComponent>()->getPosition();
-                        mEntLastPos = { pos.x, pos.y };
+                    if (project.mEnt.hasComponent<TransformComponent>()) {
+                        mEntLastPos = project.mEnt.getComponent<TransformComponent>()->getPosition();
                     }
                 }
             }
 
-            if (Input::get()->onKeyDown("MouseLeft") && mConfig->mProject.scene->isValid(ent))
+            if (project.mEnt && Input::get()->onKeyDown("MouseLeft"))
             {
-                if (ent.hasComponent<TransformComponent>()) {
-                    auto trans = ent.getComponent<TransformComponent>();
-                    vec2f result = mConfig->mMouseCoords - mMouseLastCoords;
+                if (project.mEnt.hasComponent<TransformComponent>()) {
+                    auto trans = project.mEnt.getComponent<TransformComponent>();
+                    Vec2f result = mConfig->mMouseCoords - mMouseLastCoords;
                     result /= mConfig->mRender->mCamera.getScale();
 
                     trans->x = mEntLastPos.x + result.x;
@@ -193,12 +190,12 @@ namespace Plutus
             auto winSize = framebuffer.getSize();
             float aspectRation = framebuffer.getAspectRatio();
 
-            vec2f vpSize = mConfig->mRender->mCamera.getViewPortSize();
+            Vec2f vpSize = mConfig->mRender->mCamera.getViewPortSize();
 
             auto winPos = ImGui::GetContentRegionAvail();
             auto pos = ImGui::GetCursorPos();
 
-            vec2f newSize((int)winPos.x, int(winPos.x / aspectRation));
+            Vec2f newSize((int)winPos.x, int(winPos.x / aspectRation));
             if (newSize.y > winPos.y)
             {
                 newSize.y = winPos.y;

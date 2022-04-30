@@ -8,7 +8,7 @@ constexpr float PI = 3.14159265359f;
 
 namespace Plutus
 {
-    void rotate(vec2f& point, const vec2f& origin, float angle)
+    void rotate(Vec2f& point, const Vec2f& origin, float angle)
     {
         float x = point.x - origin.x;
         float y = point.y - origin.y;
@@ -28,7 +28,7 @@ namespace Plutus
         return abs(x - y) <= epsilon * std::max(1.0f, std::max(abs(x), abs(y)));
     }
 
-    bool compare(const vec2f& v1, const vec2f& v2, float epsilon) {
+    bool compare(const Vec2f& v1, const Vec2f& v2, float epsilon) {
         return compareF(v1.x, v2.x, epsilon) && compareF(v1.y, v2.y, epsilon);
     }
     //from  Quake III Arena Game and wikipedia

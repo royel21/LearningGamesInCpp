@@ -5,7 +5,7 @@ namespace Plutus
 {
     struct VelocityComponent
     {
-        vec2f mVelocity;
+        Vec2f mVelocity;
         VelocityComponent() = default;
         VelocityComponent(float x, float y) : mVelocity(x, y) {};
 

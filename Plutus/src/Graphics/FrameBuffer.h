@@ -15,9 +15,9 @@ namespace Plutus
         void bind();
         void unBind();
 
-        int getEntId(const vec2f& pos);
+        int getEntId(const Vec2f& pos);
 
-        void resize(const vec2i& size)
+        void resize(const Vec2i& size)
         {
             isDirty = true;
             mSize = size;
@@ -29,7 +29,7 @@ namespace Plutus
             mSize = { w, h };
         }
 
-        vec2f getSize() { return { mSize.x, mSize.y }; }
+        Vec2f getSize() { return { mSize.x, mSize.y }; }
 
         float getAspectRatio() { return 1.77777778f; }
 
@@ -37,7 +37,7 @@ namespace Plutus
 
         unsigned int getTextureId() const { return mTexId; }
 
-        void setColor(const vec4f& bgColor) { mBGColor = bgColor; }
+        void setColor(const Vec4f& bgColor) { mBGColor = bgColor; }
 
         void cleanUp();
     private:
@@ -48,9 +48,9 @@ namespace Plutus
         //renderbuffer Id
         unsigned int mRbufferId = 0;
         bool isDirty = false;
-        vec2i mSize;
+        Vec2i mSize;
 
-        vec4f mBGColor;
+        Vec4f mBGColor;
 
         bool mIsPicking = false;
     };

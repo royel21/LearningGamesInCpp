@@ -46,7 +46,7 @@ namespace Plutus
 
 		int getMouseWheel() { return mMouseWheel; }
 
-		vec2f getMouseCoords() const { return mMouseCoords; }
+		Vec2f getMouseCoords() const { return mMouseCoords; }
 
 		void addEventListener(InputListener* listener);
 		void addRemoveListener(InputListener* listener);
@@ -56,7 +56,7 @@ namespace Plutus
 	private:
 		bool mMouseMove = false;
 		int mMouseWheel = 0;
-		vec2f mMouseCoords;
+		Vec2f mMouseCoords;
 		std::vector<InputListener*> mEventListeners;
 		std::unordered_map<std::string, bool> mKeyMap;
 		std::unordered_map<std::string, bool> mPrevKeyMap;

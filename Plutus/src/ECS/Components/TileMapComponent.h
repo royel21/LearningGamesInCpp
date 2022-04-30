@@ -37,7 +37,7 @@ namespace Plutus
             parent = _parent;
         }
 
-        vec4f getRect();
+        Vec4f getRect();
 
         inline bool operator==(Tile tile)
         {
@@ -72,8 +72,8 @@ namespace Plutus
 
         void addTile(Tile& tile);
         void addTile(int pos, int tile);
-        Tile* getTile(const vec2i& mCoords);
-        int getIndex(const vec2i& mCoords);
-        bool removeTile(const vec2i& mCoords);
+        Tile* getTile(const Vec2i& mCoords);
+        int getIndex(const Vec2i& mCoords);
+        bool removeTile(const Vec2i& mCoords);
     };
 } // namespace Plutus

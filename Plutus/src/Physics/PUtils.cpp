@@ -5,7 +5,7 @@
 namespace Plutus
 {
     namespace PUtils {
-        vec2f ClosestPointLineCircle(Circle2d* circle, Line2d* line)
+        Vec2f ClosestPointLineCircle(Circle2d* circle, Line2d* line)
         {
             Points points = line->getVertices();
             auto p1 = points[0];
@@ -32,7 +32,7 @@ namespace Plutus
             return p1 - (dist * dot);
         }
 
-        bool PointOnLine(vec2f& point, Line2d* line)
+        bool PointOnLine(Vec2f& point, Line2d* line)
         {
             float dy = line->end.y - line->pos.y;
             float dx = line->end.x - line->pos.x;
@@ -47,9 +47,9 @@ namespace Plutus
             return point.y == m * point.x + b;
         }
 
-        bool PointInBox(vec2f& point, Box2d* box)
+        bool PointInBox(Vec2f& point, Box2d* box)
         {
-            vec2f p = point;
+            Vec2f p = point;
             if (box->rotation) {
                 rotate(p, box->getCenter(), box->rotation);
             }
@@ -57,19 +57,19 @@ namespace Plutus
         }
 
 
-        bool PointInCircle(vec2f& p, Circle2d* c)
+        bool PointInCircle(Vec2f& p, Circle2d* c)
         {
             return (p - c->pos).lengthSqrt() - 1 < c->radiusSqrt();
         }
 
 
-        vec2f getProjection(const Points& verts, vec2f axis)
+        Vec2f getProjection(const Points& verts, Vec2f axis)
         {
-            vec2f result;
+            Vec2f result;
 
             result.x = axis.dot(verts[0]);
             result.y = result.x;
-            for (const vec2f& v : verts) {
+            for (const Vec2f& v : verts) {
                 float proj = axis.dot(v);
 
                 if (proj < result.x) result.x = proj;

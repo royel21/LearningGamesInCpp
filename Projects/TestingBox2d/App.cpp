@@ -237,7 +237,7 @@ namespace Plutus
         }
         else {
             auto size = mCamera.getScaleScreen();
-            mCamera.setPosition(vec2f{ capsule.position.x - size.x * 0.5f, capsule.position.y - size.y * 0.15f });
+            mCamera.setPosition(Vec2f{ capsule.position.x - size.x * 0.5f, capsule.position.y - size.y * 0.15f });
         }
 
     }
@@ -264,7 +264,7 @@ namespace Plutus
         }
 
         // mDebug->drawBox(Box2d(capsule.x, capsule.y, capsule.w, capsule.h));
-        vec4f rect = { capsule.position, capsule.size };
+        Vec4f rect = { capsule.position, capsule.size };
         mBatch.submit(texture->mTexId, rect, texture->getUV(0));
         mBatch.begin();
         mBatch.draw();

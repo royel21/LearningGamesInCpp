@@ -11,7 +11,7 @@ namespace Plutus {
         @param pos point
         @param angle angle in degre
     */
-    vec2f rotatePoint2D(const vec2f& pos, float angle) {
+    Vec2f rotatePoint2D(const Vec2f& pos, float angle) {
 
         float rad = DEC2RA(-angle);
         float cosAng = cos(rad);

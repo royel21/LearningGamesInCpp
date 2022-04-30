@@ -134,7 +134,7 @@ namespace Plutus
                 {
                     for (int x = 0; x < tilemap->mWidth; x++)
                     {
-                        auto tile = tilemap->getTile(vec2i{ x , y });
+                        auto tile = tilemap->getTile(Vec2i{ x , y });
                         if (tile) {
                             int t = tile->texture + 1;
                             t |= tile->texcoord << 4;

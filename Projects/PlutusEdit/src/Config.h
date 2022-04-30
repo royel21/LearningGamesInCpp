@@ -40,7 +40,7 @@ namespace Plutus
     struct Config
     {
         //Mouse Coords in view port
-        vec2f mMouseCoords;
+        Vec2f mMouseCoords;
         // Is Viewport hovered
         bool isHover;
 

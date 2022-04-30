@@ -100,8 +100,8 @@ namespace Plutus
 
     float force = 0.2f;
     float force2 = 10.0f;
-    vec2f mouseLast;
-    vec2f camOrg;
+    Vec2f mouseLast;
+    Vec2f camOrg;
     void App::Update(float dt) {
         auto cPos = mCamera.getPosition();
 
@@ -155,10 +155,10 @@ namespace Plutus
         // move the camera
         if (Input::get()->isCtrl)
         {
-            vec2f offset;
+            Vec2f offset;
             if (Input::get()->onKeyDown("MouseLeft"))
             {
-                vec2f result = Input::get()->getMouseCoords() - mouseLast;
+                Vec2f result = Input::get()->getMouseCoords() - mouseLast;
                 result /= mCamera.getScale();
                 offset = camOrg - result;
                 Logger::info("camera Pos: %.2f %.2f", result.x, result.y);
@@ -196,7 +196,7 @@ namespace Plutus
         //         Logger::info("camera Pos: %s", ent.getName().c_str());
         //     }
         // }
-        // mBatch->submit(mFBuffer.getTextureId(), vec4f{ 0,0, mWidth, mHeight }, { 0, 0,1 ,1 }, {}, 0, false, true);
+        // mBatch->submit(mFBuffer.getTextureId(), Vec4f{ 0,0, mWidth, mHeight }, { 0, 0,1 ,1 }, {}, 0, false, true);
         // mBatch->finish();
         // mRenderer.submit(tex->mTexId, rect1, tex->getUV(0));
         // mRenderer.submit(tex->mTexId, rect2, tex->getUV(0));

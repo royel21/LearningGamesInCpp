@@ -36,9 +36,9 @@ namespace Plutus
             }
         }
 
-        vec4f getRect() { return { x, y, w, h }; }
-        vec2f getPosition() { return { x,y }; }
-        vec2i getSize() { return { w, h }; }
+        Vec4f getRect() { return { x, y, w, h }; }
+        Vec2f getPosition() { return { x,y }; }
+        Vec2i getSize() { return { w, h }; }
     };
 
 } // namespace Plutus

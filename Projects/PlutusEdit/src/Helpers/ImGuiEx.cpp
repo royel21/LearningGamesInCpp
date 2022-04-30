@@ -141,7 +141,7 @@ namespace ImGui {
         return isSelected;
     }
 
-    bool Texture(const Plutus::Texture* tileset, float scale, std::vector<Plutus::vec3i>& selected)
+    bool Texture(const Plutus::Texture* tileset, float scale, std::vector<Plutus::Vec3i>& selected)
     {
         bool isSelected = false;
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
@@ -187,8 +187,8 @@ namespace ImGui {
                         }
                     }
                     //Rect
-                    static std::vector<Plutus::vec2i> sels;
-                    static std::vector<Plutus::vec2i> drawSelect;
+                    static std::vector<Plutus::Vec2i> sels;
+                    static std::vector<Plutus::Vec2i> drawSelect;
 
                     static bool mDown = false;
                     if (ImGui::IsItemHovered())
@@ -282,7 +282,7 @@ namespace ImGui {
         return change;
     }
 
-    void BeginDialog(const char* name, bool fixedPos, Plutus::vec2f size)
+    void BeginDialog(const char* name, bool fixedPos, Plutus::Vec2f size)
     {
         if (fixedPos) {
             auto pos = ImGui::GetWindowPos();
@@ -344,7 +344,7 @@ namespace ImGui {
         return clicked;
     }
 
-    bool Draw2Float(char* label, Plutus::vec2f& value, float step, const char* btntag1, const char* btntag2) {
+    bool Draw2Float(char* label, Plutus::Vec2f& value, float step, const char* btntag1, const char* btntag2) {
         bool changed = false;
 
         ImGui::BeginGroup();
@@ -363,7 +363,7 @@ namespace ImGui {
         ImGui::SameLine();
 
         float vecValuesX = value.x;
-        if (ImGui::DragFloat("##x", &vecValuesX, step, 0, 0, "%0.1f")) changed = true;
+        if (ImGui::DragFloat("##x", &vecValuesX, step, 0, 0, "%0.02f")) changed = true;
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -375,7 +375,7 @@ namespace ImGui {
 
         ImGui::SameLine();
         float vecValuesY = value.y;
-        if (ImGui::DragFloat("##y", &vecValuesY, step, 0, 0, "%0.1f")) changed = true;
+        if (ImGui::DragFloat("##y", &vecValuesY, step, 0, 0, "%0.2f")) changed = true;
         ImGui::PopItemWidth();
         ImGui::SameLine();
 
@@ -399,7 +399,7 @@ namespace ImGui {
         return false;
     }
 
-    void DrawTexCoords(const Plutus::Texture* tileset, Plutus::vec4f& coords) {
+    void DrawTexCoords(const Plutus::Texture* tileset, Plutus::Vec4f& coords) {
         auto mInput = Plutus::Input::get();
         const int w = tileset->mWidth;
         const int h = tileset->mHeight;
@@ -502,7 +502,7 @@ namespace ImGui {
     }
 
     bool DrawTextureOne(const Plutus::Texture* texture, int& selected) {
-        std::vector<Plutus::vec3i> selecteds;
+        std::vector<Plutus::Vec3i> selecteds;
         if (DrawTexture(texture, 0, 200, 1.0f, &selecteds, true)) {
             selected = selecteds[0].z;
             return true;
@@ -511,7 +511,7 @@ namespace ImGui {
     }
 
 
-    bool DrawTexture(const Plutus::Texture* texture, int winWidth, int winHeight, float scale, std::vector<Plutus::vec3i>* selected, bool onlyOne)
+    bool DrawTexture(const Plutus::Texture* texture, int winWidth, int winHeight, float scale, std::vector<Plutus::Vec3i>* selected, bool onlyOne)
     {
         if (texture != nullptr) {
             if (ImGui::BeginChild("##texture-map", { (float)0, (float)winHeight }, false, ImGuiWindowFlags_HorizontalScrollbar)) {
@@ -557,8 +557,8 @@ namespace ImGui {
                             }
 
                             if (selected) {
-                                static std::vector<Plutus::vec2i> sels;
-                                static std::vector<Plutus::vec2i> drawSelect;
+                                static std::vector<Plutus::Vec2i> sels;
+                                static std::vector<Plutus::Vec2i> drawSelect;
 
                                 static bool mDown = false;
                                 if (ImGui::IsItemHovered())

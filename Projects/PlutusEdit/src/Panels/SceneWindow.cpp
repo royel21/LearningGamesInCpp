@@ -66,7 +66,7 @@ namespace Plutus
             }
             ImGui::PopStyleVar();
 
-            if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+            if (ImGui::IsMouseClicked(1) && ImGui::IsWindowHovered()) {
                 ImGui::OpenPopup("AssetMenu");
             }
 
@@ -142,7 +142,7 @@ namespace Plutus
         //     ImGui::Separator();
         //     if (ImGui::BeginUIGroup(ImGuiTableFlags_SizingFixedFit)) {
         //         ImGui::BeginCol("Gravity");
-        //         vec2f g = scene->getGravity();
+        //         Vec2f g = scene->getGravity();
         //         if (ImGui::Draw2Float("##gravity", g)) {
         //             scene->setGravity(g);
         //         }

@@ -88,5 +88,13 @@ namespace Plutus
         {
             system(("start " + dir).c_str());
         }
+
+        bool moveFile(const std::string& oldFile, const std::string& newFile) {
+            if (exists(oldFile) && !exists(newFile)) {
+                std::filesystem::rename(oldFile, newFile);
+                return true;
+            }
+            return false;
+        }
     }
 }

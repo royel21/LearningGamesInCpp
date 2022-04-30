@@ -20,7 +20,7 @@
 
 namespace Plutus
 {
-    vec2i getCoords(Config* config) {
+    Vec2i getCoords(Config* config) {
         auto pos = config->mMouseCoords;
         return DebugRender::get()->getSquareCoords({ pos.x, pos.y });
     }

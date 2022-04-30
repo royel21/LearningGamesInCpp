@@ -32,7 +32,7 @@ namespace Plutus
         }
     }
 
-    vec4f Texture::getUVs(float column, float row, float w, float h)
+    Vec4f Texture::getUVs(float column, float row, float w, float h)
     {
         float xw = column * mTileWidth;
         float yh = row * mTileHeight;
@@ -66,7 +66,7 @@ namespace Plutus
                 for (int x = 0; x < mWidth / mTileWidth; x++)
                 {
 
-                    vec4f UV;
+                    Vec4f UV;
                     UV.x = ((float)(x * mTileWidth + spacingX) / (float)mWidth);
                     UV.y = ((float)(y * mTileHeight + spacingY) / (float)mHeight);
 
@@ -83,7 +83,7 @@ namespace Plutus
             // {
             //     int y = i / columns;
             //     int x = i % columns;
-            //     vec4f UV;
+            //     Vec4f UV;
             //     UV.x = ((float)(x * mTileWidth) / (float)mWidth) + (spacingX * (x + 1));
             //     UV.y = ((float)(y * mTileHeight) / (float)mHeight) + (spacingY * (y + 1));
             //     UV.z = ((float)(x * mTileWidth + mTileWidth) / (float)mWidth);

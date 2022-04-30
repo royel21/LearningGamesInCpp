@@ -20,28 +20,28 @@ constexpr int BoxShape = 2;
 
 namespace Plutus
 {
-    using Points = std::vector<vec2f>;
+    using Points = std::vector<Vec2f>;
 
     //Min Translation Vector for SAT separation
     struct MTV {
         float dist;
-        vec2f axis;
+        Vec2f axis;
         MTV() = default;
     };
 
-    inline b2Vec2 toWorld(const vec2f& value) {
+    inline b2Vec2 toWorld(const Vec2f& value) {
         return { value.x * PPM, value.y * PPM };
     }
 
-    inline vec2f fromWorld(b2Vec2 value) {
+    inline Vec2f fromWorld(b2Vec2 value) {
         return { value.x * MPP, value.y * MPP };
     }
 
-    inline b2Vec2 tobVec2(const vec2f& vec) { return { vec.x, vec.y }; }
-    inline vec2f toVec2f(const b2Vec2& vec) { return { vec.x, vec.y }; }
+    inline b2Vec2 tobVec2(const Vec2f& vec) { return { vec.x, vec.y }; }
+    inline Vec2f toVec2f(const b2Vec2& vec) { return { vec.x, vec.y }; }
 
     struct Shape {
-        vec2f pos;
+        Vec2f pos;
         int type;
         b2Body* body;
 
@@ -50,20 +50,20 @@ namespace Plutus
 
         Shape() = default;
         Shape(float x, float y) : pos(x, y) {}
-        Shape(const vec2f _pos) : pos(_pos) {}
+        Shape(const Vec2f _pos) : pos(_pos) {}
 
         virtual void update();
     };
 
     struct Line2d : public Shape {
-        vec2f end;
+        Vec2f end;
         float rotation = 0;
 
         Line2d() { type = EdgeShape; };
         Line2d(float x1, float y1, float x2, float y2, float r = 0);
-        Line2d(const vec2f& _start, const vec2f& _end, float r = 0);
+        Line2d(const Vec2f& _start, const Vec2f& _end, float r = 0);
 
-        vec2f getCenter();
+        Vec2f getCenter();
         Points getVertices();
 
     private:
@@ -75,24 +75,24 @@ namespace Plutus
         float radius = 1.0f;
         Circle2d() { type = CircleShape; };
         Circle2d(float x, float y, float r) : Shape(x, y), radius(r) { type = CircleShape; }
-        Circle2d(const vec2f& _pos, float r) : Shape(_pos), radius(r) { type = CircleShape; }
+        Circle2d(const Vec2f& _pos, float r) : Shape(_pos), radius(r) { type = CircleShape; }
 
         float radiusSqrt() const { return radius * radius; }
     };
 
     struct Box2d : public Shape
     {
-        vec2f size;
-        vec2f half;
+        Vec2f size;
+        Vec2f half;
         Points axes;
         float rotation = 0;
 
         Box2d() { type = BoxShape; };
         Box2d(float x, float y, float w, float h, float r = 0);
-        Box2d(const vec2f& pos, const vec2f& _size, float r = 0);
+        Box2d(const Vec2f& pos, const Vec2f& _size, float r = 0);
 
-        vec2f getMax() const { return pos + size; }
-        vec2f getCenter() const { return pos + half; }
+        Vec2f getMax() const { return pos + size; }
+        Vec2f getCenter() const { return pos + half; }
 
         Points getVertices();
 

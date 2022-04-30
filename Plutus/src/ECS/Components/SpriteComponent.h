@@ -12,7 +12,7 @@ namespace Plutus
         bool mFlipX = false;
         bool mFlipY = false;
         ColorRGBA8 mColor;
-        vec4f mUVCoord;
+        Vec4f mUVCoord;
 
         SpriteComponent() {};
         SpriteComponent(std::string texId, ColorRGBA8 color = {}) : mTextureId(texId), mColor(color), mUVCoord(0, 0, 1, 1) {};

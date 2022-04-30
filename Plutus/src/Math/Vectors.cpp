@@ -4,7 +4,7 @@
 
 namespace Plutus
 {
-    vec4f& vec4f::operator*=(float n) {
+    Vec4f& Vec4f::operator*=(float n) {
         x *= n;
         y *= n;
         z *= n;
@@ -13,7 +13,7 @@ namespace Plutus
         return *this;
     }
 
-    vec4f& vec4f::operator/=(float n) {
+    Vec4f& Vec4f::operator/=(float n) {
         x /= n;
         y /= n;
         z /= n;
@@ -22,20 +22,20 @@ namespace Plutus
         return *this;
     }
 
-    vec4f vec4f::operator*(float n) const {
+    Vec4f Vec4f::operator*(float n) const {
         return { x * n, y * n, z * n, w * n };
     }
 
-    vec4f vec4f::operator/(float n) const {
+    Vec4f Vec4f::operator/(float n) const {
         return { x / n, y / n, z / n, w / n };
     }
 
-    vec4f vec4f::operator+(const vec4f& v) const
+    Vec4f Vec4f::operator+(const Vec4f& v) const
     {
         return { x + v.x, y + v.y, z + v.z, w + v.w };
     }
 
-    vec4f vec4f::operator-(const vec4f& v) const
+    Vec4f Vec4f::operator-(const Vec4f& v) const
     {
         return { x - v.x, y - v.y, z - v.z, w - v.w };
     }

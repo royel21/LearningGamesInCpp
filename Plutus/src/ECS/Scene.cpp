@@ -11,7 +11,12 @@ namespace Plutus
         return isValid() ? mScene->mRegistry.get<Tag>(mId).Name : "";
     }
 
-    bool Entity::isValid() {
+    Entity::Entity(int id) {
+        auto ent = entt::entity(id);
+        mId = mScene->mRegistry.valid(ent) ? ent : entt::null;
+    }
+
+    bool Entity::isValid() const {
         return mId != entt::null && mScene->mRegistry.valid(mId);
     }
 

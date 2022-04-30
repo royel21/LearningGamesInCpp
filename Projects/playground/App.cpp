@@ -33,7 +33,7 @@ namespace Plutus
         mDebug = DebugRender::get();
         mDebug->init(&mCamera);
         auto size = mCamera.getScaleScreen() - 5;
-        size = vec2f(size.x, size.y);
+        size = Vec2f(size.x, size.y);
         shapes.push_back(new Circle2d{ 70, 100, 30 });
         shapes.push_back(new Circle2d{ 640, 150, 30 });
         // shapes.push_back(new Circle2d{ 70, 200, 30 });
@@ -63,9 +63,9 @@ namespace Plutus
     bool isMouseDownInCircle = false;
     bool isMouseDownInBox = false;
 
-    vec2f initPos;
-    vec2f pos;
-    vec2f mpos;
+    Vec2f initPos;
+    Vec2f pos;
+    Vec2f mpos;
 
 
     float speed = 5;
