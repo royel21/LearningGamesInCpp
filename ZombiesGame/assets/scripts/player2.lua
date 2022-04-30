@@ -1,5 +1,5 @@
 local SPEED = 4
-local curAnime = "stand-right"
+local curAnime = "stand-r"
 
 local stand = {
     right = "stand-right",
@@ -8,10 +8,7 @@ local stand = {
     down = "stand-down"
 }
 
- print("player2 loaded")
-
-local sound = assetManager:addSound("shotgun", "assets/sounds/shotgun.wav")
- print("sound loaded")
+local sound = assetManager:addSound("bg", "assets/sounds/shotgun.wav")
 
 local direction = "right";
 local state = ""
@@ -53,17 +50,17 @@ function update(dt)
         vel = {x = 0, y = 0}
     end
 
-     if (input:onKeyDown("X")) then
-		print("play sound")
-     	sound:play(false)
-    end
+    -- if (input:onKeyDown("X")) then
+    -- sound:play(false)
+    --   print("play sound")
+    -- end
 
     if state ~= "attacking" and state ~= "jumping" then
         -- Move Up - Down
         if input:onKeyDown("Up") then
             direction = "up"
-			state = "running"
-			vel.y = SPEED
+		    state = "running"
+ 			vel.y = SPEED
         elseif input:onKeyDown("Down") then
             direction = "down"
             state = "running"
@@ -102,25 +99,6 @@ function update(dt)
         state = "     "
     end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
