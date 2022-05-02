@@ -134,7 +134,7 @@ namespace Plutus
                 {
                     for (int x = 0; x < tilemap->mWidth; x++)
                     {
-                        auto tile = tilemap->getTile(vec2i{ x , y });
+                        auto tile = tilemap->getTile(Vec2i{ x , y });
                         if (tile) {
                             int t = tile->texture + 1;
                             t |= tile->texcoord << 4;
@@ -268,7 +268,7 @@ namespace Plutus
                         ser.addFloat("gravScale", rbody->mGravityScale);
                         ser.addInt("bodyType", rbody->mBodyType);
                         ser.add2Float("max-vel", rbody->mMaxVel);
-                        ser.addFloat("spd-rfact", rbody->mSpeedReducctionFactor);
+                        ser.add2Float("spd-refact", rbody->mSpeedReducctionFactor);
                         addFixtures(ser, rbody);
 
                     }

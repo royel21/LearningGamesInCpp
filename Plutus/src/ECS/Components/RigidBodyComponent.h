@@ -8,21 +8,21 @@ class b2Body;
 
 namespace Plutus
 {
-    //Entity ent, BodyType type, const vec2f& _offset = { 0,0 }, float liDamping = 0, float gScale = 1, float isFixedRotation = true, bool isBullet = false
+    //Entity ent, BodyType type, const Vec2f& _offset = { 0,0 }, float liDamping = 0, float gScale = 1, float isFixedRotation = true, bool isBullet = false
     struct RigidBodyComponent : public PhysicBodyComponent {
         bool  mBullet = false;
         bool  mFixedRotation = true;
         float mLinearDamping = 0;
         float mGravityScale = 1;
-        vec2f mMaxVel;
-        float mSpeedReducctionFactor = 0.95f;
+        Vec2f mMaxVel;
+        Vec2f mSpeedReducctionFactor = { 0.95f, 0.95f };
 
         RigidBodyComponent(BodyType type = DynamicBody) : PhysicBodyComponent(type) { };
 
         void ApplyForce(float x, float y);
         void ApplyImpulse(float x, float y);
 
-        vec2f getVelocity();
+        Vec2f getVelocity();
         void setVelocity(float x, float y);
 
         inline void setMaxVel(float x, float y = 0.0f) { mMaxVel = { x, y }; }

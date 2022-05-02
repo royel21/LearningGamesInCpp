@@ -31,7 +31,8 @@ namespace Plutus
         if (ImGui::Begin("##ComPanel")) {
             mEnt = mConfig->mProject.mEnt;
             if (mConfig->mProject.scene->isValid(mEnt)) {
-                ImGui::InputString("Name##c-tag", mEnt.getComponent<Tag>()->Name);
+                ImGui::Row("Name");
+                ImGui::InputString("##c-tag", mEnt.getComponent<Tag>()->Name);
 
                 if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE " Add Component##cp")) {
                     ImGui::OpenPopup("AddComponent");
@@ -44,13 +45,21 @@ namespace Plutus
                     ImGui::Text("Componets");
                     ImGui::Separator();
 
-                    ComponentMenuItem<TransformComponent>(mConfig, "Transform");
-                    ComponentMenuItem<SpriteComponent>(mConfig, "Sprite");
-                    ComponentMenuItem<TileMapComponent>(mConfig, "TileMap");
-                    ComponentMenuItem<AnimationComponent>(mConfig, "Animation");
+                    if (!mConfig->mProject.mEnt.hasComponent<TileMapComponent>()) {
+                        ComponentMenuItem<TransformComponent>(mConfig, "Transform");
+                        ComponentMenuItem<SpriteComponent>(mConfig, "Sprite");
+                        ComponentMenuItem<AnimationComponent>(mConfig, "Animation");
+                        if (!mConfig->mProject.mEnt.hasComponent<PhysicBodyComponent>())
+                            ComponentMenuItem<RigidBodyComponent>(mConfig, "Rigid Body");
+                    }
+                    else {
+                        ComponentMenuItem<TileMapComponent>(mConfig, "TileMap");
+                    }
+
+                    if (!mConfig->mProject.mEnt.hasComponent<RigidBodyComponent>())
+                        ComponentMenuItem<PhysicBodyComponent>(mConfig, "Static Body");
+
                     ComponentMenuItem<ScriptComponent>(mConfig, "Script");
-                    ComponentMenuItem<RigidBodyComponent>(mConfig, "Rigid Body");
-                    ComponentMenuItem<PhysicBodyComponent>(mConfig, "Static Body");
 
                     ImGui::EndPopup();
                 }
@@ -75,13 +84,13 @@ namespace Plutus
 
             float textWidth = ImGui::GetContentRegionAvailWidth() * mTextColumnWidth;
             ImGui::Row("Position", textWidth);
-            vec2f pos = { trans->x, trans->y };
+            Vec2f pos = { trans->x, trans->y };
             if (ImGui::Draw2Float("Position##ent-pos", pos)) {
                 trans->x = pos.x;
                 trans->y = pos.y;
             }
             ImGui::Row("Size");
-            vec2f size = { trans->w, trans->h };
+            Vec2f size = { trans->w, trans->h };
             if (ImGui::Draw2Float("Size##ent-size", size, 1, "W", "H")) {
                 trans->w = (int)size.x;
                 trans->h = (int)size.y;
@@ -163,13 +172,23 @@ namespace Plutus
             auto files = Utils::listFiles("assets/script", ".lua");
             auto scripts = AssetManager::get()->getAssets<Script>();
 
-
+            float space = ImGui::GetContentRegionAvailWidth();
             ImGui::Text("Scripts");
             ImGui::Separator();
+            float textWidth = space * 0.15f;
+            ImGui::Text("Id");
+            ImGui::SameLine(textWidth);
+            ImGui::SetNextItemWidth(space - 60);
+
+            ImGui::BeginGroup();
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
+            ImGui::ComboBox("##slist", scripts, script->mScript);
+            ImGui::SameLine();
             if (ImGui::TransparentButton(ICON_FA_TRASH "", true, { 1,0,0,1 })) {
                 script->mScript = "";
             }
-            ImGui::ComboBox("##slist", scripts, script->mScript);
+            ImGui::PopStyleVar();
+            ImGui::EndGroup();
         }
     }
 
@@ -182,7 +201,7 @@ namespace Plutus
     {
         auto mRigidBody = mEnt.getComponent<RigidBodyComponent>();
         if (CollapseComponent<RigidBodyComponent>("Rigid Body##tilemap-comp", 6, mConfig)) {
-            float textWidth = ImGui::GetContentRegionAvailWidth() * 0.45f;
+            float textWidth = ImGui::GetContentRegionAvailWidth() * 0.40f;
 
             ImGui::Row("Is Bullet", textWidth);
             ImGui::Checkbox("##isbullet", &mRigidBody->mBullet);
@@ -194,7 +213,7 @@ namespace Plutus
             ImGui::Row("Gravity Scale", textWidth);
             ImGui::DragFloat("##g-scale", &mRigidBody->mGravityScale, 1, 0, 30, "%.2f");
             ImGui::Row("Speed Reduction", textWidth);
-            ImGui::DragFloat("##g-speed-redu", &mRigidBody->mSpeedReducctionFactor, 0.1f, 0, 1, "%.2f");
+            ImGui::Draw2Float("##g-speed-redu", mRigidBody->mSpeedReducctionFactor, 0.01f);
 
             auto found = std::find_if(rigidBodyTypes.begin(), rigidBodyTypes.end(),
                 [=](auto&& rbtype)-> bool { return rbtype.second == mRigidBody->mBodyType;});
@@ -205,7 +224,6 @@ namespace Plutus
                 mRigidBody->mBodyType = rigidBodyTypes[current];
             }
 
-            ImGui::Separator();
             drawFixtures(mRigidBody);
         }
     }

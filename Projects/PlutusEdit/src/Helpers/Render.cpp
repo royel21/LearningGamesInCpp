@@ -47,13 +47,14 @@ namespace Plutus
         mScene = mConfig->mProject.scene.get();
     }
 
-    void Render::resizeBuffers(const vec2f& size) {
+    void Render::resizeBuffers(const Vec2f& size) {
         mFrameBuffer.resize(size);
         mFramePicker.resize(size);
     }
 
     void Render::draw()
     {
+        mCamera.update();
         if (mScene && mConfig) {
             // auto start = Timer::millis();
             mFrameBuffer.setColor(mScene->mBGColor);
@@ -78,7 +79,7 @@ namespace Plutus
 
     void Render::drawFixtures(PhysicBodyComponent* pbody, TransformComponent* trans) {
         for (auto& fixture : pbody->mFixtures) {
-            vec2f pos;
+            Vec2f pos;
 
             if (trans) {
                 pos = trans->getPosition();//fromWorld(rbody.mBody->GetPosition());
@@ -86,7 +87,7 @@ namespace Plutus
 
             switch (fixture.type) {
             case BoxShape: {
-                vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
+                Vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
                 if (mCamera.isBoxInView(rect, 200))
                 {
                     mDebugRender->drawBox(rect);
@@ -98,7 +99,7 @@ namespace Plutus
                 break;
             }
             case CircleShape: {
-                vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
+                Vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
                 if (mCamera.isBoxInView(rect, 200))
                 {
                     mDebugRender->drawCircle(pos + fixture.offset, fixture.radius);

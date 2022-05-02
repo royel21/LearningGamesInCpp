@@ -9,8 +9,8 @@ namespace Plutus
     {
         b2Body* body;
 
-        vec2f position;
-        vec2f size;
+        Vec2f position;
+        Vec2f size;
         float radius;
 
         Capsule() = default;

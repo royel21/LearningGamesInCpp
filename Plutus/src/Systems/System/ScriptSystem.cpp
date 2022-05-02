@@ -35,7 +35,7 @@ namespace Plutus
         return sol::stack::push(L, description);
     }
 
-    ScriptSystem::ScriptSystem(Camera2D* camera) {
+    ScriptSystem::ScriptSystem(Camera2D* camera) : ISystem(camera) {
         mGlobalLua.open_libraries(
             sol::lib::base,
             sol::lib::math
@@ -56,11 +56,19 @@ namespace Plutus
         input["onKeyDown"] = &Input::onKeyDown;
         input["onKeyPressed"] = &Input::onKeyPressed;
 
-        auto lua_vec2 = mGlobalLua.new_usertype<vec2f>("vec2f", sol::constructors<vec2f(), vec2f(float, float), vec2f(int, int)>());
-        lua_vec2["x"] = &vec2f::x;
-        lua_vec2["y"] = &vec2f::y;
+        auto lua_vec2 = mGlobalLua.new_usertype<Vec2f>("Vec2f", sol::constructors<Vec2f(), Vec2f(float, float), Vec2f(int, int)>());
+        lua_vec2["x"] = &Vec2f::x;
+        lua_vec2["y"] = &Vec2f::y;
+
+        auto lua_vec4 = mGlobalLua.new_usertype<Vec4f>("Vec4f", sol::constructors<Vec4f(), Vec4f(float, float, float, float)>());
+
+        lua_vec4["x"] = &Vec4f::x;
+        lua_vec4["y"] = &Vec4f::y;
+        lua_vec4["z"] = &Vec4f::z;
+        lua_vec4["w"] = &Vec4f::w;
 
         registerAssets();
+        registerCamera();
         registerEntity();
         registerComponents();
     }
@@ -91,7 +99,7 @@ namespace Plutus
     {
         /*****************************Register AssetManager**********************************************/
         auto assetManager_table = mGlobalLua.new_usertype<AssetManager>("AssetManager");
-        assetManager_table["addSound"] = sol::overload(&AssetManager::addAsset < Sound, std::string>, &AssetManager::addAsset<Sound, std::string, int>);
+        assetManager_table["addSound"] = sol::overload(&AssetManager::addAsset<Sound, std::string>, &AssetManager::addAsset<Sound, std::string, int>);
         assetManager_table["removeSound"] = &AssetManager::removeAsset<Sound>;
 
         /**************************Register Sound Asset*************************************************/
@@ -114,7 +122,22 @@ namespace Plutus
             Texture(const std::string&, int, int, GLint, GLint)>()
             );
         texture_table["getUV"] = sol::overload(&Texture::getUV<int>, &Texture::getUV<float, float, float, float>);
+    }
 
+    void ScriptSystem::registerCamera() {
+        auto lua_camera = mGlobalLua.new_usertype<Camera2D>("Camera2D");
+        lua_camera["getPosition"] = &Camera2D::getPosition;
+        lua_camera["setBounds"] = &Camera2D::setBounds;
+
+        lua_camera["setPosition"] = sol::overload(
+            [&](float x, float y) {mCamera->setPosition(x, y); },
+            [&](const Vec2f& pos) {mCamera->setPosition(pos); }
+        );
+
+        lua_camera["setTarget"] = &Camera2D::setTarget;
+        lua_camera["getVPSize"] = &Camera2D::getScaleScreen;
+
+        mGlobalLua["camera"] = mCamera;
     }
 
     void ScriptSystem::registerEntity()

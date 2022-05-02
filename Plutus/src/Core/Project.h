@@ -19,7 +19,7 @@ namespace Plutus
         // View Port Size
         int vpWidth = 1280;
         int vpHeight = 768;
-        vec2f vpPos = { 0, 0 };
+        Vec2f vpPos = { 0, 0 };
 
         float zoomLevel = 1.0f;
         //FPS Limiter
@@ -32,13 +32,14 @@ namespace Plutus
         // Box2d Time step FPS 
         float timeStepInSec = 1.0f / maxFPS;
         // Box2d gravity
-        vec2f gravity = { 0.0f, -9.8f };
+        Vec2f gravity = { 0.0f, -9.8f };
         // Box2d Auto Clear Force
         bool autoClearForce = true;
 
         Ref<Scene> scene;
         std::string currentScene;
         std::string currentScenePath;
+        std::unordered_map<std::string, std::string> scenes;
 
         Project();
 
@@ -48,6 +49,7 @@ namespace Plutus
         void save(const std::string& path);
 
         void loadScene(const std::string& path);
+        void unLoadScene();
         void saveScene();
     };
 } // namespace Plutus

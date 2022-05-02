@@ -25,7 +25,7 @@ namespace Plutus
                 float length = 1 / invSqrt(sqrtLength);
                 float collisionDepth = r - length;
 
-                vec2f collisionDepthVec = (distVec / length) * collisionDepth;
+                Vec2f collisionDepthVec = (distVec / length) * collisionDepth;
                 mtv->axis = collisionDepthVec;
                 // collisionDepthVec *= 0.5f;
                 // c1->pos += collisionDepthVec;

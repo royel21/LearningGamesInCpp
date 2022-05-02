@@ -84,7 +84,7 @@ namespace Plutus
 		bufferVertices.clear();
 	}
 
-	void SpriteBatch2D::createVertices(GLuint texture, const vec4f& rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
+	void SpriteBatch2D::createVertices(GLuint texture, const Vec4f& rect, Vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
 	{
 		// Check if is it inside the view port
 		float id = static_cast<float>(entId);
@@ -104,7 +104,7 @@ namespace Plutus
 
 		if (r)
 		{
-			vec2f center(rect.x + rect.z * 0.5f, rect.y + rect.w * 0.5f);
+			Vec2f center(rect.x + rect.z * 0.5f, rect.y + rect.w * 0.5f);
 			rotate(mbottomLeft, center, r);
 			rotate(mtopLeft, center, r);
 			rotate(mtopRight, center, r);
@@ -117,7 +117,7 @@ namespace Plutus
 		bufferVertices[mVertexCount++] = { mBottomRight.x, mBottomRight.y, uv.z, uv.w, c, id };
 	}
 
-	void SpriteBatch2D::submit(GLuint texture, const vec4f& rect, vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {
+	void SpriteBatch2D::submit(GLuint texture, const Vec4f& rect, Vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {
 		resize(4);
 		createVertices(texture, rect, uv, c, r, flipX, flipY, entId);
 	}

@@ -31,7 +31,7 @@ namespace Plutus
                     mCurTex = mTextures.begin()->first;
             }
             if (sequences.size() && !mCurSeq.empty()) {
-                if (ImGui::TransparentButton(ICON_FA_EDIT "##edit-seq", true)) {
+                if (ImGui::TransparentButton(ICON_FA_EDIT "##edit-seq", true, { 1,1,1,1 })) {
                     showSeqWindow = true;
                     mCurrentSeq = &sequences[mCurSeq];
                     mNewSeqId = mCurSeq;
@@ -39,7 +39,10 @@ namespace Plutus
                     mMode = EDIT;
                 }
             }
-            if (ImGui::TransparentButton(ICON_FA_TRASH "##rm-seq", true, { 1,0,0,1 })) {
+            ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() - 20);
+            ImGui::ComboBox("##a-seq", sequences, mCurSeq, defItem);
+            ImGui::SameLine();
+            if (ImGui::TransparentButton(ICON_FA_TRASH "##rm-seq", true, { 1,0,0,1 }, false)) {
                 sequences.erase(mCurSeq);
                 if (sequences.size()) {
                     mCurrentSeq = &sequences.begin()->second;
@@ -50,9 +53,7 @@ namespace Plutus
                     mCurSeq = "";
                 }
             }
-
-
-            ImGui::ComboBox("##a-seq", sequences, mCurSeq, defItem);
+            ImGui::Separator();
 
             auto found = sequences.find(mCurSeq);
             if (found != sequences.end()) {

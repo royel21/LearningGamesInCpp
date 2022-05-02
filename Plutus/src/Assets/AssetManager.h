@@ -16,13 +16,6 @@ namespace Plutus
 
     class AssetManager
     {
-    private:
-        std::string baseDir = "";
-        ma_engine* mAudioEngine = nullptr;
-        std::vector<umap<std::string, Asset*>> mAssets;
-
-        friend Sound;
-
     public:
         static AssetManager* get();
 
@@ -88,6 +81,12 @@ namespace Plutus
         void destroy();
 
     private:
+        std::string baseDir = "";
+        ma_engine* mAudioEngine = nullptr;
+        std::vector<umap<std::string, Asset*>> mAssets;
+
+        friend Sound;
+
         AssetManager();
 
         inline uint32_t getId() {

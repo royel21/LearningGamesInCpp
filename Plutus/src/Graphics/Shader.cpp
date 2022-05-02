@@ -123,17 +123,17 @@ namespace Plutus
 		glUniform1iv(getUniform(name), size, value);
 	}
 
-	void Shader::setUniform2f(std::string name, vec2f value)
+	void Shader::setUniform2f(std::string name, Vec2f value)
 	{
 		glUniform2f(getUniform(name), value.x, value.y);
 	}
 
-	void Shader::setUniform3f(std::string name, vec3f value)
+	void Shader::setUniform3f(std::string name, Vec3f value)
 	{
 		glUniform3f(getUniform(name), value.x, value.y, value.z);
 	}
 
-	void Shader::setUniform4f(std::string name, const vec4f& value)
+	void Shader::setUniform4f(std::string name, const Vec4f& value)
 	{
 		glUniform4f(getUniform(name), value.x, value.y, value.z, value.w);
 	}

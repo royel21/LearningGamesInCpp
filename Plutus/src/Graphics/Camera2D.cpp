@@ -1,6 +1,8 @@
 #include "Camera2D.h"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include <cmath>
+
 #include <ECS/Components/TransformComponent.h>
 
 namespace Plutus
@@ -20,33 +22,35 @@ namespace Plutus
 
 	void Camera2D::update()
 	{
+		if (mEntity) {
+			mCamPos = mEntity.getPosition() + (mOffset * mScale);
+			if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
+			if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
+			if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
+			if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
+		}
+		mCamPos = { roundf(mCamPos.x), roundf(mCamPos.y) };
 		auto view = glm::lookAt(glm::vec3{ mCamPos.x, mCamPos.y, 20.0f }, { mCamPos.x, mCamPos.y, -1 }, { 0,1,0 });
 		mCameraMatrix = mOrtho * view;
 	}
 
-	vec4f Camera2D::getViewPortDim()
+	Vec4f Camera2D::getViewPortDim()
 	{
-		return  vec4f{ mCamPos.x, mCamPos.y, mScreenWidth / mScale, mScreenHeight / mScale };
+		return  Vec4f{ mCamPos.x, mCamPos.y, mScreenWidth / mScale, mScreenHeight / mScale };
 	}
 
-	void Camera2D::setViewPosition(const vec2f& v) {
-		auto half = vec2f(mScreenWidth >> 1, mScreenHeight >> 1) / mScale;
-		auto pos = v / mScale;
-		setPosition(pos + half);
-	}
-
-	vec2f Camera2D::convertScreenToWold(vec2f coords, bool invertY)
+	Vec2f Camera2D::convertScreenToWold(Vec2f coords, bool invertY)
 	{
-		auto coordsTrans = vec2f{ coords.x / mWindowWidth, coords.y / mWindowHeight };
+		auto coordsTrans = Vec2f{ coords.x / mWindowWidth, coords.y / mWindowHeight };
 
-		return mCamPos + vec2f{ mScreenWidth / mScale * coordsTrans.x, mScreenHeight / mScale * coordsTrans.y };
+		return mCamPos + Vec2f{ mScreenWidth / mScale * coordsTrans.x, mScreenHeight / mScale * coordsTrans.y };
 	}
 
-	bool Camera2D::isBoxInView(const vec4f& box, int offset)
+	bool Camera2D::isBoxInView(const Vec4f& box, int offset)
 	{
 		float offs = offset / mScale;
 
-		auto viewport = getViewPortDim() + vec4f(-offs, -offs, offs, offs);
+		auto viewport = getViewPortDim() + Vec4f(-offs, -offs, offs, offs);
 
 		return (box.x < viewport.x + viewport.z &&
 			box.x + box.z > viewport.x &&

@@ -15,7 +15,7 @@ namespace Plutus
         mBody->SetLinearVelocity({ x, y });
     }
 
-    vec2f RigidBodyComponent::getVelocity() {
+    Vec2f RigidBodyComponent::getVelocity() {
         auto vel = mBody->GetLinearVelocity();
         return { vel.x , vel.y };
     }
@@ -46,7 +46,7 @@ namespace Plutus
                 }
             }
 
-            mBody->SetLinearVelocity({ vel.x * mSpeedReducctionFactor, vel.y * mSpeedReducctionFactor });
+            mBody->SetLinearVelocity({ vel.x * mSpeedReducctionFactor.x, vel.y * mSpeedReducctionFactor.y });
         }
     }
 } // namespace Plutus

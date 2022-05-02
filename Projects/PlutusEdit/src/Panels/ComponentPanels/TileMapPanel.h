@@ -36,6 +36,6 @@ namespace Plutus
         bool mShowAddModal = false;
         TileMapComponent* mTileMap = nullptr;
         Tile* mCurrentTile = nullptr;
-        std::vector<vec3i> mTempTiles;
+        std::vector<Vec3i> mTempTiles;
     };
 } // namespace Plutus

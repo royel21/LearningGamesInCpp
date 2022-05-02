@@ -34,7 +34,6 @@ namespace Plutus
         Texture texture;
         Font mFont;
         Script mScript;
-        SceneAsset mSceneAsset;
 
         std::string assetId;
 

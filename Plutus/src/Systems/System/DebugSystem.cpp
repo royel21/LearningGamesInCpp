@@ -28,7 +28,7 @@ namespace Plutus
 
                 switch (fixture.type) {
                 case BoxShape: {
-                    vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
+                    Vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
                     if (mCamera->isBoxInView(rect, 200))
                     {
                         mDebug->drawBox(rect);
@@ -40,7 +40,7 @@ namespace Plutus
                     break;
                 }
                 case CircleShape: {
-                    vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
+                    Vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
                     if (mCamera->isBoxInView(rect, 200))
                     {
                         mDebug->drawCircle(pos + fixture.offset, fixture.radius);

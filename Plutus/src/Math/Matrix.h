@@ -11,9 +11,9 @@ namespace Plutus {
 		float v[4][4];
 	};
 
-	Mat4 scale(const Mat4& m, const vec3f& v);
-	Mat4 rotate(const Mat4& m, const vec3f& v);
-	Mat4 translate(const Mat4& m, const vec3f& v);
+	Mat4 scale(const Mat4& m, const Vec3f& v);
+	Mat4 rotate(const Mat4& m, const Vec3f& v);
+	Mat4 translate(const Mat4& m, const Vec3f& v);
 	Mat4 ortho(float x, float y, float w, float h);
 
 }

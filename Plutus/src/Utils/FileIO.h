@@ -25,6 +25,8 @@ namespace Plutus
 
         bool copyFile(const std::string& src, const std::string dst);
 
+        bool moveFile(const std::string& oldFile, const std::string& newFile);
+
         void openDir(const std::string& dir);
 
         template <typename... TArgs>

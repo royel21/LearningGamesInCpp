@@ -23,7 +23,7 @@ namespace Plutus
 	*/
 	struct Vertex
 	{
-		vec2f position; /* Positon X,Y */
+		Vec2f position; /* Positon X,Y */
 		UV uv;	/* Texture coord from where to sample */
 		ColorRGBA8 color; /* RGBA Color for the sample */
 		float entId;
@@ -32,7 +32,7 @@ namespace Plutus
 		Vertex(float x, float y, float uvX, float uvY, ColorRGBA8 c, float _entId = 0)
 			: position(x, y), uv(uvX, uvY), color(c), entId(_entId) {}
 
-		Vertex(vec2f pos, float uvX, float uvY, ColorRGBA8 c, float _entId = 0)
+		Vertex(Vec2f pos, float uvX, float uvY, ColorRGBA8 c, float _entId = 0)
 			: position(pos), uv(uvX, uvY), color(c), entId(_entId) {}
 
 		void setPosition(float x, float y)
@@ -57,9 +57,9 @@ namespace Plutus
 		// Texture Id
 		uint32_t TexId;
 		// Rectangle with position x,y and width, height
-		vec4f trans;
+		Vec4f trans;
 		// Texture coords "UV"
-		vec4f uv = { 0,0,1,1 };
+		Vec4f uv = { 0,0,1,1 };
 		// Color
 		ColorRGBA8 color = {};
 		// Rotation
@@ -75,9 +75,9 @@ namespace Plutus
 		// Sort in Y order
 		bool sortY = false;
 		Renderable() = default;
-		Renderable(uint32_t texture, vec4f rect, vec4f _uv, ColorRGBA8 _c) : TexId(texture), trans(rect), uv(_uv), color(_c) {}
+		Renderable(uint32_t texture, Vec4f rect, Vec4f _uv, ColorRGBA8 _c) : TexId(texture), trans(rect), uv(_uv), color(_c) {}
 
-		Renderable(uint32_t texture, vec4f rect, vec4f _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, int id, int _layer, bool sY = false)
+		Renderable(uint32_t texture, Vec4f rect, Vec4f _uv, ColorRGBA8 _c, float _r, bool fx, bool fy, int id, int _layer, bool sY = false)
 			: TexId(texture), trans(rect), uv(_uv), color(_c), r(_r), flipX(fx), flipY(fy), entId(id), layer(_layer), sortY(sY) {
 		}
 

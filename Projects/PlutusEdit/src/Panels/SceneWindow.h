@@ -5,6 +5,7 @@
 #define EDIT_REMOVE 2
 
 #include "../Config.h"
+#include <string>
 
 namespace Plutus
 {
@@ -16,6 +17,8 @@ namespace Plutus
     private:
         Config* mConfig;
         Render* mRender;
+        std::string sceneName;
+        std::string newName;
 
     public:
         void init(Config* config, Render* render) {

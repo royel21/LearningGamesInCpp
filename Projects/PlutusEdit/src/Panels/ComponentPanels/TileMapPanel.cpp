@@ -20,7 +20,7 @@
 
 namespace Plutus
 {
-    vec2i getCoords(Config* config) {
+    Vec2i getCoords(Config* config) {
         auto pos = config->mMouseCoords;
         return DebugRender::get()->getSquareCoords({ pos.x, pos.y });
     }
@@ -62,21 +62,20 @@ namespace Plutus
             //Texture Combobox
             ImGui::Text("Textures");
             ImGui::SameLine();
-            ImGui::PushItemWidth(120);
-            if (ImGui::ComboBox("##mttexture", mTileMap->mTextures, mCurrentTexture)) {
-                mTempTiles.clear();
-                if (mCurrentTile)
-                    mCurrentTile->texcoord = 0;
-            }
-            ImGui::PopItemWidth();
-            ImGui::SameLine();
             //Add, Remove Buttons
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });
             if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE " ##tm-add-tex")) {
                 addTexture = true;
             }
             ImGui::SameLine();
-            if (ImGui::TransparentButton(ICON_FA_TRASH " ##tm-rm-tex")) {
+            ImGui::SetNextItemWidth(ImGui::GetContentRegionAvailWidth() - 20);
+            if (ImGui::ComboBox("##mttexture", mTileMap->mTextures, mCurrentTexture)) {
+                mTempTiles.clear();
+                if (mCurrentTile)
+                    mCurrentTile->texcoord = 0;
+            }
+            ImGui::SameLine();
+            if (ImGui::TransparentButton(ICON_FA_TRASH " ##tm-rm-tex", true, { 1,0,0,1 })) {
                 mTempTiles.clear();
                 mTileMap->removeTexture(mCurrentTexture);
                 if (mCurrentTile)
@@ -252,9 +251,9 @@ namespace Plutus
             auto& textures = AssetManager::get()->getAssets<Texture>();
             static std::string current = textures.begin()->first;
             int index = (int)mTileMap->mTextures.size();
+            ImGui::SetNextWindowSize({ 400, 0 });
 
             float width = ImGui::GetContentRegionAvailWidth() * 0.3f;
-
             ImGui::BeginDialog("Texture Modal");
 
             ImGui::Row("Textures", width);
@@ -264,13 +263,12 @@ namespace Plutus
 
             auto texture = static_cast<Texture*>(textures[current]);
             ImGui::DrawTexture(texture, 400, 350, scale);
-            ImGui::Separator();
-            if (ImGui::Button("Add Texture##mt-modal"))
-            {
-                mTileMap->addTexture(current);
-                show = false;
-            }
-            ImGui::EndDialog(show);
+            ImGui::EndDialog(show, [&](bool save) {
+                if (save) {
+                    mTileMap->addTexture(current);
+                    show = false;
+                }
+                });
         }
     }
 }

@@ -52,7 +52,7 @@ namespace Plutus
         writer.Bool(data);
     }
 
-    void Serializer::add2Float(const std::string& id, const vec2f& v)
+    void Serializer::add2Float(const std::string& id, const Vec2f& v)
     {
         StartArr(id);
         {
@@ -107,18 +107,18 @@ namespace Plutus
         return value->HasMember(key) ? (*value)[key].GetString() : def;
     }
 
-    Plutus::vec2f JsonHelper::getFloat2(const char* key, Plutus::vec2f def)
+    Plutus::Vec2f JsonHelper::getFloat2(const char* key, Plutus::Vec2f def)
     {
-        Plutus::vec2f f2 = def;
+        Plutus::Vec2f f2 = def;
         if (value->HasMember(key)) {
             auto arr = (*value)[key].GetArray();
             f2 = { arr[0].GetFloat(), arr[1].GetFloat() };
         }
         return f2;
     }
-    Plutus::vec4f JsonHelper::getFloat4(const char* key, Plutus::vec4f def)
+    Plutus::Vec4f JsonHelper::getFloat4(const char* key, Plutus::Vec4f def)
     {
-        Plutus::vec4f f4 = def;
+        Plutus::Vec4f f4 = def;
         if (value->HasMember(key)) {
             auto arr = (*value)[key].GetArray();
             f4 = { arr[0].GetFloat(), arr[1].GetFloat(), arr[2].GetFloat(), arr[3].GetFloat() };

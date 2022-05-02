@@ -16,7 +16,7 @@ namespace Plutus
         float bl = 0; // bitmap left;
         float bt = 0; // bitmap top;
 
-        vec4f uv; // x offset of glyph in texture coordinates
+        Vec4f uv; // x offset of glyph in texture coordinates
     };
     /*
         Font Struct Replesenting a single font
@@ -29,7 +29,7 @@ namespace Plutus
     {
         unsigned int mTexId = -1;
         int mSize = 16;
-        CharData ch[128] = {0};
+        CharData ch[128] = { 0 };
 
         Font() = default;
         ~Font() { destroy(); }

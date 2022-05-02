@@ -15,6 +15,7 @@ namespace Plutus
         sol::state mGlobalLua;
 
         void registerAssets();
+        void registerCamera();
         void registerEntity();
         void registerComponents();
     };

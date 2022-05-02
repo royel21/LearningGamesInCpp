@@ -27,9 +27,12 @@ namespace Plutus
         entt::entity getEntityId() const { return mId; }
 
         const std::string getName();
+        Vec2f getPosition();
+
+
         void setName(const std::string& name);
-        bool isValid();
-        operator bool() const { return mId != entt::null; }
+        bool isValid() const;
+        operator bool() const { return isValid(); }
         operator entt::entity() const { return mId; }
         operator uint32_t() const { return (uint32_t)mId; }
 
@@ -86,9 +89,9 @@ namespace Plutus
 
         inline bool isValid(Entity ent) { return mRegistry.valid(ent); }
 
-        entt::registry* getRegistry() { return &mRegistry; }
+        inline entt::registry* getRegistry() { return &mRegistry; }
         // remove all entity from scene
-        void clear() { mRegistry.clear(); }
+        inline void clear() { mRegistry.clear(); mBGColor = {}; }
 
     private:
         entt::registry mRegistry;

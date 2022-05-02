@@ -108,7 +108,7 @@ namespace Plutus
 	/***************************** Shapes **********************************************/
 	void DebugRender::drawBox(Box2d& b, const ColorRGBA8& color)
 	{
-		// drawBox(vec4f(b.pos.x, b.pos.y, b.size.x, b.size.y), b.rotation, color);
+		// drawBox(Vec4f(b.pos.x, b.pos.y, b.size.x, b.size.y), b.rotation, color);
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 4);
 		auto vertices = b.getVertices();
@@ -123,13 +123,14 @@ namespace Plutus
 	}
 	/*******************************************************************************************************/
 
-	void DebugRender::drawLine(const vec2f& a, const vec2f& b, float angle, const ColorRGBA8& color)
+	void DebugRender::drawLine(const Vec2f& a, const Vec2f& b, float angle, const ColorRGBA8& color)
 	{
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 2);
 
 		mVertexs[i].position = a;
 		mVertexs[i].color = color;
+
 		mVertexs[i + 1].position = b;
 		mVertexs[i + 1].color = color;
 
@@ -137,23 +138,23 @@ namespace Plutus
 		mIndices.push_back(i + 1);
 	}
 
-	void DebugRender::drawBox(const vec4f& rect, float angle, const ColorRGBA8& color)
+	void DebugRender::drawBox(const Vec4f& rect, float angle, const ColorRGBA8& color)
 	{
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 4);
 
-		vec2f bl(rect.x, rect.y);
+		Vec2f bl(rect.x, rect.y);
 		//top left
-		vec2f tl(rect.x, rect.y + rect.w);
+		Vec2f tl(rect.x, rect.y + rect.w);
 		//bottom right
-		vec2f tr(rect.x + rect.z, rect.y + rect.w);
+		Vec2f tr(rect.x + rect.z, rect.y + rect.w);
 		//top right
-		vec2f br(rect.x + rect.z, rect.y);
+		Vec2f br(rect.x + rect.z, rect.y);
 
 		if (angle)
 		{
-			vec2f halfDim(rect.z * 0.5f, rect.w * 0.5f);
-			vec2f center = vec2f(rect.x, rect.y) + halfDim;
+			Vec2f halfDim(rect.z * 0.5f, rect.w * 0.5f);
+			Vec2f center = Vec2f(rect.x, rect.y) + halfDim;
 			rotate(bl, center, angle);
 			rotate(tl, center, angle);
 			rotate(tr, center, angle);
@@ -168,10 +169,11 @@ namespace Plutus
 		addIndices(i);
 	}
 
-	void DebugRender::drawCircle(const vec2f& center, float radius, const ColorRGBA8& color)
+	void DebugRender::drawCircle(const Vec2f& center, float radius, const ColorRGBA8& color)
 	{
 		uint32_t start = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + NUmVERTS);
+
 		for (size_t i = 0; i < NUmVERTS; i++)
 		{
 			float angle = ((float)i / NUmVERTS) * 2.0f * PI;
@@ -199,11 +201,11 @@ namespace Plutus
 
 			auto campos = mCamera->getPosition();
 
-			vec2f size = mCamera->getScaleScreen();
-			vec2f lineStart;
-			vec2f lineEnd;
+			Vec2f size = mCamera->getScaleScreen();
+			Vec2f lineStart;
+			Vec2f lineEnd;
 
-			vec2f cpos = { round(campos.x / tw) * tw, round(campos.y / th) * th };
+			Vec2f cpos = { round(campos.x / tw) * tw, round(campos.y / th) * th };
 
 			for (float currentLine = -3 * tw; currentLine <= size.x + tw; currentLine += tw)
 			{
@@ -248,9 +250,9 @@ namespace Plutus
 		}
 	}
 
-	vec2i DebugRender::getSquareCoords(vec2f mousePos)
+	Vec2i DebugRender::getSquareCoords(Vec2f mousePos)
 	{
-		vec2f cmpos = mCamera->convertScreenToWold(mousePos);
+		Vec2f cmpos = mCamera->convertScreenToWold(mousePos);
 
 		int x = (int)floor(cmpos.x / mCellSize.x);
 		int y = (int)floor(cmpos.y / mCellSize.y);
@@ -258,7 +260,7 @@ namespace Plutus
 		return { x, y };
 	}
 
-	void DebugRender::setCellSize(const vec2i& cellSize)
+	void DebugRender::setCellSize(const Vec2i& cellSize)
 	{
 		mCellSize = { std::max(0, cellSize.x), std::max(0, cellSize.y) };
 	}

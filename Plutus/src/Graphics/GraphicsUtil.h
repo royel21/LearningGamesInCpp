@@ -7,5 +7,5 @@ constexpr float PI = 3.14159265359f;
 
 namespace Plutus
 {
-    vec2f rotatePoint2D(const vec2f& point, float angle);
+    Vec2f rotatePoint2D(const Vec2f& point, float angle);
 } // namespace Plutus

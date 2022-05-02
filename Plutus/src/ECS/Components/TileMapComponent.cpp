@@ -5,7 +5,7 @@
 namespace Plutus
 {
 
-    vec4f Tile::getRect() {
+    Vec4f Tile::getRect() {
         return { x * parent->mTileWidth, y * parent->mTileHeight, parent->mTileWidth, parent->mTileHeight };
     }
 
@@ -39,13 +39,13 @@ namespace Plutus
         mTiles.back().setParent(this);
     }
 
-    Tile* TileMapComponent::getTile(const vec2i& mCoords)
+    Tile* TileMapComponent::getTile(const Vec2i& mCoords)
     {
         int index = getIndex(mCoords);
         return index > -1 ? &mTiles[index] : nullptr;
     }
 
-    int TileMapComponent::getIndex(const vec2i& pos)
+    int TileMapComponent::getIndex(const Vec2i& pos)
     {
         auto it = std::find_if(mTiles.begin(), mTiles.end(), [=](const Tile& ntile) -> bool
             { return ntile.x == pos.x && ntile.y == pos.y; });
@@ -53,7 +53,7 @@ namespace Plutus
         return it != mTiles.end() ? int(it - mTiles.begin()) : -1;
     }
 
-    bool TileMapComponent::removeTile(const vec2i& mCoords)
+    bool TileMapComponent::removeTile(const Vec2i& mCoords)
     {
         int index = getIndex(mCoords);
         if (index > -1)

@@ -8,9 +8,11 @@ namespace ImGui
 {
     bool NewFileDialig(const char* label, std::function<void(const std::string&)> callback)
     {
+        ImVec2 btnWidth = { 75, 0 };
         static std::string name;
         ImVec2 center = ImGui::GetMainViewport()->GetCenter();
         ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+        ImGui::SetNextWindowSize({ 300,0 });
         ImGui::OpenPopup(label);
         if (ImGui::BeginPopupModal(label, NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 
@@ -18,14 +20,16 @@ namespace ImGui
             ImGui::InputString("##n-p", name);
 
             ImGui::Separator();
+            ImGui::InvisibleButton("##n-name", { 1,1 });
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.33f, 0.33f, 0.33f, 0.8f));
-            if (ImGui::Button("OK", ImVec2(120, 0))) {
+            ImGui::SameLine(70);
+            if (ImGui::Button("OK", btnWidth)) {
                 callback(name);
                 name = "";
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SameLine();
-            if (ImGui::Button("Cancel##modal-1")) {
+            if (ImGui::Button("Cancel##modal-1", btnWidth)) {
                 callback("");
                 name = "";
                 ImGui::CloseCurrentPopup();

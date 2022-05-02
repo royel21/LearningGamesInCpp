@@ -19,18 +19,18 @@ namespace Plutus
         void drawViewPort();
         void CameraControl();
         void selectEntity(float x, float y);
-        vec2f getMousePos();
+        Vec2f getMousePos();
         void showConfig();
 
     private:
         Config* mConfig;
 
-        vec2f mMouseLastCoords;
-        vec2f mCamCoords;
-        vec2f mEntLastPos;
+        Vec2f mMouseLastCoords;
+        Vec2f mCamCoords;
+        Vec2f mEntLastPos;
 
-        vec2f mCursor;
-        vec2f mTexRegion;
+        Vec2f mCursor;
+        Vec2f mTexRegion;
 
         std::string currentScript;
         std::vector<std::string> scripts;

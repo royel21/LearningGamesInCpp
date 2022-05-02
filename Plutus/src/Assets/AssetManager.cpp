@@ -13,6 +13,7 @@ namespace Plutus
 	}
 
 	AssetManager::AssetManager() {
+
 		if (mAudioEngine == nullptr) {
 			mAudioEngine = new ma_engine;
 
@@ -37,12 +38,13 @@ namespace Plutus
 	}
 
 	void AssetManager::destroy() {
-		for (auto& repo : mAssets) {
+		for (auto& repo : mAssets)
+		{
 			for (auto& a : repo) {
 				a.second->destroy();
 				delete a.second;
 			}
+			repo.clear();
 		}
-		mAssets.clear();
 	}
 }

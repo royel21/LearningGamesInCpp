@@ -30,7 +30,8 @@ namespace Plutus
 
         std::string getDir(const std::string& part);
 
-        void CreateScene(const std::string& name);
+        bool CreateScene(const std::string& name);
+        void RenameScene(const std::string& oldName, const std::string& newName);
         void removeScene(std::string id);
 
         void clearScene();
@@ -39,7 +40,7 @@ namespace Plutus
     struct Config
     {
         //Mouse Coords in view port
-        vec2f mMouseCoords;
+        Vec2f mMouseCoords;
         // Is Viewport hovered
         bool isHover;
 
