@@ -1,6 +1,8 @@
 #include "Camera2D.h"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include <cmath>
+
 #include <ECS/Components/TransformComponent.h>
 
 namespace Plutus
@@ -20,6 +22,14 @@ namespace Plutus
 
 	void Camera2D::update()
 	{
+		if (mEntity) {
+			mCamPos = mEntity.getPosition() + (mOffset * mScale);
+			if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
+			if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
+			if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
+			if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
+		}
+		mCamPos = { roundf(mCamPos.x), roundf(mCamPos.y) };
 		auto view = glm::lookAt(glm::vec3{ mCamPos.x, mCamPos.y, 20.0f }, { mCamPos.x, mCamPos.y, -1 }, { 0,1,0 });
 		mCameraMatrix = mOrtho * view;
 	}
@@ -27,12 +37,6 @@ namespace Plutus
 	Vec4f Camera2D::getViewPortDim()
 	{
 		return  Vec4f{ mCamPos.x, mCamPos.y, mScreenWidth / mScale, mScreenHeight / mScale };
-	}
-
-	void Camera2D::setViewPosition(const Vec2f& v) {
-		auto half = Vec2f(mScreenWidth >> 1, mScreenHeight >> 1) / mScale;
-		auto pos = v / mScale;
-		setPosition(pos + half);
 	}
 
 	Vec2f Camera2D::convertScreenToWold(Vec2f coords, bool invertY)

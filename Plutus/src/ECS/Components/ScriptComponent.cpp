@@ -23,7 +23,6 @@ namespace Plutus
             auto result = lua.script(script->mBuffer, mEnv);
             if (result.valid()) {
                 mEnv[ent.getName()] = Entity{ ent.mId, ent.mScene };
-
                 if (mEnv["init"] != sol::nil) {
                     mEnv["init"]();
                     isLoaded = true;

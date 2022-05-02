@@ -20,7 +20,6 @@ namespace Plutus
 
     public:
         Entity() = default;
-        Entity(int id);
         Entity(const Entity& ent) : mId(ent.mId), mScene(ent.mScene) { }
         Entity(const Entity* ent) : mId(ent->mId), mScene(ent->mScene) { }
         Entity(entt::entity ent, Scene* scene) : mId(ent), mScene(scene) {}
@@ -28,6 +27,9 @@ namespace Plutus
         entt::entity getEntityId() const { return mId; }
 
         const std::string getName();
+        Vec2f getPosition();
+
+
         void setName(const std::string& name);
         bool isValid() const;
         operator bool() const { return isValid(); }

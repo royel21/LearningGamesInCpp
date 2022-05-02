@@ -15,7 +15,16 @@ local state = ""
 
 local rbody
 
+local size = camera:getVPSize();
+print(size.x, size.y)
+
+local vec = Vec2f.new( -(size.x/2 - 32), -(size.y/2 - 32) );
+
+local bounds = Vec4f.new(0,0, 823, 425)
+camera:setBounds(bounds);
+
 function init()
+	camera:setTarget(Player2, vec )
     local anim = Player2:getAnimate()
     if anim then anim:play(curAnime) end
     rbody = Player2:getRigidBody()
@@ -99,6 +108,18 @@ function update(dt)
         state = "     "
     end
 end
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

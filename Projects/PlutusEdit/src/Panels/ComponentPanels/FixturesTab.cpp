@@ -78,6 +78,7 @@ void drawFixtures(Plutus::PhysicBodyComponent* physicBody) {
 
         ImGui::EndPopup();
     }
+
     int id = 0;
     int removeId = -1;
     int copyId = -1;
@@ -97,7 +98,6 @@ void drawFixtures(Plutus::PhysicBodyComponent* physicBody) {
     }
 
     if (copyId > -1) {
-        Logger::info("Copy: %i", copyId);
         physicBody->mFixtures.emplace_back(physicBody->mFixtures[copyId - 1]);
     }
 }

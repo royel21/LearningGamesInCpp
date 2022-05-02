@@ -98,6 +98,8 @@
         "stb_sprintf.h": "c"
     },
     "cmake.debugConfig": {
-        "cwd": "${workspaceFolder}"
+        "cwd": "${workspaceFolder}",
+        "externalConsole": true
+
     }
 }

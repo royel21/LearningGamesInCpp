@@ -130,6 +130,7 @@ namespace Plutus
 
 		mVertexs[i].position = a;
 		mVertexs[i].color = color;
+
 		mVertexs[i + 1].position = b;
 		mVertexs[i + 1].color = color;
 
@@ -172,6 +173,7 @@ namespace Plutus
 	{
 		uint32_t start = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + NUmVERTS);
+
 		for (size_t i = 0; i < NUmVERTS; i++)
 		{
 			float angle = ((float)i / NUmVERTS) * 2.0f * PI;

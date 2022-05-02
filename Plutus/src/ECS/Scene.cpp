@@ -1,23 +1,25 @@
 #include "Scene.h"
 #include "Components.h"
 
-#include <box2d/box2d.h>
-
 namespace Plutus
 {
+
+    Vec2f Entity::getPosition() {
+        auto trans = getComponent<TransformComponent>();
+        if (trans) {
+            return trans->getPosition();
+        }
+
+        return {};
+    }
 
     const std::string Entity::getName()
     {
         return isValid() ? mScene->mRegistry.get<Tag>(mId).Name : "";
     }
 
-    Entity::Entity(int id) {
-        auto ent = entt::entity(id);
-        mId = mScene->mRegistry.valid(ent) ? ent : entt::null;
-    }
-
     bool Entity::isValid() const {
-        return mId != entt::null && mScene->mRegistry.valid(mId);
+        return mScene && mScene->mRegistry.valid(mId);
     }
 
     void Entity::setName(const std::string& name)

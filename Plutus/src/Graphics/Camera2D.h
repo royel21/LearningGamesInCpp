@@ -2,8 +2,9 @@
 #define _CAMERA2D_H
 
 #include <glm/glm.hpp>
-#include <Math/Vectors.h>
+
 #include <ECS/Scene.h>
+#include <Math/Vectors.h>
 
 namespace Plutus
 {
@@ -21,6 +22,7 @@ namespace Plutus
 		Entity mEntity;
 		Vec2f mOffset = { 0, 0 };
 		Vec2f mCamPos = { 0, 0 };
+		Vec4f mBounds = { 0, 0 };
 		glm::mat4 mOrtho = glm::mat4(0);
 		glm::mat4 mCameraMatrix = glm::mat4(0);
 
@@ -38,21 +40,17 @@ namespace Plutus
 		//set camera position and shedule a update
 		//@param x position x
 		//@param y position y
-		inline void setPosition(float x, float y)
-		{
-			mCamPos.x = x;
-			mCamPos.y = y;
-			update();
-		}
+		inline void setPosition(float x, float y) { mCamPos.x = x; mCamPos.y = y; }
+
+		inline void setBounds(const Vec4f& bounds) { mBounds = bounds; }
 
 		//set camera position and shedule a update
 		//@param newPosition glm vec2 position
-		inline void setPosition(const Vec2f& pos) { setPosition(pos.x, pos.y); }
+		inline void setPosition(const Vec2f& pos) { mCamPos = pos; }
 
-		inline void setTarget(Entity entity, const Vec2f& offset = { 0 }) { mEntity = entity; mOffset = offset; }
-
-		inline void setViewPosition(float x, float y) { setViewPosition(Vec2f{ x, y }); };
-		void setViewPosition(const Vec2f& v);
+		inline void setTarget(Entity entity, const Vec2f& offset = { 0 }) {
+			mEntity = entity; mOffset = offset;
+		}
 		/*
 			change the camera to a new with and height
 			@param w Width of the camera in pixel
@@ -74,6 +72,7 @@ namespace Plutus
 		Vec2f getViewPortSize() { return Vec2f(mScreenWidth, mScreenHeight); }
 		//Getters
 		inline Vec2f getPosition() { return mCamPos; }
+
 		// return the 4x4 camera matrix
 		inline glm::mat4 getCameraMatrix() { return mCameraMatrix; }
 		//Convert screen coordination to camera coordination and return it

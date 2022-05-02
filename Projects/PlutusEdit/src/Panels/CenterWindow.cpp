@@ -99,7 +99,9 @@ namespace Plutus
             if (Input::get()->onKeyPressed("MouseLeft"))
             {
                 mMouseLastCoords = mConfig->mMouseCoords;
-                Entity ent = { mConfig->mRender->mFramePicker.getEntId({ x, y }) };
+
+                auto id = mConfig->mRender->mFramePicker.getEntId({ x, y });
+                Entity ent = mConfig->mProject.scene->getEntity(id);
 
                 if (ent) {
                     project.mEnt = ent;
@@ -128,7 +130,7 @@ namespace Plutus
         auto camera = mConfig->mRender->mCamera;
         auto& project = mConfig->mProject;
 
-        ImGui::SetNextWindowSize({ 0, 0 });
+        ImGui::SetNextWindowSize({ 0, 400 });
         auto winPos = ImGui::GetCursorScreenPos();
         ImVec2 pos(winPos.x + 200, winPos.y + 50);
         ImGui::SetNextWindowPos(pos);
@@ -301,6 +303,7 @@ namespace Plutus
 
                         mSysManager.stop();
                         mConfig->mTempProject.clearScene();
+                        mConfig->mRender->mCamera.setPosition(mCamCoords);
                     }
                     else {
                         mConfig->state = Running;
@@ -311,6 +314,7 @@ namespace Plutus
 
                         mSysManager.init();
                         mConfig->mRender->setScene(mConfig->mTempProject.scene.get());
+                        mCamCoords = mConfig->mRender->mCamera.getPosition();
                     }
                 }
                 ImGui::SameLine();

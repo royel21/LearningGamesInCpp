@@ -54,6 +54,7 @@ namespace Plutus
 
     void Render::draw()
     {
+        mCamera.update();
         if (mScene && mConfig) {
             // auto start = Timer::millis();
             mFrameBuffer.setColor(mScene->mBGColor);
