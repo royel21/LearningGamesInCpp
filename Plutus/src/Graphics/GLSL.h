@@ -10,7 +10,7 @@
 
 namespace GLSL {
 
-    const std::string vertexShader = std::string(VERTEX_HEADER) + R"END(
+    const std::string vertexShader = R"END(
 layout(location = 0) in vec2 vertexPosition;
 layout(location = 1) in vec2 vertexUV;
 layout(location = 2) in vec4 vertexColor;
@@ -33,7 +33,7 @@ void main() {
     entityId = entId + 1.0;
 })END";
 
-    const std::string fragShader = std::string(VERTEX_HEADER) + R"END(
+    const std::string fragShader = R"END(
 in vec2 uv;
 in vec4 color;
 in float entityId;
@@ -67,7 +67,7 @@ void main() {
 
 })END";
 
-    const std::string debug_vertshader = std::string(VERTEX_HEADER) + R"END(
+    const std::string debug_vertshader = R"END(
 layout(location = 0) in vec2 vertexPosition;
 layout(location = 1) in vec4 in_color;
 
@@ -83,7 +83,7 @@ void main() {
     color = in_color;
 })END";
 
-    const std::string debug_fragshader = std::string(VERTEX_HEADER) + R"END(
+    const std::string debug_fragshader = R"END(
 //The fragment shader operates on each pixel in a given polygon
 
 in vec4 color;

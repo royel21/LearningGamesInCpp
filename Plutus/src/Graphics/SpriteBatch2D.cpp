@@ -61,24 +61,7 @@ namespace Plutus
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		GLuint* indices = new GLuint[RENDERER_INDICES_SIZE];
-
-		int offest = 0;
-		for (size_t i = 0; i < RENDERER_INDICES_SIZE; i += 6)
-		{
-			indices[i + 0] = offest + 0;
-			indices[i + 1] = offest + 1;
-			indices[i + 2] = offest + 2;
-
-			indices[i + 3] = offest + 2;
-			indices[i + 4] = offest + 3;
-			indices[i + 5] = offest + 0;
-
-			offest += 4;
-		}
-
-		mIBO = new IndexBuffer(indices, RENDERER_INDICES_SIZE);
-		delete[] indices;
+		mIBO = new IndexBuffer(RENDERER_MAX_SPRITES);
 
 		mRenderBatches.clear();
 		bufferVertices.clear();
