@@ -15,9 +15,9 @@ namespace Plutus
 	{
 		Vec2f m_position;
 		Vec2f m_velocity;
-		ColorRGBA8 m_color;
 		float m_life;
 		float m_width;
+		ColorRGBA8 m_color;
 	};
 
 	inline void defaultParticleUpdate(Particle2D& p, float deltaTime)

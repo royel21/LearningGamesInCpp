@@ -26,8 +26,8 @@ void GameScreen::Init()
     mSystemManager.AddSystem<Plutus::AnimationSystem>();
     mSystemManager.AddSystem<Plutus::RenderSystem>(mCamera);
 
-    auto debugSys = mSystemManager.AddSystem<Plutus::DebugSystem>(mCamera);
-    debugSys->drawGrid(true, 64, 64);
+    // auto debugSys = mSystemManager.AddSystem<Plutus::DebugSystem>(mCamera);
+    // debugSys->drawGrid(true, 64, 64);
 }
 
 void GameScreen::Enter()

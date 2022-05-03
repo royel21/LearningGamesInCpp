@@ -20,7 +20,7 @@ print(size.x, size.y)
 
 local vec = Vec2f.new( -(size.x/2 - 32), -(size.y/2 - 32) );
 
-local bounds = Vec4f.new(0,0, 823, 425)
+local bounds = Vec4f.new(0,0, 960, 528)
 camera:setBounds(bounds);
 
 function init()
@@ -108,6 +108,7 @@ function update(dt)
         state = "     "
     end
 end
+
 
 
 

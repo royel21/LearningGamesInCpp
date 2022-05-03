@@ -92,7 +92,6 @@ namespace Plutus
                 mRenderables[i++] = { tex ? tex->mTexId : 0, rect, sprite.mUVCoord, sprite.mColor,
                     trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
             }
-
         }
         mRenderables.resize(i);
         // sort by layer, y position, texture
