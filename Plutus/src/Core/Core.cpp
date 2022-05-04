@@ -95,4 +95,8 @@ namespace Plutus
     void Core::setNextScreen(const std::string & screenId) {
         mNextScreen = screenId;
     }
+
+    void Core::setBackgoundColor(float r, float g, float b, float a) {
+        glClearColor(r, g, b, a);
+    }
 } // namespace Plutus

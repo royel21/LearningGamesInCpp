@@ -7,6 +7,7 @@
 #include <Time/Timer.h>
 #include <Input/Input.h>
 #include <Utils/FileIO.h>
+#include <Utils/Utils.h>
 #include <Assets/Assets.h>
 #include <ECS/Components.h>
 #include <Systems/Systems.h>
@@ -28,15 +29,19 @@ namespace Plutus
     void App::Init() {
         mSystemManager.setProject(&mProject);
 
+        AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle-textures/particleAtlas.png", 32, 32, GL_LINEAR, GL_LINEAR);
+
         auto ent = mProject.scene->createEntity("particleEmiter");
 
         ent.addComponent<TransformComponent>(0.0f, 0.0f, 10, 10);
-        auto particles = ent.addComponent<ParticleComponent>(50);
+        auto particles = ent.addComponent<ParticleComponent>(100);
+        // particles->color.setColor(255, 255, 255, 255);
+        particles->addTexture("particles.png");
 
         mSystemManager.AddSystem<ParticleSystem>(&mCamera);
 
         mSystemManager.init();
-
+        Logger::info("init");
     }
 
     float force = 0.2f;
@@ -90,15 +95,20 @@ namespace Plutus
             auto ent = mProject.scene->getEntityByName("particleEmiter");
             auto particles = ent.getComponent<ParticleComponent>();
 
-            for (int i = 0; i < 100; i++) {
-                particles->addParticle(pos, 50, { 0, 50 }, 2.0f);
+            for (int i = 0; i < 10; i++) {
+                auto x = Utils::getRandom(-5, 5);
+                auto y = Utils::getRandom(0, 50);
+                particles->addParticle(pos, 100, { x, y }, 4.0f);
+                // Logger::info("num: %i %i", x, y);
             }
+            Logger::warn("Next");
         }
 
         if (Input::get()->onKeyPressed("MouseLeft"))
         {
             mouseLast = Input::get()->getMouseCoords();
             camOrg = mCamera.getPosition();
+
         }
         // move the camera
         if (Input::get()->isCtrl)
@@ -109,7 +119,7 @@ namespace Plutus
                 Vec2f result = Input::get()->getMouseCoords() - mouseLast;
                 result /= mCamera.getScale();
                 offset = camOrg - result;
-                Logger::info("camera Pos: %.2f %.2f", result.x, result.y);
+                // Logger::info("camera Pos: %.2f %.2f", result.x, result.y);
                 mCamera.setPosition(offset);
             }
 
@@ -124,11 +134,11 @@ namespace Plutus
 
                 auto offset = newPos - mpos;
                 mCamera.setPosition(mCamera.getPosition() - offset);
-                Logger::info("offset: %.2f %.2f", offset.x, offset.y);
+                // Logger::info("offset: %.2f %.2f", offset.x, offset.y);
 
             }
         }
-
+        // setBackgoundColor(0.0f, 0.5f, 0.8f);
 
         auto start = Timer::micros();
         mSystemManager.update(dt);

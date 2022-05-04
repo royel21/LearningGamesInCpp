@@ -78,7 +78,7 @@ void GameScreen::Update(float dt)
 
 void GameScreen::Draw()
 {
-    setBackgoundColor(0.33f, 0.33f, 0.33f, 1);
+    mCore->setBackgoundColor(0.33f, 0.33f, 0.33f, 1);
 }
 
 

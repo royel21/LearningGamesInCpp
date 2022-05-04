@@ -244,8 +244,6 @@ namespace Plutus
 
     void App::Draw()
     {
-        setBackgoundColor(0, 0, 0, 1);
-
         for (auto& shape : mShapes) {
             switch (shape->type) {
             case BoxShape: {

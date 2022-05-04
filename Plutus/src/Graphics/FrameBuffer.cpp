@@ -1,5 +1,5 @@
 #include "FrameBuffer.h"
-#include <Graphics/GLheaders.h>
+#include <Graphics/GLUtils.h>
 #include <assert.h>
 
 namespace Plutus

@@ -18,8 +18,9 @@ namespace Plutus
     struct RenderableParticle {
         Vec2f pos;
         Vec2f uv;
-        RenderableParticle(float x, float y, float ux, float uy) : pos(x, y), uv(ux, uy) {}
-        RenderableParticle(const Vec2f& p, const Vec2f& up) : pos(p), uv(up) {}
+        ColorRGBA8 color;
+        RenderableParticle(float x, float y, float ux, float uy, ColorRGBA8 ucolor) : pos(x, y), uv(ux, uy), color(ucolor) {}
+        RenderableParticle(const Vec2f& p, const Vec2f& up, ColorRGBA8 ucolor) : pos(p), uv(up), color(ucolor) {}
     };
 
     struct Batch {

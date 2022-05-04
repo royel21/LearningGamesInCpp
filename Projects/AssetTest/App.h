@@ -6,7 +6,6 @@
 #include <Systems/SystemManager.h>
 #include <Graphics/FrameBuffer.h>
 
-
 namespace Plutus
 {
     class DebugRender;

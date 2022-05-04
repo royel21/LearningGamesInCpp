@@ -6,6 +6,8 @@
 #define float2u8(c) static_cast<uint8_t>(c * 255)
 #define RGBA2Int(r, g, b, a) a << 24 | b << 16 | g << 8 | r
 
+#define ALPHA 0xffffff
+
 namespace Plutus
 {
     struct ColorRGBA8
@@ -26,6 +28,10 @@ namespace Plutus
 
         inline void setColor(const Vec4f& v) {
             rgba = rgba = RGBA2Int(float2u8(v.x), float2u8(v.y), float2u8(v.z), float2u8(v.w));
+        }
+
+        void setAlpha(float a) {
+            rgba = (rgba & ALPHA) | float2u8(a) << 24;
         }
 
         operator uint32_t() const { return rgba; }

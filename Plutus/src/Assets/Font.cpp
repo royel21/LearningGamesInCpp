@@ -3,7 +3,7 @@
 #include <Log/Logger.h>
 
 #include <Utils/FileIO.h>
-#include <Graphics/GLheaders.h>
+#include <Graphics/GLUtils.h>
 // FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H

@@ -16,6 +16,7 @@
 
 #define SHADER_PART_POS 0
 #define SHADER_PART_UV 1
+#define SHADER_PART_COLOR 2
 
 namespace Plutus
 {
@@ -46,6 +47,9 @@ namespace Plutus
         glEnableVertexAttribArray(SHADER_PART_UV);
         glVertexAttribPointer(SHADER_PART_UV, 2, GL_FLOAT, GL_FALSE, sizeof(RenderableParticle), (void*)offsetof(RenderableParticle, uv));
 
+        glEnableVertexAttribArray(SHADER_PART_COLOR);
+        glVertexAttribPointer(SHADER_PART_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RenderableParticle), (void*)offsetof(RenderableParticle, color));
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         mIbo = new IndexBuffer(MAX_PARTICLES);
@@ -64,7 +68,7 @@ namespace Plutus
         mIbo->bind();
         glBindVertexArray(mVAO);
         glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-
+        enableBlendMode();
         for (auto& b : mBatches) {
             if (b.second.bufferVertices.size()) {
                 mShader.setUniform1i("hasTexture", b.first > -1);
@@ -83,7 +87,6 @@ namespace Plutus
             b.second.bufferVertices.clear();
             b.second.buffSize = 0;
         }
-
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         mIbo->unbind();
@@ -94,12 +97,16 @@ namespace Plutus
         auto view = mProject->scene->getRegistry()->view<ParticleComponent>();
 
         Vec4f uv = { 0,0,1,1 };
+
         for (auto [ent, particles] : view.each())
         {
             Batch* batch = &mBatches[-1];
 
-            if (particles.mTexture) {
-                batch = &mBatches[particles.mTexture->mTexId];
+            auto tex = particles.mTexture;
+            uint32_t size = 0;
+            if (tex) {
+                batch = &mBatches[tex->mTexId];
+                size = particles.mTexture->uvs.size() - 1;
             }
 
             batch->buffSize += particles.mParticles.size();
@@ -109,19 +116,25 @@ namespace Plutus
 
             for (auto& p : particles.mParticles) {
                 if (p) {
-                    particles.mUpdate(p, dt);
+                    auto color = particles.color;
+                    float alpha = particles.mUpdate(p, dt);
 
-                    if (particles.mTexture) {
+                    if (tex) {
+                        if (alpha < 1)
+                            p.texCoord = int((1.0f - alpha) * size);
+
                         uv = particles.mTexture->getUV(p.texCoord);
                     }
+
+                    // color.setAlpha(alpha);
 
                     float x = p.position.x;
                     float y = p.position.y;
 
-                    batch->bufferVertices.emplace_back(x, y, uv.x, uv.w); //bottom left
-                    batch->bufferVertices.emplace_back(x, y + p.size, uv.x, uv.y); ////Top left
-                    batch->bufferVertices.emplace_back(x + p.size, y + p.size, uv.z, uv.y);// Top Right
-                    batch->bufferVertices.emplace_back(x + p.size, y, uv.z, uv.w); // Bottom Right
+                    batch->bufferVertices.emplace_back(x, y, uv.x, uv.w, color); //bottom left
+                    batch->bufferVertices.emplace_back(x, y + p.size, uv.x, uv.y, color); ////Top left
+                    batch->bufferVertices.emplace_back(x + p.size, y + p.size, uv.z, uv.y, color);// Top Right
+                    batch->bufferVertices.emplace_back(x + p.size, y, uv.z, uv.w, color); // Bottom Right
                     batch->indexCount += 6;
                 }
             }

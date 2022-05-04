@@ -1,6 +1,6 @@
 in vec2 uv;
+in vec4 color;
 
-uniform vec4 uColor;
 uniform int hasTexture;
 uniform sampler2D uSampler;
 
@@ -10,8 +10,8 @@ void main() {
 
     if(hasTexture > 0){
         vec4 tex = texture(uSampler, uv);
-        fragColor = uColor * tex;
+        fragColor = color * tex;
     }else{
-        fragColor = uColor;
+        fragColor = color;
     }
 }

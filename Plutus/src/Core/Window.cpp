@@ -109,7 +109,8 @@ namespace Plutus
             }
             });
         //Enable alpha blend
-        enableBlendMode();
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #ifdef _WIN32
         // if we are on window set the time precision to 1ms for sleep function
         timeBeginPeriod(1);

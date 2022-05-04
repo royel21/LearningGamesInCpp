@@ -16,11 +16,12 @@ local state = ""
 local rbody
 
 local size = camera:getVPSize();
+
+local vec = Vec2f.new( -size.x/2 + 32, -size.y/2 + 32 );
+
 print(size.x, size.y)
 
-local vec = Vec2f.new( -(size.x/2 - 32), -(size.y/2 - 32) );
-
-local bounds = Vec4f.new(0,0, 960, 528)
+local bounds = Vec4f.new(0,0, 1280-size.x, 768-size.y)
 camera:setBounds(bounds);
 
 function init()
@@ -108,6 +109,9 @@ function update(dt)
         state = "     "
     end
 end
+
+
+
 
 
 

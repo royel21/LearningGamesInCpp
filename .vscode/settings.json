@@ -95,11 +95,11 @@
         "strstream": "cpp",
         "span": "cpp",
         "*.rh": "cpp",
-        "stb_sprintf.h": "c"
+        "stb_sprintf.h": "c",
+        "random": "cpp"
     },
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}",
-        "externalConsole": true
-
+        "console": true,
     }
 }

@@ -15,7 +15,7 @@ namespace Plutus
 			mWindowWidth = screenWidth; mWindowHeight = screenHeight;
 		}
 
-		mOrtho = glm::ortho(0.0f, (float)mScreenWidth / mScale, 0.0f, (float)mScreenHeight / mScale, 0.0f, 100.0f);
+		mOrtho = glm::ortho(0.0f, floorf((float)mScreenWidth / mScale), 0.0f, floorf((float)mScreenHeight / mScale), 0.0f, 100.0f);
 
 		update();
 	}
@@ -23,13 +23,13 @@ namespace Plutus
 	void Camera2D::update()
 	{
 		if (mEntity) {
-			mCamPos = mEntity.getPosition() + (mOffset * mScale);
+			mCamPos = mEntity.getPosition() + mOffset;
 			if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
 			if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
 			if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
 			if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
 		}
-		mCamPos = { roundf(mCamPos.x), roundf(mCamPos.y) };
+		mCamPos = { floorf(mCamPos.x), floorf(mCamPos.y) };
 		auto view = glm::lookAt(glm::vec3{ mCamPos.x, mCamPos.y, 20.0f }, { mCamPos.x, mCamPos.y, -1 }, { 0,1,0 });
 		mCameraMatrix = mOrtho * view;
 	}

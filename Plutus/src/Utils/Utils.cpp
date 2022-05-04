@@ -1,8 +1,10 @@
 #include "Utils.h"
 
-#include<time.h>
 #include <fstream>
 #include <filesystem>
+
+#include <cstdlib>
+#include <ctime>
 
 #define PI 3.141592653589793238463
 #define DEC2RA(dec) dec *(PI / 180)
@@ -103,7 +105,7 @@ namespace Plutus
                 first = false;
             }
 
-            return min + rand() % max;
+            return (rand() % (max + 1 - min)) + min;
         }
     } // namespace Utils
 } // namespace Plutus
