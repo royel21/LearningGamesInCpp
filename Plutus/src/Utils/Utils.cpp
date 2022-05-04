@@ -99,7 +99,7 @@ namespace Plutus
             static bool  first = true;
 
             if (first) {
-                srand(time(0));
+                srand((uint32_t)time(0));
                 first = false;
             }
 
