@@ -10,8 +10,10 @@
 #include <Assets/Assets.h>
 #include <ECS/Components.h>
 #include <Systems/Systems.h>
-#include <Graphics/DebugRenderer.h>
-#include <Serialize/SceneSerializer.h>
+
+#include "ParticleComponent.h"
+#include "ParticleSystem.h"
+
 
 #define CHECKLIMIT(val, min, max) val<min ? min : val> max ? max : val
 
@@ -26,6 +28,12 @@ namespace Plutus
     void App::Init() {
         mSystemManager.setProject(&mProject);
 
+        auto ent = mProject.scene->createEntity("particleEmiter");
+
+        ent.addComponent<TransformComponent>(0.0f, 0.0f, 10, 10);
+        auto particles = ent.addComponent<ParticleComponent>(50);
+
+        mSystemManager.AddSystem<ParticleSystem>(&mCamera);
 
         mSystemManager.init();
 
@@ -73,11 +81,18 @@ namespace Plutus
         // Logger::info("camera Pos: %.2f %.2f world: %.2f %.2f", pos.x, pos.y, woldOrg.x, woldOrg.y);
         // mCamera.setPosition(-woldOrg);
         if (Input::get()->onKeyPressed("MouseLeft")) {
-            // auto pos = Input::get()->getMouseCoords();
+            auto pos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
             // auto worldPos = mCamera.convertScreenToWold(pos);
             // Logger::info("camera Pos: %.2f %.2f world: %.2f %.2f", pos.x, pos.y, worldPos.x, worldPos.y);
-            mouseLast = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
-            Logger::info("camera Pos: %.2f %.2f", mouseLast.x, mouseLast.y);
+            // mouseLast = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
+            // Logger::info("camera Pos: %.2f %.2f", mouseLast.x, mouseLast.y);
+
+            auto ent = mProject.scene->getEntityByName("particleEmiter");
+            auto particles = ent.getComponent<ParticleComponent>();
+
+            for (int i = 0; i < 100; i++) {
+                particles->addParticle(pos, 50, { 0, 50 }, 2.0f);
+            }
         }
 
         if (Input::get()->onKeyPressed("MouseLeft"))
@@ -115,8 +130,9 @@ namespace Plutus
         }
 
 
-
+        auto start = Timer::micros();
         mSystemManager.update(dt);
+        Logger::info("elapse: %llu", Timer::micros() - start);
 
     }
 

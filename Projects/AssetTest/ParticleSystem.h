@@ -8,6 +8,8 @@
 #include <unordered_map>
 #include <stdint.h>
 
+#include <Graphics/Camera2D.h>
+
 namespace Plutus
 {
     class IndexBuffer;
@@ -16,17 +18,20 @@ namespace Plutus
     struct RenderableParticle {
         Vec2f pos;
         Vec2f uv;
+        RenderableParticle(float x, float y, float ux, float uy) : pos(x, y), uv(ux, uy) {}
+        RenderableParticle(const Vec2f& p, const Vec2f& up) : pos(p), uv(up) {}
     };
 
     struct Batch {
-        uint32_t offset = 0;
-        uint32_t numVerts = 0;
+        uint32_t buffSize = 0;
+        uint32_t indexCount = 0;
         std::vector<RenderableParticle> bufferVertices;
     };
 
     class ParticleSystem : public ISystem
     {
-        ParticleSystem();
+    public:
+        ParticleSystem(Camera2D* camera) : ISystem(camera) {};
         ~ParticleSystem();
         void init(Project* project);
         void update(float dt);
@@ -40,6 +45,8 @@ namespace Plutus
 
         IndexBuffer* mIbo = nullptr;
         std::unordered_map<int, Batch> mBatches;
+
+        Camera2D mCamera;
 
         void prepare(float dt);
     };

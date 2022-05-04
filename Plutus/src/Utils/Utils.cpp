@@ -1,5 +1,6 @@
 #include "Utils.h"
 
+#include<time.h>
 #include <fstream>
 #include <filesystem>
 
@@ -90,6 +91,19 @@ namespace Plutus
             auto str2 = str;
             for (auto& s : str2) if (s < 91) s = s + 32;
             return str2;
+        }
+
+
+        int getRandom(int min, int max)
+        {
+            static bool  first = true;
+
+            if (first) {
+                srand(time(0));
+                first = false;
+            }
+
+            return min + rand() % max;
         }
     } // namespace Utils
 } // namespace Plutus

@@ -24,7 +24,7 @@ namespace Plutus
         Particle(const Vec2f& pos, int _size, const Vec2f& vel, float _lifeTime, int _texCoord = 0)
             : position(pos), velocity(vel), size(_size), lifeTime(_lifeTime), texCoord(_texCoord) {};
 
-        operator bool() { return lifeTime < 0; }
+        operator bool() { return lifeTime > 0; }
     };
 
     struct ParticleComponent
@@ -43,6 +43,13 @@ namespace Plutus
         std::function<void(Particle&, float)> mUpdate = nullptr;
 
         ParticleComponent();
+        /**
+         * @brief Construct a new Particle Component object
+         *
+         * @param maxCount
+         * @param texId
+         * @param updatefunc
+         */
         ParticleComponent(int maxCount, const std::string& texId = "", std::function<void(Particle&, float)> updatefunc = nullptr) { init(maxCount, texId, updatefunc); }
 
         void init(int maxCount, const std::string& texId = "", std::function<void(Particle&, float)> updatefunc = nullptr);

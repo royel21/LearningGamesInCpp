@@ -6,6 +6,7 @@ namespace Plutus
 {
     void defaultUpdate(Particle& p, float dt) {
         p.position += p.velocity * dt;
+        p.lifeTime -= dt;
     }
 
     ParticleComponent::ParticleComponent() {
@@ -20,15 +21,4 @@ namespace Plutus
         mUpdate = updatefunc ? updatefunc : defaultUpdate;
         mParticles.resize(maxCount);
     }
-
-    void ParticleComponent::update(float dt) {
-
-        for (auto& p : mParticles) {
-            if (p) {
-                if (mUpdate) mUpdate(p, dt);
-                p.lifeTime -= dt;
-            }
-        }
-    }
-
 }

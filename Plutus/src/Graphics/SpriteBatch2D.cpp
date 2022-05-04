@@ -48,16 +48,16 @@ namespace Plutus
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 		//bind the Shader position to the buffer object
 		glEnableVertexAttribArray(SHADER_VERTEX_INDEX);
-		glVertexAttribPointer(SHADER_VERTEX_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void*)NULL);
+		glVertexAttribPointer(SHADER_VERTEX_INDEX, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)NULL);
 		//bind the Shader UV "Texture coordinate" to the buffer object
 		glEnableVertexAttribArray(SHADER_UV_INDEX);
-		glVertexAttribPointer(SHADER_UV_INDEX, 2, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void*)offsetof(Vertex, uv));
+		glVertexAttribPointer(SHADER_UV_INDEX, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
 		//bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
 		glEnableVertexAttribArray(SHADER_COLOR_INDEX);
-		glVertexAttribPointer(SHADER_COLOR_INDEX, 4, GL_UNSIGNED_BYTE, GL_TRUE, RENDERER_VERTEX_SIZE, (void*)offsetof(Vertex, color));
+		glVertexAttribPointer(SHADER_COLOR_INDEX, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, color));
 		//
 		glEnableVertexAttribArray(SHADER_ENTITYID_INDEX);
-		glVertexAttribPointer(SHADER_ENTITYID_INDEX, 1, GL_FLOAT, GL_FALSE, RENDERER_VERTEX_SIZE, (void*)offsetof(Vertex, entId));
+		glVertexAttribPointer(SHADER_ENTITYID_INDEX, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, entId));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -138,21 +138,11 @@ namespace Plutus
 		mShader->setUniform1i("mySampler", 0);
 		mShader->setUniformMat4("camera", mCamera->getCameraMatrix());
 
-		glClearDepthf(1.0f);
-
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 		glBufferData(GL_ARRAY_BUFFER, mVertexCount * sizeof(Vertex), bufferVertices.data(), GL_DYNAMIC_DRAW);
 
 		mIBO->bind();
 		glBindVertexArray(mVAO);
-	}
-
-	void SpriteBatch2D::unBind() {
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		mIBO->unbind();
-		mShader->disable();
 	}
 
 	void SpriteBatch2D::draw(BatchType type)
@@ -165,6 +155,14 @@ namespace Plutus
 			glBindTexture(GL_TEXTURE_2D, batch.texture);
 			glDrawElements(GL_TRIANGLES, batch.numVertices, GL_UNSIGNED_INT, (void*)(batch.offset * sizeof(GLuint)));
 		}
+	}
+
+	void SpriteBatch2D::unBind() {
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		mIBO->unbind();
+		mShader->disable();
 	}
 
 	void SpriteBatch2D::end()

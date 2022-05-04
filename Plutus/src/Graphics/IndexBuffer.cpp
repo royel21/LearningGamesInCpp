@@ -11,25 +11,25 @@ namespace Plutus
 	void IndexBuffer::init(uint32_t count) {
 		mCount = count * 6;
 
-		int offest = 0;
+		int offset = 0;
 		GLuint* indices = new GLuint[mCount];
 
 		for (size_t i = 0; i < mCount; i += 6)
 		{
-			indices[i + 0] = offest + 0;
-			indices[i + 1] = offest + 1;
-			indices[i + 2] = offest + 2;
+			indices[i + 0] = offset + 0;
+			indices[i + 1] = offset + 1;
+			indices[i + 2] = offset + 2;
 
-			indices[i + 3] = offest + 2;
-			indices[i + 4] = offest + 3;
-			indices[i + 5] = offest + 0;
+			indices[i + 3] = offset + 2;
+			indices[i + 4] = offset + 3;
+			indices[i + 5] = offset + 0;
 
-			offest += 4;
+			offset += 4;
 		}
 
 		glGenBuffers(1, &mIboID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIboID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(GLuint), indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mCount * sizeof(GLuint), indices, GL_STATIC_DRAW);
 
 		delete[] indices;
 	}
