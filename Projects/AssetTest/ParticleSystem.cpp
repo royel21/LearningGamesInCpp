@@ -1,6 +1,7 @@
 #include "ParticleSystem.h"
 
 #include <Graphics/GLheaders.h>
+#include <Graphics/GLUtils.h>
 #include <Graphics/IndexBuffer.h>
 
 #include <ECS/Scene.h>
@@ -68,7 +69,9 @@ namespace Plutus
         mIbo->bind();
         glBindVertexArray(mVAO);
         glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-        enableBlendMode();
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         for (auto& b : mBatches) {
             if (b.second.bufferVertices.size()) {
                 mShader.setUniform1i("hasTexture", b.first > -1);
@@ -114,7 +117,8 @@ namespace Plutus
             if (batch->buffSize > batch->bufferVertices.size())
                 batch->bufferVertices.reserve(batch->buffSize);
 
-            for (auto& p : particles.mParticles) {
+            for (int i = particles.mParticles.size() - 1; i > 0; i--) {
+                auto& p = particles.mParticles[i];
                 if (p) {
                     auto color = particles.color;
                     float alpha = particles.mUpdate(p, dt);

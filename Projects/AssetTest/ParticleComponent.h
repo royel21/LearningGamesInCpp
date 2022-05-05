@@ -13,7 +13,7 @@ class b2Body;
 namespace Plutus
 {
     class ParticleSystem;
-    
+
     struct Texture;
 
     struct Particle
@@ -58,8 +58,9 @@ namespace Plutus
         void init(int maxCount, const std::string& texId = "", std::function<float(Particle&, float)> updatefunc = nullptr);
 
         inline void addParticle(const Vec2f& pos, int size, const Vec2f& vel, float lifeTime, int texCoord = 0) {
-
-            mParticles[lastIndex] = { pos, size, vel, lifeTime, texCoord };
+            auto& p = mParticles[lastIndex];
+            if (!p)
+                mParticles[lastIndex] = { pos, size, vel, lifeTime, texCoord };
             lastIndex = (lastIndex + 1) % mMaxCount;
         }
 

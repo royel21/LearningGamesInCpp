@@ -29,7 +29,7 @@ namespace Plutus
     void App::Init() {
         mSystemManager.setProject(&mProject);
 
-        AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle-textures/particleAtlas.png", 32, 32, GL_LINEAR, GL_LINEAR);
+        AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle-textures/fire.png", 64, 64, GL_LINEAR, GL_LINEAR);
 
         auto ent = mProject.scene->createEntity("particleEmiter");
 
@@ -97,8 +97,8 @@ namespace Plutus
 
             for (int i = 0; i < 10; i++) {
                 auto x = Utils::getRandom(-5, 5);
-                auto y = Utils::getRandom(0, 50);
-                particles->addParticle(pos, 100, { x, y }, 4.0f);
+                auto y = Utils::getRandom(0, 20);
+                particles->addParticle(pos, 200, { x, y }, 10.0f);
                 // Logger::info("num: %i %i", x, y);
             }
             Logger::warn("Next");
@@ -147,6 +147,7 @@ namespace Plutus
     }
 
     void App::Draw() {
+        setBackgoundColor(0.0f, 0.35f, 0.75f);
         // if (Input::get()->onKeyDown("MouseLeft")) {
         //     auto pos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
 
