@@ -3,6 +3,7 @@
 
 #include <Graphics/GLSL.h>
 #include <ECS/Components.h>
+#include <Graphics/Camera2D.h>
 #include <Graphics/DebugRenderer.h>
 
 #include <Assets/Assets.h>
@@ -23,7 +24,7 @@ namespace Plutus
         if (!isLoaded) {
             mShader.init(GLSL::vertexShader, GLSL::fragShader);
             mDebugRender = Plutus::DebugRender::get();
-            mDebugRender->init(&mCamera);
+            mDebugRender->init(mCamera);
             mDebugRender->setCellSize({ mConfig->tileWidth, mConfig->tileHeight });
             isLoaded = true;
         }
@@ -34,13 +35,13 @@ namespace Plutus
         int w = config->mProject.vpWidth;
         int h = config->mProject.vpHeight;
 
-        mCamera.init(w, h);
-        mCamera.setPosition(config->mProject.vpPos);
-        mCamera.setScale(config->mProject.zoomLevel);
+        mCamera->init(w, h);
+        mCamera->setPosition(config->mProject.vpPos);
+        mCamera->setScale(config->mProject.zoomLevel);
 
         mSpriteBatch.init();
         mSpriteBatch.setShader(&mShader);
-        mSpriteBatch.setCamera(&mCamera);
+        mSpriteBatch.setCamera(mCamera);
 
         mFramePicker.init(w, h, true);
         mFrameBuffer.init(w, h);
@@ -54,7 +55,6 @@ namespace Plutus
 
     void Render::draw()
     {
-        mCamera.update();
         if (mScene && mConfig) {
             // auto start = Timer::millis();
             mFrameBuffer.setColor(mScene->mBGColor);
@@ -88,7 +88,7 @@ namespace Plutus
             switch (fixture.type) {
             case BoxShape: {
                 Vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
-                if (mCamera.isBoxInView(rect, 200))
+                if (mCamera->isBoxInView(rect))
                 {
                     mDebugRender->drawBox(rect);
                 }
@@ -100,7 +100,7 @@ namespace Plutus
             }
             case CircleShape: {
                 Vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
-                if (mCamera.isBoxInView(rect, 200))
+                if (mCamera->isBoxInView(rect))
                 {
                     mDebugRender->drawCircle(pos + fixture.offset, fixture.radius);
                 }
@@ -161,7 +161,7 @@ namespace Plutus
                 for (auto& tile : tilemap.mTiles)
                 {
                     auto rect = tile.getRect();
-                    if (mCamera.isBoxInView(rect, 200))
+                    if (mCamera->isBoxInView(rect))
                     {
                         auto texIndex = -1;
                         Texture* tex = nullptr;
@@ -184,7 +184,7 @@ namespace Plutus
         {
             auto [trans, sprite] = view.get(ent);
             auto rect = trans.getRect();
-            if (mCamera.isBoxInView(rect, 200))
+            if (mCamera->isBoxInView(rect))
             {
                 auto tex = AssetManager::get()->getAsset<Texture>(sprite.mTextureId);
 

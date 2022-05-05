@@ -19,7 +19,7 @@ namespace Plutus
     {
     public:
         Config* mConfig = nullptr;
-        Camera2D mCamera;
+        Camera2D* mCamera;
         FrameBuffer mFrameBuffer;
         FrameBuffer mFramePicker;
         std::vector<Renderable> mRenderables;

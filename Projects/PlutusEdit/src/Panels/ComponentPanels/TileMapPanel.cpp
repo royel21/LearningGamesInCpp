@@ -33,17 +33,21 @@ namespace Plutus
     void TileMapPanel::draw(Config* config)
     {
         mConfig = config;
+        static bool loadTex = true;
+
         if (CollapseComponent<TileMapComponent>("TileMap##tilemap-comp", 4, mConfig))
         {
             static bool addTexture = false;
             mIsOpen = true;
             mTileMap = mConfig->mProject.mEnt.getComponent<TileMapComponent>();
-
-            for (int i = 0; i < 16; i++) {
-                if (!mTileMap->mTextures[i].empty()) {
-                    mCurrentTexture = i;
-                    break;
+            if (loadTex) {
+                for (int i = 0; i < 16; i++) {
+                    if (!mTileMap->mTextures[i].empty()) {
+                        mCurrentTexture = i;
+                        break;
+                    }
                 }
+                loadTex = false;
             }
 
             float textWidth = ImGui::GetContentRegionAvailWidth() * 0.35f;
@@ -156,6 +160,7 @@ namespace Plutus
         }
         else {
             mIsOpen = false;
+            loadTex = true;
         }
 
     }

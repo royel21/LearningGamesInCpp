@@ -100,6 +100,6 @@
     },
     "cmake.debugConfig": {
         "cwd": "${workspaceFolder}",
-        "console": true,
+        "externalConsole": true,
     }
 }

@@ -16,8 +16,8 @@
 
 #include <Systems/Systems.h>
 
-#include <Graphics/DebugRenderer.h>
 #include <Assets/Assets.h>
+#include <Graphics/DebugRenderer.h>
 #include <ECS/Components/TransformComponent.h>
 
 #include <Time/Timer.h>
@@ -36,7 +36,7 @@ namespace Plutus
         mTextEditor.SetShowWhitespaces(false);
 
         mSysManager.setProject(&mConfig->mTempProject);
-        mSysManager.AddSystem<ScriptSystem>(&mConfig->mRender->mCamera);
+        mSysManager.AddSystem<ScriptSystem>(mConfig->mRender->mCamera);
         mSysManager.AddSystem<PhysicSystem>();
         mSysManager.AddSystem<AnimationSystem>();
     }
@@ -46,20 +46,20 @@ namespace Plutus
     {
         if (mConfig->isHover) {
             auto pos = mConfig->mMouseCoords;
-            auto& camera = mConfig->mRender->mCamera;
+            auto camera = mConfig->mRender->mCamera;
 
             if (Input::get()->onKeyPressed("F2"))
-                camera.setPosition(0, 0);
+                camera->setPosition(0, 0);
 
             if (Input::get()->onKeyPressed("F3")) {
-                camera.setScale(1);
+                camera->setScale(1);
                 mConfig->mProject.zoomLevel = 1;
             }
 
             if (Input::get()->onKeyPressed("MouseLeft"))
             {
                 mMouseLastCoords = pos;
-                mCamCoords = camera.getPosition();
+                mCamCoords = camera->getPosition();
             }
             // move the camera
             if (Input::get()->isCtrl)
@@ -67,26 +67,26 @@ namespace Plutus
                 if (Input::get()->onKeyDown("MouseLeft"))
                 {
                     Vec2f result = pos - mMouseLastCoords;
-                    result /= camera.getScale();
+                    result /= camera->getScale();
                     mConfig->mProject.vpPos = mCamCoords - result;
                 }
 
                 auto scroll = Input::get()->getMouseWheel();
                 if (scroll != 0)
                 {
-                    auto scalePos = pos / camera.getScale();
+                    auto scalePos = pos / camera->getScale();
 
-                    auto newVal = camera.getScale() + (scroll > 0 ? 0.05f : -0.05f);
-                    camera.setScale(CHECKLIMIT(newVal, 0.20f, 6));
-                    mConfig->mProject.zoomLevel = camera.getScale();
+                    auto newVal = camera->getScale() + (scroll > 0 ? 0.05f : -0.05f);
+                    camera->setScale(CHECKLIMIT(newVal, 0.20f, 6));
+                    mConfig->mProject.zoomLevel = camera->getScale();
 
-                    auto newPos = pos / camera.getScale();
+                    auto newPos = pos / camera->getScale();
 
                     auto offset = newPos - scalePos;
-                    mConfig->mProject.vpPos = camera.getPosition() - offset;
+                    mConfig->mProject.vpPos = camera->getPosition() - offset;
                 }
 
-                camera.setPosition(mConfig->mProject.vpPos);
+                camera->setPosition(mConfig->mProject.vpPos);
             }
         }
     }
@@ -116,7 +116,7 @@ namespace Plutus
                 if (project.mEnt.hasComponent<TransformComponent>()) {
                     auto trans = project.mEnt.getComponent<TransformComponent>();
                     Vec2f result = mConfig->mMouseCoords - mMouseLastCoords;
-                    result /= mConfig->mRender->mCamera.getScale();
+                    result /= mConfig->mRender->mCamera->getScale();
 
                     trans->x = mEntLastPos.x + result.x;
                     trans->y = mEntLastPos.y + result.y;
@@ -130,16 +130,15 @@ namespace Plutus
         auto camera = mConfig->mRender->mCamera;
         auto& project = mConfig->mProject;
 
-        ImGui::SetNextWindowSize({ 0, 400 });
         auto winPos = ImGui::GetCursorScreenPos();
         ImVec2 pos(winPos.x + 200, winPos.y + 50);
         ImGui::SetNextWindowPos(pos);
         ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove
             | ImGuiWindowFlags_NoDecoration
-            | ImGuiWindowFlags_AlwaysAutoResize
             | ImGuiWindowFlags_NoSavedSettings;
 
-        if (ImGui::BeginPopupModal("Project Config", NULL, flags))
+        ImGui::SetNextWindowSize({ 400, 0 });
+        if (ImGui::BeginPopupModal("Project Config", NULL, ImGuiWindowFlags_NoMove))
         {
             float width = 380 * 0.35f;
             ImGui::Text("Window Config");
@@ -176,6 +175,8 @@ namespace Plutus
             ImGui::Row("Auto Clear Force", width);
             ImGui::Checkbox("##cforce", &project.autoClearForce);
             ImGui::Separator();
+            ImGui::InvisibleButton("inv-c", { 1,1 });
+            ImGui::SameLine(140);
             if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
             ImGui::EndPopup();
         }
@@ -192,7 +193,7 @@ namespace Plutus
             auto winSize = framebuffer.getSize();
             float aspectRation = framebuffer.getAspectRatio();
 
-            Vec2f vpSize = mConfig->mRender->mCamera.getViewPortSize();
+            Vec2f vpSize = mConfig->mRender->mCamera->getViewPortSize();
 
             auto winPos = ImGui::GetContentRegionAvail();
             auto pos = ImGui::GetCursorPos();
@@ -201,7 +202,7 @@ namespace Plutus
             if (newSize.y > winPos.y)
             {
                 newSize.y = winPos.y;
-                newSize.x = winPos.y * aspectRation;
+                newSize.x = roundf(winPos.y * aspectRation);
             }
             // add padding to the canvas
             newSize -= 10;
@@ -303,7 +304,7 @@ namespace Plutus
 
                         mSysManager.stop();
                         mConfig->mTempProject.clearScene();
-                        mConfig->mRender->mCamera.setPosition(mCamCoords);
+                        mConfig->mRender->mCamera->setPosition(mCamCoords);
                     }
                     else {
                         mConfig->state = Running;
@@ -314,7 +315,7 @@ namespace Plutus
 
                         mSysManager.init();
                         mConfig->mRender->setScene(mConfig->mTempProject.scene.get());
-                        mCamCoords = mConfig->mRender->mCamera.getPosition();
+                        mCamCoords = mConfig->mRender->mCamera->getPosition();
                     }
                 }
                 ImGui::SameLine();

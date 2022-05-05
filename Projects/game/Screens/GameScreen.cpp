@@ -36,6 +36,8 @@ void GameScreen::Enter()
     mSystemManager.init();
 }
 
+float speed = 1;
+
 void GameScreen::Update(float dt)
 {
     auto pos = mCamera->getPosition();
@@ -43,23 +45,25 @@ void GameScreen::Update(float dt)
     {
         mCore->setNextScreen("Editor");
     }
+
     if (mInput->onKeyDown("Right"))
     {
-        mCamera->setPosition({ pos.x - 5, pos.y });
+        mCamera->setPosition({ pos.x + speed, pos.y });
     }
 
     if (mInput->onKeyDown("Left"))
     {
-        mCamera->setPosition({ pos.x + 5, pos.y });
+        mCamera->setPosition({ pos.x - speed, pos.y });
     }
+
     if (mInput->onKeyDown("Up"))
     {
-        mCamera->setPosition({ pos.x, pos.y - 5 });
+        mCamera->setPosition({ pos.x, pos.y + speed });
     }
 
     if (mInput->onKeyDown("Down"))
     {
-        mCamera->setPosition({ pos.x, pos.y + 5 });
+        mCamera->setPosition({ pos.x, pos.y - speed });
     }
 
     auto scale = mCamera->getScale();

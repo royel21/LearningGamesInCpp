@@ -107,7 +107,10 @@ namespace ImGui
             int i = 0;
             for (auto m : data)
             {
-                if (m.empty()) continue;
+                if (m.empty()) {
+                    i++;
+                    continue;
+                }
                 bool is_selected = m.compare(data[selected]) == 0;
                 if (ImGui::Selectable(m.c_str(), is_selected))
                 {

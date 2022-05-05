@@ -28,6 +28,7 @@ namespace Plutus
     void App::initialize()
     {
         if (!mConfig.currentProject.empty() && !isInitialize) {
+            mRender.mCamera = &mCamera;
             mConfig.init(&mRender);
             mAssetsWin.init(&mConfig);
             mCenterWin.init(&mConfig);

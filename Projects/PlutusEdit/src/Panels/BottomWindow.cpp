@@ -27,7 +27,7 @@ namespace Plutus
                         ImGui::TableNextColumn();
                         {
                             auto width = ImGui::GetContentRegionAvailWidth() * 0.3f;
-                            auto& camera = mRender->mCamera;
+                            auto camera = mRender->mCamera;
                             auto& zoom = mConfig->mProject.zoomLevel;
                             ImGui::Row("Zoom", width);
 
@@ -37,11 +37,11 @@ namespace Plutus
                             if (ImGui::InputFloat("##seq-time", &zoom, 0.05f))
                             {
                                 mConfig->mProject.zoomLevel = CHECKLIMIT(zoom, 0.20f, 10.0f);
-                                camera.setScale(mConfig->mProject.zoomLevel);
+                                camera->setScale(mConfig->mProject.zoomLevel);
                             }
                             ImGui::SameLine();
                             if (ImGui::Button("RS", { 24, 0 })) {
-                                camera.setScale(1.0f);
+                                camera->setScale(1.0f);
                                 mConfig->mProject.zoomLevel = 1.0f;
                             }
                             ImGui::PopStyleVar();
@@ -50,7 +50,7 @@ namespace Plutus
 
                             ImGui::Row("Position", width);
                             if (ImGui::Draw2Float("##cpos", mConfig->mProject.vpPos))
-                                camera.setPosition(mConfig->mProject.vpPos);
+                                camera->setPosition(mConfig->mProject.vpPos);
 
                             ImGui::Row("BG Color", width);
                             Vec4f color = mConfig->mProject.scene->mBGColor;

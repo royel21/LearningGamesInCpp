@@ -30,7 +30,7 @@ namespace Plutus
 			if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
 		}
 		mCamPos = { floorf(mCamPos.x), floorf(mCamPos.y) };
-		auto view = glm::lookAt(glm::vec3{ mCamPos.x, mCamPos.y, 20.0f }, { mCamPos.x, mCamPos.y, -1 }, { 0,1,0 });
+		auto view = glm::lookAt(glm::vec3{ mCamPos.x, mCamPos.y, 10.0f }, { mCamPos.x, mCamPos.y, -1 }, { 0,1,0 });
 		mCameraMatrix = mOrtho * view;
 	}
 
@@ -46,15 +46,17 @@ namespace Plutus
 		return mCamPos + Vec2f{ mScreenWidth / mScale * coordsTrans.x, mScreenHeight / mScale * coordsTrans.y };
 	}
 
-	bool Camera2D::isBoxInView(const Vec4f& box, int offset)
+	bool Camera2D::isBoxInView(const Vec4f& box)
 	{
-		float offs = offset / mScale;
+		float width = box.z / mScale * 2;
+		float height = box.w / mScale * 2;
+		auto vp = getViewPortDim();
 
-		auto viewport = getViewPortDim() + Vec4f(-offs, -offs, offs, offs);
-
-		return (box.x < viewport.x + viewport.z &&
-			box.x + box.z > viewport.x &&
-			box.y < viewport.y + viewport.w &&
-			box.y + box.w > viewport.y);
+		return (
+			box.x < vp.x + vp.z + width &&
+			box.y < vp.y + vp.w + height &&
+			box.x + box.z > vp.x - width &&
+			box.y + box.w > vp.y - height
+			);
 	}
 } // namespace Plutus

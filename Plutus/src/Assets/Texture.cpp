@@ -4,6 +4,8 @@
 #include <Utils/FileIO.h>
 #include <Graphics/GLUtils.h>
 
+#include <Log/Logger.h>
+
 namespace Plutus
 {
     void Texture::init(const std::string& path, int w, int h, int minFilter, int magFilter)
@@ -98,7 +100,7 @@ namespace Plutus
             }
             else
             {
-                std::printf("stbi fail: %s - %s\n", stbi_failure_reason(), mPath.c_str());
+                Logger::info("stbi fail: %s - %s\n", stbi_failure_reason(), mPath.c_str());
             }
         }
     }

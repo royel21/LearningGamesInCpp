@@ -82,7 +82,7 @@ namespace Plutus
 
 		const Vec2f getScaleScreen() { return Vec2f(mScreenWidth, mScreenHeight) / mScale; }
 
-		bool isBoxInView(const Vec4f& box, int offset = 0);
+		bool isBoxInView(const Vec4f& box);
 	};
 } // namespace Plutus
 

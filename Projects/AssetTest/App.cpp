@@ -62,7 +62,7 @@ namespace Plutus
                 cPos.x -= 5;
             }
             if (mInput->onKeyDown("Up")) {
-                cPos.y += 5;
+                cPos.y -= 5;
             }
             if (mInput->onKeyDown("Down")) {
                 cPos.y -= 5;

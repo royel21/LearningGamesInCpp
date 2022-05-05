@@ -53,7 +53,7 @@ namespace Plutus
                 for (auto& tile : tilemap.mTiles)
                 {
                     auto rect = tile.getRect();
-                    if (mCamera->isBoxInView(rect, 200))
+                    if (mCamera->isBoxInView(rect))
                     {
                         auto texIndex = -1;
                         Texture* tex = nullptr;
@@ -86,7 +86,7 @@ namespace Plutus
         {
             auto [trans, sprite] = view.get(ent);
             auto rect = trans.getRect();
-            if (mCamera->isBoxInView(rect, 200))
+            if (mCamera->isBoxInView(rect))
             {
                 auto tex = AssetManager::get()->getAsset<Texture>(sprite.mTextureId);
                 mRenderables[i++] = { tex ? tex->mTexId : 0, rect, sprite.mUVCoord, sprite.mColor,
