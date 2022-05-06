@@ -13,6 +13,7 @@ namespace Plutus
 
         void init(const std::string& path);
         void save(const std::string& buffe = "");
+        std::string load();
         void destroy();
     };
 } // namespace Plutus

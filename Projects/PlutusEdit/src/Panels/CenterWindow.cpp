@@ -22,6 +22,19 @@
 
 #include <Time/Timer.h>
 
+const char* newScript = R"SCRIPT(
+function init()
+
+end
+
+function update(dt)
+
+end
+
+function destroy()
+
+end)SCRIPT";
+
 #define mapIn(x, min_in, max_in, min_out, max_out) (x - min_in) * (max_out - min_out) / (max_in - min_in) + min_out
 
 namespace Plutus
@@ -290,9 +303,13 @@ namespace Plutus
             ImGui::EndTabBar();
 
             ImGui::SameLine();
-            ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f);
             ImGui::SetCursorPosY(4);
+
+            static Script* script = nullptr;
+
             if (isViewPort) {
+                script = nullptr;
+                ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f);
                 static bool drawGrid = DebugRender::get()->getShouldDraw();
                 bool isRunning = mConfig->state == Running;
 
@@ -325,8 +342,8 @@ namespace Plutus
                 showConfig();
             }
             else {
-                auto scripts = AssetManager::get()->getAssets<Script>();
-                static Script* script = nullptr;
+                ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - 100);
+                auto& scripts = AssetManager::get()->getAssets<Script>();
 
                 if (scripts.size() && currentScript.empty()) {
                     currentScript = scripts.begin()->first;
@@ -344,6 +361,12 @@ namespace Plutus
                     if (ImGui::TransparentButton(ICON_FA_SAVE " Save")) {
                         script->save(mTextEditor.GetText().c_str());
                         saveStart = Timer::millis();
+                    }
+
+                    ImGui::SameLine();
+                    if (ImGui::TransparentButton(ICON_FA_TRASH " Remove", false, { 1,0,0,1 })) {
+                        scripts.erase(currentScript);
+                        currentScript = "";
                     }
 
                     ImGui::SameLine();
@@ -369,8 +392,10 @@ namespace Plutus
                     ImGui::Separator();
                     ImGui::SetCursorPosX(100);
                     if (ImGui::Button("Create")) {
-                        currentScript = name;
-                        AssetManager::get()->addAsset<Script>(name, "assets/scripts/" + name);
+                        currentScript = name + ".lua";
+                        auto scr = AssetManager::get()->addAsset<Script>(name, "assets/scripts/" + currentScript);
+                        scr->save(newScript);
+                        mTextEditor.SetText(newScript);
                         ImGui::CloseCurrentPopup();
                     }
                     ImGui::SameLine();

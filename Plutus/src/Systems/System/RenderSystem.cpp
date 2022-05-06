@@ -95,7 +95,7 @@ namespace Plutus
         }
         mRenderables.resize(i);
         // sort by layer, y position, texture
-        // std::sort(mRenderables.begin(), mRenderables.end());
+        std::sort(mRenderables.begin(), mRenderables.end());
         mRenderer.submit(mRenderables);
         if (mFrameBuff) {
             mFrameBuff->bind();

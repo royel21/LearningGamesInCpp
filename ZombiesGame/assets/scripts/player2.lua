@@ -17,19 +17,19 @@ local rbody
 
 local size = camera:getVPSize();
 
-local vec = Vec2f.new( -size.x/2 + 32, -size.y/2 + 32 );
+local vec = Vec2f.new(-size.x / 2 + 32, -size.y / 2 + 32);
 
 print(size.x, size.y)
 
-local bounds = Vec4f.new(0,0, 1280-size.x, 768-size.y)
+local bounds = Vec4f.new(0, 0, 1280 - size.x, 768 - size.y)
 camera:setBounds(bounds);
 
 function init()
-	camera:setTarget(Player2, vec )
+    camera:setTarget(Player2, vec)
     local anim = Player2:getAnimate()
     if anim then anim:play(curAnime) end
     rbody = Player2:getRigidBody()
-    rbody:setMaxVelocity(1,2)
+    rbody:setMaxVelocity(1, 2)
 
     print("player2 init")
 end
@@ -69,8 +69,8 @@ function update(dt)
         -- Move Up - Down
         if input:onKeyDown("Up") then
             direction = "up"
-		    state = "running"
- 			vel.y = SPEED
+            state = "running"
+            vel.y = SPEED
         elseif input:onKeyDown("Down") then
             direction = "down"
             state = "running"
@@ -109,24 +109,4 @@ function update(dt)
         state = "     "
     end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

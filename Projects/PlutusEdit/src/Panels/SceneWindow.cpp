@@ -23,7 +23,7 @@ namespace Plutus
             ImGui::SameLine();
             if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE "##new-scene"))  openNew = true;
             ImGui::SameLine();
-            if (ImGui::TransparentButton(ICON_FA_SAVE "##save-scene"))  project.saveScene();
+            if (ImGui::TransparentButton(ICON_FA_SAVE "##save-scene"))  project.save(mConfig->mProjects[mConfig->currentProject]);
 
             bool isNodeOpen = false;
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 0, 0 });

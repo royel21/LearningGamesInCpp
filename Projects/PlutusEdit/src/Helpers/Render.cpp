@@ -8,8 +8,6 @@
 
 #include <Assets/Assets.h>
 
-#include <Time/Timer.h>
-
 namespace Plutus
 {
     Render::~Render() {

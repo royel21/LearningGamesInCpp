@@ -24,4 +24,9 @@ namespace Plutus
     {
         mBuffer = "";
     }
+
+    std::string Script::load() {
+        mBuffer = FileIO::readFileAsString(mPath.c_str());
+        return  mBuffer;
+    }
 }
