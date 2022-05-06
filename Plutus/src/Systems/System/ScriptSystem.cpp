@@ -17,22 +17,18 @@
 
 namespace Plutus
 {
-    int my_exception_handler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description)
+
+    void ScriptSystem::init(Project* project)
     {
-        /* std::cout << "An exception occurred in a function, here's what it says ";
-         if (maybe_exception)
-         {
-             std::cout << "(straight from the exception): ";
-             const std::exception& ex = *maybe_exception;
-             std::cout << ex.what() << std::endl;
-         }
-         else
-         {
-             std::cout << "(from the description parameter): ";
-             std::cout.write(description.data(), static_cast<std::streamsize>(description.size()));
-             std::cout << std::endl;
-         }*/
-        return sol::stack::push(L, description);
+        mProject = project;
+        //Scene References
+        mGlobalLua.set("scene", project->scene.get());
+
+        auto view = project->scene->getRegistry()->view<ScriptComponent>();
+
+        for (auto [ent, script] : view.each()) {
+            script.init(mGlobalLua, { ent, project->scene.get() });
+        }
     }
 
     ScriptSystem::ScriptSystem(Camera2D* camera) : ISystem(camera) {
@@ -40,8 +36,6 @@ namespace Plutus
             sol::lib::base,
             sol::lib::math
         );
-
-        mGlobalLua.set_exception_handler(&my_exception_handler);
 
         mGlobalLua.set("input", Input::get());
         mGlobalLua.set("getMillis", &Timer::millis);
@@ -71,19 +65,6 @@ namespace Plutus
         registerCamera();
         registerEntity();
         registerComponents();
-    }
-
-    void ScriptSystem::init(Project* project)
-    {
-        mProject = project;
-        //Scene References
-        mGlobalLua.set("scene", project->scene.get());
-
-        auto view = project->scene->getRegistry()->view<ScriptComponent>();
-
-        for (auto [ent, script] : view.each()) {
-            script.init(mGlobalLua, { ent, project->scene.get() });
-        }
     }
 
     void ScriptSystem::update(float dt)

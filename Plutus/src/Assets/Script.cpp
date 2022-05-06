@@ -9,7 +9,8 @@ namespace Plutus
             save();
         }
         mPath = path;
-        mBuffer = FileIO::readFileAsString((baseDir + mPath).c_str());
+        fullPath = baseDir + mPath;
+        mBuffer = FileIO::readFileAsString(fullPath.c_str());
     }
 
     void Script::save(const std::string& buffer)
@@ -17,7 +18,7 @@ namespace Plutus
         if (!buffer.empty()) {
             mBuffer = buffer;
         }
-        FileIO::saveBufferToFile((baseDir + mPath), mBuffer.c_str());
+        FileIO::saveBufferToFile(fullPath, mBuffer.c_str());
     }
 
     void Script::destroy()
@@ -26,7 +27,7 @@ namespace Plutus
     }
 
     std::string Script::load() {
-        mBuffer = FileIO::readFileAsString(mPath.c_str());
+        mBuffer = FileIO::readFileAsString(fullPath.c_str());
         return  mBuffer;
     }
 }

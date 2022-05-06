@@ -15,5 +15,8 @@ namespace Plutus
         void save(const std::string& buffe = "");
         std::string load();
         void destroy();
+
+    private:
+        std::string fullPath;
     };
 } // namespace Plutus

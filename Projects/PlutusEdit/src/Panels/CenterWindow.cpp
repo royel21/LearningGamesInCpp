@@ -347,8 +347,11 @@ namespace Plutus
 
                 if (scripts.size() && currentScript.empty()) {
                     currentScript = scripts.begin()->first;
+                }
+
+                if (!script && !currentScript.empty() && scripts.size()) {
                     script = static_cast<Script*>(scripts[currentScript]);
-                    mTextEditor.SetText(script->mBuffer);
+                    mTextEditor.SetText(script->load());
                 }
 
 
@@ -372,7 +375,8 @@ namespace Plutus
                     ImGui::SameLine();
                     ImGui::PushItemWidth(200);
                     if (ImGui::ComboBox("##scr-list", scripts, currentScript)) {
-                        mTextEditor.SetText(static_cast<Script*>(scripts[currentScript])->mBuffer);
+                        script->save();
+                        mTextEditor.SetText(static_cast<Script*>(scripts[currentScript])->load());
                     }
                     ImGui::PopItemWidth();
 
@@ -393,7 +397,7 @@ namespace Plutus
                     ImGui::SetCursorPosX(100);
                     if (ImGui::Button("Create")) {
                         currentScript = name + ".lua";
-                        auto scr = AssetManager::get()->addAsset<Script>(name, "assets/scripts/" + currentScript);
+                        auto scr = AssetManager::get()->addAsset<Script>(currentScript, "assets/scripts/" + currentScript);
                         scr->save(newScript);
                         mTextEditor.SetText(newScript);
                         ImGui::CloseCurrentPopup();
