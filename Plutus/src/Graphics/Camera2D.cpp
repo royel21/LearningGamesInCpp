@@ -24,12 +24,14 @@ namespace Plutus
 	{
 		if (mEntity) {
 			mCamPos = mEntity.getPosition() + mOffset;
-			if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
-			if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
-			if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
-			if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
+			if (mHasBounds) {
+				if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
+				if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
+				if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
+				if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
+			}
 		}
-		mCamPos = { floorf(mCamPos.x), floorf(mCamPos.y) };
+
 		auto view = glm::lookAt(glm::vec3{ mCamPos.x, mCamPos.y, 10.0f }, { mCamPos.x, mCamPos.y, -1 }, { 0,1,0 });
 		mCameraMatrix = mOrtho * view;
 	}

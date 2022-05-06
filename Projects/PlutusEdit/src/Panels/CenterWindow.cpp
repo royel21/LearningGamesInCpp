@@ -375,9 +375,9 @@ namespace Plutus
                     ImGui::SameLine();
                     ImGui::PushItemWidth(200);
                     if (ImGui::ComboBox("##scr-list", scripts, currentScript)) {
-                        script->save();
                         mTextEditor.SetText(static_cast<Script*>(scripts[currentScript])->load());
                     }
+
                     ImGui::PopItemWidth();
 
                     if (Input::get()->isCtrl && Input::get()->onKeyPressed("S")) {

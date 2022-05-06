@@ -18,6 +18,8 @@ namespace Plutus
 		int mWindowHeight = 0;
 
 		bool mNeedsMatrixUpdate = true;
+		bool mHasBounds = false;
+
 		float mScale = 1.0f;
 		Entity mEntity;
 		Vec2f mOffset = { 0, 0 };
@@ -42,7 +44,7 @@ namespace Plutus
 		//@param y position y
 		inline void setPosition(float x, float y) { mCamPos.x = x; mCamPos.y = y; }
 
-		inline void setBounds(const Vec4f& bounds) { mBounds = bounds; }
+		inline void setBounds(const Vec4f& bounds) { mBounds = bounds; mHasBounds = true; }
 
 		//set camera position and shedule a update
 		//@param newPosition glm vec2 position
