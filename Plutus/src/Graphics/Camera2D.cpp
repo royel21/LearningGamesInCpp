@@ -32,6 +32,7 @@ namespace Plutus
 			}
 		}
 
+		mCamPos = { floorf(mCamPos.x), floorf(mCamPos.y) };
 		auto view = glm::lookAt(glm::vec3{ mCamPos.x, mCamPos.y, 10.0f }, { mCamPos.x, mCamPos.y, -1 }, { 0,1,0 });
 		mCameraMatrix = mOrtho * view;
 	}
