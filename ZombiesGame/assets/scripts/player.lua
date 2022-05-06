@@ -6,6 +6,7 @@ function init()
 	local size = camera:getVPSize();
 	camera:setTarget(Player, Vec2f.new(-size.x / 2 + 32, -size.y / 2 + 32))
     rbody = Player:getRigidBody()
+ 	rbody:setMaxVelocity(1, 2)
 	print("Player")
 end
 
@@ -28,6 +29,9 @@ function update(dt)
 end
 
 function destroy() end
+
+
+
 
 
 
