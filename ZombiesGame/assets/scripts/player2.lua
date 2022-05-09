@@ -1,4 +1,4 @@
-local SPEED = 4
+local SPEED = 8
 local curAnime = "stand-r"
 
 local stand = {
@@ -109,4 +109,5 @@ function update(dt)
         state = "     "
     end
 end
+
 

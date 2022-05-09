@@ -29,7 +29,7 @@ namespace Plutus
     void App::Init() {
         mSystemManager.setProject(&mProject);
 
-        AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle-textures/fire.png", 64, 64, GL_LINEAR, GL_LINEAR);
+        AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle-textures/fire.png", 64, 64, GL_LINEAR);
 
         auto ent = mProject.scene->createEntity("particleEmiter");
 
