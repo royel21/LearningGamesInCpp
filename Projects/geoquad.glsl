@@ -12,11 +12,11 @@ uniform int uColumns;
 out vec4 color;
 out vec2 uv;
 
-in float index2[];
-
 void createVert(float x, float y, vec2 uUv){
     uv = uUv;
-    gl_Position = uCamera * (gl_in[0].gl_Position + vec4(x, y, 0.0, 0.0));
+    vec2 pos = gl_in[0].gl_Position.xy * vec2(th, tw);
+
+    gl_Position = uCamera * ((vec4(pos, 0.0, 1.0)) + vec4(x, y, 0.0, 0.0));
     EmitVertex();
 }
 
@@ -35,11 +35,17 @@ vec4 coords(float index){
     return tuv;
 }
 
+in float index[];
+in float texIndex[];
+
+out float textureIndex;
+
 void main()
 {
-    float index = index2[0];
-    vec4 uvCoords = coords(index);
-    
+    vec4 uvCoords = coords(index[0]);
+
+    textureIndex = texIndex[0];
+
     createVert(0, th,  vec2(uvCoords.x, uvCoords.y));
     createVert(0, 0,   vec2(uvCoords.x, uvCoords.w));
     createVert(tw, th, vec2(uvCoords.z, uvCoords.y));

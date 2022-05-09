@@ -8,8 +8,9 @@
 
 namespace Plutus
 {
-    void Texture::init(const std::string& path, int w, int h, int glFilter)
+    void Texture::init(const std::string& path, int w, int h, int glFilter, int texture)
     {
+        mTexureUnit = texture;
         destroy();
 
         mPath = path;
@@ -86,7 +87,7 @@ namespace Plutus
         if (mWidth && mHeight) {
             auto format = ch == 3 ? GL_RGB8 : GL_RGBA8;
             auto gltype = ch == 3 ? GL_RGB : GL_RGBA;
-
+            glActiveTexture(GL_TEXTURE0 + mTexureUnit);
             mTexId = createTexture(mWidth, mHeight, out, format, gltype, GL_UNSIGNED_BYTE, mGlFilter, mGlFilter);
             //unlink the texture
             glBindTexture(GL_TEXTURE_2D, 0);

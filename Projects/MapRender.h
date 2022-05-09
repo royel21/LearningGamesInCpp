@@ -11,6 +11,7 @@ namespace Plutus
         ~MapRender();
 
         void init();
+        void update();
         void draw();
 
     private:

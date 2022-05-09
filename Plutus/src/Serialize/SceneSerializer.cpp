@@ -64,6 +64,7 @@ namespace Plutus
                 ser.addInt("spacing", tex->mSpacing);
                 ser.addInt("margin", tex->mMargin);
                 ser.addInt("gl-filter", tex->mGlFilter);
+                ser.addInt("tex-unit", tex->mTexureUnit);
             }
             ser.EndObj();
         }
