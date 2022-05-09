@@ -17,8 +17,10 @@ namespace Plutus
 		destroy();
 	}
 
-	bool Shader::init(const std::string& verData, const std::string& fragData)
+	bool Shader::init(const std::string& verData, const std::string& fragData, const std::string geoShader)
 	{
+		bool hasGeoShader = !geoShader.empty();
+
 		auto vsdata = verData.empty() ? GLSL::vertexShader : verData;
 		auto fsdata = fragData.empty() ? GLSL::fragShader : fragData;
 
@@ -26,8 +28,10 @@ namespace Plutus
 
 		GLuint vertId = glCreateShader(GL_VERTEX_SHADER);
 		GLuint fragId = glCreateShader(GL_FRAGMENT_SHADER);
+		GLuint geoId = glCreateShader(GL_GEOMETRY_SHADER);
 
 		compileShader(vertId, vsdata);
+		if (hasGeoShader) compileShader(geoId, geoShader);
 		compileShader(fragId, fsdata);
 
 		if (compileError)
@@ -43,6 +47,7 @@ namespace Plutus
 		{
 			//attach the shader to the program
 			glAttachShader(mProgId, vertId);
+			if (hasGeoShader) glAttachShader(mProgId, geoId);
 			glAttachShader(mProgId, fragId);
 			//link the programs
 			glLinkProgram(mProgId);
@@ -58,11 +63,13 @@ namespace Plutus
 			}
 
 			glDetachShader(mProgId, vertId);
+			if (hasGeoShader) glDetachShader(mProgId, geoId);
 			glDetachShader(mProgId, fragId);
 		}
 
 		glDeleteShader(vertId);
 		glDeleteShader(fragId);
+		if (hasGeoShader) glDeleteShader(geoId);
 		return result;
 	}
 
@@ -145,9 +152,19 @@ namespace Plutus
 
 	void Shader::compileShader(uint32_t id, std::string shaderPath)
 	{
-		bool isShader = shaderPath.find("void main") != -1;
-
-		std::string data = VERTEX_HEADER + (isShader ? shaderPath : FileIO::readFileAsString(shaderPath.c_str()));
+		std::string data;
+		if (shaderPath.find("void main") != -1) {
+			data = VERTEX_HEADER + shaderPath;
+		}
+		else {
+			auto str = FileIO::readFileAsString(shaderPath.c_str());
+			if (str.empty()) {
+				Logger::error("File: %s Don't Exist", shaderPath.c_str());
+				compileError = true;
+				return;
+			}
+			data = VERTEX_HEADER + str;
+		}
 
 		char const* vertSource = data.c_str();
 
@@ -155,10 +172,7 @@ namespace Plutus
 		glCompileShader(id);
 
 		if (!getCompileError(id, shaderPath))
-		{
 			compileError = true;
-			return;
-		}
 	}
 
 	bool Shader::getCompileError(uint32_t id, std::string shader)
