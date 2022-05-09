@@ -12,6 +12,7 @@ namespace Plutus
         static void init();
         static u64 micros();
         static u64 millis();
+        static float seconds();
         static void Log(const std::string& id);
         static void LogEnd(const std::string& id);
     };

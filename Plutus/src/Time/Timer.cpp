@@ -36,6 +36,11 @@ namespace Plutus
         return micros() / 1000;
     }
 
+    float Timer::seconds()
+    {
+        return float(micros() / 1000) / 1000.0f;
+    }
+
     void Timer::Log(const std::string& id)
     {
         TimerClock::timers[id] = micros();
