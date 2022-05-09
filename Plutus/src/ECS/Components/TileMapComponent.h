@@ -55,7 +55,7 @@ namespace Plutus
 
         TileMapComponent() = default;
         // TileMap(const TileMap& tilemap);
-        TileMapComponent(int tileWidth, int tileHeight, int _layer = 0) : mTileWidth(tileWidth), mTileHeight(tileHeight) {}
+        TileMapComponent(int tileWidth, int tileHeight, int layer = 0) : mTileWidth(tileWidth), mTileHeight(tileHeight), mLayer(layer) {}
 
         void addTexture(int id, const std::string& texture);
         void addTexture(const std::string& texture);
