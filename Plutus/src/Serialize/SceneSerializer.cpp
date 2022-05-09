@@ -63,8 +63,7 @@ namespace Plutus
                 ser.addInt("tileHeight", tex->mTileHeight);
                 ser.addInt("spacing", tex->mSpacing);
                 ser.addInt("margin", tex->mMargin);
-                ser.addInt("min-filter", tex->mMinFilter);
-                ser.addInt("mag-filter", tex->mMagFilter);
+                ser.addInt("gl-filter", tex->mGlFilter);
             }
             ser.EndObj();
         }

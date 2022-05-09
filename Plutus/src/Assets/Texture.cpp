@@ -8,16 +8,13 @@
 
 namespace Plutus
 {
-    void Texture::init(const std::string& path, int w, int h, int minFilter, int magFilter)
+    void Texture::init(const std::string& path, int w, int h, int glFilter)
     {
         destroy();
 
         mPath = path;
 
-        if (minFilter && magFilter) {
-            mMinFilter = minFilter;
-            mMagFilter = magFilter;
-        }
+        if (glFilter) mGlFilter = glFilter;
 
         mTileWidth = w;
         mTileHeight = h;
@@ -55,8 +52,8 @@ namespace Plutus
             uvs.clear();
             int spacingY = mSpacing;
 
-            float tileWidth = (float)mTileWidth / (float)mWidth;
-            float tileheight = (float)mTileHeight / (float)mHeight;
+            float tileWidth = ((float)mTileWidth - mSpacing) / (float)mWidth;
+            float tileheight = ((float)mTileHeight - mSpacing) / (float)mHeight;
 
             Vec4f UV;
             for (int y = 0; y < mHeight / mTileHeight; y++)
@@ -90,7 +87,7 @@ namespace Plutus
             auto format = ch == 3 ? GL_RGB8 : GL_RGBA8;
             auto gltype = ch == 3 ? GL_RGB : GL_RGBA;
 
-            mTexId = createTexture(mWidth, mHeight, out, format, gltype, GL_UNSIGNED_BYTE, mMinFilter, mMagFilter);
+            mTexId = createTexture(mWidth, mHeight, out, format, gltype, GL_UNSIGNED_BYTE, mGlFilter, mGlFilter);
             //unlink the texture
             glBindTexture(GL_TEXTURE_2D, 0);
             //delete the image buffer from memory

@@ -22,11 +22,11 @@ namespace Plutus
     {
     public:
         Texture() = default;
-        Texture(const std::string& path, int w = 0, int h = 0, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST) {
-            init(path, w, h, minFilter, magFilter);
+        Texture(const std::string& path, int w = 0, int h = 0, GLint glFilter = GL_NEAREST) {
+            init(path, w, h, glFilter);
         }
 
-        void init(const std::string& path, int w = 0, int h = 0, GLint minFilter = GL_NEAREST, GLint magFilter = GL_NEAREST);
+        void init(const std::string& path, int w = 0, int h = 0, GLint glFilter = GL_NEAREST);
 
         void setTilesSize(int w, int h);
 
@@ -54,8 +54,7 @@ namespace Plutus
     public:
         int mTileWidth = 0;
         int mTileHeight = 0;
-        int mMinFilter = GL_NEAREST;
-        int mMagFilter = GL_NEAREST;
+        int mGlFilter = GL_NEAREST;
         int mWidth = 0;
         int mHeight = 0;
         int mSpacing = 0;

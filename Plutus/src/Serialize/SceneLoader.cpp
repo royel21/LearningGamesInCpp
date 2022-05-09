@@ -165,9 +165,8 @@ namespace Plutus
                     int tileheight = jhelper.getInt("tileHeight");
                     int spacing = jhelper.getInt("spacing");
                     int margin = jhelper.getInt("margin");
-                    int minFilter = jhelper.getInt("min-filter", GL_NEAREST);
-                    int magFilter = jhelper.getInt("mag-filter", GL_NEAREST);
-                    auto texture = AssetManager::get()->addAsset<Texture>(id, path, tilewidth, tileheight, minFilter, magFilter);
+                    int glFilter = jhelper.getInt("gl-filter", GL_NEAREST);
+                    auto texture = AssetManager::get()->addAsset<Texture>(id, path, tilewidth, tileheight, glFilter);
                     texture->mSpacing = spacing;
                     texture->mMargin = margin;
                     texture->calculateUV();

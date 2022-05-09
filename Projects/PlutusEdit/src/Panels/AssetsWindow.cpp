@@ -287,7 +287,7 @@ namespace Plutus
             case TEXURES:
             {
                 if (texture.mTexId == -1) {
-                    texture.init(assetFile.fullpath, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
+                    texture.init(assetFile.fullpath, texture.mTileWidth, texture.mTileHeight, texfilter.filter);
                 }
                 showTexure(texture, true, width);
 
@@ -334,7 +334,7 @@ namespace Plutus
                         }
                         case TEXURES:
                         {
-                            assetMang->addAsset<Texture>(assetFile.id, asset, texture.mTileWidth, texture.mTileHeight, texfilter.filter, texfilter.filter);
+                            assetMang->addAsset<Texture>(assetFile.id, asset, texture.mTileWidth, texture.mTileHeight, texfilter.filter);
                             texture.destroy();
                             break;
                         }
@@ -417,8 +417,7 @@ namespace Plutus
         texture.mWidth = 500;
         texture.mHeight = 500;
         texture.setTilesSize(0, 0);
-        texture.mMagFilter = GL_NEAREST;
-        texture.mMinFilter = GL_NEAREST;
+        texture.mGlFilter = GL_NEAREST;
 
         drawTexture(texture, width);
         texture.mTexId = -1;
