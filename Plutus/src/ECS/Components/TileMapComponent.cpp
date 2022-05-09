@@ -4,11 +4,6 @@
 
 namespace Plutus
 {
-
-    Vec4f Tile::getRect() {
-        return { x * parent->mTileWidth, y * parent->mTileHeight, parent->mTileWidth, parent->mTileHeight };
-    }
-
     void TileMapComponent::addTexture(int id, const std::string& texture)
     {
         mTextures[id] = texture;
@@ -36,7 +31,6 @@ namespace Plutus
     void TileMapComponent::addTile(Tile& tile)
     {
         mTiles.push_back(tile);
-        mTiles.back().setParent(this);
     }
 
     Tile* TileMapComponent::getTile(const Vec2i& mCoords)

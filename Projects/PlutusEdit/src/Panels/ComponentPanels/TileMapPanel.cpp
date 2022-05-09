@@ -216,7 +216,6 @@ namespace Plutus
             if (index == -1)
             {
                 tiles.push_back(Tile(x, y, tile.z, mCurrentTexture, mRotation));
-                tiles.back().setParent(mTileMap);
             }
             else
             {

@@ -158,7 +158,7 @@ namespace Plutus
 
                 for (auto& tile : tilemap.mTiles)
                 {
-                    auto rect = tile.getRect();
+                    auto rect = tilemap.getRect(tile);
                     if (mCamera->isBoxInView(rect))
                     {
                         auto texIndex = -1;

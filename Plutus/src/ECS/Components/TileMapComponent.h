@@ -19,7 +19,6 @@ namespace Plutus
         float rotate;
         int texcoord = 0;
         int texture = 0;
-        TileMapComponent* parent = nullptr;
         Tile() = default;
         Tile(int _x, int _y, int _texcoord, unsigned int _texture, bool fx = false, bool fy = false, float _rotate = 0)
         {
@@ -32,12 +31,6 @@ namespace Plutus
             flipY = fy;
             rotate = _rotate;
         }
-
-        void setParent(TileMapComponent* _parent) {
-            parent = _parent;
-        }
-
-        Vec4f getRect();
 
         inline bool operator==(Tile tile)
         {
@@ -75,5 +68,13 @@ namespace Plutus
         Tile* getTile(const Vec2i& mCoords);
         int getIndex(const Vec2i& mCoords);
         bool removeTile(const Vec2i& mCoords);
+
+        inline Vec4f getRect(float x, float y) {
+            return { x * mTileWidth, y * mTileHeight, mTileWidth, mTileHeight };
+        }
+
+        inline Vec4f getRect(Tile tile) {
+            return { tile.x * mTileWidth, tile.y * mTileHeight, mTileWidth, mTileHeight };
+        }
     };
 } // namespace Plutus

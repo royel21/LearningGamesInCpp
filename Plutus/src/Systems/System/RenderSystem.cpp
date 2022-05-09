@@ -52,7 +52,7 @@ namespace Plutus
                 ColorRGBA8 color;
                 for (auto& tile : tilemap.mTiles)
                 {
-                    auto rect = tile.getRect();
+                    auto rect = tilemap.getRect(tile);
                     if (mCamera->isBoxInView(rect))
                     {
                         auto texIndex = -1;
