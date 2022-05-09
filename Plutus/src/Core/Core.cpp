@@ -47,7 +47,6 @@ namespace Plutus
         while (mWindow.isFinish() && !mExit)
         {
 #endif
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             float dt = mLimiter.start();
             mCamera.update();
             if (mCurrentScreen) {
