@@ -18,6 +18,14 @@ namespace Plutus
      *   @param minFilter Minify Filter default = GL_NEAREST
      *   @param magFilter Magnify Filter default = GL_NEAREST
     */
+    struct TileSet {
+        float columns;
+        float width;
+        float height;
+        float spacingX;
+        float spacingY;
+    };
+
     struct Texture : Asset
     {
     public:
@@ -62,5 +70,6 @@ namespace Plutus
         int mTexureUnit = 0;
         uint32_t mTexId = -1;
         std::vector<Vec4f> uvs;
+        TileSet mTileSet;
     };
 } // namespace Plutus
