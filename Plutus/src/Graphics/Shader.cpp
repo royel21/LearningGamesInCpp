@@ -145,6 +145,11 @@ namespace Plutus
 		glUniform4f(getUniform(name), value.x, value.y, value.z, value.w);
 	}
 
+	void Shader::setUniform1fv(std::string name, int count, float* buffer)
+	{
+		glUniform1fv(getUniform(name), count, buffer);
+	}
+
 	void Shader::setUniformMat4(std::string name, const glm::mat4& value)
 	{
 		glUniformMatrix4fv(getUniform(name), 1, GL_FALSE, &value[0][0]);
