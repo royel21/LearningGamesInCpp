@@ -8,7 +8,7 @@ namespace Plutus
     {
         inline static uint32_t createVertexBuffer()
         {
-            id = 0;
+            uint32_t id = 0;
             glGenVertexArrays(1, &id);
             glBindVertexArray(id);
             return id;
@@ -16,8 +16,7 @@ namespace Plutus
 
         inline static uint32_t createElementBuffer()
         {
-
-            id = 0;
+            uint32_t id = 0;
             glGenBuffers(1, &id);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
             return id;
@@ -25,16 +24,10 @@ namespace Plutus
 
         inline static uint32_t createVertexArray()
         {
-
-            id = 0;
+            uint32_t id = 0;
             glGenBuffers(1, &id);
             glBindBuffer(GL_ARRAY_BUFFER, id);
             return id;
         }
-
-    private:
-        static uint32_t id;
     };
-
-    uint32_t Graphic::id = 0;
 } // namespace Plutus
