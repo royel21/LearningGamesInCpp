@@ -56,6 +56,20 @@ file(GLOB_RECURSE AssetTest Projects/AssetTest/*.h Projects/AssetTest/*.cpp)
 add_executable("AssetTest" ${AssetTest})
 target_link_libraries(AssetTest PUBLIC Plutus)
 
+
+#*************Geometry Shader**********************
+add_executable("GeometryShader" Projects/GeometryShader/main.cpp 
+                            Projects/GeometryShader/App.h 
+                            Projects/GeometryShader/App.cpp
+                            Projects/GeometryShader/MapRender.h
+                            Projects/GeometryShader/MapRender.cpp
+                            Projects/GeometryShader/Camera.h
+                            Projects/GeometryShader/Camera.cpp
+                            )
+
+target_link_libraries(GeometryShader PUBLIC Plutus)
+
 #*************Single Test**********************
 add_executable("SingleTest" Projects/SingleTest.cpp)
 target_link_libraries(SingleTest PUBLIC Plutus)
+
