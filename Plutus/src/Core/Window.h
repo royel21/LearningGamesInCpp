@@ -26,6 +26,7 @@ namespace Plutus
         void close();
 
         void setAlwaysOnTOp(bool isOnTop);
+        void setVSYNC(int state = 0);
 
         inline GLFWwindow* getGLFWwindow() { return mWindow; }
 

@@ -152,6 +152,11 @@ namespace Plutus
         glfwSetWindowAttrib(mWindow, GLFW_FLOATING, isOnTop);
     }
 
+    void Window::setVSYNC(int state)
+    {
+        glfwSwapInterval(state);
+    }
+
     void initKeys()
     {
         unkeys = {
