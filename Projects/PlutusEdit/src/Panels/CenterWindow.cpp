@@ -226,6 +226,7 @@ namespace Plutus
 
             if ((int)winSize.x != (int)newSize.x && (int)winSize.y != (int)newSize.y) {
                 mConfig->mRender->resizeBuffers(newSize);
+                mConfig->mRender->mCamera->setVPSize(newSize);
             }
 
             ImVec2 canvas_pos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!

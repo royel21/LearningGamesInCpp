@@ -43,7 +43,9 @@ namespace Plutus
 
 	Vec2f Camera2D::convertScreenToWold(Vec2f coords, bool invertY)
 	{
-		auto coordsTrans = Vec2f{ coords.x / mWindowWidth, coords.y / mWindowHeight };
+		auto size = mVPSize / mScale;
+
+		auto coordsTrans = Vec2f{ coords.x / size.x, coords.y / size.y };
 
 		return mCamPos + Vec2f{ mScreenWidth / mScale * coordsTrans.x, mScreenHeight / mScale * coordsTrans.y };
 	}

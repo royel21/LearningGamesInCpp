@@ -25,6 +25,7 @@ namespace Plutus
 		Vec2f mOffset = { 0, 0 };
 		Vec2f mCamPos = { 0, 0 };
 		Vec4f mBounds = { 0, 0 };
+		Vec2f mVPSize = { 0, 0 };
 		glm::mat4 mOrtho = glm::mat4(0);
 		glm::mat4 mCameraMatrix = glm::mat4(0);
 
@@ -74,6 +75,8 @@ namespace Plutus
 		Vec2f getViewPortSize() { return Vec2f(mScreenWidth, mScreenHeight); }
 		//Getters
 		inline Vec2f getPosition() { return mCamPos; }
+
+		void setVPSize(const Vec2f& size) { mVPSize = size; }
 
 		// return the 4x4 camera matrix
 		inline glm::mat4 getCameraMatrix() { return mCameraMatrix; }
