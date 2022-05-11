@@ -12,6 +12,9 @@
 #include "Camera.h"
 #include "MapRender.h"
 
+#include <Graphics/Camera2D.h>
+#include <Systems/SystemManager.h>
+
 namespace Plutus
 {
     struct Point {
@@ -30,8 +33,10 @@ namespace Plutus
         Window mWindow;
         Project mProject;
         Input* mInput;
-        Camera mCamera;
+        // Camera mCamera;
         MapRender mMapRender;
+        SystemManager mSysManager;
+        Camera2D mCamera;
 
         // Shader mShader;
         // uint32_t mVertexArray;

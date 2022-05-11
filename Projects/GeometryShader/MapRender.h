@@ -10,7 +10,7 @@ namespace Plutus
     struct TileMapComponent;
     class Camera;
 
-    struct Batch {
+    struct Batch2 {
         uint32_t vertId;
         uint32_t buffId;
         int vertCount;
@@ -29,7 +29,7 @@ namespace Plutus
     private:
         int tileWidth;
         int tileHeight;
-        std::vector<std::unordered_map<std::string, Batch>> tileMaps;
+        std::vector<std::unordered_map<std::string, Batch2>> tileMaps;
 
         Shader mShader;
         Camera* mCamera = nullptr;

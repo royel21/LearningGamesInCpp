@@ -67,7 +67,7 @@ namespace Plutus
 		// return the current scale value
 		inline float getScale() { return mScale; }
 		// zoom the view port
-		inline void setScale(float scale) { mScale = scale > 0 ? scale : 1.0f; init(mScreenWidth, mScreenHeight); }
+		inline void setScale(float scale) { mScale = scale > 0 ? scale : 0.1f; init(mScreenWidth, mScreenHeight); }
 
 		Vec4f getViewPortDim();
 		// return the view port size in pixels

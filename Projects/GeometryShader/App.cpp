@@ -1,19 +1,22 @@
 #include "App.h"
 
+#include <glm/glm.hpp>
 
-#include <Graphics/Graphic.h>
 
 #include <Time/Timer.h>
-#include <glm/glm.hpp>
+#include <Graphics/Graphic.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <Assets/Assets.h>
 
-#include <Core/Project.h>
 #include <ECS/Scene.h>
+#include <Core/Project.h>
+#include <Assets/Assets.h>
 #include <ECS/Components.h>
 #include <Serialize/SceneLoader.h>
 
+#include <Systems/System/TileMapSystem.h>
+
+#include <Log/Logger.h>
 
 namespace Plutus
 {
@@ -31,26 +34,32 @@ namespace Plutus
     void AppGeo::init()
     {
         mWindow.init("Plutus AppGeo", 1280, 768);
+        glClearColor(0.0f, 0.65f, .95f, 1.0f);
         mInput = Input::get();
+        mSysManager.setProject(&mProject);
+
 
         mCamera.init(1280, 768);
         mProject.load("ZombiesGame/ZombiesGame.json");
         mProject.loadScene(mProject.currentScene);
 
-        mMapRender.init(&mCamera);
+        mSysManager.AddSystem<TileMapSystem>(&mCamera);
+        // mMapRender.init(&mCamera);
 
-        auto tilemap = mProject.scene->getEntityByName("floor");
-        auto mapCom = tilemap.getComponent<TileMapComponent>();
-        mMapRender.addMap("floor", mapCom);
+        // auto mapView = mProject.scene->getRegistry()->view<TileMapComponent>();
 
-        tilemap = mProject.scene->getEntityByName("bg1");
-        mapCom = tilemap.getComponent<TileMapComponent>();
-        mMapRender.addMap("bg1", mapCom);
+        // for (auto [e, map] : mapView.each()) {
+        //     auto ent = Entity{ e, mProject.scene.get() };
+        //     mMapRender.addMap(ent.getName(), &map);
+        // }
+
+
+        mSysManager.init();
     }
 
     void AppGeo::update()
     {
-        auto pos = mCamera.getPos();
+        auto pos = mCamera.getPosition();
         if (mInput->onKeyDown("Right"))
         {
             pos.x -= speed;
@@ -70,7 +79,7 @@ namespace Plutus
         {
             pos.y += speed;
         }
-        mCamera.setPos(pos);
+        mCamera.setPosition(pos);
 
         auto scale = mCamera.getScale();
         if (mInput->onKeyDown("NUMPAD+"))
@@ -83,11 +92,14 @@ namespace Plutus
             scale -= 0.05f;
         }
         mCamera.setScale(scale);
+
+
+        mCamera.update();
+        mSysManager.update(0.01667f);
     }
 
     void AppGeo::draw()
     {
-        glClearColor(0.0f, 0.65f, .95f, 1.0f);
-        mMapRender.draw();
+        // mMapRender.draw();
     }
 }
