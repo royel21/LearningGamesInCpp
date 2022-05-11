@@ -21,6 +21,9 @@ namespace Plutus
 
         return *this;
     }
+    Vec4f Vec4f::operator-() const {
+        return { -x, -y, -z, -w };
+    }
 
     Vec4f Vec4f::operator*(float n) const {
         return { x * n, y * n, z * n, w * n };

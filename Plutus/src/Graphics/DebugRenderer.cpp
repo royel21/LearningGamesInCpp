@@ -199,7 +199,7 @@ namespace Plutus
 			float tw = (float)mCellSize.x;
 			float th = (float)mCellSize.y;
 
-			auto campos = mCamera->getPosition();
+			auto campos = -mCamera->getPosition() / mCamera->getScale();
 
 			Vec2f size = mCamera->getScaleScreen();
 			Vec2f lineStart;

@@ -61,6 +61,8 @@ namespace Plutus
 		void setUniform4f(std::string name, const Vec4f& value);
 		//Upload Uniform array of float
 		void setUniform1fv(std::string name, int count, float* buffer);
+		//Upload Uniform array of int
+		void setUniform1iv(std::string name, int count, int* buffer);
 		//Upload Uniform matrix 4x4 of float
 		void setUniformMat4(std::string name, const glm::mat4& value);
 

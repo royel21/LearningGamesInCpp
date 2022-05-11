@@ -126,6 +126,7 @@ namespace Plutus
 
         Vec4f& operator*=(float n);
         Vec4f& operator/=(float n);
+        Vec4f operator-() const;
 
         Vec4f operator*(float v) const;
         Vec4f operator/(float v) const;

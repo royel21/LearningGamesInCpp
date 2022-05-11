@@ -40,11 +40,12 @@ namespace Plutus
 
 
         mCamera.init(1280, 768);
+        // mCamera2.init(1280, 768);
         mProject.load("ZombiesGame/ZombiesGame.json");
         mProject.loadScene(mProject.currentScene);
 
         mSysManager.AddSystem<TileMapSystem>(&mCamera);
-        // mMapRender.init(&mCamera);
+        // mMapRender.init(&mCamera2);
 
         // auto mapView = mProject.scene->getRegistry()->view<TileMapComponent>();
 
@@ -52,7 +53,6 @@ namespace Plutus
         //     auto ent = Entity{ e, mProject.scene.get() };
         //     mMapRender.addMap(ent.getName(), &map);
         // }
-
 
         mSysManager.init();
     }
@@ -100,6 +100,14 @@ namespace Plutus
 
     void AppGeo::draw()
     {
+        // glDisable(GL_BLEND);
         // mMapRender.draw();
+
+        // if (mInput->onKeyPressed("MouseLeft")) {
+        //     auto mpos = mInput->getMouseCoords();
+        //     float pixels[4];
+        //     glReadPixels(static_cast<int>(mpos.x), static_cast<int>(mpos.y), 1, 1, GL_RGBA, GL_FLOAT, pixels);
+        //     Logger::info("values: %.6f, %.6f, %.6f, %.6f", pixels[0], pixels[1], pixels[2], pixels[3]);
+        // }
     }
 }

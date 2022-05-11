@@ -103,22 +103,25 @@ namespace Plutus
     void TileMapSystem::update(float dt)
     {
         mShader.enable();
+        std::string texId = "";
         for (const auto& batchs : tileMaps) {
             for (const auto& batch : batchs) {
                 glBindVertexArray(batch.second.vertId);
                 glBindBuffer(GL_ARRAY_BUFFER, batch.second.buffId);
+                if (texId.compare(batch.first) != 0) {
+                    texId = batch.first;
+                    auto tex = AssetManager::get()->getAsset<Texture>(batch.first);
+                    glActiveTexture(GL_TEXTURE0 + tex->mTexureUnit);
+                    glBindTexture(GL_TEXTURE_2D, tex->mTexId);
+                    mShader.setUniform1i("hasTexture", 1);
+                    mShader.setUniform1f("tw", (float)tileWidth);
+                    mShader.setUniform1f("th", (float)tileHeight);
 
-                auto tex = AssetManager::get()->getAsset<Texture>(batch.first);
-                glBindTexture(GL_TEXTURE_2D, tex->mTexId);
+                    mShader.setUniform1fv("uTexData", 5, &tex->mTileSet.columns);
 
-                mShader.setUniform1i("hasTexture", 1);
-                mShader.setUniform1f("tw", (float)tileWidth);
-                mShader.setUniform1f("th", (float)tileHeight);
-
-                mShader.setUniform1fv("uTexData", 5, &tex->mTileSet.columns);
-
-                mShader.setUniform4f("uColor", { 1.0f, 1.0f,1.0f, 1.0f });
-                mShader.setUniformMat4("uCamera", mCamera->getCameraMatrix());
+                    mShader.setUniform4f("uColor", { 1.0f, 1.0f,1.0f, 1.0f });
+                    mShader.setUniformMat4("uCamera", mCamera->getCameraMatrix());
+                }
 
                 glDrawArrays(GL_POINTS, 0, batch.second.vertCount);
 

@@ -45,7 +45,7 @@ namespace Plutus
 		//@param y position y
 		inline void setPosition(float x, float y) { mCamPos.x = x; mCamPos.y = y; }
 
-		inline void setBounds(const Vec4f& bounds) { mBounds = bounds; mHasBounds = true; }
+		inline void setBounds(const Vec4f& bounds) { mBounds = -bounds; mHasBounds = true; }
 
 		//set camera position and shedule a update
 		//@param newPosition glm vec2 position

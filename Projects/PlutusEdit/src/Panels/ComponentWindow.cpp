@@ -52,9 +52,8 @@ namespace Plutus
                         if (!mConfig->mProject.mEnt.hasComponent<PhysicBodyComponent>())
                             ComponentMenuItem<RigidBodyComponent>(mConfig, "Rigid Body");
                     }
-                    else {
-                        ComponentMenuItem<TileMapComponent>(mConfig, "TileMap");
-                    }
+
+                    ComponentMenuItem<TileMapComponent>(mConfig, "TileMap");
 
                     if (!mConfig->mProject.mEnt.hasComponent<RigidBodyComponent>())
                         ComponentMenuItem<PhysicBodyComponent>(mConfig, "Static Body");
@@ -63,6 +62,7 @@ namespace Plutus
 
                     ImGui::EndPopup();
                 }
+
                 if (mEnt.hasComponent<TransformComponent>()) DrawTransform();
                 if (mEnt.hasComponent<SpriteComponent>()) DrawSprite();
                 if (mEnt.hasComponent<AnimationComponent>()) mAnimation.draw(mConfig);

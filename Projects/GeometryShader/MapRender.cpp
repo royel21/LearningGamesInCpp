@@ -77,29 +77,37 @@ namespace Plutus
 
     void MapRender::draw()
     {
+        std::string texId = "";
+        int i = 0;
         mShader.enable();
         for (const auto& batchs : tileMaps) {
-            for (const auto& batch : batchs) {
-                glBindVertexArray(batch.second.vertId);
-                glBindBuffer(GL_ARRAY_BUFFER, batch.second.buffId);
+            if (i > 0)
+                for (const auto& batch : batchs) {
+                    glBindVertexArray(batch.second.vertId);
+                    glBindBuffer(GL_ARRAY_BUFFER, batch.second.buffId);
 
-                auto tex = AssetManager::get()->getAsset<Texture>(batch.first);
-                glBindTexture(GL_TEXTURE_2D, tex->mTexId);
+                    auto tex = AssetManager::get()->getAsset<Texture>(batch.first);
+                    glBindTexture(GL_TEXTURE_2D, tex->mTexId);
+                    mShader.setUniform1fv("uTexData", 5, &tex->mTileSet.columns);
 
-                mShader.setUniform1i("hasTexture", 1);
-                mShader.setUniform1f("tw", (float)tileWidth);
-                mShader.setUniform1f("th", (float)tileHeight);
+                    glActiveTexture(GL_TEXTURE0 + tex->mTexureUnit);
 
-                mShader.setUniform1fv("uTexData", 5, &tex->mTileSet.columns);
+                    mShader.setUniform1i("hasTexture", 1);
+                    mShader.setUniform1i("mySampler", 0);
+                    mShader.setUniform1f("tw", (float)tileWidth);
+                    mShader.setUniform1f("th", (float)tileHeight);
 
-                mShader.setUniform4f("uColor", { 1.0f, 1.0f,1.0f, 1.0f });
-                mShader.setUniformMat4("uCamera", mCamera->getCamera());
+                    mShader.setUniform4f("uColor", { 1.0f, 1.0f,1.0f, 1.0f });
+                    mShader.setUniformMat4("uCamera", mCamera->getCamera());
 
-                glDrawArrays(GL_POINTS, 0, batch.second.vertCount);
+                    glDrawArrays(GL_POINTS, 0, batch.second.vertCount);
 
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
-                glBindVertexArray(0);
-            }
+                    // glBindTexture(GL_TEXTURE_2D, 0);
+                    // glBindBuffer(GL_ARRAY_BUFFER, 0);
+                    // glBindVertexArray(0);
+                    break;
+                }
+            i++;
         }
         mShader.disable();
     }

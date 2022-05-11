@@ -23,12 +23,12 @@ namespace Plutus
 	void Camera2D::update()
 	{
 		if (mEntity) {
-			mCamPos = mEntity.getPosition() + mOffset;
+			mCamPos = -mEntity.getPosition() - mOffset;
 			if (mHasBounds) {
-				if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
-				if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
-				if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
-				if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
+				if (mCamPos.x > mBounds.x) mCamPos.x = mBounds.x;
+				if (mCamPos.x < mBounds.z) mCamPos.x = mBounds.z;
+				if (mCamPos.y > mBounds.y) mCamPos.y = mBounds.y;
+				if (mCamPos.y < mBounds.w) mCamPos.y = mBounds.w;
 			}
 		}
 
@@ -43,11 +43,8 @@ namespace Plutus
 
 	Vec2f Camera2D::convertScreenToWold(Vec2f coords, bool invertY)
 	{
-		auto size = mVPSize / mScale;
-
-		auto coordsTrans = Vec2f{ coords.x / size.x, coords.y / size.y };
-
-		return mCamPos + Vec2f{ mScreenWidth / mScale * coordsTrans.x, mScreenHeight / mScale * coordsTrans.y };
+		auto coordsTrans = Vec2f{ coords.x / mWindowWidth, coords.y / mWindowHeight };
+		return Vec2f{ mScreenWidth / mScale * coordsTrans.x, mScreenHeight / mScale * coordsTrans.y } - mCamPos / mScale;
 	}
 
 	bool Camera2D::isBoxInView(const Vec4f& box)

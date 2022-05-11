@@ -33,7 +33,7 @@ namespace Plutus
         Window mWindow;
         Project mProject;
         Input* mInput;
-        // Camera mCamera;
+        Camera mCamera2;
         MapRender mMapRender;
         SystemManager mSysManager;
         Camera2D mCamera;

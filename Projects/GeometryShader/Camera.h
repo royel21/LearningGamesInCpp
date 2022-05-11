@@ -13,8 +13,8 @@ namespace Plutus
         inline float getScale() { return mScale; }
 
 
-        inline void setPos(glm::vec2 pos) { mPos = pos; }
-        inline glm::vec2 getPos() { return mPos; }
+        inline void setPosition(glm::vec2 pos) { mPos = pos; }
+        inline glm::vec2 getPosition() { return mPos; }
 
         glm::mat4 getCamera();
 
