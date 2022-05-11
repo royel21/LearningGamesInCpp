@@ -80,8 +80,7 @@ namespace Plutus
                 if (Input::get()->onKeyDown("MouseLeft"))
                 {
                     Vec2f result = pos - mMouseLastCoords;
-                    result /= camera->getScale();
-                    mConfig->mProject.vpPos = mCamCoords - result;
+                    mConfig->mProject.vpPos = mCamCoords + result;
                 }
 
                 auto scroll = Input::get()->getMouseWheel();
