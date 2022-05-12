@@ -7,8 +7,8 @@ namespace Plutus
     float defaultUpdate(Particle& p, float dt) {
         p.position += p.velocity * dt;
         p.elapse += dt;
-
-        return 1.0f - p.elapse / p.lifeTime;
+        float alph = 1.0f - p.elapse / p.lifeTime;
+        return alph < 0.0f ? 0.0f : alph;
     }
 
     ParticleComponent::ParticleComponent() {

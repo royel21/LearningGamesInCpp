@@ -6,7 +6,7 @@ namespace Plutus
 {
     struct Graphic
     {
-        inline static uint32_t createVertexBuffer()
+        inline static uint32_t createVertexArray()
         {
             uint32_t id = 0;
             glGenVertexArrays(1, &id);
@@ -22,7 +22,7 @@ namespace Plutus
             return id;
         }
 
-        inline static uint32_t createVertexArray()
+        inline static uint32_t createArrayBuffer()
         {
             uint32_t id = 0;
             glGenBuffers(1, &id);
