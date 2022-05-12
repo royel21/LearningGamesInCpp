@@ -17,13 +17,18 @@ namespace Plutus
     void main_loop2() { loop2(); }
 #endif
     void Core::init() {
-        mWindow.init(mName.c_str(), mProject.winWidth, mProject.winHeight);
-        mCamera.init(mProject.vpWidth, mProject.vpHeight);
-        mCamera.setScale(mProject.zoomLevel);
-
-        if (!mProject.currentScene.empty()) {
-            mProject.loadScene(mProject.currentScene);
+        if (mProject) {
+            mWidth = mProject.winWidth;
+            mHeight = mProject.winHeight;
+            mName = mProject.winTitle;
+            mCamera.init(mProject.vpWidth, mProject.vpHeight);
+            mCamera.setScale(mProject.zoomLevel);
         }
+        else {
+            mCamera.init(mWidth, mHeight);
+        }
+
+        mWindow.init(mName.c_str(), mWidth, mHeight);
 
         mWindow.onResize = [&](int w, int h) {
             mWidth = w;
@@ -34,6 +39,10 @@ namespace Plutus
         mWindow.onFileDrop = [&](const char* file) {
             Dropfile(file);
         };
+
+        if (!mProject.currentScene.empty()) {
+            mProject.loadScene(mProject.currentScene);
+        }
 
         Init();
     }
@@ -97,5 +106,9 @@ namespace Plutus
 
     void Core::setBackgoundColor(float r, float g, float b, float a) {
         glClearColor(r, g, b, a);
+    }
+
+    void Core::printGLVersion() {
+        std::printf("\033[0;93mVersion: %s\n\033[0m", glGetString(GL_VERSION));
     }
 } // namespace Plutus

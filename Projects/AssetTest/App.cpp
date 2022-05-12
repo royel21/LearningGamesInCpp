@@ -27,6 +27,7 @@ namespace Plutus
     }
 
     void App::Init() {
+        printGLVersion();
         mSystemManager.setProject(&mProject);
 
         AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle-textures/fire.png", 64, 64, GL_LINEAR);
@@ -34,20 +35,20 @@ namespace Plutus
         auto ent = mProject.scene->createEntity("particleEmiter");
 
         ent.addComponent<TransformComponent>(0.0f, 0.0f, 10, 10);
-        auto particles = ent.addComponent<ParticleComponent>(100);
-        // particles->color.setColor(255, 255, 255, 255);
+        auto particles = ent.addComponent<ParticleComponent>(10000);
+        particles->color.setColor(255, 200, 200, 255);
         particles->addTexture("particles.png");
 
         mSystemManager.AddSystem<ParticleSystem>(&mCamera);
 
         mSystemManager.init();
-        Logger::info("init");
     }
 
     float force = 0.2f;
     float force2 = 10.0f;
     Vec2f mouseLast;
     Vec2f camOrg;
+
     void App::Update(float dt) {
         auto cPos = mCamera.getPosition();
 
@@ -85,7 +86,7 @@ namespace Plutus
         // auto woldOrg = mCamera.convertScreenToWold({ 0,0 });
         // Logger::info("camera Pos: %.2f %.2f world: %.2f %.2f", pos.x, pos.y, woldOrg.x, woldOrg.y);
         // mCamera.setPosition(-woldOrg);
-        if (Input::get()->onKeyPressed("MouseLeft")) {
+        if (Input::get()->onKeyDown("MouseLeft")) {
             auto pos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
             // auto worldPos = mCamera.convertScreenToWold(pos);
             // Logger::info("camera Pos: %.2f %.2f world: %.2f %.2f", pos.x, pos.y, worldPos.x, worldPos.y);
@@ -95,13 +96,13 @@ namespace Plutus
             auto ent = mProject.scene->getEntityByName("particleEmiter");
             auto particles = ent.getComponent<ParticleComponent>();
 
-            for (int i = 0; i < 10; i++) {
-                auto x = Utils::getRandom(-5, 5);
-                auto y = Utils::getRandom(0, 20);
-                particles->addParticle(pos, 200, { x, y }, 10.0f);
+            for (int i = 0; i < 1000; i++) {
+                auto x = Utils::getRandom(-100, 100);
+                auto y = Utils::getRandom(20, 100);
+                particles->addParticle(pos, 100, { x, y }, 5.0f);
                 // Logger::info("num: %i %i", x, y);
             }
-            Logger::warn("Next");
+            Logger::warn("count %zu", particles->mParticles.size());
         }
 
         if (Input::get()->onKeyPressed("MouseLeft"))

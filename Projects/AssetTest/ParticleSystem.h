@@ -14,18 +14,19 @@ namespace Plutus
 {
     class IndexBuffer;
     struct Project;
+    struct Texture;
 
     struct RenderableParticle {
         Vec2f pos;
-        Vec2f uv;
+        float size;
+        float texcoord;
         ColorRGBA8 color;
-        RenderableParticle(float x, float y, float ux, float uy, ColorRGBA8 ucolor) : pos(x, y), uv(ux, uy), color(ucolor) {}
-        RenderableParticle(const Vec2f& p, const Vec2f& up, ColorRGBA8 ucolor) : pos(p), uv(up), color(ucolor) {}
+        RenderableParticle(float x, float y, float s, float tc, ColorRGBA8 ucolor) : pos(x, y), size(s), texcoord(tc), color(ucolor) {}
+        RenderableParticle(const Vec2f& p, float s, float tc, ColorRGBA8 ucolor) : pos(p), size(s), texcoord(tc), color(ucolor) {}
     };
 
     struct Batch {
-        uint32_t buffSize = 0;
-        uint32_t indexCount = 0;
+        Texture* tex;
         std::vector<RenderableParticle> bufferVertices;
     };
 
@@ -41,14 +42,11 @@ namespace Plutus
         Shader mShader;
         uint32_t mVBO;
         uint32_t mVAO;
-        uint32_t mVertexCount = 0;
-        uint32_t mIndexCount = 0;
 
-        IndexBuffer* mIbo = nullptr;
         std::unordered_map<int, Batch> mBatches;
 
         Camera2D mCamera;
 
-        void prepare(float dt);
+        bool prepare(float dt);
     };
 } // namespace Test

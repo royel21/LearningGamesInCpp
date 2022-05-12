@@ -26,7 +26,6 @@ namespace Plutus
     struct MTV {
         float dist;
         Vec2f axis;
-        MTV() = default;
     };
 
     inline b2Vec2 toWorld(const Vec2f& value) {
@@ -47,6 +46,7 @@ namespace Plutus
 
         Points axes;
         Points vertices;
+        bool isStatic = false;
 
         Shape() = default;
         Shape(float x, float y) : pos(x, y) {}

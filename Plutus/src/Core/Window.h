@@ -31,7 +31,7 @@ namespace Plutus
         inline GLFWwindow* getGLFWwindow() { return mWindow; }
 
     private:
-        GLFWwindow* mWindow;
+        GLFWwindow* mWindow = nullptr;
         bool mAutoResizeVP = false;
     };
 } // namespace Plutus

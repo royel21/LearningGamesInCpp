@@ -45,8 +45,8 @@ namespace Plutus
     void Project::load(const std::string& path)
     {
         rapidjson::Document doc;
-        bool isLoaded = loadJsonFromFile(path.c_str(), doc);
-        if (isLoaded) {
+        if (loadJsonFromFile(path.c_str(), doc)) {
+            isLoaded = true;
             Plutus::AssetManager::get()->setBaseDir(Utils::getDirectory(path));
 
             scene->clear();
