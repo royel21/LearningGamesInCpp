@@ -2,6 +2,7 @@
 
 #include "IScreen.h"
 
+#include <Time/Timer.h>
 #include <Input/Input.h>
 #include <Graphics/GLheaders.h>
 
@@ -17,6 +18,8 @@ namespace Plutus
     void main_loop2() { loop2(); }
 #endif
     void Core::init() {
+        Timer::init();
+
         if (mProject) {
             mWidth = mProject.winWidth;
             mHeight = mProject.winHeight;

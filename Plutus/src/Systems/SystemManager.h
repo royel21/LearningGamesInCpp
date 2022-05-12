@@ -28,7 +28,7 @@ namespace Plutus
         T* AddSystem(TArgs &&... args)
         {
             auto id = getListId<T>();
-            if (id > mSystems.size()) {
+            if (id == mSystems.size()) {
                 mSystems.resize(id + 1);
             }
 

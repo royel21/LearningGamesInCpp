@@ -63,8 +63,6 @@ namespace Plutus
     {
         if (!prepare(dt)) return;
 
-        float buff[5] = { 0 };
-
         mShader.enable();
         mShader.setUniformMat4("uCamera", mCamera.getCameraMatrix());
 
@@ -116,8 +114,9 @@ namespace Plutus
 
             batch->bufferVertices.reserve(particles.mParticles.size());
 
-            for (int i = particles.mParticles.size() - 1; i > 0; i--) {
-                auto& p = particles.mParticles[i];
+            // for (int i = particles.mParticles.size() - 1; i > 0; i--) {
+                // auto& p = particles.mParticles[i];
+            for (auto& p : particles.mParticles) {
                 if (p) {
                     hasParticle = true;
                     auto color = particles.color;

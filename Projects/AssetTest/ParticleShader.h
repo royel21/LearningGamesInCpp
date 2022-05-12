@@ -66,12 +66,12 @@ namespace ParticleShader {
         {
             vec4 uvCoords = coords(index[0]);
             float pSize = size[0];
-            float half = size[0]/2.0;
+            float halfSize = size[0]/2.0;
 
-            createVert(-half, pSize,  uvCoords.xy);
-            createVert(-half, 0, vec2(uvCoords.x, uvCoords.w));
-            createVert(half, pSize, vec2(uvCoords.z, uvCoords.y));
-            createVert(half, 0,  uvCoords.zw);
+            createVert(-halfSize, pSize,  uvCoords.xy);
+            createVert(-halfSize, 0, vec2(uvCoords.x, uvCoords.w));
+            createVert(halfSize, pSize, vec2(uvCoords.z, uvCoords.y));
+            createVert(halfSize, 0,  uvCoords.zw);
 
             EndPrimitive();
         }

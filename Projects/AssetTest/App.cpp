@@ -35,7 +35,7 @@ namespace Plutus
         auto ent = mProject.scene->createEntity("particleEmiter");
 
         ent.addComponent<TransformComponent>(0.0f, 0.0f, 10, 10);
-        auto particles = ent.addComponent<ParticleComponent>(10000);
+        auto particles = ent.addComponent<ParticleComponent>(40000);
         particles->color.setColor(255, 200, 200, 255);
         particles->addTexture("particles.png");
 
@@ -96,10 +96,10 @@ namespace Plutus
             auto ent = mProject.scene->getEntityByName("particleEmiter");
             auto particles = ent.getComponent<ParticleComponent>();
 
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 100; i++) {
                 auto x = Utils::getRandom(-100, 100);
                 auto y = Utils::getRandom(20, 100);
-                particles->addParticle(pos, 100, { x, y }, 5.0f);
+                particles->addParticle(pos, 100, { x, y }, 2.0f);
                 // Logger::info("num: %i %i", x, y);
             }
             Logger::warn("count %zu", particles->mParticles.size());
