@@ -140,9 +140,10 @@ namespace Plutus
 
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 		glBufferData(GL_ARRAY_BUFFER, mVertexCount * sizeof(Vertex), bufferVertices.data(), GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		mIBO->bind();
 		glBindVertexArray(mVAO);
+		mIBO->bind();
 	}
 
 	void SpriteBatch2D::draw(BatchType type)
@@ -150,6 +151,7 @@ namespace Plutus
 		mShader->setUniform1i("type", type);
 		for (size_t i = 0; i < mRenderBatches.size(); i++)
 		{
+			glActiveTexture(GL_TEXTURE0);
 			auto& batch = mRenderBatches[i];
 			mShader->setUniform1i("hasTexture", batch.texture);
 			glBindTexture(GL_TEXTURE_2D, batch.texture);
@@ -160,7 +162,6 @@ namespace Plutus
 	void SpriteBatch2D::unBind() {
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		mIBO->unbind();
 		mShader->disable();
 	}
@@ -168,11 +169,7 @@ namespace Plutus
 	void SpriteBatch2D::end()
 	{
 		//Clean up
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		mIBO->unbind();
-		mShader->disable();
+		unBind();
 		mRenderBatches.clear();
 
 		mVertexCount = 0;

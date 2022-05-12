@@ -1,6 +1,9 @@
-local SPEED = 4
+local SPEED = 32
 
 local rbody
+
+local size = camera:getVPSize();
+camera:setBounds( Vec4f.new(0, 0, 4096 - size.x, 2048 - size.y));
 
 function init()
 	local size = camera:getVPSize();
@@ -29,6 +32,12 @@ function update(dt)
 end
 
 function destroy() end
+
+
+
+
+
+
 
 
 

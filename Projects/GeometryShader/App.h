@@ -44,7 +44,7 @@ namespace Plutus
 
         // int tileWidth;
         // int tileHeight;
-        float speed = 5;
+        float speed = 32;
 
         // glm::vec2 pos = { 0, 0 };
         // glm::mat4 projection;

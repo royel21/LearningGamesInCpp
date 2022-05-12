@@ -24,15 +24,12 @@ void GameScreen::Init()
     mSystemManager.AddSystem<Plutus::ScriptSystem>(mCamera);
     mSystemManager.AddSystem<Plutus::PhysicSystem>();
     mSystemManager.AddSystem<Plutus::AnimationSystem>();
+    mSystemManager.AddSystem<Plutus::TileMapSystem>(mCamera);
     mSystemManager.AddSystem<Plutus::RenderSystem>(mCamera);
-
-    // auto debugSys = mSystemManager.AddSystem<Plutus::DebugSystem>(mCamera);
-    // debugSys->drawGrid(true, 64, 64);
 }
 
 void GameScreen::Enter()
 {
-    // Plutus::SceneLoader::loadFromPath("assets/scenes/testing.json", mCore->mProject.scene.get());
     mSystemManager.init();
 }
 

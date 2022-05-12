@@ -2,7 +2,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include <cmath>
-
+#include <Log/Logger.h>
 #include <ECS/Components/TransformComponent.h>
 
 namespace Plutus
@@ -30,6 +30,10 @@ namespace Plutus
 				if (mCamPos.y > mBounds.y) mCamPos.y = mBounds.y;
 				if (mCamPos.y < mBounds.w) mCamPos.y = mBounds.w;
 			}
+			mCamPos *= mScale;
+			mCamPos = { std::round(mCamPos.x), std::round(mCamPos.y) };
+
+			Logger::info("%.3f %.3f", mCamPos.x, mCamPos.y);
 		}
 
 		mCameraMatrix = glm::translate(glm::mat4(1.0f), { mCamPos.x, mCamPos.y, 0.0f });

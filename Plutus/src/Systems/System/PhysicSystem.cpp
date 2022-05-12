@@ -10,6 +10,8 @@
 
 #include <Core/Project.h>
 
+#include <cmath>
+
 constexpr float PIXEL_SIZE = 100.0f;
 //Pixel Per Meter
 constexpr float PPM = 1 / PIXEL_SIZE;

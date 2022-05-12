@@ -19,7 +19,7 @@ namespace Plutus
     class TileMapSystem : public ISystem
     {
     public:
-        TileMapSystem(Camera2D* camera) { mCamera = camera; };
+        TileMapSystem(Camera2D* camera) : ISystem(camera) {  };
         ~TileMapSystem() { destroy(); }
 
         void init(Project* project);

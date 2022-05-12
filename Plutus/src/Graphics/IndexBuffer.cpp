@@ -30,6 +30,7 @@ namespace Plutus
 		glGenBuffers(1, &mIboID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIboID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mCount * sizeof(GLuint), indices, GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		delete[] indices;
 	}

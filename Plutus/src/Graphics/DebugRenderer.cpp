@@ -65,6 +65,7 @@ namespace Plutus
 
 		glBindVertexArray(0);
 	}
+
 	void DebugRender::end()
 	{
 		//Set Up Vertex Buffer Object

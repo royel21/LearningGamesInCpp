@@ -286,7 +286,7 @@ namespace Plutus
                     if (saveStart) {
                         auto time = Timer::millis() - saveStart;
 
-                        if (Timer::millis() - saveStart > 5000) {
+                        if (time > 5000) {
                             saveStart = 0;
                         }
                         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.85f, 1.0f, 1.0f));
@@ -345,8 +345,9 @@ namespace Plutus
                 ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - 100);
                 auto& scripts = AssetManager::get()->getAssets<Script>();
 
-                if (scripts.size() && currentScript.empty()) {
+                if (scripts.size() && (currentScript.empty() || scripts.find(currentScript) == scripts.end())) {
                     currentScript = scripts.begin()->first;
+                    script = nullptr;
                 }
 
                 if (!script && !currentScript.empty() && scripts.size()) {

@@ -23,7 +23,7 @@ namespace Plutus
         RenderableParticle(const Vec2f& p, const Vec2f& up, ColorRGBA8 ucolor) : pos(p), uv(up), color(ucolor) {}
     };
 
-    struct Batch {
+    struct ParticleBatch {
         uint32_t buffSize = 0;
         uint32_t indexCount = 0;
         std::vector<RenderableParticle> bufferVertices;
@@ -45,7 +45,7 @@ namespace Plutus
         uint32_t mIndexCount = 0;
 
         IndexBuffer* mIbo = nullptr;
-        std::unordered_map<int, Batch> mBatches;
+        std::unordered_map<int, ParticleBatch> mBatches;
 
         Camera2D mCamera;
 

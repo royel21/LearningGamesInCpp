@@ -27,28 +27,49 @@ namespace Plutus
         template <typename T, typename... TArgs>
         T* AddSystem(TArgs &&... args)
         {
+            auto id = getListId<T>();
+            if (id > mSystems.size()) {
+                mSystems.resize(id + 1);
+            }
 
-            T* newSystem = new T(std::forward<TArgs>(args)...);
-            mSystems[&typeid(T)] = newSystem;
+            T* newSystem = nullptr;
+
+            if (mSystems[id] == nullptr) {
+                newSystem = new T(std::forward<TArgs>(args)...);
+                mSystems[id] = newSystem;
+            }
+
             return newSystem;
         }
 
         template <typename T>
         T* getSystem()
         {
-            return hasSystem<T>() ? static_cast<T*>(it->second) : nullptr;
+            return static_cast<T>(mSystems[getListId<T>()]);
         }
 
         template <typename T>
         bool hasSystem()
         {
-            return mSystems[&typeid(T)] != nullptr;
+            return mSystems[getListId<T>()] != nullptr;
         }
 
         void cleanup();
 
     private:
         Project* mProject;
-        std::unordered_map<const std::type_info*, ISystem*> mSystems;
+        std::vector<ISystem*> mSystems;
+
+        inline uint32_t getId() {
+            static int id = 0;
+            return id++;
+        }
+
+        template<typename T>
+        inline uint32_t getListId()
+        {
+            static int id = getId();
+            return id;
+        }
     };
 } // namespace Plutus

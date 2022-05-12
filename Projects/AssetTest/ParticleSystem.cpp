@@ -103,7 +103,7 @@ namespace Plutus
 
         for (auto [ent, particles] : view.each())
         {
-            Batch* batch = &mBatches[-1];
+            ParticleBatch* batch = &mBatches[-1];
 
             auto tex = particles.mTexture;
             uint32_t size = 0;

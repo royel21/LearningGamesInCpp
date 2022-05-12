@@ -61,7 +61,6 @@ namespace Plutus
 
         tileMaps.clear();
         mShader.destroy();
-
     }
 
     void TileMapSystem::addMap(const std::string& id, TileMapComponent* tmap)
@@ -86,7 +85,7 @@ namespace Plutus
             auto& batch = currentMap[tilemp.first];
 
             batch.vertId = Graphic::createVertexArray();
-            batch.buffId = Graphic::createVertexBuffer();
+            batch.buffId = Graphic::createArrayBuffer();
             batch.vertCount = tilemp.second.size();
 
             glEnableVertexAttribArray(0);
@@ -97,6 +96,7 @@ namespace Plutus
             glBufferData(GL_ARRAY_BUFFER, tilemp.second.size() * sizeof(TileVert), tilemp.second.data(), GL_STATIC_DRAW);
 
             glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindVertexArray(0);
         }
     }
 
@@ -107,7 +107,6 @@ namespace Plutus
         for (const auto& batchs : tileMaps) {
             for (const auto& batch : batchs) {
                 glBindVertexArray(batch.second.vertId);
-                glBindBuffer(GL_ARRAY_BUFFER, batch.second.buffId);
                 if (texId.compare(batch.first) != 0) {
                     texId = batch.first;
                     auto tex = AssetManager::get()->getAsset<Texture>(batch.first);
@@ -124,9 +123,8 @@ namespace Plutus
                 }
 
                 glDrawArrays(GL_POINTS, 0, batch.second.vertCount);
-
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
                 glBindVertexArray(0);
+                glBindTexture(GL_TEXTURE_2D, 0);
             }
         }
         mShader.disable();
