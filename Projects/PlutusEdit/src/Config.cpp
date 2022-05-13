@@ -109,6 +109,19 @@ namespace Plutus
         return workingDir + "assets\\" + Utils::ToLowerCase(part);
     }
 
+    void EditorProject::loadSceneFromFile(const std::string& path)
+    {
+        auto ex = Utils::getExtension(path);
+
+        if (FileIO::exists(path) && ex == "json") {
+            auto name = Utils::getFileName(path);
+            if (FileIO::copyFile(path, FileIO::joinPath(workingDir, "assets", "scenes", name))) {
+                scenes[name] = "assets\\scenes\\" + name;
+                loadScene(name);
+            }
+        }
+    }
+
     bool EditorProject::CreateScene(const std::string& name)
     {
         auto curPath = currentScenePath;

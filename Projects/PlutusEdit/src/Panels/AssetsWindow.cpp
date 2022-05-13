@@ -15,6 +15,8 @@
 
 #include <misc/cpp/imgui_stdlib.h>
 
+#include <Log/Logger.h>
+
 #define TreeNodeLeaf_NoPushOpen 264
 #define FA_FILE ICON_FA_FILE_ALT " "
 
@@ -273,12 +275,12 @@ namespace Plutus
             //Texure Or Font Id
             ImGui::Row("Asset Id", width);
             ImGui::InputText("##asset-modal", &assetFile.id);
-            ImGui::Separator();
 
             switch (assetFile.type)
             {
             case FONTS:
             {
+                ImGui::Separator();
                 mFont.mPath = assetFile.fullpath;
                 showFont(&mFont, width);
                 asset = "assets\\fonts\\" + assetFile.name;
@@ -286,6 +288,7 @@ namespace Plutus
             }
             case TEXURES:
             {
+                ImGui::Separator();
                 if (texture.mTexId == -1) {
                     texture.init(assetFile.fullpath, texture.mTileWidth, texture.mTileHeight, texfilter.filter);
                 }
@@ -296,6 +299,7 @@ namespace Plutus
             }
             case SOUNDS:
             {
+                ImGui::Separator();
                 if (mSound.mPath.empty()) {
                     mSound.init(assetFile.fullpath);
                 }
@@ -308,6 +312,7 @@ namespace Plutus
             }
             case SCRIPTS:
             {
+                ImGui::Separator();
                 if (mScript.mBuffer.length())
                     mScript.init(assetFile.fullpath);
 
@@ -320,36 +325,41 @@ namespace Plutus
             ImGui::EndDialog(show, [&](bool save) {
                 if (save && assetFile.id.length() > 0)
                 {
-                    std::string baseDir = mConfig->mProject.workingDir;
-                    std::string dest = FileIO::joinPath(baseDir, asset);
-                    Utils::replaceAll(asset, '\\', '/');
-                    if (FileIO::copyFile(assetFile.fullpath, dest))
-                    {
-                        switch (assetFile.type)
+                    if (assetFile.type == SCENES) {
+                        mConfig->mProject.loadSceneFromFile(assetFile.fullpath);
+                    }
+                    else {
+                        std::string baseDir = mConfig->mProject.workingDir;
+                        std::string dest = FileIO::joinPath(baseDir, asset);
+                        Utils::replaceAll(asset, '\\', '/');
+                        if (FileIO::copyFile(assetFile.fullpath, dest))
                         {
-                        case FONTS: {
-                            assetMang->addAsset<Font>(assetFile.id, asset, mFont.mSize);
-                            mFont.destroy();
-                            break;
-                        }
-                        case TEXURES:
-                        {
-                            assetMang->addAsset<Texture>(assetFile.id, asset, texture.mTileWidth, texture.mTileHeight, texfilter.filter);
-                            texture.destroy();
-                            break;
-                        }
-                        case SOUNDS:
-                        {
-                            assetMang->addAsset<Sound>(assetFile.id, asset, mSound.mType);
-                            mSound.destroy();
-                            break;
-                        }
-                        case SCRIPTS:
-                        {
-                            assetMang->addAsset<Script>(assetFile.id, asset);
-                            mScript.destroy();
-                            break;
-                        }
+                            switch (assetFile.type)
+                            {
+                            case FONTS: {
+                                assetMang->addAsset<Font>(assetFile.id, asset, mFont.mSize);
+                                mFont.destroy();
+                                break;
+                            }
+                            case TEXURES:
+                            {
+                                assetMang->addAsset<Texture>(assetFile.id, asset, texture.mTileWidth, texture.mTileHeight, texfilter.filter);
+                                texture.destroy();
+                                break;
+                            }
+                            case SOUNDS:
+                            {
+                                assetMang->addAsset<Sound>(assetFile.id, asset, mSound.mType);
+                                mSound.destroy();
+                                break;
+                            }
+                            case SCRIPTS:
+                            {
+                                assetMang->addAsset<Script>(assetFile.id, asset);
+                                mScript.destroy();
+                                break;
+                            }
+                            }
                         }
                     }
                 }

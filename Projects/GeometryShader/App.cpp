@@ -45,11 +45,11 @@ namespace Plutus
         mCamera.setScale(mProject.zoomLevel);
         // mCamera2.init(1280, 768);
 
-        mSysManager.AddSystem<ScriptSystem>(&mCamera);
-        mSysManager.AddSystem<PhysicSystem>();
-        mSysManager.AddSystem<AnimationSystem>();
+        // mSysManager.AddSystem<ScriptSystem>(&mCamera);
+        // mSysManager.AddSystem<PhysicSystem>();
+        // mSysManager.AddSystem<AnimationSystem>();
         mSysManager.AddSystem<TileMapSystem>(&mCamera);
-        mSysManager.AddSystem<RenderSystem>(&mCamera);
+        // mSysManager.AddSystem<RenderSystem>(&mCamera);
         // mMapRender.init(&mCamera2);
 
         // auto mapView = mProject.scene->getRegistry()->view<TileMapComponent>();
@@ -60,31 +60,32 @@ namespace Plutus
         // }
 
         mSysManager.init();
+        // mCamera.setTarget({}, {});
     }
 
     void AppGeo::update()
     {
-        // auto pos = mCamera.getPosition();
-        // if (mInput->onKeyDown("Right"))
-        // {
-        //     pos.x -= speed;
-        // }
+        auto pos = mCamera.getPosition();
+        if (mInput->onKeyDown("Right"))
+        {
+            pos.x -= speed;
+        }
 
-        // if (mInput->onKeyDown("Left"))
-        // {
-        //     pos.x += speed;
-        // }
+        if (mInput->onKeyDown("Left"))
+        {
+            pos.x += speed;
+        }
 
-        // if (mInput->onKeyDown("Up"))
-        // {
-        //     pos.y -= speed;
-        // }
+        if (mInput->onKeyDown("Up"))
+        {
+            pos.y -= speed;
+        }
 
-        // if (mInput->onKeyDown("Down"))
-        // {
-        //     pos.y += speed;
-        // }
-        // mCamera.setPosition(pos);
+        if (mInput->onKeyDown("Down"))
+        {
+            pos.y += speed;
+        }
+        mCamera.setPosition(pos);
 
         auto scale = mCamera.getScale();
         if (mInput->onKeyDown("NUMPAD+"))

@@ -30,6 +30,7 @@ namespace Plutus
 
         std::string getDir(const std::string& part);
 
+        void loadSceneFromFile(const std::string& path);
         bool CreateScene(const std::string& name);
         void RenameScene(const std::string& oldName, const std::string& newName);
         void removeScene(std::string id);
