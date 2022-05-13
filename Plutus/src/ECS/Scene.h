@@ -81,7 +81,12 @@ namespace Plutus
 
         Entity getEntity(int Id);
         Entity CreateCopy(Entity& ent);
-        Entity getEntityByName(const std::string name);
+        Entity getEntityByName(const std::string& name);
+
+        template<typename T>
+        T* getComponentFromName(const std::string& name) {
+            return getEntityByName(name).getComponent<T>();
+        }
 
         void copyScene(Scene* scene);
 

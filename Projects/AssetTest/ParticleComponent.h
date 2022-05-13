@@ -59,12 +59,15 @@ namespace Plutus
 
         inline void addParticle(const Vec2f& pos, int size, const Vec2f& vel, float lifeTime, int texCoord = 0) {
             auto& p = mParticles[lastIndex];
-            if (!p)
-                mParticles[lastIndex] = { pos, size, vel, lifeTime, texCoord };
+            if (!p) {
+                count++;
+                mParticles[lastIndex] = { pos + offset, size, vel, lifeTime, texCoord };
+            }
             lastIndex = (lastIndex + 1) % mMaxCount;
         }
 
         void addTexture(const std::string& texId);
+        int count = 0;
 
     private:
         std::string mTexId;

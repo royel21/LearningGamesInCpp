@@ -42,7 +42,7 @@ namespace Plutus
         return { mRegistry.valid(ent) ? ent : entt::null , this };
     }
 
-    Entity Scene::getEntityByName(const std::string name)
+    Entity Scene::getEntityByName(const std::string& name)
     {
         entt::entity ent = entt::null;
         auto view = mRegistry.view<const Tag>();

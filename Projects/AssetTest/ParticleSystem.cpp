@@ -35,7 +35,6 @@ namespace Plutus
     void ParticleSystem::init(Project* project)
     {
         mProject = project;
-        mCamera.init(project->vpWidth, project->vpHeight);
 
         mShader.init(ParticleShader::vertexShader, ParticleShader::fragShader, ParticleShader::geoShader);
 
@@ -64,7 +63,7 @@ namespace Plutus
         if (!prepare(dt)) return;
 
         mShader.enable();
-        mShader.setUniformMat4("uCamera", mCamera.getCameraMatrix());
+        mShader.setUniformMat4("uCamera", mCamera->getCameraMatrix());
 
         glBindVertexArray(mVAO);
         glBindBuffer(GL_ARRAY_BUFFER, mVBO);
@@ -125,6 +124,7 @@ namespace Plutus
                     if (batch->tex && alpha < 1) {
                         p.texCoord = int((1.0f - alpha) * size);
                     }
+                    if (alpha == 0) particles.count--;
 
                     color.setAlpha(alpha);
 

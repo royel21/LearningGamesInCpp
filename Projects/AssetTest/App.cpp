@@ -35,9 +35,10 @@ namespace Plutus
         auto ent = mProject.scene->createEntity("particleEmiter");
 
         ent.addComponent<TransformComponent>(0.0f, 0.0f, 10, 10);
-        auto particles = ent.addComponent<ParticleComponent>(40000);
+        auto particles = ent.addComponent<ParticleComponent>(10000);
         particles->color.setColor(255, 200, 200, 255);
         particles->addTexture("particles.png");
+        particles->offset = { 0, -50 };
 
         mSystemManager.AddSystem<ParticleSystem>(&mCamera);
 
@@ -50,6 +51,7 @@ namespace Plutus
     Vec2f camOrg;
 
     void App::Update(float dt) {
+        auto particles = mProject.scene->getComponentFromName < ParticleComponent>("particleEmiter");
         auto cPos = mCamera.getPosition();
 
         auto mInput = Input::get();
@@ -93,16 +95,13 @@ namespace Plutus
             // mouseLast = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
             // Logger::info("camera Pos: %.2f %.2f", mouseLast.x, mouseLast.y);
 
-            auto ent = mProject.scene->getEntityByName("particleEmiter");
-            auto particles = ent.getComponent<ParticleComponent>();
 
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 200; i++) {
                 auto x = Utils::getRandom(-100, 100);
                 auto y = Utils::getRandom(20, 100);
                 particles->addParticle(pos, 100, { x, y }, 2.0f);
                 // Logger::info("num: %i %i", x, y);
             }
-            Logger::warn("count %zu", particles->mParticles.size());
         }
 
         if (Input::get()->onKeyPressed("MouseLeft"))
@@ -143,7 +142,7 @@ namespace Plutus
 
         auto start = Timer::micros();
         mSystemManager.update(dt);
-        Logger::info("elapse: %llu", Timer::micros() - start);
+        Logger::info("count: %i, elapse: %llu", particles->count, Timer::micros() - start);
 
     }
 

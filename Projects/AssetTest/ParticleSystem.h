@@ -43,7 +43,6 @@ namespace Plutus
         uint32_t mVBO;
         uint32_t mVAO;
 
-        Camera2D mCamera;
         std::unordered_map<int, ParticleBatch> mBatches;
 
         bool prepare(float dt);
