@@ -21,7 +21,9 @@ extern "C"
 #pragma comment(lib, "winmm.lib")
 #endif
 
-
+// extern "C" {
+//     _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+// }
 
 #include <Input/Input.h>
 

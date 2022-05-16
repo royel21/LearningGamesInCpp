@@ -2,8 +2,6 @@
 #include <unordered_map>
 
 #include <Log/Logger.h>
-// #include "Logger.h"
-
 #include <Time/Timer.h>
 #include <Input/Input.h>
 #include <Utils/FileIO.h>
@@ -128,9 +126,9 @@ namespace Plutus
         }
         // setBackgoundColor(0.0f, 0.5f, 0.8f);
 
-        auto start = Time::micros();
+        // auto start = Time::micros();
         mSystemManager.update(dt);
-        Logger::info("count: %i, elapse: %llu", particles->count, Time::micros() - start);
+        // Logger::info("count: %i, elapse: %llu", particles->count, Time::micros() - start);
     }
 
     void App::Draw() {
