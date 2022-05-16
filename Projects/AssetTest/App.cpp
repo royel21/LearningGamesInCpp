@@ -16,7 +16,7 @@
 
 #define CHECKLIMIT(val, min, max) val<min ? min : val> max ? max : val
 
-#define NUM_PARTICLES 15000
+#define NUM_PARTICLES 12000
 
 namespace Plutus
 {
@@ -58,9 +58,10 @@ namespace Plutus
     Vec2f mouseLast;
     Vec2f camOrg;
 
-    auto start = Time::millis();
 
     void App::Update(float dt) {
+        auto start = Time::millis();
+        // auto start = Time::micros();
         auto mpos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
         auto particles = mProject.scene->getComponentFromName < ParticleComponent>("particleEmiter");
         auto cPos = mCamera.getPosition();
@@ -129,6 +130,9 @@ namespace Plutus
         // auto start = Time::micros();
         mSystemManager.update(dt);
         // Logger::info("count: %i, elapse: %llu", particles->count, Time::micros() - start);
+
+
+        Logger::info("elapse: %llu", 1000 / (Time::millis() - start));
     }
 
     void App::Draw() {

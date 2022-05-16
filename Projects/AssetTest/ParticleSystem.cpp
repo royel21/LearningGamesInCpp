@@ -115,9 +115,9 @@ namespace Plutus
                     mShader.setUniform1i("uhasTexture", 1);
                     mShader.setUniform1fv("uTexData", 5, &b.second.tex->mTileSet.columns);
                 }
-                auto start = Time::micros();
+                // auto start = Time::micros();
                 glBufferData(GL_ARRAY_BUFFER, b.second.bufferVertices.size() * sizeof(RenderableParticle), b.second.bufferVertices.data(), GL_DYNAMIC_DRAW);
-                Logger::info("elapse: %llu", Time::micros() - start);
+                // Logger::info("elapse: %llu", Time::micros() - start);
 
                 glDrawArrays(GL_POINTS, 0, b.second.bufferVertices.size());
 
