@@ -189,8 +189,12 @@ namespace Plutus
             ImGui::Separator();
             ImGui::InvisibleButton("inv-c", { 1,1 });
             ImGui::SameLine(140);
-            if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+            if (ImGui::Button("Close", ImVec2(120, 0))) {
+                mConfig->mRender->init(mConfig);
+                ImGui::CloseCurrentPopup();
+            }
             ImGui::EndPopup();
+
         }
     }
 
@@ -284,7 +288,7 @@ namespace Plutus
 
                 if (mConfig->state == Editing && ImGui::BeginTabItem("Script Editor")) {
                     if (saveStart) {
-                        auto time = Timer::millis() - saveStart;
+                        auto time = Time::millis() - saveStart;
 
                         if (time > 5000) {
                             saveStart = 0;
@@ -364,7 +368,7 @@ namespace Plutus
                     ImGui::SameLine();
                     if (ImGui::TransparentButton(ICON_FA_SAVE " Save")) {
                         script->save(mTextEditor.GetText().c_str());
-                        saveStart = Timer::millis();
+                        saveStart = Time::millis();
                     }
 
                     ImGui::SameLine();
@@ -383,7 +387,7 @@ namespace Plutus
 
                     if (Input::get()->isCtrl && Input::get()->onKeyPressed("S")) {
                         script->save(mTextEditor.GetText().c_str());
-                        saveStart = Timer::millis();
+                        saveStart = Time::millis();
                     }
                 }
 

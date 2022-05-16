@@ -1,5 +1,6 @@
 #include "IndexBuffer.h"
 #include <assert.h>
+#include <Graphics/Graphic.h>
 
 namespace Plutus
 {
@@ -27,8 +28,7 @@ namespace Plutus
 			offset += 4;
 		}
 
-		glGenBuffers(1, &mIboID);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIboID);
+		mIboID = Graphic::createElementBuffer();
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mCount * sizeof(GLuint), indices, GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 

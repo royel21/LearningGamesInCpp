@@ -19,10 +19,9 @@ namespace Plutus
     struct RenderableParticle {
         Vec2f pos;
         float size;
-        float texcoord;
         ColorRGBA8 color;
-        RenderableParticle(float x, float y, float s, float tc, ColorRGBA8 ucolor) : pos(x, y), size(s), texcoord(tc), color(ucolor) {}
-        RenderableParticle(const Vec2f& p, float s, float tc, ColorRGBA8 ucolor) : pos(p), size(s), texcoord(tc), color(ucolor) {}
+        RenderableParticle(float x, float y, float s, ColorRGBA8 ucolor) : pos(x, y), size(s), color(ucolor) {}
+        RenderableParticle(const Vec2f& p, float s, ColorRGBA8 ucolor) : pos(p), size(s), color(ucolor) {}
     };
 
     struct ParticleBatch {
@@ -37,11 +36,13 @@ namespace Plutus
         ~ParticleSystem();
         void init(Project* project);
         void update(float dt);
+        inline void setBlend(bool blend) { mBlend = blend; };
 
     private:
         Shader mShader;
         uint32_t mVBO;
         uint32_t mVAO;
+        bool mBlend = true;
 
         std::unordered_map<int, ParticleBatch> mBatches;
 

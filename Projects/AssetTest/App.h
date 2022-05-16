@@ -6,6 +6,8 @@
 #include <Systems/SystemManager.h>
 #include <Graphics/FrameBuffer.h>
 
+#include <Time/Timer.h>
+
 namespace Plutus
 {
     class DebugRender;
@@ -32,5 +34,6 @@ namespace Plutus
         FrameBuffer mFBuffer;
         SpriteBatch2D* mBatch;
         SystemManager mSystemManager;
+        Timer timer;
     };
 } // namespace Plutus

@@ -85,7 +85,7 @@ namespace Plutus
             auto& batch = currentMap[tilemp.first];
 
             batch.vertId = Graphic::createVertexArray();
-            batch.buffId = Graphic::createArrayBuffer();
+            batch.buffId = Graphic::createBufferArray();
             batch.vertCount = tilemp.second.size();
 
             glEnableVertexAttribArray(0);
@@ -113,6 +113,7 @@ namespace Plutus
                     glActiveTexture(GL_TEXTURE0 + tex->mTexureUnit);
                     glBindTexture(GL_TEXTURE_2D, tex->mTexId);
                     mShader.setUniform1i("hasTexture", 1);
+                    mShader.setUniform1i("uSampler", tex->mTexureUnit);
                     mShader.setUniform1f("tw", (float)tileWidth);
                     mShader.setUniform1f("th", (float)tileHeight);
 

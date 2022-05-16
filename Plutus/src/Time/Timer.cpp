@@ -20,33 +20,33 @@ namespace Plutus
     } // namespace TimerClock
 
 
-    void Timer::init()
+    void Time::init()
     {
         TimerClock::start = std::chrono::duration_cast<TimerClock::CMicros>(TimerClock::Clock::now().time_since_epoch()).count();
     }
 
-    u64 Timer::micros()
+    u64 Time::micros()
     {
-        if (!TimerClock::start) Timer::init();
+        if (!TimerClock::start) Time::init();
         return std::chrono::duration_cast<TimerClock::CMicros>(TimerClock::Clock::now().time_since_epoch()).count() - TimerClock::start;
     }
 
-    u64 Timer::millis()
+    u64 Time::millis()
     {
         return micros() / 1000;
     }
 
-    float Timer::seconds()
+    float Time::seconds()
     {
         return float(micros() / 1000) / 1000.0f;
     }
 
-    void Timer::Log(const std::string& id)
+    void Time::Log(const std::string& id)
     {
         TimerClock::timers[id] = micros();
     }
 
-    void Timer::LogEnd(const std::string& id)
+    void Time::LogEnd(const std::string& id)
     {
         auto found = TimerClock::timers.find(id);
         if (found != TimerClock::timers.end()) {
@@ -57,5 +57,45 @@ namespace Plutus
             std::printf("Timer Not Found: %s\n", id.c_str());
         }
     }
+
+
+    bool Timer::IntervalMillis(u64 elapse)
+    {
+        if (millis == 0) millis = Time::millis();
+
+        if (Time::millis() - millis > elapse) {
+            millis = 0;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool Timer::IntervalMicro(u64 elapse)
+    {
+        if (micros == 0) micros = Time::millis();
+
+        if (Time::micros() - micros > elapse) {
+            micros = 0;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool Timer::timeOut(u64 elapse)
+    {
+        if (once == -1) return false;
+
+        if (once == 0) once = Time::millis();
+
+        if (Time::millis() - once > elapse) {
+            once = -1;
+            return true;
+        }
+
+        return false;
+    }
+
 
 } // namespace Plutus

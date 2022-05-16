@@ -1,7 +1,6 @@
 #ifndef _INDEXBUFFER_H
 #define _INDEXBUFFER_H
 
-#include "GLheaders.h"
 #include <cstdint>
 
 namespace Plutus
@@ -9,12 +8,12 @@ namespace Plutus
 	class IndexBuffer
 	{
 	private:
-		GLuint mIboID = -1;
-		GLuint mCount;
+		uint32_t mIboID = -1;
+		uint32_t mCount;
 
 	public:
 		IndexBuffer() = default;
-		IndexBuffer(GLuint count);
+		IndexBuffer(uint32_t count);
 		~IndexBuffer() { cleanUp(); }
 
 		void init(uint32_t count);
@@ -24,7 +23,7 @@ namespace Plutus
 
 		void cleanUp();
 
-		GLuint getCount() const { return mCount; }
+		uint32_t getCount() const { return mCount; }
 	};
 } // namespace Plutus
 #endif

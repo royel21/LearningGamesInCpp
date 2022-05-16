@@ -121,7 +121,7 @@ namespace Plutus
         //         shapeA->pos.y -= 5;
         //     }
         // }
-        Timer::Log("collider: ");
+        Time::Log("collider: ");
         for (size_t i = 0; i < shapes.size(); i++) {
             MTV mtvA;
             auto shapeA = shapes[i];
@@ -174,7 +174,7 @@ namespace Plutus
                 DebugRender::get()->drawCircle(shapeA->pos, 5);
             }
         }
-        Timer::LogEnd("collider: ");
+        Time::LogEnd("collider: ");
     }
 
     void App::Draw()

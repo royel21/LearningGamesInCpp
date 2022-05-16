@@ -76,12 +76,12 @@ namespace MapShader {
     const std::string fragShader = R"END(
         in vec2 uv;
         uniform vec4 uColor;
-        uniform sampler2D mySampler;
+        uniform sampler2D uSampler;
 
         out vec4 fragColor;
 
         void main(){
-            vec4 tex = texture(mySampler, uv);
+            vec4 tex = texture(uSampler, uv);
             fragColor = tex * uColor;
         }
     )END";

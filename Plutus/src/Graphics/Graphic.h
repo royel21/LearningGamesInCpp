@@ -22,7 +22,7 @@ namespace Plutus
             return id;
         }
 
-        inline static uint32_t createArrayBuffer()
+        inline static uint32_t createBufferArray()
         {
             uint32_t id = 0;
             glGenBuffers(1, &id);

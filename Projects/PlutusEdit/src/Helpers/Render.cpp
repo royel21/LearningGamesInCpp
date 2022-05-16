@@ -54,7 +54,7 @@ namespace Plutus
     void Render::draw()
     {
         if (mScene && mConfig) {
-            // auto start = Timer::millis();
+            // auto start = Time::millis();
             mFrameBuffer.setColor(mScene->mBGColor);
             prepare();
             mSpriteBatch.begin();

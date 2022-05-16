@@ -5,17 +5,12 @@ namespace ParticleShader {
     const std::string vertexShader = R"END(
         layout(location = 0) in vec2 vPosition;
         layout(location = 1) in float vSize;
-        layout(location = 2) in float vIndex;
-        layout(location = 3) in vec4 vColor;
+        layout(location = 2) in vec4 vColor;
 
-        uniform mat4 uCamera;
-
-        out float index;
         out float size;
         out vec4 pColor;
 
         void main(){
-            index = vIndex;
             size = vSize;
             pColor = vColor;
 
@@ -27,7 +22,6 @@ namespace ParticleShader {
         layout(points) in;
         layout(triangle_strip, max_vertices = 4) out;
 
-        uniform mat4 uCamera;
         uniform float uTexData[5];
 
         vec4 coords(float index){
@@ -48,6 +42,7 @@ namespace ParticleShader {
         }
 
         in vec4 pColor[];
+        uniform mat4 uCamera;
 
         out vec2 uv;
         out vec4 color;
@@ -59,12 +54,13 @@ namespace ParticleShader {
             EmitVertex();
         }
 
-        in float index[];
         in float size[];
 
         void main()
         {
-            vec4 uvCoords = coords(index[0]);
+            float total = floor(1.0 / uTexData[2]) * round(uTexData[0]);
+            vec4 uvCoords = coords(int((1.0 - pColor[0].w) * total));
+
             float pSize = size[0];
             float halfSize = size[0]/2.0;
 

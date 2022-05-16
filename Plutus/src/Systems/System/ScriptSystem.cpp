@@ -38,7 +38,7 @@ namespace Plutus
         );
 
         mGlobalLua.set("input", Input::get());
-        mGlobalLua.set("getMillis", &Timer::millis);
+        mGlobalLua.set("getMillis", &Time::millis);
         mGlobalLua.set("assetManager", AssetManager::get());
 
         /*****************************Register EntityManager**********************************************/

@@ -61,7 +61,7 @@ namespace Plutus
             auto& batch = currentMap[tilemp.first];
 
             batch.vertId = Graphic::createVertexArray();
-            batch.buffId = Graphic::createArrayBuffer();
+            batch.buffId = Graphic::createBufferArray();
             batch.vertCount = tilemp.second.size();
 
             glEnableVertexAttribArray(0);

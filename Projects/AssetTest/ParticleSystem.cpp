@@ -20,8 +20,7 @@
 
 #define SHADER_P_POS 0
 #define SHADER_P_SIZE 1
-#define SHADER_P_TEXTCOORD 2
-#define SHADER_P_COLOR 3
+#define SHADER_P_COLOR 2
 
 namespace Plutus
 {
@@ -40,22 +39,52 @@ namespace Plutus
 
         mBatches[-1];
         mVAO = Graphic::createVertexArray();
-        mVBO = Graphic::createArrayBuffer();
+        mVBO = Graphic::createBufferArray();
 
         glEnableVertexAttribArray(SHADER_P_POS);
         glVertexAttribPointer(SHADER_P_POS, 2, GL_FLOAT, GL_FALSE, sizeof(RenderableParticle), (void*)NULL);
 
         glEnableVertexAttribArray(SHADER_P_SIZE);
         glVertexAttribPointer(SHADER_P_SIZE, 1, GL_FLOAT, GL_FALSE, sizeof(RenderableParticle), (void*)offsetof(RenderableParticle, size));
-        //bind the Shader UV "Texture coordinate" to the buffer object
-        glEnableVertexAttribArray(SHADER_P_TEXTCOORD);
-        glVertexAttribPointer(SHADER_P_TEXTCOORD, 1, GL_FLOAT, GL_FALSE, sizeof(RenderableParticle), (void*)offsetof(RenderableParticle, texcoord));
 
         glEnableVertexAttribArray(SHADER_P_COLOR);
         glVertexAttribPointer(SHADER_P_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RenderableParticle), (void*)offsetof(RenderableParticle, color));
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+    }
+
+    bool ParticleSystem::prepare(float dt) {
+
+        auto view = mProject->scene->getRegistry()->view<ParticleComponent>();
+        bool hasParticle = false;
+
+        for (auto [ent, particles] : view.each())
+        {
+            auto batch = &mBatches[-1];
+
+            if (particles.mTexture) {
+                batch = &mBatches[particles.mTexture->mTexId];
+                batch->tex = particles.mTexture;
+            }
+
+            batch->bufferVertices.reserve(particles.mParticles.size());
+
+            for (auto& p : particles.mParticles) {
+                if (p) {
+                    hasParticle = true;
+                    auto color = particles.color;
+                    float alpha = particles.mUpdate(p, dt);
+
+                    if (alpha == 0) particles.count--;
+
+                    color.setAlpha(1.0f - alpha);
+
+                    batch->bufferVertices.emplace_back(p.position, (float)p.size, color);
+                }
+            }
+        }
+        return hasParticle;
     }
 
     void ParticleSystem::update(float dt)
@@ -67,9 +96,13 @@ namespace Plutus
 
         glBindVertexArray(mVAO);
         glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        if (mBlend) {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+        else {
+            glDisable(GL_BLEND);
+        }
 
         for (auto& b : mBatches) {
             if (b.second.bufferVertices.size()) {
@@ -92,46 +125,5 @@ namespace Plutus
         glActiveTexture(GL_TEXTURE0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-    }
-
-    bool ParticleSystem::prepare(float dt) {
-
-        auto view = mProject->scene->getRegistry()->view<ParticleComponent>();
-        bool hasParticle = false;
-
-        for (auto [ent, particles] : view.each())
-        {
-            auto batch = &mBatches[-1];
-
-            uint32_t size = 0;
-
-            if (particles.mTexture) {
-                batch = &mBatches[particles.mTexture->mTexId];
-                batch->tex = particles.mTexture;
-                size = particles.mTexture->uvs.size() - 1;
-            }
-
-            batch->bufferVertices.reserve(particles.mParticles.size());
-
-            // for (int i = particles.mParticles.size() - 1; i > 0; i--) {
-                // auto& p = particles.mParticles[i];
-            for (auto& p : particles.mParticles) {
-                if (p) {
-                    hasParticle = true;
-                    auto color = particles.color;
-                    float alpha = particles.mUpdate(p, dt);
-
-                    if (batch->tex && alpha < 1) {
-                        p.texCoord = int((1.0f - alpha) * size);
-                    }
-                    if (alpha == 0) particles.count--;
-
-                    color.setAlpha(alpha);
-
-                    batch->bufferVertices.emplace_back(p.position, (float)p.size, (float)p.texCoord, color);
-                }
-            }
-        }
-        return hasParticle;
     }
 }

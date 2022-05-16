@@ -45,12 +45,12 @@ namespace Plutus
         mCamera.setScale(mProject.zoomLevel);
         // mCamera2.init(1280, 768);
 
-        // mSysManager.AddSystem<ScriptSystem>(&mCamera);
-        // mSysManager.AddSystem<PhysicSystem>();
-        // mSysManager.AddSystem<AnimationSystem>();
+        mSysManager.AddSystem<ScriptSystem>(&mCamera);
+        mSysManager.AddSystem<PhysicSystem>();
+        mSysManager.AddSystem<AnimationSystem>();
         mSysManager.AddSystem<TileMapSystem>(&mCamera);
-        // mSysManager.AddSystem<RenderSystem>(&mCamera);
-        // mMapRender.init(&mCamera2);
+        mSysManager.AddSystem<RenderSystem>(&mCamera);
+        // mMapRender.init(&mCamera);
 
         // auto mapView = mProject.scene->getRegistry()->view<TileMapComponent>();
 

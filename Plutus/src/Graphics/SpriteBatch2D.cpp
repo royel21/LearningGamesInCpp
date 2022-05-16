@@ -9,9 +9,10 @@
 #include "ECS/Components/TileMapComponent.h"
 #include <Utils/Utils.h>
 
-#include "IndexBuffer.h"
-#include "Camera2D.h"
 #include "Shader.h"
+#include "Camera2D.h"
+#include "IndexBuffer.h"
+#include "Graphic.h"
 
 #include "GraphicsUtil.h"
 #include <Math/PMath.h>
@@ -41,11 +42,8 @@ namespace Plutus
 
 	void SpriteBatch2D::init()
 	{
-		glGenVertexArrays(1, &mVAO);
-		glBindVertexArray(mVAO);
-
-		glGenBuffers(1, &mVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+		mVAO = Graphic::createVertexArray();
+		mVBO = Graphic::createBufferArray();
 		//bind the Shader position to the buffer object
 		glEnableVertexAttribArray(SHADER_VERTEX_INDEX);
 		glVertexAttribPointer(SHADER_VERTEX_INDEX, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)NULL);
@@ -60,8 +58,9 @@ namespace Plutus
 		glVertexAttribPointer(SHADER_ENTITYID_INDEX, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, entId));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 		mIBO = new IndexBuffer(RENDERER_MAX_SPRITES);
+
+		glBindVertexArray(0);
 
 		mRenderBatches.clear();
 		bufferVertices.clear();

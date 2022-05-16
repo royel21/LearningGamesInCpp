@@ -18,7 +18,7 @@ namespace Plutus
     void main_loop2() { loop2(); }
 #endif
     void Core::init() {
-        Timer::init();
+        Time::init();
 
         if (mProject) {
             mWidth = mProject.winWidth;
@@ -80,7 +80,7 @@ namespace Plutus
 #endif
 
         Exit();
-    }
+        }
 
     void Core::addScreen(const std::string id, IScreen * screen, bool primary) {
         mScreenList[id] = screen;
@@ -114,4 +114,4 @@ namespace Plutus
     void Core::printGLVersion() {
         std::printf("\033[0;93mVersion: %s\n\033[0m", glGetString(GL_VERSION));
     }
-} // namespace Plutus
+    } // namespace Plutus

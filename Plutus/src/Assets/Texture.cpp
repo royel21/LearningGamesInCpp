@@ -96,6 +96,7 @@ namespace Plutus
             {
                 Logger::info("stbi fail: %s - %s\n", stbi_failure_reason(), mPath.c_str());
             }
+            glActiveTexture(GL_TEXTURE0);
         }
     }
 }
