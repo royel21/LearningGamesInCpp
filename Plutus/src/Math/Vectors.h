@@ -134,6 +134,8 @@ namespace Plutus
         Vec4f operator+(const Vec4f& v) const;
         Vec4f operator-(const Vec4f& v) const;
 
-
+        bool contain(const Vec2f& v);
+        bool contain(const Vec4f& v);
+        bool overlap(const Vec4f& v);
     };
 } // namespace Plutus

@@ -42,4 +42,16 @@ namespace Plutus
     {
         return { x - v.x, y - v.y, z - v.z, w - v.w };
     }
+
+    bool Vec4f::contain(const Vec2f& v) {
+        return !(v.x < x || v.y < y || v.x >= (x + z) || v.y >= (y + w));
+    }
+
+    bool Vec4f::contain(const Vec4f& v) {
+        return (v.x >= x && (v.x + v.z) < (x + z) && (v.y > y) && (v.y + v.w) < (y + w));
+    }
+
+    bool Vec4f::overlap(const Vec4f& v) {
+        return (x < v.x + v.z && (x + w) >= x && y < v.y + v.w && v.y >= y + w);
+    }
 } // namespace Plutus

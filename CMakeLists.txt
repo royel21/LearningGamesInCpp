@@ -69,6 +69,14 @@ add_executable("GeometryShader" Projects/GeometryShader/main.cpp
 
 target_link_libraries(GeometryShader PUBLIC Plutus)
 
+#*************QuadTree**********************
+
+file(GLOB_RECURSE SRC_QUAD Projects/QuadTree/*.h Projects/QuadTree/*.cpp)
+
+add_executable("QuadTree" ${SRC_QUAD})
+
+target_link_libraries(QuadTree PUBLIC Plutus)
+
 #*************Single Test**********************
 add_executable("SingleTest" Projects/SingleTest.cpp)
 target_link_libraries(SingleTest PUBLIC Plutus)

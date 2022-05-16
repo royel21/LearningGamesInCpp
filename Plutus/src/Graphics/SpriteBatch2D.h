@@ -71,7 +71,7 @@ namespace Plutus
 
 		void submit(const std::vector<Renderable>& renderables);
 
-		void submit(Vec4f rect, float r) { createVertices(0, rect, DEF_UV, {}, r); }
+		void submit(const Vec4f& rect, ColorRGBA8 c = {}, float r = 0) { resize(4); createVertices(0, rect, DEF_UV, c, r); }
 		/*
 			Submit a single Object to draw in the screen
 			@param texture Texture image from where to draw

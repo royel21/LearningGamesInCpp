@@ -32,8 +32,6 @@ namespace Plutus
 			}
 			mCamPos *= mScale;
 			mCamPos = { std::round(mCamPos.x), std::round(mCamPos.y) };
-
-			Logger::info("%.3f %.3f", mCamPos.x, mCamPos.y);
 		}
 
 		mCameraMatrix = glm::translate(glm::mat4(1.0f), { mCamPos.x, mCamPos.y, 0.0f });
