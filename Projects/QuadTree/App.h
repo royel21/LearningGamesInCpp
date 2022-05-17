@@ -9,32 +9,10 @@
 #include <vector>
 #include <Time/Limiter.h>
 
+#include "QuadTree.h"
+
 namespace Plutus
 {
-    struct Rect {
-        Vec2f pos;
-        Vec2f size;
-        Rect() {};
-        Rect(float x, float y, float w, float h) : pos(x, y), size(w, h) {}
-        Rect(const Vec2f& p, const Vec2f& s) : pos(p), size(s) {}
-
-        inline bool interset(const Vec2f& p) { return p >= pos && p <= (pos + size); }
-
-        bool overlap(const Rect& p) {
-            return
-                interset(p.pos) ||
-                interset(p.pos + p.size) ||
-                interset({ p.pos.x, p.pos.y + p.size.y }) ||
-                interset({ p.pos.x + p.size.x, p.pos.y });
-        }
-
-        bool contain(const Rect& rect) {
-            return rect.pos > pos && rect.pos + rect.size < pos + size;
-        }
-
-        Vec4f getBox() { return { pos, size }; }
-    };
-
     struct ColorRect {
         Rect rect;
         ColorRGBA8 color;
@@ -61,6 +39,8 @@ namespace Plutus
         PlutusEngine::SpriteBatch mSpriteBatch2;
 
         std::vector<ColorRect> rects;
+        QuadTreeContainer<ColorRect> mQTrees;
+
         Limiter mLimiter;
         Rect rect1;
     };
