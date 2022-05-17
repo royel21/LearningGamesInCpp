@@ -16,8 +16,9 @@ namespace Plutus
         TimePoint mStartPoint;
 
     public:
-        Limiter() : mSpecFps(1.0f / 60.0f) {};
-        Limiter(float fps) : mSpecFps(1.0f / fps) {};
+        Limiter() { init(60); };
+        void init(float fps);
+        ~Limiter();
         float start();
         void end();
         float getFPS() { return mFps; };

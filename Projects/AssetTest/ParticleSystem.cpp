@@ -80,7 +80,7 @@ namespace Plutus
 
                     if (alpha == 0) particles.count--;
 
-                    color.setAlpha(1.0f - alpha);
+                    color.a = uint8_t((1.0f - alpha) * 255);
 
                     batch->bufferVertices.emplace_back(p.position, (float)p.size, color);
                 }

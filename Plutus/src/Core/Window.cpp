@@ -21,9 +21,9 @@ extern "C"
 #pragma comment(lib, "winmm.lib")
 #endif
 
-extern "C" {
-    _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
-}
+// extern "C" {
+//     _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+// }
 
 #include <Input/Input.h>
 
@@ -113,17 +113,11 @@ namespace Plutus
         //Enable alpha blend
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-#ifdef _WIN32
-        // if we are on window set the time precision to 1ms for sleep function
-        timeBeginPeriod(1);
-#endif
+
         return true;
     }
     Window::~Window()
     {
-#ifdef _WIN32
-        timeEndPeriod(1);
-#endif
         if (mWindow != nullptr)
         {
             glfwDestroyWindow(mWindow);
@@ -140,6 +134,7 @@ namespace Plutus
 
     void Window::update()
     {
+        Input::get()->update();
         glfwSwapBuffers(mWindow);
         glfwPollEvents();
     }
@@ -158,6 +153,11 @@ namespace Plutus
     void Window::setVSYNC(int state)
     {
         glfwSwapInterval(state);
+    }
+
+    void Window::setTitle(const char* title)
+    {
+        glfwSetWindowTitle(mWindow, title);
     }
 
     void initKeys()

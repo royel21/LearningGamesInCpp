@@ -9,9 +9,29 @@ using Duration = std::chrono::duration<float>;
 
 namespace Plutus
 {
+    void Limiter::init(float fps)
+    {
+        mSpecFps = 1.0f / fps;
+#ifdef _WIN32
+        // if we are on window set the time precision to 1ms for sleep function
+        timeBeginPeriod(1);
+#endif
+
+    }
+
+    Limiter::~Limiter()
+    {
+#ifdef _WIN32
+        timeEndPeriod(1);
+#endif
+    }
 
     float Limiter::start()
     {
+#ifdef _WIN32
+        // if we are on window set the time precision to 1ms for sleep function
+        timeBeginPeriod(1);
+#endif
         mStartPoint = Clock::now();
         return (float)mLastElapsed;
     }

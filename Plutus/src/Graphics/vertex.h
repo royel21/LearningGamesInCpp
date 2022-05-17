@@ -35,19 +35,19 @@ namespace Plutus
 		Vertex(Vec2f pos, float uvX, float uvY, ColorRGBA8 c, float _entId = 0)
 			: position(pos), uv(uvX, uvY), color(c), entId(_entId) {}
 
-		void setPosition(float x, float y)
+		inline void setPosition(float x, float y)
 		{
 			position.x = x;
 			position.y = y;
 		}
 
-		void setUV(float u, float v)
+		inline void setUV(float u, float v)
 		{
 			uv.u = u;
 			uv.v = v;
 		}
 
-		void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+		inline void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 		{
 			color.setColor(r, g, b, a);
 		}

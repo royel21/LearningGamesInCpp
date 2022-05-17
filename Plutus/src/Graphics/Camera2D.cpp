@@ -61,21 +61,21 @@ namespace Plutus
 		// 	box.x + box.z > vp.x - width &&
 		// 	box.y + box.w > vp.y - height
 		// 	);
-		glm::vec2 pos(box.x, box.y);
-		glm::vec2 dim(box.z, box.w);
+		// glm::vec2 pos(box.x, box.y);
+		// glm::vec2 dim(box.z, box.w);
 
-		glm::vec2 scaleDim = glm::vec2(mScreenWidth, mScreenHeight) / mScale;
+		// glm::vec2 scaleDim = glm::vec2(mScreenWidth, mScreenHeight) / mScale;
 
-		const float MIN_DISTANCE_X = dim.x / 2.0f + scaleDim.x / 2.0f;
-		const float MIN_DISTANCE_Y = dim.y / 2.0f + scaleDim.y / 2.0f;
+		// const float MIN_DISTANCE_X = dim.x / 2.0f + scaleDim.x / 2.0f;
+		// const float MIN_DISTANCE_Y = dim.y / 2.0f + scaleDim.y / 2.0f;
 
-		glm::vec2 centerPos = pos + dim / 2.0f;
+		// glm::vec2 centerPos = pos + dim / 2.0f;
 
-		glm::vec2 distVec = centerPos - pos;
+		// glm::vec2 distVec = centerPos - pos;
 
-		float xDepth = MIN_DISTANCE_X - abs(distVec.x);
-		float yDepth = MIN_DISTANCE_Y - abs(distVec.y);
+		// float xDepth = MIN_DISTANCE_X - abs(distVec.x);
+		// float yDepth = MIN_DISTANCE_Y - abs(distVec.y);
 
-		return xDepth > 0 && yDepth > 0;
+		return getViewPortDim().overlap(box);
 	}
 } // namespace Plutus
