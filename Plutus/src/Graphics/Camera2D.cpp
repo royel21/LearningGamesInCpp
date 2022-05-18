@@ -30,23 +30,22 @@ namespace Plutus
 				if (mCamPos.y > mBounds.y) mCamPos.y = mBounds.y;
 				if (mCamPos.y < mBounds.w) mCamPos.y = mBounds.w;
 			}
-			mCamPos *= mScale;
 			mCamPos = { std::round(mCamPos.x), std::round(mCamPos.y) };
 		}
 
-		mCameraMatrix = glm::translate(glm::mat4(1.0f), { mCamPos.x, mCamPos.y, 0.0f });
-		mCameraMatrix = mOrtho * glm::scale(mCameraMatrix, { mScale, mScale, 0.0f });
+		mCameraMatrix = glm::scale(glm::mat4(1.0f), { mScale, mScale, 0.0f });
+		mCameraMatrix = mOrtho * glm::translate(mCameraMatrix, { mCamPos.x, mCamPos.y, 0.0f });
 	}
 
 	Vec4f Camera2D::getViewPortDim()
 	{
-		return  Vec4f{ mCamPos.x, mCamPos.y, mScreenWidth / mScale, mScreenHeight / mScale };
+		return  Vec4f{ -mCamPos.x, -mCamPos.y, mScreenWidth / mScale, mScreenHeight / mScale };
 	}
 
 	Vec2f Camera2D::convertScreenToWold(Vec2f coords, bool invertY)
 	{
 		auto coordsTrans = Vec2f{ coords.x / mWindowWidth, coords.y / mWindowHeight };
-		return Vec2f{ mScreenWidth / mScale * coordsTrans.x, mScreenHeight / mScale * coordsTrans.y } - mCamPos / mScale;
+		return Vec2f{ mScreenWidth * coordsTrans.x, mScreenHeight / mScale * coordsTrans.y } - mCamPos;
 	}
 
 	bool Camera2D::isBoxInView(const Vec4f& box)
@@ -75,7 +74,7 @@ namespace Plutus
 
 		// float xDepth = MIN_DISTANCE_X - abs(distVec.x);
 		// float yDepth = MIN_DISTANCE_Y - abs(distVec.y);
-
-		return getViewPortDim().overlap(box);
+		auto dim = getViewPortDim() + Vec4f{ -box.z, -box.w, box.z, box.w };
+		return dim.overlap(box);
 	}
 } // namespace Plutus

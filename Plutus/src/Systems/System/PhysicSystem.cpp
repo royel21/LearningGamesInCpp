@@ -12,7 +12,7 @@
 
 #include <cmath>
 
-constexpr float PIXEL_SIZE = 100.0f;
+constexpr float PIXEL_SIZE = 32.0f;
 //Pixel Per Meter
 constexpr float PPM = 1 / PIXEL_SIZE;
 //Meter Per Pixel

@@ -9,7 +9,7 @@
 namespace Plutus
 {
     constexpr uint32_t MAX_RECT = 1000000;
-    constexpr uint32_t scale = 6;
+    constexpr uint32_t scale = 10;
     constexpr uint32_t WIDTH = 1280 * scale;
     constexpr uint32_t HEIGHT = 720 * scale;
 
@@ -40,6 +40,7 @@ namespace Plutus
         mSpriteBatch2.init();
 
         rects.reserve(MAX_RECT);
+        mQTrees.reserve(MAX_RECT);
         for (size_t i = 0; i < MAX_RECT; i++)
         {
             float x = (float)Utils::getRandom(0, WIDTH);
@@ -75,30 +76,9 @@ namespace Plutus
 
     void App::draw()
     {
-        auto mpos = Input::get()->getMouseCoords() * (float)scale;
-        auto start = Time::micros();
         glClearColor(0.6f, 0.7f, 1.0f, 1.0f);
+        auto mpos = Input::get()->getMouseCoords() * (float)scale;
 
-        int count = 0;
-        if (LinearSearch) {
-            for (auto& r : rects) {
-                if (rect1.overlaps(r.rect)) {
-                    mSpritebatch.submit(r.rect.getBox(), r.color);
-                    count++;
-                }
-            }
-        }
-        else {
-            // for (auto& item : mQTrees.query(rect1)) {
-            //     mSpritebatch.submit(item.rect.getBox(), item.color);
-            //     count++;
-            // }
-        }
-
-
-        Rect v1(515, 259, 250, 250);
-
-        ColorRGBA8 c(0, 0, 0, 10);
 
         if (Input::get()->onKeyPressed("Q")) {
             LinearSearch = !LinearSearch;
@@ -125,14 +105,38 @@ namespace Plutus
             }
         }
 
+        auto start = Time::micros();
+        std::vector<ColorRect*> items;
+
+        int count = 0;
+        if (LinearSearch) {
+            for (auto& r : rects) {
+                if (rect1.overlaps(r.rect)) {
+                    items.push_back(&r);
+                }
+            }
+        }
+        else {
+            items = mQTrees.query(rect1);
+        }
+
+        for (auto item : items) {
+            mSpritebatch.submit(item->rect.getBox(), item->color);
+        }
+
+        char title[128];
+        std::snprintf(title, 128, "%s - FPS: %.2f elapse: %03.03f, count:%zu / 1000000", LinearSearch ? "Linear" : "Quad", mLimiter.getFPS(), (Time::micros() - start) / 1000.0f, items.size());
+        mWindow.setTitle(title);
+
+        Rect v1(515, 259, 250, 250);
+
+        ColorRGBA8 c(0, 0, 0, 10);
         if (rect1.contains(v1)) {
             mSpritebatch.submit(v1.getBox());
         }
+
         mSpritebatch.submit(rect1.getBox(), c);
         mSpritebatch.finish();
 
-        char title[128];
-        std::snprintf(title, 128, "%s - elapse: %llu, FPS: %.2f count:%i / 1000000", LinearSearch ? "Linear" : "Quad", Time::micros() - start, mLimiter.getFPS(), count);
-        mWindow.setTitle(title);
     }
 }

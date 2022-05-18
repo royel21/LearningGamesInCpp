@@ -12,7 +12,7 @@
 
 namespace Plutus
 {
-    constexpr size_t MAX_DEPTH = 8;
+    constexpr size_t MAX_DEPTH = 20;
 
     template<typename T>
     class QuadTree
@@ -48,11 +48,9 @@ namespace Plutus
                         if (!mChilds[i]) {
                             mChilds[i] = std::make_shared<QuadTree<T>>(mChildsArea[i], curDepth);
                         }
+                        mChilds[i]->insert(item, itemSize);
+                        return;
                     }
-
-
-                    mChilds[i]->insert(item, itemSize);
-                    return;
                 }
             }
             mItems.push_back({ itemSize, item });
@@ -125,11 +123,11 @@ namespace Plutus
 
     template <typename T>
     class QuadTreeContainer {
-        using Container = std::list<T>;
+        using Container = std::vector<T>;
 
     private:
         Container mAllItems;
-        QuadTree<typename Container::iterator> root;
+        QuadTree<uint32_t> root;
 
     public:
         QuadTreeContainer(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0) : root(area) { }
@@ -137,6 +135,8 @@ namespace Plutus
         void resize(const Rect area) {
             root.resize(area);
         }
+
+        void reserve(size_t count) { mAllItems.reserve(count); }
 
         size_t size() const { return mAllItems.size(); }
 
@@ -159,18 +159,23 @@ namespace Plutus
         void insert(const T& item, const Rect& itemSize)
         {
             mAllItems.push_back(item);
-
-            auto it = std::prev(mAllItems.end());
-            auto start = Time::micros();
-            root.insert(it, itemSize);
-            Logger::info("time: %llu %zu", Time::micros() - start, sizeof(it));
+            // auto start = Time::micros();
+            root.insert(mAllItems.size() - 1, itemSize);
+            // Logger::info("time: %llu %zu", Time::micros() - start, sizeof(it));
         }
 
-        std::list<typename Container::iterator> query(const Rect& r) const
+        std::vector<T*> query(const Rect& r)
         {
-            std::list<typename Container::iterator> items;
+            std::list<uint32_t> items;
+            std::vector<T*> founds;
+
             root.queryItems(r, items);
-            return items;
+            founds.reserve(items.size());
+
+            for (auto i : items) {
+                founds.push_back(&mAllItems[i]);
+            }
+            return founds;
         }
 
 

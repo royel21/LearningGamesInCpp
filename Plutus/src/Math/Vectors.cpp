@@ -44,7 +44,7 @@ namespace Plutus
     }
 
     bool Vec4f::contain(const Vec2f& v) {
-        return !(v.x < x || v.y < y || v.x >= (x + z) || v.y >= (y + w));
+        return v.x >= x && v.x >= y && v.x <= x + z && v.y <= y + w;
     }
 
     bool Vec4f::contain(const Vec4f& v) {
@@ -52,12 +52,6 @@ namespace Plutus
     }
 
     bool Vec4f::overlap(const Vec4f& v) {
-        // return v.x + v.z >= x || v.y + v.w >= y || v.x <= (x + z) || y <= (y + w);
-        // return (x < v.x + v.z && x + z >= v.x && y < v.y + v.w && y + w >= v.y);
-        return
-            contain(Vec2f{ v.x, v.y }) ||
-            contain(Vec2f{ v.x, v.w }) ||
-            contain(Vec2f{ v.z, v.w }) ||
-            contain(Vec2f{ v.x, v.w });
+        return v.x >= x || v.y >= y || v.x + v.z <= x + z || v.y + v.w <= y + w;
     }
 } // namespace Plutus
