@@ -50,7 +50,7 @@ namespace Plutus
 
                             ImGui::Row("Position", width);
                             if (ImGui::Draw2Float("##cpos", mConfig->mProject.vpPos))
-                                camera->setPosition(mConfig->mProject.vpPos * camera->getScale());
+                                camera->setPosition(mConfig->mProject.vpPos);
 
                             ImGui::Row("BG Color", width);
                             Vec4f color = mConfig->mProject.scene->mBGColor;

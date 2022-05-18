@@ -29,7 +29,7 @@ namespace Plutus
                 switch (fixture.type) {
                 case BoxShape: {
                     Vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
-                    if (mCamera->isBoxInView(rect))
+                    if (mCamera->getViewPortDim().overlap(rect))
                     {
                         mDebug->drawBox(rect);
                     }
@@ -41,7 +41,7 @@ namespace Plutus
                 }
                 case CircleShape: {
                     Vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
-                    if (mCamera->isBoxInView(rect))
+                    if (mCamera->getViewPortDim().overlap(rect))
                     {
                         mDebug->drawCircle(pos + fixture.offset, fixture.radius);
                     }

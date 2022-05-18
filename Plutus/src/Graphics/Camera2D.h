@@ -28,6 +28,7 @@ namespace Plutus
 		Vec2f mVPSize = { 0, 0 };
 		glm::mat4 mOrtho = glm::mat4(0);
 		glm::mat4 mCameraMatrix = glm::mat4(0);
+		Vec2f mScaleSize;
 
 	public:
 		/*
@@ -45,7 +46,7 @@ namespace Plutus
 		//@param y position y
 		inline void setPosition(float x, float y) { mCamPos.x = x; mCamPos.y = y; }
 
-		inline void setBounds(const Vec4f& bounds) { mBounds = -bounds; mHasBounds = true; }
+		inline void setBounds(const Vec4f& bounds) { mBounds = bounds; mHasBounds = true; }
 
 		//set camera position and shedule a update
 		//@param newPosition glm vec2 position
@@ -68,7 +69,7 @@ namespace Plutus
 		// return the current scale value
 		inline float getScale() { return mScale; }
 		// zoom the view port
-		inline void setScale(float scale) { mScale = scale > 0 ? scale : 0.1f; init(mScreenWidth, mScreenHeight); }
+		void setScale(float scale);
 
 		Vec4f getViewPortDim();
 		// return the view port size in pixels
@@ -85,9 +86,7 @@ namespace Plutus
 		//Convert screen coordination to camera coordination and return it
 		Vec2f convertScreenToWold(Vec2f screenCoords, bool invertY = false);
 
-		const Vec2f getScaleScreen() { return Vec2f(mScreenWidth, mScreenHeight) / mScale; }
-
-		bool isBoxInView(const Vec4f& box);
+		const Vec2f getScaleScreen() { return mScaleSize; }
 	};
 } // namespace Plutus
 

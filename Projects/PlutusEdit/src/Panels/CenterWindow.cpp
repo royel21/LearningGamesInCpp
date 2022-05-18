@@ -21,6 +21,7 @@
 #include <ECS/Components/TransformComponent.h>
 
 #include <Time/Timer.h>
+#include <Log/Logger.h>
 
 const char* newScript = R"SCRIPT(
 function init()
@@ -60,6 +61,7 @@ namespace Plutus
         if (mConfig->isHover) {
             auto pos = mConfig->mMouseCoords;
             auto camera = mConfig->mRender->mCamera;
+            auto scale = camera->getScale();
 
             if (Input::get()->onKeyPressed("F2"))
                 camera->setPosition(0, 0);
@@ -79,17 +81,17 @@ namespace Plutus
             {
                 if (Input::get()->onKeyDown("MouseLeft"))
                 {
-                    Vec2f result = pos - mMouseLastCoords;
-                    mConfig->mProject.vpPos = mCamCoords + result;
+                    Vec2f result = (pos - mMouseLastCoords) / scale;
+                    mConfig->mProject.vpPos = mCamCoords - result;
                 }
 
                 auto scroll = Input::get()->getMouseWheel();
                 if (scroll != 0)
                 {
-                    auto scalePos = pos / camera->getScale();
+                    auto scalePos = pos / scale;
 
-                    auto newVal = camera->getScale() + (scroll > 0 ? 0.05f : -0.05f);
-                    camera->setScale(CHECKLIMIT(newVal, 0.20f, 6));
+                    auto newVal = scale + (scroll > 0 ? 0.1f : -0.1f);
+                    camera->setScale(newVal);
                     mConfig->mProject.zoomLevel = camera->getScale();
 
                     auto newPos = pos / camera->getScale();
@@ -110,30 +112,25 @@ namespace Plutus
         if (!Input::get()->isCtrl) {
             if (Input::get()->onKeyPressed("MouseLeft"))
             {
-                mMouseLastCoords = mConfig->mMouseCoords;
+                // mMouseLastCoords = mConfig->mMouseCoords;
 
                 auto id = mConfig->mRender->mFramePicker.getEntId({ x, y });
                 Entity ent = mConfig->mProject.scene->getEntity(id);
 
-                if (ent) {
-                    project.mEnt = ent;
-                    if (project.mEnt.hasComponent<TransformComponent>()) {
-                        mEntLastPos = project.mEnt.getComponent<TransformComponent>()->getPosition();
-                    }
-                }
+                if (ent) project.mEnt = ent;
             }
 
-            if (project.mEnt && Input::get()->onKeyDown("MouseLeft"))
-            {
-                if (project.mEnt.hasComponent<TransformComponent>()) {
-                    auto trans = project.mEnt.getComponent<TransformComponent>();
-                    Vec2f result = mConfig->mMouseCoords - mMouseLastCoords;
-                    result /= mConfig->mRender->mCamera->getScale();
+            // if (project.mEnt && Input::get()->onKeyDown("MouseLeft"))
+            // {
+            //     if (project.mEnt.hasComponent<TransformComponent>()) {
+            //         auto trans = project.mEnt.getComponent<TransformComponent>();
+            //         Vec2f result = mConfig->mMouseCoords - mMouseLastCoords;
+            //         result /= mConfig->mRender->mCamera->getScale();
 
-                    trans->x = mEntLastPos.x + result.x;
-                    trans->y = mEntLastPos.y + result.y;
-                }
-            }
+            //         trans->x = mEntLastPos.x + result.x;
+            //         trans->y = mEntLastPos.y + result.y;
+            //     }
+            // }
         }
     }
 

@@ -61,7 +61,7 @@ namespace Plutus
 
     void App::Update(float dt) {
         auto start = Time::micros();
-        auto mpos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
+        auto mpos = Input::get()->getMouseCoords();
         auto particles = mProject.scene->getComponentFromName < ParticleComponent>("particleEmiter");
         auto cPos = mCamera.getPosition();
 

@@ -86,7 +86,7 @@ namespace Plutus
             switch (fixture.type) {
             case BoxShape: {
                 Vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
-                if (mCamera->isBoxInView(rect))
+                if (mCamera->getViewPortDim().overlap(rect))
                 {
                     mDebugRender->drawBox(rect);
                 }
@@ -98,7 +98,7 @@ namespace Plutus
             }
             case CircleShape: {
                 Vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
-                if (mCamera->isBoxInView(rect))
+                if (mCamera->getViewPortDim().overlap(rect))
                 {
                     mDebugRender->drawCircle(pos + fixture.offset, fixture.radius);
                 }
@@ -159,7 +159,7 @@ namespace Plutus
                 for (auto& tile : tilemap.mTiles)
                 {
                     auto rect = tilemap.getRect(tile);
-                    if (mCamera->isBoxInView(rect))
+                    if (mCamera->getViewPortDim().overlap(rect))
                     {
                         auto texIndex = -1;
                         Texture* tex = nullptr;
@@ -182,7 +182,7 @@ namespace Plutus
         {
             auto [trans, sprite] = view.get(ent);
             auto rect = trans.getRect();
-            if (mCamera->isBoxInView(rect))
+            if (mCamera->getViewPortDim().overlap(rect))
             {
                 auto tex = AssetManager::get()->getAsset<Texture>(sprite.mTextureId);
 

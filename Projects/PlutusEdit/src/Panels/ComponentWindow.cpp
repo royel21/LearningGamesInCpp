@@ -74,7 +74,7 @@ namespace Plutus
         }
         ImGui::End();
     }
-
+    Vec2f lastEntPos, lastMPos;
     /***********************************Transform Comopnent********************************************************/
     void ComponentWindow::DrawTransform() {
         if (CollapseComponent<TransformComponent>("Transform##comp-comp", 1, mConfig))
@@ -103,6 +103,20 @@ namespace Plutus
 
             ImGui::Row("Sort Y");
             ImGui::Checkbox("##trans-sortY", &trans->sortY);
+
+            if (Input::get()->onKeyPressed("MouseLeft")) {
+                lastMPos = mConfig->mMouseCoords;
+                lastEntPos = mEnt.getPosition();
+            }
+
+            if (Input::get()->onKeyDown("MouseLeft") && !Input::get()->isCtrl) {
+                auto trans = mEnt.getComponent<TransformComponent>();
+                Vec2f result = mConfig->mMouseCoords - lastMPos;
+                result /= mConfig->mRender->mCamera->getScale();
+
+                trans->x = lastEntPos.x + result.x;
+                trans->y = lastEntPos.y + result.y;
+            }
         }
     }
     /***********************************Sprite Comopnent********************************************************/
@@ -224,7 +238,7 @@ namespace Plutus
                 mRigidBody->mBodyType = rigidBodyTypes[current];
             }
 
-            drawFixtures(mRigidBody);
+            drawFixtures(mRigidBody, mConfig);
         }
     }
 
@@ -232,7 +246,7 @@ namespace Plutus
     {
         auto  physicBody = mEnt.getComponent<PhysicBodyComponent>();
         if (CollapseComponent<PhysicBodyComponent>("Phyics Body##tilemap-comp", 7, mConfig)) {
-            drawFixtures(physicBody);
+            drawFixtures(physicBody, mConfig);
         }
     }
 }

@@ -38,7 +38,7 @@ namespace Plutus
         {
             auto [trans, sprite] = view.get(ent);
             auto rect = trans.getRect();
-            if (mCamera->isBoxInView(rect))
+            if (mCamera->getViewPortDim().overlap(rect))
             {
                 auto tex = AssetManager::get()->getAsset<Texture>(sprite.mTextureId);
                 mRenderables.emplace_back(tex ? tex->mTexId : 0, rect, sprite.mUVCoord, sprite.mColor,

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <Log/Logger.h>
 #include <ECS/Components/TransformComponent.h>
+#include <algorithm>
 
 namespace Plutus
 {
@@ -20,61 +21,36 @@ namespace Plutus
 		update();
 	}
 
+	void Camera2D::setScale(float scale) {
+		mScale = std::clamp(scale, 0.1f, 20.0f);
+		mScaleSize = { mScreenWidth / mScale, mScreenHeight / mScale };
+		mOrtho = glm::ortho(0.0f, (float)mScreenWidth / mScale, 0.0f, (float)mScreenHeight / mScale, 0.0f, 100.0f);
+	}
+
 	void Camera2D::update()
 	{
 		if (mEntity) {
-			mCamPos = -mEntity.getPosition() - mOffset;
+			mCamPos = mEntity.getPosition() + mOffset;
 			if (mHasBounds) {
-				if (mCamPos.x > mBounds.x) mCamPos.x = mBounds.x;
-				if (mCamPos.x < mBounds.z) mCamPos.x = mBounds.z;
-				if (mCamPos.y > mBounds.y) mCamPos.y = mBounds.y;
-				if (mCamPos.y < mBounds.w) mCamPos.y = mBounds.w;
+				if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
+				if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
+				if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
+				if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
 			}
-			mCamPos = { std::round(mCamPos.x), std::round(mCamPos.y) };
+			mCamPos = { std::roundf(mCamPos.x), std::roundf(mCamPos.y) };
 		}
 
-		mCameraMatrix = glm::scale(glm::mat4(1.0f), { mScale, mScale, 0.0f });
-		mCameraMatrix = mOrtho * glm::translate(mCameraMatrix, { mCamPos.x, mCamPos.y, 0.0f });
+		mCameraMatrix = mOrtho * glm::translate(glm::mat4(1.0f), { -mCamPos.x, -mCamPos.y, 0.0f });
 	}
 
 	Vec4f Camera2D::getViewPortDim()
 	{
-		return  Vec4f{ -mCamPos.x, -mCamPos.y, mScreenWidth / mScale, mScreenHeight / mScale };
+		return  Vec4f{ mCamPos.x, mCamPos.y, mScaleSize.x, mScaleSize.y };
 	}
 
 	Vec2f Camera2D::convertScreenToWold(Vec2f coords, bool invertY)
 	{
 		auto coordsTrans = Vec2f{ coords.x / mWindowWidth, coords.y / mWindowHeight };
-		return Vec2f{ mScreenWidth * coordsTrans.x, mScreenHeight / mScale * coordsTrans.y } - mCamPos;
-	}
-
-	bool Camera2D::isBoxInView(const Vec4f& box)
-	{
-		// float width = box.z / mScale * 2;
-		// float height = box.w / mScale * 2;
-		// auto vp = getViewPortDim();
-
-		// return(
-		// 	box.x < vp.x + vp.z + width &&
-		// 	box.y < vp.y + vp.w + height &&
-		// 	box.x + box.z > vp.x - width &&
-		// 	box.y + box.w > vp.y - height
-		// 	);
-		// glm::vec2 pos(box.x, box.y);
-		// glm::vec2 dim(box.z, box.w);
-
-		// glm::vec2 scaleDim = glm::vec2(mScreenWidth, mScreenHeight) / mScale;
-
-		// const float MIN_DISTANCE_X = dim.x / 2.0f + scaleDim.x / 2.0f;
-		// const float MIN_DISTANCE_Y = dim.y / 2.0f + scaleDim.y / 2.0f;
-
-		// glm::vec2 centerPos = pos + dim / 2.0f;
-
-		// glm::vec2 distVec = centerPos - pos;
-
-		// float xDepth = MIN_DISTANCE_X - abs(distVec.x);
-		// float yDepth = MIN_DISTANCE_Y - abs(distVec.y);
-		auto dim = getViewPortDim() + Vec4f{ -box.z, -box.w, box.z, box.w };
-		return dim.overlap(box);
+		return mCamPos + Vec2f{ mScaleSize.x * coordsTrans.x, mScaleSize.y * coordsTrans.y };
 	}
 } // namespace Plutus
