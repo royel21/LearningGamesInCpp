@@ -20,7 +20,6 @@ namespace Plutus
         SpriteBatch2D* getSpritebath() { return &mRenderer; }
 
     private:
-        Shader mShader;
         SpriteBatch2D mRenderer;
         FrameBuffer* mFrameBuff = nullptr;
         std::vector<Renderable> mRenderables;

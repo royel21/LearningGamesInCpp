@@ -3,12 +3,31 @@
 #include <vector>
 
 #include <Math/Vectors.h>
+#include <box2d/b2_math.h>
 
+constexpr float PIXEL_SIZE = 32.0f;
+//Pixel Per Meter
+constexpr float PPM = 1 / PIXEL_SIZE;
+//Meter Per Pixel
+constexpr float MPP = PIXEL_SIZE;
+//Half Meter Per Pixel
+constexpr float HMPP = PPM / 2.0f;
 
 class b2Body;
 
 namespace Plutus
 {
+    inline b2Vec2 toWorld(const Vec2f& value) {
+        return { value.x * PPM, value.y * PPM };
+    }
+
+    inline Vec2f fromWorld(b2Vec2 value) {
+        return { value.x * MPP, value.y * MPP };
+    }
+
+    inline b2Vec2 tobVec2(const Vec2f& vec) { return { vec.x, vec.y }; }
+    inline Vec2f toVec2f(const b2Vec2& vec) { return { vec.x, vec.y }; }
+
     constexpr int P_Edge = 0;
     constexpr int P_Circle = 1;
     constexpr int P_Box = 2;

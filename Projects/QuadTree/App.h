@@ -34,7 +34,6 @@ namespace Plutus
     private:
         Window mWindow;
         Camera2D mCamera;
-        Shader mShader;
         SpriteBatch2D mSpritebatch;
         PlutusEngine::SpriteBatch mSpriteBatch2;
 

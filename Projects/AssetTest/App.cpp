@@ -16,7 +16,7 @@
 
 #define CHECKLIMIT(val, min, max) val<min ? min : val> max ? max : val
 
-#define NUM_PARTICLES 20000
+#define NUM_PARTICLES 1000
 
 namespace Plutus
 {
@@ -29,6 +29,7 @@ namespace Plutus
     void App::Init() {
         printGLVersion();
         mSystemManager.setProject(&mProject);
+        mWindow.setVSYNC(0);
 
         // AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle.png");
         AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle-textures/fire.png", 64, 64, GL_LINEAR);
@@ -51,6 +52,7 @@ namespace Plutus
             auto y = Utils::getRandom(5, 20);
             particles->addParticle({ 640, 0 }, 100, { x, y }, 60.0f);
         }
+        // mLimiter.setFPS(120);
     }
 
     float force = 0.2f;
@@ -60,75 +62,73 @@ namespace Plutus
 
 
     void App::Update(float dt) {
-        auto mpos = Input::get()->getMouseCoords();
-        auto particles = mProject.scene->getComponentFromName < ParticleComponent>("particleEmiter");
-        auto cPos = mCamera.getPosition();
+        // auto mpos = Input::get()->getMouseCoords();
+        // auto particles = mProject.scene->getComponentFromName < ParticleComponent>("particleEmiter");
+        // auto cPos = mCamera.getPosition();
 
-        auto mInput = Input::get();
+        // auto mInput = Input::get();
 
-        if (mInput->isCtrl) {
+        // if (mInput->isCtrl) {
 
-            if (mInput->onKeyDown("Right")) {
-                cPos.x += 5;
-            }
-            if (mInput->onKeyDown("Left")) {
-                cPos.x -= 5;
-            }
-            if (mInput->onKeyDown("Up")) {
-                cPos.y -= 5;
-            }
-            if (mInput->onKeyDown("Down")) {
-                cPos.y -= 5;
-            }
-            mCamera.setPosition(cPos);
-        }
+        //     if (mInput->onKeyDown("Right")) {
+        //         cPos.x += 5;
+        //     }
+        //     if (mInput->onKeyDown("Left")) {
+        //         cPos.x -= 5;
+        //     }
+        //     if (mInput->onKeyDown("Up")) {
+        //         cPos.y -= 5;
+        //     }
+        //     if (mInput->onKeyDown("Down")) {
+        //         cPos.y -= 5;
+        //     }
+        //     mCamera.setPosition(cPos);
+        // }
 
-        if (Input::get()->onKeyDown("MouseLeft")) {
-            if (timer.IntervalMillis(0)) {
-                for (int i = 0; i < 500; i++) {
-                    auto x = Utils::getRandom(-100, 100);
-                    auto y = Utils::getRandom(20, 100);
-                    particles->addParticle(mpos, 100, { x, y }, 2.0f);
-                }
-            }
-        }
+        // if (Input::get()->onKeyDown("MouseLeft")) {
+        //     if (timer.IntervalMillis(0)) {
+        //         for (int i = 0; i < 500; i++) {
+        //             auto x = Utils::getRandom(-100, 100);
+        //             auto y = Utils::getRandom(20, 100);
+        //             particles->addParticle(mpos, 100, { x, y }, 2.0f);
+        //         }
+        //     }
+        // }
 
-        if (Input::get()->onKeyPressed("MouseLeft"))
-        {
-            mouseLast = Input::get()->getMouseCoords();
-            camOrg = mCamera.getPosition();
+        // if (Input::get()->onKeyPressed("MouseLeft"))
+        // {
+        //     mouseLast = Input::get()->getMouseCoords();
+        //     camOrg = mCamera.getPosition();
 
-        }
-        // move the camera
-        if (Input::get()->isCtrl)
-        {
-            Vec2f offset;
-            if (Input::get()->onKeyDown("MouseLeft"))
-            {
-                Vec2f result = Input::get()->getMouseCoords() - mouseLast;
-                result /= mCamera.getScale();
-                offset = camOrg - result;
-                mCamera.setPosition(offset);
-            }
+        // }
+        // // move the camera
+        // if (Input::get()->isCtrl)
+        // {
+        //     Vec2f offset;
+        //     if (Input::get()->onKeyDown("MouseLeft"))
+        //     {
+        //         Vec2f result = Input::get()->getMouseCoords() - mouseLast;
+        //         result /= mCamera.getScale();
+        //         offset = camOrg - result;
+        //         mCamera.setPosition(offset);
+        //     }
 
-            auto scroll = Input::get()->getMouseWheel();
-            if (scroll != 0)
-            {
-                auto newVal = mCamera.getScale() + (scroll > 0 ? 0.05f : -0.05f);
-                mCamera.setScale(CHECKLIMIT(newVal, 0.20f, 6));
-                auto newPos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
+        //     auto scroll = Input::get()->getMouseWheel();
+        //     if (scroll != 0)
+        //     {
+        //         auto newVal = mCamera.getScale() + (scroll > 0 ? 0.05f : -0.05f);
+        //         mCamera.setScale(CHECKLIMIT(newVal, 0.20f, 6));
+        //         auto newPos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
 
-                auto offset = newPos - mpos;
-                mCamera.setPosition(mCamera.getPosition() - offset);
+        //         auto offset = newPos - mpos;
+        //         mCamera.setPosition(mCamera.getPosition() - offset);
 
-            }
-        }
+        //     }
+        // }
         // setBackgoundColor(0.0f, 0.5f, 0.8f);
 
         // auto start = Time::micros();
-        // auto start = Time::micros();
         mSystemManager.update(dt);
-        // Logger::info("count: %i, elapse: %llu", particles->count, Time::micros() - start);
         // char title[128];
         // std::snprintf(title, 128, "FPS: %.2f elapse: %03.03f", mLimiter.getFPS(), (Time::micros() - start) / 1000.0f);
         // mWindow.setTitle(title);
@@ -136,6 +136,11 @@ namespace Plutus
 
         // auto start = Time::millis();
         // Logger::info("elapse: %llu", 1000 / (Time::millis() - start));
+
+
+        char title[128];
+        std::snprintf(title, 128, "FPS: %.2f", mLimiter.getFPS());
+        mWindow.setTitle(title);
     }
 
     void App::Draw() {

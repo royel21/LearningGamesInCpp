@@ -1,6 +1,7 @@
 #include "Capsule.h"
 #include <box2d/b2_body.h>
 #include <Physics/Shapes.h>
+#include <ECS/Components/PhysicBodyComponent.h>
 
 namespace Plutus
 {

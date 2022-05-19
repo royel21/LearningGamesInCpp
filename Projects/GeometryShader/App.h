@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "MapRender.h"
 
+#include <Time/Limiter.h>
 #include <Graphics/Camera2D.h>
 #include <Systems/SystemManager.h>
 
@@ -37,6 +38,7 @@ namespace Plutus
         MapRender mMapRender;
         SystemManager mSysManager;
         Camera2D mCamera;
+        Limiter mLimiter;
 
         // Shader mShader;
         // uint32_t mVertexArray;

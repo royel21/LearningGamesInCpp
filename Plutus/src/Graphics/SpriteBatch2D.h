@@ -6,6 +6,7 @@
 
 #include "vertex.h"
 #include "GLheaders.h"
+#include "Shader.h"
 
 #include <Math/Vectors.h>
 
@@ -45,6 +46,7 @@ namespace Plutus
 		//Vertext Object Buffer Id
 		GLuint mVBO = 0;
 		// Represent how many Vertice was created
+		Shader mShader;
 		GLuint mIndexCount = 0;
 		GLuint mVertexCount = 0;
 		//Array of 4 Vertix per Single Object
@@ -53,7 +55,6 @@ namespace Plutus
 		IndexBuffer* mIBO = nullptr;
 		// Camera with the screen coordinate where we are drawing
 		Camera2D* mCamera = nullptr;
-		Shader* mShader = nullptr;
 		// Array of Renderables batcher per Image
 		std::vector<Renderable> mRenderables;
 		// Array of Rnder batcher per Image
@@ -62,11 +63,10 @@ namespace Plutus
 	public:
 		SpriteBatch2D() = default;
 		~SpriteBatch2D();
-		void init();
+		void init(uint32_t maxSprite = 60000);
 		//Prepare the Vertex buffer to add objects
 		void begin();
 
-		void setShader(Shader* shader) { mShader = shader; }
 		void setCamera(Camera2D* cam) { mCamera = cam; }
 
 		void submit(const std::vector<Renderable>& renderables);

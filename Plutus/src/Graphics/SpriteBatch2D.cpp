@@ -18,12 +18,6 @@
 #include <Math/PMath.h>
 #include <Assets/Assets.h>
 
-#define RENDERER_MAX_SPRITES 1000000
-#define RENDERER_VERTEX_SIZE sizeof(Vertex)
-#define RENDERER_SPRITE_SIZE RENDERER_VERTEX_SIZE * 4
-#define RENDERER_BUFFER_SIZE RENDERER_SPRITE_SIZE *RENDERER_MAX_SPRITES
-#define RENDERER_INDICES_SIZE RENDERER_MAX_SPRITES * 6
-
 #define SHADER_VERTEX_INDEX 0
 #define SHADER_UV_INDEX 1
 #define SHADER_COLOR_INDEX 2
@@ -35,12 +29,13 @@ namespace Plutus
 	SpriteBatch2D::~SpriteBatch2D()
 	{
 		mRenderBatches.clear();
+		mShader.destroy();
 		glDeleteBuffers(1, &mVBO);
 		glDeleteVertexArrays(1, &mVAO);
 		delete mIBO;
 	}
 
-	void SpriteBatch2D::init()
+	void SpriteBatch2D::init(uint32_t maxSprite)
 	{
 		mVAO = Graphic::createVertexArray();
 		mVBO = Graphic::createBufferArray();
@@ -58,12 +53,13 @@ namespace Plutus
 		glVertexAttribPointer(SHADER_ENTITYID_INDEX, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, entId));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		mIBO = new IndexBuffer(RENDERER_MAX_SPRITES);
+		mIBO = new IndexBuffer(maxSprite);
 
 		glBindVertexArray(0);
 
 		mRenderBatches.clear();
 		bufferVertices.clear();
+		mShader.init();
 	}
 
 	void SpriteBatch2D::createVertices(GLuint texture, const Vec4f& rect, Vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
@@ -133,9 +129,9 @@ namespace Plutus
 
 	void SpriteBatch2D::begin()
 	{
-		mShader->enable();
-		mShader->setUniform1i("mySampler", 0);
-		mShader->setUniformMat4("camera", mCamera->getCameraMatrix());
+		mShader.enable();
+		mShader.setUniform1i("mySampler", 0);
+		mShader.setUniformMat4("camera", mCamera->getCameraMatrix());
 
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 		glBufferData(GL_ARRAY_BUFFER, mVertexCount * sizeof(Vertex), bufferVertices.data(), GL_DYNAMIC_DRAW);
@@ -147,12 +143,12 @@ namespace Plutus
 
 	void SpriteBatch2D::draw(BatchType type)
 	{
-		mShader->setUniform1i("type", type);
+		mShader.setUniform1i("type", type);
 		for (size_t i = 0; i < mRenderBatches.size(); i++)
 		{
 			glActiveTexture(GL_TEXTURE0);
 			auto& batch = mRenderBatches[i];
-			mShader->setUniform1i("hasTexture", batch.texture);
+			mShader.setUniform1i("hasTexture", batch.texture);
 			glBindTexture(GL_TEXTURE_2D, batch.texture);
 			glDrawElements(GL_TRIANGLES, batch.numVertices, GL_UNSIGNED_INT, (void*)(batch.offset * sizeof(GLuint)));
 		}
@@ -162,7 +158,7 @@ namespace Plutus
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(0);
 		mIBO->unbind();
-		mShader->disable();
+		mShader.disable();
 	}
 
 	void SpriteBatch2D::end()

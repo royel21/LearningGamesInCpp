@@ -1,4 +1,4 @@
-local SPEED = 20
+local SPEED = 12
 local curAnime = "stand-r"
 
 local stand = {
@@ -43,7 +43,8 @@ function move() rbody:applyForce(vel.x, vel.y) end
 function roll()
     vel.x = vel.x * 1.1;
     vel.y = vel.y * 1.1;
-    rbody:applyForce(vel.x, vel.y)
+   -- rbody:applyForce(vel.x, vel.y)
+	rbody:setVelocity(vel.x, vel.y)
 end
 
 function jump() rbody:applyImpulse(0, 0.3) end
@@ -109,6 +110,21 @@ function update(dt)
         state = "     "
     end
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -16,13 +16,11 @@
 namespace Plutus
 {
     RenderSystem::RenderSystem(Camera2D* camera) : ISystem(camera) {
-        mShader.init(GLSL::vertexShader, GLSL::fragShader);
         mRenderer.init();
     }
 
     void RenderSystem::init(Project* project) {
         mProject = project;
-        mRenderer.setShader(&mShader);
         mRenderer.setCamera(mCamera);
     }
 

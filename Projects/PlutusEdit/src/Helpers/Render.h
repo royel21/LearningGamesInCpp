@@ -45,7 +45,6 @@ namespace Plutus
 
     private:
         Scene* mScene = nullptr;
-        Shader mShader;
         SpriteBatch2D mSpriteBatch;
         DebugRender* mDebugRender = nullptr;
     };

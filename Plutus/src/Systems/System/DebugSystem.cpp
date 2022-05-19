@@ -18,39 +18,48 @@ namespace Plutus
         mDebug->init(mCamera);
     }
 
+    void DebugSystem::prepare(PhysicBodyComponent pc) {
+        for (auto& fixture : pc.mFixtures) {
+            auto pos = fromWorld(pc.mBody->GetPosition());
+
+            switch (fixture.type) {
+            case BoxShape: {
+                Vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
+                if (mCamera->getViewPortDim().overlap(rect))
+                {
+                    mDebug->drawBox(rect);
+                }
+                break;
+            }
+            case EdgeShape: {
+                mDebug->drawLine(pos + fixture.offset, fixture.size + fixture.offset);
+                break;
+            }
+            case CircleShape: {
+                Vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
+                if (mCamera->getViewPortDim().overlap(rect))
+                {
+                    mDebug->drawCircle(pos + fixture.offset, fixture.radius);
+                }
+                break;
+            }
+            }
+
+        }
+    }
+
     void DebugSystem::update(float dt)
     {
-        auto rigidview = mProject->scene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
-        for (auto [e, trans, rbody] : rigidview.each()) {
-
-            for (auto& fixture : rbody.mFixtures) {
-                auto pos = fromWorld(rbody.mBody->GetPosition());
-
-                switch (fixture.type) {
-                case BoxShape: {
-                    Vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
-                    if (mCamera->getViewPortDim().overlap(rect))
-                    {
-                        mDebug->drawBox(rect);
-                    }
-                    break;
-                }
-                case EdgeShape: {
-                    mDebug->drawLine(pos + fixture.offset, fixture.size + fixture.offset);
-                    break;
-                }
-                case CircleShape: {
-                    Vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
-                    if (mCamera->getViewPortDim().overlap(rect))
-                    {
-                        mDebug->drawCircle(pos + fixture.offset, fixture.radius);
-                    }
-                    break;
-                }
-                }
-
-            }
+        auto rigidview = mProject->scene->getRegistry()->view<RigidBodyComponent>();
+        for (auto [e, rbody] : rigidview.each()) {
+            prepare(rbody);
         }
+
+        auto physicview = mProject->scene->getRegistry()->view<PhysicBodyComponent>();
+        for (auto [e, rbody] : physicview.each()) {
+            prepare(rbody);
+        }
+
         mDebug->end();
         mDebug->render();
 

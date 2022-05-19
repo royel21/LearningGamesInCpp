@@ -37,7 +37,7 @@ namespace Plutus
 				if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
 				if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
 			}
-			mCamPos = { std::roundf(mCamPos.x), std::roundf(mCamPos.y) };
+			// mCamPos = { int(mCamPos.x), int(mCamPos.y) };
 		}
 
 		mCameraMatrix = mOrtho * glm::translate(glm::mat4(1.0f), { -mCamPos.x, -mCamPos.y, 0.0f });

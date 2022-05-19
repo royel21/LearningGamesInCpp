@@ -11,6 +11,8 @@
 #include <emscripten.h>
 #endif
 
+#include <Log/Logger.h>
+
 namespace Plutus
 {
 #ifdef __EMSCRIPTEN__
@@ -80,7 +82,7 @@ namespace Plutus
 #endif
 
         Exit();
-        }
+    }
 
     void Core::addScreen(const std::string id, IScreen * screen, bool primary) {
         mScreenList[id] = screen;
@@ -114,4 +116,4 @@ namespace Plutus
     void Core::printGLVersion() {
         std::printf("\033[0;93mVersion: %s\n\033[0m", glGetString(GL_VERSION));
     }
-    } // namespace Plutus
+} // namespace Plutus

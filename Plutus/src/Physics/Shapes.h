@@ -1,15 +1,6 @@
 #pragma once
 #include <vector>
 #include <Math/Vectors.h>
-#include <box2d/b2_math.h>
-
-constexpr float PIXEL_SIZE = 100.0f;
-//Pixel Per Meter
-constexpr float PPM = 1 / PIXEL_SIZE;
-//Meter Per Pixel
-constexpr float MPP = PIXEL_SIZE;
-//Half Meter Per Pixel
-constexpr float HMPP = PPM / 2.0f;
 
 class b2Body;
 
@@ -27,17 +18,6 @@ namespace Plutus
         float dist;
         Vec2f axis;
     };
-
-    inline b2Vec2 toWorld(const Vec2f& value) {
-        return { value.x * PPM, value.y * PPM };
-    }
-
-    inline Vec2f fromWorld(b2Vec2 value) {
-        return { value.x * MPP, value.y * MPP };
-    }
-
-    inline b2Vec2 tobVec2(const Vec2f& vec) { return { vec.x, vec.y }; }
-    inline Vec2f toVec2f(const b2Vec2& vec) { return { vec.x, vec.y }; }
 
     struct Shape {
         Vec2f pos;

@@ -8,7 +8,7 @@
 
 namespace Plutus
 {
-    constexpr uint32_t MAX_RECT = 1000000;
+    constexpr uint32_t MAX_RECT = 100000;
     constexpr uint32_t scale = 10;
     constexpr uint32_t WIDTH = 1280 * scale;
     constexpr uint32_t HEIGHT = 720 * scale;
@@ -32,12 +32,9 @@ namespace Plutus
 
         mWindow.init("Quad Tree Test", 1280, 720);
         mCamera.init(WIDTH, HEIGHT);
-        mShader.init();
 
         mSpritebatch.init();
-        mSpritebatch.setShader(&mShader);
         mSpritebatch.setCamera(&mCamera);
-        mSpriteBatch2.init();
 
         auto start = Time::micros();
         rects.reserve(MAX_RECT);
@@ -105,7 +102,6 @@ namespace Plutus
             }
         }
 
-        auto start = Time::micros();
         std::vector<ColorRect*> items;
 
         int count = 0;
@@ -120,13 +116,10 @@ namespace Plutus
             items = mQTrees.query(rect1);
         }
 
+        auto start = Time::micros();
         for (auto item : items) {
             mSpritebatch.submit(item->rect.getBox(), item->color);
         }
-
-        char title[128];
-        std::snprintf(title, 128, "%s - FPS: %.2f elapse: %03.03f, count:%zu / 1000000", LinearSearch ? "Linear" : "Quad", mLimiter.getFPS(), (Time::micros() - start) / 1000.0f, items.size());
-        mWindow.setTitle(title);
 
         Rect v1(515, 259, 250, 250);
 
@@ -137,6 +130,10 @@ namespace Plutus
 
         mSpritebatch.submit(rect1.getBox(), c);
         mSpritebatch.finish();
+
+        char title[128];
+        std::snprintf(title, 128, "%s - FPS: %.2f elapse: %03.03f, count:%zu / 1000000", LinearSearch ? "Linear" : "Quad", mLimiter.getFPS(), (Time::micros() - start) / 1000.0f, items.size());
+        mWindow.setTitle(title);
 
     }
 }

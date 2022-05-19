@@ -12,28 +12,8 @@
 
 #include <cmath>
 
-constexpr float PIXEL_SIZE = 32.0f;
-//Pixel Per Meter
-constexpr float PPM = 1 / PIXEL_SIZE;
-//Meter Per Pixel
-constexpr float MPP = PIXEL_SIZE;
-//Half Meter Per Pixel
-constexpr float HMPP = PPM / 2.0f;
-
-
 namespace Plutus
 {
-    inline b2Vec2 toWorld(const Vec2f& value) {
-        return { value.x * PPM, value.y * PPM };
-    }
-
-    inline Vec2f fromWorld(b2Vec2 value) {
-        return { value.x * MPP, value.y * MPP };
-    }
-
-    inline b2Vec2 tobVec2(const Vec2f& vec) { return { vec.x, vec.y }; }
-    inline Vec2f toVec2f(const b2Vec2& vec) { return { vec.x, vec.y }; }
-
     void createFixture(PhysicBodyComponent& pbody, const Vec2f& pos) {
 
         for (auto& fixture : pbody.mFixtures) {
@@ -124,10 +104,10 @@ namespace Plutus
 
         auto view = mProject->scene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
         for (auto [ent, trans, rbody] : view.each()) {
+            rbody.speedLimit();
             auto pos = fromWorld(rbody.mBody->GetPosition());
             trans.x = pos.x;
             trans.y = pos.y;
-            rbody.speedLimit();
         }
     }
 

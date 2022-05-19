@@ -10,19 +10,10 @@
 #include <Time/Timer.h>
 #include <Graphics/GLSL.h>
 #include <Assets/Assets.h>
+#include <ECS/Components/PhysicBodyComponent.h>
 
 namespace Plutus
 {
-    /*
-
-    b2_staticBody = 0,
-    b2_kinematicBody,
-    b2_dynamicBody
-    */
-    constexpr int StaticBody = 0;
-    constexpr int KinematicBody = 1;
-    constexpr int DynamicBody = 2;
-
     App::App(const char* name, int width, int height)
     {
         mName = name;
@@ -138,7 +129,6 @@ namespace Plutus
         mShader.init(GLSL::vertexShader, GLSL::fragShader);
         mBatch.init();
         mBatch.setCamera(&mCamera);
-        mBatch.setShader(&mShader);
         texture = AssetManager::get()->addAsset<Texture>("player", "assets/textures/Player.png", 60, 64, 64);
 
         mDebug = DebugRender::get();

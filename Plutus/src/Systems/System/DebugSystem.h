@@ -5,6 +5,7 @@
 namespace Plutus
 {
     class DebugRender;
+    struct PhysicBodyComponent;
 
     class DebugSystem : public ISystem
     {
@@ -16,5 +17,7 @@ namespace Plutus
     private:
         DebugRender* mDebug;
         bool mIsDrawGrid = false;
+
+        void prepare(PhysicBodyComponent pc);
     };
 } // namespace Plutus

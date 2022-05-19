@@ -7,8 +7,8 @@
 namespace Plutus
 {
     void Shape::update() {
-        if (type != EdgeShape)
-            pos = fromWorld(body->GetPosition());
+        // if (type != EdgeShape)
+        //     pos = fromWorld(body->GetPosition());
     }
 
     Line2d::Line2d(float x1, float y1, float x2, float y2, float r) : end(x2, y2) {

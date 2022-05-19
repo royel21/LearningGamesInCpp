@@ -18,8 +18,6 @@
 #include <Log/Logger.h>
 #include <Time/Timer.h>
 
-#define MAX_PARTICLES 60000
-
 #define SHADER_P_POS 0
 #define SHADER_P_SIZE 1
 #define SHADER_P_COLOR 2
@@ -115,9 +113,7 @@ namespace Plutus
                     mShader.setUniform1i("uhasTexture", 1);
                     mShader.setUniform1fv("uTexData", 5, &b.second.tex->mTileSet.columns);
                 }
-                auto start = Time::micros();
                 glBufferData(GL_ARRAY_BUFFER, b.second.bufferVertices.size() * sizeof(RenderableParticle), b.second.bufferVertices.data(), GL_DYNAMIC_DRAW);
-                Logger::info("elapse: %llu", Time::micros() - start);
 
                 glDrawArrays(GL_POINTS, 0, b.second.bufferVertices.size());
 

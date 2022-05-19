@@ -17,12 +17,13 @@ namespace Plutus
 
     public:
         Limiter() { init(60); };
-        void init(float fps);
         ~Limiter();
         float start();
         void end();
         float getFPS() { return mFps; };
         void setFPS(float fps) { mSpecFps = 1.0f / fps; };
         void setFPSLimiter(bool state) { limitFPS = state; }
+    private:
+        void init(float fps);
     };
 } // namespace Plutus

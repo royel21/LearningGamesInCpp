@@ -26,9 +26,11 @@ namespace Plutus
         init();
         while (mWindow.isFinish())
         {
+            mLimiter.start();
             update();
             draw();
             mWindow.update();
+            mLimiter.end();
         }
     }
 
@@ -37,13 +39,13 @@ namespace Plutus
         mWindow.init("Plutus AppGeo", 1280, 768);
         glClearColor(0.0f, 0.65f, .95f, 1.0f);
         mInput = Input::get();
-        mSysManager.setProject(&mProject);
 
         mProject.load("ZombiesGame/ZombiesGame.json");
         mProject.loadScene(mProject.currentScene);
 
         mCamera.init(mProject.vpWidth, mProject.vpHeight);
         mCamera.setScale(mProject.zoomLevel);
+        mSysManager.setProject(&mProject);
         // mCamera2.init(1280, 768);
 
         mSysManager.AddSystem<ScriptSystem>(&mCamera);
@@ -51,6 +53,7 @@ namespace Plutus
         mSysManager.AddSystem<AnimationSystem>();
         mSysManager.AddSystem<TileMapSystem>(&mCamera);
         mSysManager.AddSystem<RenderSystem>(&mCamera);
+        mSysManager.AddSystem<DebugSystem>(&mCamera);
         // mMapRender.init(&mCamera);
 
         // auto mapView = mProject.scene->getRegistry()->view<TileMapComponent>();
@@ -106,6 +109,11 @@ namespace Plutus
         auto start = Time::micros();
         mSysManager.update(0.01667f);
         Logger::info("elapse: %llu", Time::micros() - start);
+
+
+        char title[128];
+        std::snprintf(title, 128, "FPS: %.2f", (Time::micros() - start) / 1000.0f);
+        mWindow.setTitle(title);
     }
 
     void AppGeo::draw()

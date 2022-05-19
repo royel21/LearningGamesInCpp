@@ -11,7 +11,6 @@
 namespace Plutus
 {
     Render::~Render() {
-        mShader.destroy();
     }
 
     void Render::init(Config* config)
@@ -20,7 +19,6 @@ namespace Plutus
         reload(config);
 
         if (!isLoaded) {
-            mShader.init(GLSL::vertexShader, GLSL::fragShader);
             mDebugRender = Plutus::DebugRender::get();
             mDebugRender->init(mCamera);
             mDebugRender->setCellSize({ mConfig->tileWidth, mConfig->tileHeight });
@@ -38,7 +36,6 @@ namespace Plutus
         mCamera->setScale(config->mProject.zoomLevel);
 
         mSpriteBatch.init();
-        mSpriteBatch.setShader(&mShader);
         mSpriteBatch.setCamera(mCamera);
 
         mFramePicker.init(w, h, true);
