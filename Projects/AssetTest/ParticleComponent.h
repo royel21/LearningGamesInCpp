@@ -4,8 +4,9 @@
 #include <string>
 #include <functional>
 
-#include <Math/Vectors.h>
+#include <Log/Logger.h>
 
+#include <Math/Vectors.h>
 #include <Utils/ColorRGBA8.h>
 
 class b2Body;
@@ -64,6 +65,7 @@ namespace Plutus
                 mParticles[lastIndex] = { pos + offset, size, vel, lifeTime, texCoord };
             }
             lastIndex = (lastIndex + 1) % mMaxCount;
+            // Logger::info("count: %i lastI:%i", count, lastIndex);
         }
 
         void addTexture(const std::string& texId);

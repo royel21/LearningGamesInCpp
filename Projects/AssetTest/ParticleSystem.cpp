@@ -91,9 +91,7 @@ namespace Plutus
 
     void ParticleSystem::update(float dt)
     {
-        // auto start = Time::micros();
         if (!prepare(dt)) return;
-        // Logger::info("elapse: %llu", Time::micros() - start);
 
         mShader.enable();
         mShader.setUniformMat4("uCamera", mCamera->getCameraMatrix());
@@ -117,7 +115,9 @@ namespace Plutus
                     mShader.setUniform1i("uhasTexture", 1);
                     mShader.setUniform1fv("uTexData", 5, &b.second.tex->mTileSet.columns);
                 }
+                auto start = Time::micros();
                 glBufferData(GL_ARRAY_BUFFER, b.second.bufferVertices.size() * sizeof(RenderableParticle), b.second.bufferVertices.data(), GL_DYNAMIC_DRAW);
+                Logger::info("elapse: %llu", Time::micros() - start);
 
                 glDrawArrays(GL_POINTS, 0, b.second.bufferVertices.size());
 

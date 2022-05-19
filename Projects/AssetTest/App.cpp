@@ -16,7 +16,7 @@
 
 #define CHECKLIMIT(val, min, max) val<min ? min : val> max ? max : val
 
-#define NUM_PARTICLES 5000
+#define NUM_PARTICLES 20000
 
 namespace Plutus
 {
@@ -46,11 +46,11 @@ namespace Plutus
         // sys->setBlend(false);
         mSystemManager.init();
 
-        // for (int i = 0; i < NUM_PARTICLES; i++) {
-        //     auto x = Utils::getRandom(-5, 5);
-        //     auto y = Utils::getRandom(5, 20);
-        //     particles->addParticle({ 640, 0 }, 100, { x, y }, 60.0f);
-        // }
+        for (int i = 0; i < NUM_PARTICLES; i++) {
+            auto x = Utils::getRandom(-5, 5);
+            auto y = Utils::getRandom(5, 20);
+            particles->addParticle({ 640, 0 }, 100, { x, y }, 60.0f);
+        }
     }
 
     float force = 0.2f;
@@ -60,7 +60,6 @@ namespace Plutus
 
 
     void App::Update(float dt) {
-        auto start = Time::micros();
         auto mpos = Input::get()->getMouseCoords();
         auto particles = mProject.scene->getComponentFromName < ParticleComponent>("particleEmiter");
         auto cPos = mCamera.getPosition();
@@ -86,7 +85,7 @@ namespace Plutus
 
         if (Input::get()->onKeyDown("MouseLeft")) {
             if (timer.IntervalMillis(0)) {
-                for (int i = 0; i < 200; i++) {
+                for (int i = 0; i < 500; i++) {
                     auto x = Utils::getRandom(-100, 100);
                     auto y = Utils::getRandom(20, 100);
                     particles->addParticle(mpos, 100, { x, y }, 2.0f);
@@ -127,8 +126,12 @@ namespace Plutus
         // setBackgoundColor(0.0f, 0.5f, 0.8f);
 
         // auto start = Time::micros();
+        // auto start = Time::micros();
         mSystemManager.update(dt);
-        Logger::info("count: %i, elapse: %llu", particles->count, Time::micros() - start);
+        // Logger::info("count: %i, elapse: %llu", particles->count, Time::micros() - start);
+        // char title[128];
+        // std::snprintf(title, 128, "FPS: %.2f elapse: %03.03f", mLimiter.getFPS(), (Time::micros() - start) / 1000.0f);
+        // mWindow.setTitle(title);
 
 
         // auto start = Time::millis();

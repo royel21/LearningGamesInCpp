@@ -39,6 +39,7 @@ namespace Plutus
         mSpritebatch.setCamera(&mCamera);
         mSpriteBatch2.init();
 
+        auto start = Time::micros();
         rects.reserve(MAX_RECT);
         mQTrees.reserve(MAX_RECT);
         for (size_t i = 0; i < MAX_RECT; i++)
@@ -53,15 +54,14 @@ namespace Plutus
             uint8_t b = (uint8_t)Utils::getRandom(0, 255);
 
             rects.emplace_back(Rect{ x, y, w, h }, ColorRGBA8(r, g, b));
-            auto size = Rect{ x, y, w, h };
 
-            ColorRect crect(size, ColorRGBA8(r, g, b));
+            ColorRect crect(Rect{ x, y, w, h }, ColorRGBA8(r, g, b));
 
             mQTrees.insert(crect, crect.rect);
         }
         rect1 = { 0,0, 600,600 };
         size_t totalItems = mQTrees.size();
-        Logger::info("count: %zu", totalItems);
+        Logger::info("count: %zu %llu", totalItems, Time::micros() - start);
     }
 
     void App::update() {

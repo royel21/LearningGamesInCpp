@@ -116,7 +116,7 @@ namespace Plutus
         // 4 child of the quad tree
         std::array<std::shared_ptr<QuadTree<T>>, 4> mChilds{};
         //Items belonging to this qtree
-        std::vector<std::pair<Rect, T>> mItems{};
+        std::vector<std::pair<Rect, T>> mItems;
     };
 
     /************** Quad Tree Container *****************************************************/

@@ -27,13 +27,12 @@ namespace Plutus
      */
     class Core
     {
-    private:
+    protected:
         Window mWindow;
         Limiter mLimiter;
 
         bool mUseConfig = false;
 
-    protected:
         //Width of the Window
         int mWidth = 1280;
         //Height of the Window
