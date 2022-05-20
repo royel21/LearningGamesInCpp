@@ -31,13 +31,14 @@ namespace Plutus
 	{
 		if (mEntity) {
 			mCamPos = mEntity.getPosition() + mOffset;
-			if (mHasBounds) {
-				if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
-				if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
-				if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
-				if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
-			}
+			// if (mHasBounds) {
+			// 	if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
+			// 	if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
+			// 	if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
+			// 	if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
+			// }
 			// mCamPos = { int(mCamPos.x), int(mCamPos.y) };
+			Logger::info("pos: %.02f %.02f", mCamPos.x, mCamPos.y);
 		}
 
 		mCameraMatrix = mOrtho * glm::translate(glm::mat4(1.0f), { -mCamPos.x, -mCamPos.y, 0.0f });

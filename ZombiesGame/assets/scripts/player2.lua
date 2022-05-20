@@ -1,4 +1,4 @@
-local SPEED = 12
+local SPEED = 1
 local curAnime = "stand-r"
 
 local stand = {
@@ -28,7 +28,7 @@ function init()
     camera:setTarget(Player2, vec)
     local anim = Player2:getAnimate()
     if anim then anim:play(curAnime) end
-    rbody = Player2:getRigidBody()
+    --rbody = Player2:getRigidBody()
     --rbody:setMaxVelocity(1, 1)
 
     print("player2 init")
@@ -38,7 +38,14 @@ function destroy() assetManager:removeSound("bg") end
 
 local vel = {x = 0, y = 0}
 
-function move() rbody:applyForce(vel.x, vel.y) end
+function move() 
+	--rbody:applyForce(vel.x, vel.y) 
+	local trans = Player2:getTransform()
+	print("move")
+	trans.x = trans.x + vel.x
+	trans.y = trans.y + vel.y
+	print("move")
+end
 
 function roll()
     vel.x = vel.x * 1.1;
@@ -110,6 +117,14 @@ function update(dt)
         state = "     "
     end
 end
+
+
+
+
+
+
+
+
 
 
 

@@ -49,7 +49,7 @@ namespace Plutus
         // mCamera2.init(1280, 768);
 
         mSysManager.AddSystem<ScriptSystem>(&mCamera);
-        mSysManager.AddSystem<PhysicSystem>();
+        // mSysManager.AddSystem<PhysicSystem>();
         mSysManager.AddSystem<AnimationSystem>();
         mSysManager.AddSystem<TileMapSystem>(&mCamera);
         mSysManager.AddSystem<RenderSystem>(&mCamera);
