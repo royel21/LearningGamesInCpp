@@ -9,9 +9,6 @@
 #include <glm/glm.hpp>
 #include <Input/Input.h>
 
-#include "Camera.h"
-#include "MapRender.h"
-
 #include <Time/Limiter.h>
 #include <Graphics/Camera2D.h>
 #include <Systems/SystemManager.h>
@@ -34,8 +31,6 @@ namespace Plutus
         Window mWindow;
         Project mProject;
         Input* mInput;
-        Camera mCamera2;
-        MapRender mMapRender;
         SystemManager mSysManager;
         Camera2D mCamera;
         Limiter mLimiter;
@@ -46,7 +41,7 @@ namespace Plutus
 
         // int tileWidth;
         // int tileHeight;
-        float speed = 4;
+        float speed = 1;
 
         // glm::vec2 pos = { 0, 0 };
         // glm::mat4 projection;

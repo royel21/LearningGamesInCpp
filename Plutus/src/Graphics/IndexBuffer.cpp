@@ -4,7 +4,7 @@
 
 namespace Plutus
 {
-	IndexBuffer::IndexBuffer(GLuint count) : mIboID(0), mCount(count)
+	IndexBuffer::IndexBuffer(GLuint count) : mIboID(-1), mCount(count)
 	{
 		init(count);
 	}
@@ -28,7 +28,13 @@ namespace Plutus
 			offset += 4;
 		}
 
-		mIboID = Graphic::createElementBuffer();
+		if (mIboID == -1) {
+			mIboID = Graphic::createElementBuffer();
+		}
+		else {
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIboID);
+		}
+
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mCount * sizeof(GLuint), indices, GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -46,7 +52,7 @@ namespace Plutus
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
-	void IndexBuffer::cleanUp() {
+	void IndexBuffer::destroy() {
 		if (mIboID)
 			glDeleteBuffers(1, &mIboID);
 	}

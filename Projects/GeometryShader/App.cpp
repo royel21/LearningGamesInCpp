@@ -19,6 +19,10 @@
 #include <Log/Logger.h>
 #include <Time/Timer.h>
 
+#include "RendererSystem.h"
+
+// #include "SpriteBatch.h"
+
 namespace Plutus
 {
     void AppGeo::run()
@@ -48,12 +52,12 @@ namespace Plutus
         mSysManager.setProject(&mProject);
         // mCamera2.init(1280, 768);
 
-        mSysManager.AddSystem<ScriptSystem>(&mCamera);
+        mSysManager.AddSystem<RendererSystem>(&mCamera);
         // mSysManager.AddSystem<PhysicSystem>();
-        mSysManager.AddSystem<AnimationSystem>();
-        mSysManager.AddSystem<TileMapSystem>(&mCamera);
+        // mSysManager.AddSystem<AnimationSystem>();
+        // mSysManager.AddSystem<TileMapSystem>(&mCamera);
         mSysManager.AddSystem<RenderSystem>(&mCamera);
-        mSysManager.AddSystem<DebugSystem>(&mCamera);
+        // mSysManager.AddSystem<DebugSystem>(&mCamera);
         // mMapRender.init(&mCamera);
 
         // auto mapView = mProject.scene->getRegistry()->view<TileMapComponent>();
@@ -65,6 +69,8 @@ namespace Plutus
 
         mSysManager.init();
         // mCamera.setTarget({}, {});
+
+        // Logger::info("size: %i", sizeof(SpriteVert) * 4 );
     }
 
     void AppGeo::update()

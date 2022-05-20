@@ -41,6 +41,10 @@ namespace Plutus
         {
             return (x != tile.x && y != tile.y && texcoord != tile.texcoord);
         }
+
+        bool operator < (const Tile& t) const {
+            return texture < t.texture;
+        }
     };
 
     struct TileMapComponent
@@ -62,9 +66,9 @@ namespace Plutus
         void removeTexture(int index);
 
         Texture* getTexture(int id);
+        Vec4f getTexCoord(Tile& tile);
 
         void addTile(Tile& tile);
-        void addTile(int pos, int tile);
         Tile* getTile(const Vec2i& mCoords);
         int getIndex(const Vec2i& mCoords);
         bool removeTile(const Vec2i& mCoords);
@@ -75,6 +79,13 @@ namespace Plutus
 
         inline Vec4f getRect(Tile tile) {
             return { tile.x * mTileWidth, tile.y * mTileHeight, mTileWidth, mTileHeight };
+        }
+
+        bool operator < (const TileMapComponent& ref) const {
+            return mLayer < ref.mLayer;
+        }
+        bool operator < (const TileMapComponent* ref) const {
+            return mLayer < ref->mLayer;
         }
     };
 } // namespace Plutus

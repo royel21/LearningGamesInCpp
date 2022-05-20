@@ -14,14 +14,15 @@ namespace Plutus
 	public:
 		IndexBuffer() = default;
 		IndexBuffer(uint32_t count);
-		~IndexBuffer() { cleanUp(); }
+		~IndexBuffer() { destroy(); }
 
 		void init(uint32_t count);
+		void calculateIndex(uint32_t count);
 		void bind() const;
 
 		void unbind() const;
 
-		void cleanUp();
+		void destroy();
 
 		uint32_t getCount() const { return mCount; }
 	};

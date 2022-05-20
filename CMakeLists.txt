@@ -58,14 +58,8 @@ target_link_libraries(AssetTest PUBLIC Plutus)
 
 
 #*************Geometry Shader**********************
-add_executable("GeometryShader" Projects/GeometryShader/main.cpp 
-                            Projects/GeometryShader/App.h 
-                            Projects/GeometryShader/App.cpp
-                            Projects/GeometryShader/MapRender.h
-                            Projects/GeometryShader/MapRender.cpp
-                            Projects/GeometryShader/Camera.h
-                            Projects/GeometryShader/Camera.cpp
-                            )
+file(GLOB_RECURSE GeometryShader_SRC Projects/GeometryShader/*.h Projects/GeometryShader/*.cpp)
+add_executable("GeometryShader"  ${GeometryShader_SRC})
 
 target_link_libraries(GeometryShader PUBLIC Plutus)
 

@@ -17,12 +17,12 @@
 #include "GraphicsUtil.h"
 #include <Math/PMath.h>
 #include <Assets/Assets.h>
+#include "Renderables.h"
 
 #define SHADER_VERTEX_INDEX 0
 #define SHADER_UV_INDEX 1
 #define SHADER_COLOR_INDEX 2
 #define SHADER_ENTITYID_INDEX 3
-
 
 namespace Plutus
 {
@@ -134,7 +134,7 @@ namespace Plutus
 		mShader.setUniformMat4("camera", mCamera->getCameraMatrix());
 
 		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-		glBufferData(GL_ARRAY_BUFFER, mVertexCount * sizeof(Vertex), bufferVertices.data(), GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, bufferVertices.size() * sizeof(Vertex), bufferVertices.data(), GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		glBindVertexArray(mVAO);

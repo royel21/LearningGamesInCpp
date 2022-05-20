@@ -28,6 +28,10 @@ namespace Plutus
         return  AssetManager::get()->getAsset<Texture>(mTextures[id]);
     }
 
+    Vec4f TileMapComponent::getTexCoord(Tile& tile) {
+        return  AssetManager::get()->getAsset<Texture>(mTextures[tile.texture])->getUV(tile.texcoord);
+    }
+
     void TileMapComponent::addTile(Tile& tile)
     {
         mTiles.push_back(tile);
@@ -55,20 +59,6 @@ namespace Plutus
             mTiles.erase(mTiles.begin() + index);
         }
         return index > -1;
-    }
-
-    void TileMapComponent::addTile(int pos, int tile) {
-
-        // uint32_t texId = 0xf & tile;
-        // int uvIndex = 0xffff & (tile >> 4);
-        // uint32_t transform = 0xf & tile;
-
-        // bool flipX = 0x2000000 & tile;
-        // bool flipY = 0x4000000 & tile;
-        // float rotation = 0x8000000 & tile ? 90.0f : 0;
-
-        // pos
-
     }
 
 } // namespace Plutus

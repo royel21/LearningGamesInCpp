@@ -45,6 +45,7 @@ namespace Plutus
         }
         // sort by layer, y position, texture
         std::sort(mRenderables.begin(), mRenderables.end());
+
         mRenderer.submit(mRenderables);
         if (mFrameBuff) {
             mFrameBuff->bind();
