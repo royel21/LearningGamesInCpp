@@ -16,18 +16,15 @@ namespace Plutus
         uint8_t g;
         uint8_t b;
         uint8_t a;
-        //Empty Constructor
-        ColorRGBA8() : r(255), b(255), g(255), a(255) {}
+        ColorRGBA8(uint32_t color = 0xffffffff) { setColor(color); }
 
-        ColorRGBA8(uint32_t color) { setColor(color); }
-
-        ColorRGBA8(uint8_t _r, uint8_t _g, uint8_t _b, uint8_t _a = 255) : r(_r), g(_g), b(_b), a(_a) {}
+        ColorRGBA8(uint8_t _r, uint8_t _g = 255, uint8_t _b = 255, uint8_t _a = 255) : r(_r), g(_g), b(_b), a(_a) {}
 
         ColorRGBA8(const Vec4f& v) { setColor(v); }
 
         inline uint32_t get() { return r | g << 8 | b << 16 | a << 24; };
 
-        inline void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+        inline void setColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) {
             this->r = r; this->g = g; this->b = b; this->a = a;
         }
 
@@ -54,6 +51,11 @@ namespace Plutus
                 b / 255.0f,
                 a / 255.0f
             };
+        }
+
+        ColorRGBA8& operator=(int value) {
+            setColor(value);
+            return *this;
         }
 
         ColorRGBA8& operator=(const Vec4f& v) {

@@ -21,15 +21,14 @@ namespace Plutus
     class SpriteBatch : public RenderBatch
     {
     public:
+        SpriteBatch() {}
         SpriteBatch(Camera2D* camera, Shader* shader = nullptr) : RenderBatch(camera, shader) {  };
         ~SpriteBatch() { destroy(); }
 
         void init(uint32_t MAX_SPRITE = 60000);
         void addSprite(Renderable* renderable);
-        void draw() override;
+        void draw(Shader* shader = nullptr) override;
         void destroy() override;
-
-        void setShader(Shader* shader) { mShader = shader; }
 
     private:
         Vec2f mtopLeft;

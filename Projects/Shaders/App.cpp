@@ -3,7 +3,6 @@
 #include <Math/Vectors.h>
 
 #include <Graphics/Graphic.h>
-#include <Graphics/Renderables.h>
 
 #include <Input/Input.h>
 #include <Time/Timer.h>
@@ -12,6 +11,7 @@
 
 #include <Math/LogVec.h>
 #include <Assets/Assets.h>
+#include <Graphics/Renderables.h>
 
 namespace Plutus
 {
@@ -45,31 +45,32 @@ namespace Plutus
     {
         mWindow.setAlwaysOnTOp(true);
         mShader.init(ver, frag);
-        Vec4f uv(0, 0, 1, 1);
+        // Vec4f uv(0, 0, 1, 1);
 
-        mVertices.push_back({ 0, 0, uv.x, uv.w });//Bottom
-        mVertices.push_back({ 0, 400, uv.x, uv.y });//top left
-        mVertices.push_back({ 400, 400, uv.z, uv.y });//top right
-        mVertices.push_back({ 400, 0, uv.z, uv.w });//bottom right
+        // mVertices.push_back({ 0, 0, uv.x, uv.w });//Bottom
+        // mVertices.push_back({ 0, 400, uv.x, uv.y });//top left
+        // mVertices.push_back({ 400, 400, uv.z, uv.y });//top right
+        // mVertices.push_back({ 400, 0, uv.z, uv.w });//bottom right
 
-        mVAO = Graphic::createVertexArray();
-        mVBO = Graphic::createBufferArray();
+        // mVAO = Graphic::createVertexArray();
+        // mVBO = Graphic::createBufferArray();
 
-        auto vsize = sizeof(VertexPoint);
-        Graphic::setFAttribute(0, 2, vsize, NULL);
-        Graphic::setFAttribute(1, 2, vsize, (void*)offsetof(VertexPoint, u));
+        // auto vsize = sizeof(VertexPoint);
+        // Graphic::setFAttribute(0, 2, vsize, NULL);
+        // Graphic::setFAttribute(1, 2, vsize, (void*)offsetof(VertexPoint, u));
 
-        glBufferData(GL_ARRAY_BUFFER, mVertices.size() * vsize, mVertices.data(), GL_STATIC_DRAW);
+        // glBufferData(GL_ARRAY_BUFFER, mVertices.size() * vsize, mVertices.data(), GL_STATIC_DRAW);
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        mIbo.init(1);
+        // glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // mIbo.init(1);
 
-        glBindVertexArray(0);
-
-        auto ftime = std::filesystem::last_write_time("Projects/Shaders/ver.vert");
+        // glBindVertexArray(0);
         AssetManager::get()->addAsset<Texture>("player.png", "assets/textures/Player1.png");
 
         mLightShader.init(ver, lightFrag);
+
+        mBatch.setCamera(&mCamera);
+        mBatch.init();
     }
 
     void App::Update(float)
@@ -91,21 +92,29 @@ namespace Plutus
     void App::Draw()
     {
         Graphic::enableBlend();
+
+        Renderable ren1;
+
         if (mShader.enable()) {
+            auto mpos = Input::get()->getMouseCoords();
             auto tex = AssetManager::get()->getAsset<Texture>("player.png");
             mShader.setUniformMat4("uCamera", mCamera.getCameraMatrix());
             mShader.setUniform2f("u_resolution", mCamera.getViewPortSize());
-            mShader.setUniform2f("u_mouse", Input::get()->getMouseCoords());
+            mShader.setUniform2f("u_mouse", mpos);
             mShader.setUniform1f("u_time", Time::seconds());
             mShader.setUniform1i("uSampler", 0);
 
-            glBindVertexArray(mVAO);
-            mIbo.bind();
+            Renderable ren1(tex, { 0,0, 400, 400 }, { 0.0f, 0.0f, 1.0f, 1.0f }, { 255, 255,255,255 });
+            mBatch.addSprite(&ren1);
+            mBatch.draw(&mShader);
 
-            if (tex) {
-                glBindTexture(GL_TEXTURE_2D, tex->mTexId);
-            }
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+            // glBindVertexArray(mVAO);
+            // mIbo.bind();
+
+            // if (tex) {
+            //     glBindTexture(GL_TEXTURE_2D, tex->mTexId);
+            // }
+            // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
             mShader.disable();
 
 
@@ -114,7 +123,11 @@ namespace Plutus
             mLightShader.setUniform2f("u_mouse", Input::get()->getMouseCoords());
             mLightShader.setUniform2f("u_resolution", mCamera.getViewPortSize());
 
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+            Renderable ren2(nullptr, { mpos.x - 200, mpos.y - 200, 400, 400 }, { -1.0f, -1.0f, 1.0f, 1.0f }, { 255, 255,255,255 });
+            mBatch.addSprite(&ren2);
+            mBatch.draw(&mLightShader);
+
+            // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
             mLightShader.disable();
 
             glBindVertexArray(0);

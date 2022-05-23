@@ -1,11 +1,11 @@
 in vec2 uv;
+in vec4 color;
 
 uniform vec2 u_mouse;
 uniform vec2 u_resolution;
 
 void main(){
-    vec2 mpos = u_mouse.xy/u_resolution.xy;
-    float dist = length(mpos);
+    float dist = length(uv);
 
-    gl_FragColor = vec4(1.0, 1.0, 1.0, 1. * (1.0-dist));
+    gl_FragColor = vec4(color.rgb, color.a * (1.0-dist));
 }

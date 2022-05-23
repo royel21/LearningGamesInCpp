@@ -87,10 +87,12 @@ namespace Plutus {
         batch->vertCount += 6;
     }
 
-    void SpriteBatch::draw() {
-        if (mShader) {
-            mShader->enable();
-            mShader->setUniformMat4("uCamera", mCamera->getCameraMatrix());
+    void SpriteBatch::draw(Shader* shader) {
+        auto nShader = shader ? shader : mShader;
+
+        if (nShader) {
+            nShader->enable();
+            nShader->setUniformMat4("uCamera", mCamera->getCameraMatrix());
 
             Graphic::enableBlend();
 
@@ -104,14 +106,14 @@ namespace Plutus {
             for (auto& batch : mBatches)
             {
                 if (batch.texture) {
-                    mShader->setUniform1i("uHasTex", 1);
-                    mShader->setUniform1i("uSampler", batch.texture->mTexureUnit);
+                    nShader->setUniform1i("uHasTex", 1);
+                    nShader->setUniform1i("uSampler", batch.texture->mTexureUnit);
 
                     glBindTexture(GL_TEXTURE_2D, batch.texture->mTexId);
                     glActiveTexture(GL_TEXTURE0 + batch.texture->mTexureUnit);
                 }
                 else {
-                    mShader->setUniform1i("uHasTex", 0);
+                    nShader->setUniform1i("uHasTex", 0);
                 }
 
                 glDrawElements(GL_TRIANGLES, batch.vertCount, GL_UNSIGNED_INT, (void*)(batch.iboOffset * sizeof(GLuint)));
@@ -119,7 +121,7 @@ namespace Plutus {
             }
 
             mIbo.unbind();
-            mShader->disable();
+            nShader->disable();
 
             glBindVertexArray(0);
             glBindTexture(GL_TEXTURE_2D, 0);

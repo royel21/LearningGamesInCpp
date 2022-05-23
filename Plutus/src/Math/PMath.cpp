@@ -3,9 +3,6 @@
 
 #include <algorithm>
 
-constexpr float PI = 3.14159265359f;
-#define DEC2RA(dec) dec *(PI / 180.0f)
-
 namespace Plutus
 {
     void rotate(Vec2f& point, const Vec2f& origin, float angle)

@@ -26,9 +26,12 @@ namespace Plutus
         Shader* mShader;
 
     public:
-        RenderBatch(Camera2D* camera, Shader* shader = nullptr) : mCamera(camera), mShader(shader) {}
-        virtual void draw() = 0;
+        RenderBatch(Camera2D* camera = nullptr, Shader* shader = nullptr) : mCamera(camera), mShader(shader) {}
+        virtual void draw(Shader* shader = nullptr) = 0;
         virtual void destroy() {}
+
+        inline void setShader(Shader* shader) { mShader = shader; }
+        inline void setCamera(Camera2D* camera) { mCamera = camera; }
 
         bool operator < (const RenderBatch& t) const {
             return mLayer < t.mLayer;

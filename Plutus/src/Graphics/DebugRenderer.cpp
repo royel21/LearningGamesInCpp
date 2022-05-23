@@ -2,7 +2,7 @@
 
 #include "GLSL.h"
 #include "Camera2D.h"
-#include "GraphicsUtil.h"
+#include "Graphic.h"
 #include <algorithm>
 
 #include <Math/PMath.h>

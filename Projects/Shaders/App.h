@@ -3,13 +3,13 @@
 
 #include <Graphics/Shader.h>
 #include <Graphics/IndexBuffer.h>
-#include <Graphics/SpriteBatch2D.h>
 #include <Graphics/Camera2D.h>
 
 #include <vector>
 #include <cstdint>
 
 #include "FileCheck.h"
+#include "SpriteBatch.h"
 
 namespace Plutus
 {
@@ -37,5 +37,6 @@ namespace Plutus
         Shader mLightShader;
         IndexBuffer mIbo;
         std::vector<VertexPoint> mVertices;
+        SpriteBatch mBatch;
     };
 } // namespace Plutus
