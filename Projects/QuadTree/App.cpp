@@ -8,21 +8,28 @@
 
 namespace Plutus
 {
-    constexpr uint32_t MAX_RECT = 100000;
+    constexpr uint32_t MAX_RECT = 20000;
     constexpr uint32_t scale = 10;
     constexpr uint32_t WIDTH = 1280 * scale;
     constexpr uint32_t HEIGHT = 720 * scale;
+
+    bool LinearSearch = true;
 
     void App::run()
     {
         init();
         while (mWindow.isFinish()) {
+            auto start = Time::micros();
             mLimiter.start();
             update();
             draw();
 
             mWindow.update();
             mLimiter.end();
+
+            char title[128];
+            std::snprintf(title, 128, "%s - FPS: %.2f elapse: %03.03f, count:%lu", LinearSearch ? "Linear" : "Quad", mLimiter.getFPS(), (Time::micros() - start) / 1000.0f, count);
+            mWindow.setTitle(title);
         }
     }
 
@@ -50,7 +57,7 @@ namespace Plutus
             uint8_t g = (uint8_t)Utils::getRandom(0, 255);
             uint8_t b = (uint8_t)Utils::getRandom(0, 255);
 
-            rects.emplace_back(Rect{ x, y, w, h }, ColorRGBA8(r, g, b));
+            // rects.emplace_back(Rect{ x, y, w, h }, ColorRGBA8(r, g, b));
 
             ColorRect crect(Rect{ x, y, w, h }, ColorRGBA8(r, g, b));
 
@@ -68,8 +75,6 @@ namespace Plutus
     Vec2f pos;
     Vec2f pos2;
     bool isSelected = false;
-
-    bool LinearSearch = true;
 
     void App::draw()
     {
@@ -104,7 +109,6 @@ namespace Plutus
 
         std::vector<ColorRect*> items;
 
-        int count = 0;
         if (LinearSearch) {
             for (auto& r : rects) {
                 if (rect1.overlaps(r.rect)) {
@@ -115,8 +119,7 @@ namespace Plutus
         else {
             items = mQTrees.query(rect1);
         }
-
-        auto start = Time::micros();
+        count = items.size();
         for (auto item : items) {
             mSpritebatch.submit(item->rect.getBox(), item->color);
         }
@@ -130,10 +133,6 @@ namespace Plutus
 
         mSpritebatch.submit(rect1.getBox(), c);
         mSpritebatch.finish();
-
-        char title[128];
-        std::snprintf(title, 128, "%s - FPS: %.2f elapse: %03.03f, count:%zu / 1000000", LinearSearch ? "Linear" : "Quad", mLimiter.getFPS(), (Time::micros() - start) / 1000.0f, items.size());
-        mWindow.setTitle(title);
 
     }
 }

@@ -15,6 +15,7 @@
 
 #include <Math/PMath.h>
 #include <Time/Timer.h>
+#include <Utils/Utils.h>
 
 namespace Plutus
 {
@@ -29,42 +30,69 @@ namespace Plutus
 
     void App::Init()
     {
-        setAlwaysOnTop(true);
+        mShapes.resize({ 0, 0, (float)mWidth, (float)mHeight });
+        // setAlwaysOnTop(true);
         // srand(time(NULL));   // Initialization, should only be called once.
         mDebug = DebugRender::get();
         mDebug->init(&mCamera);
-        auto size = mCamera.getScaleScreen() - 5;
-        size = Vec2f(size.x, size.y);
-        shapes.push_back(new Circle2d{ 70, 100, 30 });
-        shapes.push_back(new Circle2d{ 640, 150, 30 });
-        shapes.push_back(new Circle2d{ 640, 150, 30 });
-        shapes.back()->isStatic = true;
+
+        // size = Vec2f(size.x, size.y);
+        // shapes.push_back(new Circle2d{ 70, 100, 30 });
+        // shapes.push_back(new Circle2d{ 640, 150, 30 });
+        // shapes.push_back(new Circle2d{ 640, 150, 30 });
         // shapes.push_back(new Circle2d{ 70, 200, 30 });
         // shapes.push_back(new Circle2d{ 70, 250, 30 });
         // shapes.push_back(new Circle2d{ 70, 300, 30 });
         // shapes.push_back(new Box2d{ 200, 100, 100, 100, 45 });
-        shapes.push_back(new Box2d{ 360, 90, 100, 100 });
         // shapes.push_back(new Circle2d{ 100, 50, 50 });
         // shapes.push_back(new Circle2d{ 160, 170, 50 });
         // shapes.push_back(new Circle2d{ 250, 100, 50 });
         // shapes.push_back(new Circle2d{ 40, 80, 50 });
+
+        mShapes.insert(new Circle2d{ 70, 100, 30 }, { 70, 100, 30, 30 });
+        mShapes.insert(new Circle2d{ 640, 150, 30 }, { 640, 150, 30, 30 });
+        mShapes.insert(new Circle2d{ 640, 150, 30 }, { 640, 150, 30, 30 });
+        mShapes.back()->isStatic = true;
+        mShapes.insert(new Box2d{ 360, 90, 100, 100 }, { 360, 90, 100, 100 });
+
         float x = 40;
         float y = 40;
-        for (size_t i = 0; i < 1; i++) {
-            shapes.push_back(new Circle2d{ 50 + float(int(x * i) % 650), 30 + float(int(y * i) % 650), 20 });
+        for (size_t i = 0; i < 0; i++) {
+            float x = (float)Utils::getRandom(30, 1100);
+            float y = (float)Utils::getRandom(30, 700);
+            float size = (float)Utils::getRandom(20, 35);
+            mShapes.insert(new Circle2d{ x, y, size }, { x, y, size, size });
         }
-        shapes.push_back(new Line2d{ 5, 5, 5, size.y }); // Left
-        shapes.back()->isStatic = true;
-        shapes.push_back(new Line2d{ 5, size.y, size.x, size.y }); // Top
-        shapes.back()->isStatic = true;
-        shapes.push_back(new Line2d{ size.x, size.y, size.x, 5 }); // Right
-        shapes.back()->isStatic = true;
-        shapes.push_back(new Line2d{ 5, 5, size.x, 5 }); // Bottom
-        shapes.back()->isStatic = true;
+        // auto line = new Line2d{ 5, 5, 5, size.y };
+        // line->isStatic = true;
+        auto size = mCamera.getScaleScreen() - 5;
+        mShapes.insert(new Line2d{ 5, 5, 5, size.y }, { 0, 0, 0, 0 });
+        mShapes.back()->isStatic = true;
+
+        mShapes.insert(new Line2d{ 5, size.y, size.x, size.y }, { 0, 0, 0, 0 });
+        mShapes.back()->isStatic = true;
+
+        mShapes.insert(new Line2d{ size.x, size.y, size.x, 5 }, { 0, 0, 0, 0 });
+        mShapes.back()->isStatic = true;
+
+        mShapes.insert(new Line2d{ 5, 5, size.x, 5 }, { 0, 0, 0, 0 });
+        mShapes.back()->isStatic = true;
+
+        mShapes.insert(new Line2d{ 80, 62, 600, 600 }, { 0, 0, 0, 0 });
+        mShapes.back()->isStatic = true;
+
+        // shapes.push_back(new Line2d{ 5, 5, 5, size.y }); // Left
+        // shapes.back()->isStatic = true;
+        // shapes.push_back(new Line2d{ 5, size.y, size.x, size.y }); // Top
+        // shapes.back()->isStatic = true;
+        // shapes.push_back(new Line2d{ size.x, size.y, size.x, 5 }); // Right
+        // shapes.back()->isStatic = true;
+        // shapes.push_back(new Line2d{ 5, 5, size.x, 5 }); // Bottom
+        // shapes.back()->isStatic = true;
 
 
-        shapes.push_back(new Line2d{ 80, 62, 600, 600 });
-        shapes.back()->isStatic = true;
+        // shapes.push_back(new Line2d{ 80, 62, 600, 600 });
+        // shapes.back()->isStatic = true;
 
     }
     bool isMouseDown = false;
@@ -100,74 +128,81 @@ namespace Plutus
             mCamera.setPosition(cpos);
         }
         else {
-            if (Input::get()->onKeyDown("Up")) { shapes[controller]->pos.y += speed; }
-            if (Input::get()->onKeyDown("Down")) { shapes[controller]->pos.y -= speed; }
-            if (Input::get()->onKeyDown("Right")) { shapes[controller]->pos.x += speed; }
-            if (Input::get()->onKeyDown("Left")) { shapes[controller]->pos.x -= speed; }
+            if (Input::get()->onKeyDown("Up")) { mShapes[controller]->pos.y += speed; }
+            if (Input::get()->onKeyDown("Down")) { mShapes[controller]->pos.y -= speed; }
+            if (Input::get()->onKeyDown("Right")) { mShapes[controller]->pos.x += speed; }
+            if (Input::get()->onKeyDown("Left")) { mShapes[controller]->pos.x -= speed; }
         }
 
         if (isMouseDownInBox) {
             auto dis = initPos - mpos;
-            shapes[1]->pos = pos - dis;
+            mShapes[1]->pos = pos - dis;
         }
 
         if (isMouseDownInCircle) {
             auto dis = initPos - mpos;
         }
 
-        // for (size_t i = 0; i < shapes.size(); i++) {
-        //     auto shapeA = shapes[i];
-        //     if (shapeA->type == CircleShape && !shapeA->isStatic) {
-        //         shapeA->pos.y -= 5;
-        //     }
-        // }
+        for (size_t i = 0; i < mShapes.size(); i++) {
+            auto shapeA = mShapes[i];
+            if (shapeA->type == CircleShape && !shapeA->isStatic) {
+                shapeA->pos.y -= 5;
+            }
+        }
+
         Time::Log("collider: ");
-        for (size_t i = 0; i < shapes.size(); i++) {
+        for (size_t i = 0; i < mShapes.size(); i++) {
             MTV mtvA;
-            auto shapeA = shapes[i];
+            auto shapeA = mShapes[i];
             if (shapeA->isStatic) continue;
             bool isCircleA = shapeA->type & CircleShape;
             bool isBoxA = shapeA->type == BoxShape;
             bool isLineA = shapeA->type == EdgeShape;
 
-            for (size_t x = i + 1; x < shapes.size(); x++) {
-                auto shapeB = shapes[x];
+            for (size_t x = i + 1; x < mShapes.size(); x++) {
+                auto shapeB = mShapes[x];
                 bool isCircleB = shapeB->type == CircleShape;
                 bool isBoxB = shapeB->type == BoxShape;
                 bool isLineB = shapeB->type == EdgeShape;
+                bool collided = false;
+
                 MTV mtv;
 
                 if (isCircleA && isLineB) {
-                    Collider::isColliding((Circle2d*)shapeA, (Line2d*)shapeB, &mtv);
+                    collided = Collider::isColliding((Circle2d*)shapeA, (Line2d*)shapeB, &mtv);
                 }
 
                 if (isCircleA && isCircleB) {
-                    Collider::isColliding((Circle2d*)shapeA, (Circle2d*)shapeB, &mtv);
+                    collided = Collider::isColliding((Circle2d*)shapeA, (Circle2d*)shapeB, &mtv);
                 }
 
                 if (isCircleA && isBoxB) {
-                    Collider::isColliding((Circle2d*)shapeA, (Box2d*)shapeB, &mtv);
+                    collided = Collider::isColliding((Circle2d*)shapeA, (Box2d*)shapeB, &mtv);
                 }
 
                 if (isBoxA && isBoxB) {
-                    Collider::isColliding((Box2d*)shapeA, (Box2d*)shapeB, &mtv);
+                    collided = Collider::isColliding((Box2d*)shapeA, (Box2d*)shapeB, &mtv);
                 }
 
                 if (isBoxA && isCircleB) {
-                    Collider::isColliding((Box2d*)shapeA, (Circle2d*)shapeB, &mtv);
+                    collided = Collider::isColliding((Box2d*)shapeA, (Circle2d*)shapeB, &mtv);
                 }
 
                 if (isBoxA && isLineB) {
-                    Collider::isColliding((Box2d*)shapeA, (Line2d*)shapeB, &mtv);
+                    collided = Collider::isColliding((Box2d*)shapeA, (Line2d*)shapeB, &mtv);
                 }
-
-                if (!shapeB->isStatic) {
-                    auto half = mtv.axis * 0.5;
-                    shapeA->pos += half;
-                    shapeB->pos -= half;
-                }
-                else {
-                    shapeA->pos += mtv.axis;
+                if (collided) {
+                    if (shapeA->pos.y < 29.5f) {
+                        shapeA->pos.y = 30.0f;
+                    }
+                    if (!shapeB->isStatic) {
+                        auto half = mtv.axis * 0.5;
+                        shapeA->pos += half;
+                        shapeB->pos -= half;
+                    }
+                    else {
+                        shapeA->pos += mtv.axis;
+                    }
                 }
             }
             if (isCircleA) {
@@ -179,7 +214,7 @@ namespace Plutus
 
     void App::Draw()
     {
-        for (auto shape : shapes) {
+        for (auto shape : mShapes) {
             switch (shape->type) {
             case BoxShape: {
                 mDebug->drawBox(*(Box2d*)shape);
@@ -202,7 +237,7 @@ namespace Plutus
 
     void App::Exit()
     {
-        for (auto shape : shapes) {
+        for (auto shape : mShapes) {
             delete shape;
         }
     }
@@ -211,9 +246,9 @@ namespace Plutus
     {
         initPos = Input::get()->getMouseCoords();
 
-        if (PUtils::PointInBox(initPos, (Box2d*)shapes[1])) {
+        if (PUtils::PointInBox(initPos, (Box2d*)mShapes[1])) {
             isMouseDownInBox = true;
-            pos = shapes[1]->pos;
+            pos = mShapes[1]->pos;
         }
 
         // if (PUtils::PointInCircle(initPos, &c1)) {

@@ -15,5 +15,6 @@ int main(int argc, char** argv)
     {
         window.update();
     }
+
     return 0;
 }

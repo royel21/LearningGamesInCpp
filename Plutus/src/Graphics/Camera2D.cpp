@@ -18,8 +18,7 @@ namespace Plutus
 			mWindowWidth = screenWidth; mWindowHeight = screenHeight;
 		}
 
-		mOrtho = glm::ortho(0.0f, (float)mScreenWidth, 0.0f, (float)mScreenHeight, 0.0f, 100.0f);
-
+		setScale(mScale);
 		update();
 	}
 

@@ -258,7 +258,7 @@ namespace Plutus
         mBatch.draw();
         mBatch.end();
 
-        mDebug->drawBox(capsule.getBox(), { 0xff0000ff });
+        mDebug->drawBox(capsule.getBox(), { 255,0,255,255 });
         mDebug->drawBox(rect);
         mDebug->drawCircle(capsule.getBCircle());
         mDebug->drawCircle(capsule.getTCircle());

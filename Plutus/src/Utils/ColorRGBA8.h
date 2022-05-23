@@ -16,8 +16,7 @@ namespace Plutus
         uint8_t g;
         uint8_t b;
         uint8_t a;
-        ColorRGBA8(uint32_t color = 0xffffffff) { setColor(color); }
-
+        ColorRGBA8() { r = 255; g = 255; b = 255; a = 255; }
         ColorRGBA8(uint8_t _r, uint8_t _g = 255, uint8_t _b = 255, uint8_t _a = 255) : r(_r), g(_g), b(_b), a(_a) {}
 
         ColorRGBA8(const Vec4f& v) { setColor(v); }
@@ -28,13 +27,6 @@ namespace Plutus
             this->r = r; this->g = g; this->b = b; this->a = a;
         }
 
-        inline void setColor(uint32_t c) {
-            r = c & 255;
-            g = (c >> 8) & 255;
-            b = (c >> 16) & 255;
-            a = (c >> 24) & 255;
-        }
-
         inline void setColor(const Vec4f& v) {
             r = uint8_t(v.x * 255);
             g = uint8_t(v.y * 255);
@@ -43,7 +35,7 @@ namespace Plutus
         }
 
         operator uint32_t() const { return r | g << 8 | b << 16 | a << 24;; }
-        //a << 24 | b << 16 | g << 8 | r
+
         operator Vec4f() const {
             return {
                 r / 255.0f,
@@ -53,8 +45,8 @@ namespace Plutus
             };
         }
 
-        ColorRGBA8& operator=(int value) {
-            setColor(value);
+        ColorRGBA8& operator=(uint8_t value) {
+            setColor(value, value, value, value);
             return *this;
         }
 

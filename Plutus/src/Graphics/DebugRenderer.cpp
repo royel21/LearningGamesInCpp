@@ -28,63 +28,33 @@ namespace Plutus
 
 	void DebugRender::dispose()
 	{
-		if (mVao)
-			glDeleteVertexArrays(1, &mVao);
-
-		if (mVbo)
-			glDeleteBuffers(1, &mVao);
-
-		if (mIbo)
-			glDeleteBuffers(1, &mVao);
+		Graphic::destroy(&mVao, &mIbo, &mVbo);
 
 		mShader.destroy();
 	}
 
-	void DebugRender::init(Camera2D* _camera)
+	void DebugRender::init(Camera2D* camera)
 	{
-		mCamera = _camera;
+		mCamera = camera;
 		mShader.init(GLSL::debug_vertshader, GLSL::debug_fragshader);
 		mShader.setAtribute("vertexPosition");
 		mShader.setAtribute("vertexColor");
 
-		//Set up buffer
-		glGenVertexArrays(1, &mVao);
-		glGenBuffers(1, &mVbo);
-		glGenBuffers(1, &mIbo);
+		// //Set up buffer
+		mVao = Graphic::createVertexArray();
+		mVbo = Graphic::createBufferArray();
+		mIbo = Graphic::createElementBuffer();
+		auto vsize = sizeof(DebugVertex);
+		Graphic::setFAttribute(0, 2, vsize);
+		Graphic::setFAttribute(1, 4, vsize, offsetof(DebugVertex, color), GL_UNSIGNED_BYTE, GL_TRUE);
 
-		glBindVertexArray(mVao);
-
-		glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(DebugVertex), (void*)offsetof(DebugVertex, position));
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(DebugVertex), (void*)offsetof(DebugVertex, color));
-
-		glBindVertexArray(0);
+		Graphic::unBind();
 	}
 
 	void DebugRender::end()
 	{
-		//Set Up Vertex Buffer Object
-		glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-
-		glBufferData(GL_ARRAY_BUFFER, mVertexs.size() * sizeof(DebugVertex), nullptr, GL_DYNAMIC_DRAW);
-
-		glBufferSubData(GL_ARRAY_BUFFER, 0, mVertexs.size() * sizeof(DebugVertex), mVertexs.data());
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		//Set up Index Buffer Array
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
-
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndices.size() * sizeof(GLuint), nullptr, GL_DYNAMIC_DRAW);
-
-		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, mIndices.size() * sizeof(GLuint), mIndices.data());
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		Graphic::uploadBufferData(mVbo, mVertexs.size() * sizeof(DebugVertex), mVertexs.data(), GL_DYNAMIC_DRAW);
+		Graphic::uploadBufferData(mIbo, mIndices.size() * sizeof(GLuint), mIndices.data(), GL_DYNAMIC_DRAW, GL_ELEMENT_ARRAY_BUFFER);
 
 		mNumElements = (uint32_t)mIndices.size();
 		mIndices.clear();
@@ -239,11 +209,12 @@ namespace Plutus
 			mShader.enable();
 			mShader.setUniformMat4("camera", mCamera->getCameraMatrix());
 			glLineWidth(lineWidth);
-			glBindVertexArray(mVao);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
-			glDrawElements(GL_LINES, mNumElements, GL_UNSIGNED_INT, 0);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindVertexArray(0);
+
+			Graphic::bind(mVao, mIbo);
+
+			Graphic::drawElements(mNumElements, 0, GL_LINES);
+
+			Graphic::unBind();
 
 			mShader.disable();
 		}

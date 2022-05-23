@@ -37,7 +37,7 @@ namespace Plutus
 
         std::vector<ColorRect> rects;
         QuadTreeContainer<ColorRect> mQTrees;
-
+        uint32_t count;
         Limiter mLimiter;
         Rect rect1;
     };

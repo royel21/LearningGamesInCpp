@@ -43,9 +43,9 @@ namespace Plutus
         //bind the Shader position to the buffer object
         Graphic::setFAttribute(SHADER_P_POS, 2, vsize);
         //bind the Shader UV "Texture coordinate" to the buffer object
-        Graphic::setFAttribute(SHADER_P_SIZE, 1, vsize, (void*)offsetof(RenderableParticle, size));
+        Graphic::setFAttribute(SHADER_P_SIZE, 1, vsize, offsetof(RenderableParticle, size));
         //bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
-        Graphic::setFAttribute(SHADER_P_COLOR, 4, vsize, (void*)offsetof(RenderableParticle, color), GL_UNSIGNED_BYTE, GL_TRUE);
+        Graphic::setFAttribute(SHADER_P_COLOR, 4, vsize, offsetof(RenderableParticle, color), GL_UNSIGNED_BYTE, GL_TRUE);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);

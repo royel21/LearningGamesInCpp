@@ -6,8 +6,14 @@ in vec4 color;
 uniform vec2 u_resolution;
 uniform float u_time;
 uniform vec2 u_mouse;
+
+uniform bool uHasTex;
 uniform sampler2D uSampler;
 
 void main(){
-    gl_FragColor = texture(uSampler, uv) * vec4(color.rgb, .2);
+    if(uHasTex){
+        gl_FragColor = texture(uSampler, uv) * color;
+    }else{
+        gl_FragColor = color;
+    }
 }

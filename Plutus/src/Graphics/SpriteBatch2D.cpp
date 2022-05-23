@@ -4,19 +4,18 @@
 #include <algorithm>
 #include <iostream>
 
-#include "ECS/Components/TransformComponent.h"
-#include "ECS/Components/SpriteComponent.h"
-#include "ECS/Components/TileMapComponent.h"
-#include <Utils/Utils.h>
-
 #include "Shader.h"
+#include "Graphic.h"
 #include "Camera2D.h"
 #include "IndexBuffer.h"
-#include "Graphic.h"
+#include "Renderables.h"
 
 #include <Math/PMath.h>
+#include <Utils/Utils.h>
 #include <Assets/Assets.h>
-#include "Renderables.h"
+#include <ECS/Components/SpriteComponent.h>
+#include <ECS/Components/TileMapComponent.h>
+#include <ECS/Components/TransformComponent.h>
 
 #define SHADER_VERTEX_INDEX 0
 #define SHADER_UV_INDEX 1
@@ -29,8 +28,7 @@ namespace Plutus
 	{
 		mRenderBatches.clear();
 		mShader.destroy();
-		glDeleteBuffers(1, &mVBO);
-		glDeleteVertexArrays(1, &mVAO);
+		Graphic::destroy(&mVAO, nullptr, &mVBO);
 		delete mIBO;
 	}
 
@@ -43,23 +41,22 @@ namespace Plutus
 		//bind the Shader position to the buffer object
 		Graphic::setFAttribute(SHADER_VERTEX_INDEX, 2, vsize);
 		//bind the Shader UV "Texture coordinate" to the buffer object
-		Graphic::setFAttribute(SHADER_UV_INDEX, 2, vsize, (void*)offsetof(Vertex, uv));
+		Graphic::setFAttribute(SHADER_UV_INDEX, 2, vsize, offsetof(Vertex, uv));
 		//bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
-		Graphic::setFAttribute(SHADER_COLOR_INDEX, 4, vsize, (void*)offsetof(Vertex, color), GL_UNSIGNED_BYTE, GL_TRUE);
+		Graphic::setFAttribute(SHADER_COLOR_INDEX, 4, vsize, offsetof(Vertex, color), GL_UNSIGNED_BYTE, GL_TRUE);
 		//bind the Shader UV "Texture coordinate" to the buffer object
-		Graphic::setFAttribute(SHADER_ENTITYID_INDEX, 1, vsize, (void*)offsetof(Vertex, entId));
+		Graphic::setFAttribute(SHADER_ENTITYID_INDEX, 1, vsize, offsetof(Vertex, entId));
 
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		mIBO = new IndexBuffer(maxSprite);
 
-		glBindVertexArray(0);
+		Graphic::unBind();
 
 		mRenderBatches.clear();
 		bufferVertices.clear();
 		mShader.init();
 	}
 
-	void SpriteBatch2D::createVertices(GLuint texture, const Vec4f& rect, Vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, GLuint entId)
+	void SpriteBatch2D::createVertices(uint32_t texture, const Vec4f& rect, Vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId)
 	{
 		// Check if is it inside the view port
 		float id = static_cast<float>(entId);
@@ -92,7 +89,7 @@ namespace Plutus
 		bufferVertices[mVertexCount++] = { mBottomRight.x, mBottomRight.y, uv.z, uv.w, c, id };
 	}
 
-	void SpriteBatch2D::submit(GLuint texture, const Vec4f& rect, Vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {
+	void SpriteBatch2D::submit(uint32_t texture, const Vec4f& rect, Vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {
 		resize(4);
 		createVertices(texture, rect, uv, c, r, flipX, flipY, entId);
 	}
@@ -136,11 +133,9 @@ namespace Plutus
 		mShader.setUniform1i("mySampler", 0);
 		mShader.setUniformMat4("camera", mCamera->getCameraMatrix());
 
-		glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-		glBufferData(GL_ARRAY_BUFFER, bufferVertices.size() * sizeof(Vertex), bufferVertices.data(), GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		Graphic::uploadBufferData(mVBO, bufferVertices.size() * sizeof(Vertex), bufferVertices.data(), GL_DYNAMIC_DRAW);
 
-		glBindVertexArray(mVAO);
+		Graphic::bind(mVAO);
 		mIBO->bind();
 	}
 
@@ -149,17 +144,17 @@ namespace Plutus
 		mShader.setUniform1i("type", type);
 		for (size_t i = 0; i < mRenderBatches.size(); i++)
 		{
-			glActiveTexture(GL_TEXTURE0);
+
 			auto& batch = mRenderBatches[i];
 			mShader.setUniform1i("hasTexture", batch.texture);
-			glBindTexture(GL_TEXTURE_2D, batch.texture);
-			glDrawElements(GL_TRIANGLES, batch.numVertices, GL_UNSIGNED_INT, (void*)(batch.offset * sizeof(GLuint)));
+
+			Graphic::bindTexture(batch.texture);
+			Graphic::drawElements(batch.numVertices, batch.offset);
 		}
 	}
 
 	void SpriteBatch2D::unBind() {
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindVertexArray(0);
+		Graphic::unBind();
 		mIBO->unbind();
 		mShader.disable();
 	}
@@ -175,7 +170,7 @@ namespace Plutus
 	}
 
 
-	inline void SpriteBatch2D::createBatch(GLuint texture)
+	inline void SpriteBatch2D::createBatch(uint32_t texture)
 	{
 		if (mRenderBatches.size() > 0 && mRenderBatches.back().texture == texture)
 		{

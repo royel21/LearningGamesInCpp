@@ -68,9 +68,9 @@ namespace Plutus
         mCamera.update();
         auto pos = mCamera.getPosition();
 
-        auto start = Time::micros();
+        // auto start = Time::micros();
         mSysManager.update(0.01667f);
-        Logger::info("elapse: %llu", Time::micros() - start);
+        // Logger::info("elapse: %llu", Time::micros() - start);
 
 
         // char title[128];

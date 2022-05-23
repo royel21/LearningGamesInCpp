@@ -22,7 +22,7 @@ namespace Plutus
         ~TileMapBatch() { destroy(); }
 
         void init(TileMapComponent* tilemap);
-        void draw() override;
+        void draw(Shader* shader = nullptr) override;
         void destroy() override;
 
         void loadTiles(TileMapComponent* tilemap);
@@ -32,5 +32,6 @@ namespace Plutus
         Texture* textures[16];
         uint32_t mVerCount = 0;
         std::vector<TileVert> tiles;
+        const uint32_t mVertexSize = sizeof(TileVert);
     };
 } // namespace Plutus

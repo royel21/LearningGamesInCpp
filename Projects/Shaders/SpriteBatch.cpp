@@ -19,17 +19,16 @@ namespace Plutus {
     void SpriteBatch::init(uint32_t MAX_SPRITE) {
         mVAO = Graphic::createVertexArray();
         mBufferId = Graphic::createBufferArray();
-        auto vsize = sizeof(SpriteVert);
         //bind the Shader position to the buffer object
-        Graphic::setFAttribute(SHADER_VERTEX_INDEX, 2, vsize);
+        Graphic::setFAttribute(SHADER_VERTEX_INDEX, 2, mVertexSize);
         //bind the Shader UV "Texture coordinate" to the buffer object
-        Graphic::setFAttribute(SHADER_UV_INDEX, 2, vsize, (void*)offsetof(SpriteVert, uvx));
+        Graphic::setFAttribute(SHADER_UV_INDEX, 2, mVertexSize, offsetof(SpriteVert, uvx));
         //bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
-        Graphic::setFAttribute(SHADER_COLOR_INDEX, 4, vsize, (void*)offsetof(SpriteVert, color), GL_UNSIGNED_BYTE, GL_TRUE);
+        Graphic::setFAttribute(SHADER_COLOR_INDEX, 4, mVertexSize, offsetof(SpriteVert, color), GL_UNSIGNED_BYTE, GL_TRUE);
 
         mIbo.init(MAX_SPRITE);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+
+        Graphic::unBind();
     }
 
     void SpriteBatch::addSprite(Renderable* renderable) {
@@ -98,8 +97,7 @@ namespace Plutus {
 
             glBindVertexArray(mVAO);
 
-
-            Graphic::uploadBufferData(mBufferId, sprites.size() * sizeof(SpriteVert), sprites.data(), GL_DYNAMIC_DRAW);
+            Graphic::uploadBufferData(mBufferId, sprites.size() * mVertexSize, sprites.data(), GL_DYNAMIC_DRAW);
 
             mIbo.bind();
 
@@ -109,22 +107,17 @@ namespace Plutus {
                     nShader->setUniform1i("uHasTex", 1);
                     nShader->setUniform1i("uSampler", batch.texture->mTexureUnit);
 
-                    glBindTexture(GL_TEXTURE_2D, batch.texture->mTexId);
-                    glActiveTexture(GL_TEXTURE0 + batch.texture->mTexureUnit);
+                    Graphic::bindTexture(batch.texture->mTexId, batch.texture->mTexureUnit);
                 }
                 else {
                     nShader->setUniform1i("uHasTex", 0);
                 }
-
-                glDrawElements(GL_TRIANGLES, batch.vertCount, GL_UNSIGNED_INT, (void*)(batch.iboOffset * sizeof(GLuint)));
-
+                Graphic::drawElements(batch.vertCount, batch.iboOffset);
             }
 
-            mIbo.unbind();
             nShader->disable();
 
-            glBindVertexArray(0);
-            glBindTexture(GL_TEXTURE_2D, 0);
+            Graphic::unBind();
 
         }
         sprites.clear();

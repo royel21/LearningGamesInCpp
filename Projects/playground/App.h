@@ -3,6 +3,8 @@
 #include <Input/InputListener.h>
 #include <Physics/Shapes.h>
 
+#include "QuadTree.h"
+
 namespace Plutus
 {
     class DebugRender;
@@ -25,5 +27,6 @@ namespace Plutus
     private:
         DebugRender* mDebug;
         std::vector<Shape*> shapes;
+        QuadTreeContainer<Shape*> mShapes;
     };
 } // namespace Plurus

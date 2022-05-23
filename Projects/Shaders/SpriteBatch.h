@@ -38,6 +38,7 @@ namespace Plutus
         uint32_t offset = 0;
         std::vector<BatchTex> mBatches;
         std::vector<SpriteVert> sprites;
+        const uint32_t mVertexSize = sizeof(SpriteVert);
 
         void createBatch(Texture* tex);
 

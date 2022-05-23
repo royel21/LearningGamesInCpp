@@ -67,7 +67,75 @@ void main() {
         out vec4 fragColor;
 
         void main(){
-            vec4 tex = texture(uSampler[texIndex], uv);
+            vec4 tex;
+
+            switch(texIndex){
+                case 0:{
+                    tex = texture(uSampler[0], uv);
+                    break;
+                }
+                case 1:{
+                    tex = texture(uSampler[1], uv);
+                    break;
+                }
+                case 2:{
+                    tex = texture(uSampler[2], uv);
+                    break;
+                }
+                case 3:{
+                    tex = texture(uSampler[3], uv);
+                    break;
+                }
+                case 4:{
+                    tex = texture(uSampler[4], uv);
+                    break;
+                }
+                case 5:{
+                    tex = texture(uSampler[5], uv);
+                    break;
+                }
+                case 6:{
+                    tex = texture(uSampler[6], uv);
+                    break;
+                }
+                case 7:{
+                    tex = texture(uSampler[7], uv);
+                    break;
+                }
+                case 8:{
+                    tex = texture(uSampler[8], uv);
+                    break;
+                }
+                case 9:{
+                    tex = texture(uSampler[9], uv);
+                    break;
+                }
+                case 10:{
+                    tex = texture(uSampler[10], uv);
+                    break;
+                }
+                case 11:{
+                    tex = texture(uSampler[11], uv);
+                    break;
+                }
+                case 12:{
+                    tex = texture(uSampler[12], uv);
+                    break;
+                }
+                case 13:{
+                    tex = texture(uSampler[13], uv);
+                    break;
+                }
+                case 14:{
+                    tex = texture(uSampler[14], uv);
+                    break;
+                }
+                case 15:{
+                    tex = texture(uSampler[15], uv);
+                    break;
+                }
+            }
+            
             fragColor = tex * uColor;
         }
     )END";

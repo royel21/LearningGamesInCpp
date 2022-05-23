@@ -29,7 +29,7 @@ namespace Plutus
 		DebugRender();
 		static DebugRender* get();
 		~DebugRender();
-		void init(Camera2D* _camera);
+		void init(Camera2D* camera);
 
 		void render(float lineWidth = 1.0f);
 		void drawGrid();

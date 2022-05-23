@@ -5,7 +5,6 @@
 #include <unordered_map>
 
 #include "vertex.h"
-#include "GLheaders.h"
 #include "Shader.h"
 
 #include "Renderables.h"
@@ -30,12 +29,12 @@ namespace Plutus
 	{
 	public:
 		RenderBatch2D() = default;
-		RenderBatch2D(GLuint Offset, GLuint NumVertices, GLuint Texture) : offset(Offset), numVertices(NumVertices), texture(Texture)
+		RenderBatch2D(uint32_t Offset, uint32_t NumVertices, uint32_t Texture) : offset(Offset), numVertices(NumVertices), texture(Texture)
 		{
 		}
-		GLuint offset = 0;
-		GLuint numVertices = 0;
-		GLuint texture = 0;
+		uint32_t offset = 0;
+		uint32_t numVertices = 0;
+		uint32_t texture = 0;
 	};
 
 	class SpriteBatch2D
@@ -43,13 +42,13 @@ namespace Plutus
 	private:
 		bool isSprite = false;
 		//Vertext Array Buffer Id
-		GLuint mVAO = 0;
+		uint32_t mVAO = 0;
 		//Vertext Object Buffer Id
-		GLuint mVBO = 0;
+		uint32_t mVBO = 0;
 		// Represent how many Vertice was created
 		Shader mShader;
-		GLuint mIndexCount = 0;
-		GLuint mVertexCount = 0;
+		uint32_t mIndexCount = 0;
+		uint32_t mVertexCount = 0;
 		//Array of 4 Vertix per Single Object
 		std::vector<Vertex> bufferVertices;
 		//Index Buffer Array Object
@@ -83,7 +82,7 @@ namespace Plutus
 			@param flipX optional flip the image from X coordinate
 			@param flipY optional flip the image from Y coordinate
 		*/
-		void submit(GLuint texture, const Vec4f& rect, Vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
+		void submit(uint32_t texture, const Vec4f& rect, Vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
 
 		void submit(const std::string& fontId, const std::string& text, float x, float y, float scale = 1, ColorRGBA8 color = {});
 
@@ -106,11 +105,11 @@ namespace Plutus
 		Vec2f mtopRight;
 		Vec2f mBottomRight;
 
-		void createVertices(GLuint texture, const Vec4f& rect, Vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
+		void createVertices(uint32_t texture, const Vec4f& rect, Vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
 		/*
 			Create a render Batch for this texture
 		*/
-		inline void createBatch(GLuint texture);
+		inline void createBatch(uint32_t texture);
 
 		inline void resize(int count) {
 			auto size = count * 4 + mVertexCount;

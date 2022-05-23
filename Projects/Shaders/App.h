@@ -2,7 +2,6 @@
 #include <Core/Core.h>
 
 #include <Graphics/Shader.h>
-#include <Graphics/IndexBuffer.h>
 #include <Graphics/Camera2D.h>
 
 #include <vector>
@@ -10,6 +9,7 @@
 
 #include "FileCheck.h"
 #include "SpriteBatch.h"
+#include <Graphics/Renderables.h>
 
 namespace Plutus
 {
@@ -36,7 +36,8 @@ namespace Plutus
         Shader mShader;
         Shader mLightShader;
         IndexBuffer mIbo;
-        std::vector<VertexPoint> mVertices;
+        std::vector<Renderable> mRenderables;
+        std::vector<Renderable> mLights;
         SpriteBatch mBatch;
     };
 } // namespace Plutus
