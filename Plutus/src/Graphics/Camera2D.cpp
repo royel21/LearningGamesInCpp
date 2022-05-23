@@ -2,9 +2,11 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include <cmath>
+#include <algorithm>
 #include <Log/Logger.h>
 #include <ECS/Components/TransformComponent.h>
-#include <algorithm>
+
+#include <Input/Input.h>
 
 namespace Plutus
 {
@@ -29,16 +31,14 @@ namespace Plutus
 
 	void Camera2D::update()
 	{
-		if (mEntity) {
+		if (mEntity && !Input::get()->isCtrl) {
 			mCamPos = mEntity.getPosition() + mOffset;
-			// if (mHasBounds) {
-			// 	if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
-			// 	if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
-			// 	if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
-			// 	if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
-			// }
-			// mCamPos = { int(mCamPos.x), int(mCamPos.y) };
-			// Logger::info("pos: %.02f %.02f", mCamPos.x, mCamPos.y);
+			if (mHasBounds) {
+				if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
+				if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
+				if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
+				if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
+			}
 		}
 
 		mCameraMatrix = mOrtho * glm::translate(glm::mat4(1.0f), { -mCamPos.x, -mCamPos.y, 0.0f });

@@ -8,6 +8,7 @@
 #include "GLheaders.h"
 #include "Shader.h"
 
+#include "Renderables.h"
 #include <Math/Vectors.h>
 
 #define DEF_UV Vec4f(0,0,1,1)

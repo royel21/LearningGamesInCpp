@@ -34,7 +34,7 @@ namespace Plutus
 		*/
 		bool init(const std::string& verShader = "", const std::string& fragShader = "", const std::string geoShader = "");
 		// Enable this shader program
-		void enable();
+		bool enable();
 		// Disable this shader program
 		void disable();
 		// Destroy this shader program

@@ -39,7 +39,7 @@ namespace Plutus
             if (mCamera->getViewPortDim().overlap(rect))
             {
                 auto tex = AssetManager::get()->getAsset<Texture>(sprite.mTextureId);
-                mRenderables.emplace_back(tex ? tex->mTexId : 0, rect, sprite.mUVCoord, sprite.mColor,
+                mRenderables.emplace_back(tex, rect, sprite.mUVCoord, sprite.mColor,
                     trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY);
             }
         }

@@ -205,18 +205,21 @@ namespace Plutus
 
             ser.StartArr("components");
             {
+                if (ent.hasComponent<AnimationComponent>())
+                {
+                    Animate_JSON(ser, ent.getComponent<AnimationComponent>());
+                }
+
                 if (ent.hasComponent<TransformComponent>())
                 {
-                    if (ent.hasComponent<AnimationComponent>())
-                    {
-                        Animate_JSON(ser, ent.getComponent<AnimationComponent>());
-                    }
                     auto trans = ent.getComponent<TransformComponent>();
                     ser.StartObj();
                     {
                         ser.addString("name", "Transform");
                         ser.addFloat("x", trans->x);
                         ser.addFloat("y", trans->y);
+                        ser.addFloat("offset-x", trans->offsetX);
+                        ser.addFloat("offset-y", trans->offsetY);
                         ser.addInt("w", trans->w);
                         ser.addInt("h", trans->h);
                         ser.addFloat("r", trans->r);
@@ -225,6 +228,7 @@ namespace Plutus
                     }
                     ser.EndObj();
                 }
+
                 if (ent.hasComponent<SpriteComponent>())
                 {
                     auto sprite = ent.getComponent<SpriteComponent>();

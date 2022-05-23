@@ -8,6 +8,8 @@ namespace Plutus
     public:
         float x;
         float y;
+        float offsetX = 0;
+        float offsetY = 0;
         int w;
         int h;
         float r;
@@ -39,6 +41,7 @@ namespace Plutus
         Vec4f getRect() { return { x, y, w, h }; }
         Vec2f getPosition() { return { x,y }; }
         Vec2i getSize() { return { w, h }; }
+        Vec2i getOffset() { return { offsetX, offsetY }; }
     };
 
 } // namespace Plutus

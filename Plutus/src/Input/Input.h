@@ -40,7 +40,7 @@ namespace Plutus
 
 		bool onKeyPressed(std::string keyId);
 
-		void setMouseWheel(int dir) { mMouseWheel = dir; }
+		void setMouseWheel(int dir);
 		void setMouseMove(bool move) { mMouseMove = move; }
 		bool getMouseIsMoving() { return mMouseMove; }
 

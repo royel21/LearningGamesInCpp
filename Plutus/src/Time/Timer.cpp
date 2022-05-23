@@ -38,7 +38,7 @@ namespace Plutus
 
     float Time::seconds()
     {
-        return float(micros() / 1000) / 1000.0f;
+        return micros() / 1000.0f / 1000.0f;
     }
 
     void Time::Log(const std::string& id)

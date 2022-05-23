@@ -13,7 +13,7 @@ namespace Plutus
         mSystems[getListId<AnimationSystem>()] = nullptr;
         mSystems[getListId<TileMapSystem>()] = nullptr;
         mSystems[getListId<RenderSystem>()] = nullptr;
-        mSystems[getListId<DebugSystem>()] = nullptr;
+        // mSystems[getListId<DebugSystem>()] = nullptr;
     }
 
     void SystemManager::init()

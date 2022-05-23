@@ -12,6 +12,7 @@
 #include <Time/Limiter.h>
 #include <Graphics/Camera2D.h>
 #include <Systems/SystemManager.h>
+#include <Utils/CameraControl.h>
 
 namespace Plutus
 {
@@ -34,6 +35,7 @@ namespace Plutus
         SystemManager mSysManager;
         Camera2D mCamera;
         Limiter mLimiter;
+        CameraControl mCamControl;
 
         // Shader mShader;
         // uint32_t mVertexArray;

@@ -1,8 +1,5 @@
 #include "ParticleSystem.h"
 
-#include <Graphics/GLheaders.h>
-#include <Graphics/GLUtils.h>
-#include <Graphics/IndexBuffer.h>
 
 #include <ECS/Scene.h>
 #include <Core/Project.h>
@@ -12,6 +9,7 @@
 
 #include <Graphics/Graphic.h>
 #include <Graphics/Camera2D.h>
+#include <Graphics/IndexBuffer.h>
 
 #include "ParticleShader.h"
 
@@ -41,14 +39,13 @@ namespace Plutus
         mVAO = Graphic::createVertexArray();
         mVBO = Graphic::createBufferArray();
 
-        glEnableVertexAttribArray(SHADER_P_POS);
-        glVertexAttribPointer(SHADER_P_POS, 2, GL_FLOAT, GL_FALSE, sizeof(RenderableParticle), (void*)NULL);
-
-        glEnableVertexAttribArray(SHADER_P_SIZE);
-        glVertexAttribPointer(SHADER_P_SIZE, 1, GL_FLOAT, GL_FALSE, sizeof(RenderableParticle), (void*)offsetof(RenderableParticle, size));
-
-        glEnableVertexAttribArray(SHADER_P_COLOR);
-        glVertexAttribPointer(SHADER_P_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(RenderableParticle), (void*)offsetof(RenderableParticle, color));
+        auto vsize = sizeof(RenderableParticle);
+        //bind the Shader position to the buffer object
+        Graphic::setFAttribute(SHADER_P_POS, 2, vsize);
+        //bind the Shader UV "Texture coordinate" to the buffer object
+        Graphic::setFAttribute(SHADER_P_SIZE, 1, vsize, (void*)offsetof(RenderableParticle, size));
+        //bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
+        Graphic::setFAttribute(SHADER_P_COLOR, 4, vsize, (void*)offsetof(RenderableParticle, color), GL_UNSIGNED_BYTE, GL_TRUE);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);

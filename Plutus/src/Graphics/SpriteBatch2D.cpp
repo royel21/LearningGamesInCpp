@@ -14,7 +14,6 @@
 #include "IndexBuffer.h"
 #include "Graphic.h"
 
-#include "GraphicsUtil.h"
 #include <Math/PMath.h>
 #include <Assets/Assets.h>
 #include "Renderables.h"
@@ -39,18 +38,16 @@ namespace Plutus
 	{
 		mVAO = Graphic::createVertexArray();
 		mVBO = Graphic::createBufferArray();
+
+		auto vsize = sizeof(Vertex);
 		//bind the Shader position to the buffer object
-		glEnableVertexAttribArray(SHADER_VERTEX_INDEX);
-		glVertexAttribPointer(SHADER_VERTEX_INDEX, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)NULL);
+		Graphic::setFAttribute(SHADER_VERTEX_INDEX, 2, vsize);
 		//bind the Shader UV "Texture coordinate" to the buffer object
-		glEnableVertexAttribArray(SHADER_UV_INDEX);
-		glVertexAttribPointer(SHADER_UV_INDEX, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+		Graphic::setFAttribute(SHADER_UV_INDEX, 2, vsize, (void*)offsetof(Vertex, uv));
 		//bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
-		glEnableVertexAttribArray(SHADER_COLOR_INDEX);
-		glVertexAttribPointer(SHADER_COLOR_INDEX, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, color));
-		//
-		glEnableVertexAttribArray(SHADER_ENTITYID_INDEX);
-		glVertexAttribPointer(SHADER_ENTITYID_INDEX, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, entId));
+		Graphic::setFAttribute(SHADER_COLOR_INDEX, 4, vsize, (void*)offsetof(Vertex, color), GL_UNSIGNED_BYTE, GL_TRUE);
+		//bind the Shader UV "Texture coordinate" to the buffer object
+		Graphic::setFAttribute(SHADER_ENTITYID_INDEX, 1, vsize, (void*)offsetof(Vertex, entId));
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		mIBO = new IndexBuffer(maxSprite);
@@ -105,7 +102,13 @@ namespace Plutus
 		resize(renderables.size());
 		for (auto r : renderables)
 		{
-			createVertices(r.TexId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY, r.entId);
+			uint32_t texId = 0;
+
+			if (r.texture) {
+				texId = r.texture->mTexId;
+			}
+
+			createVertices(texId, r.trans, r.uv, r.color, r.r, r.flipX, r.flipY, r.entId);
 		}
 	}
 

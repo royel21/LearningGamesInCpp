@@ -33,7 +33,6 @@ struct Logger {
         int err = stbsp_snprintf(zc.data(), zc.size(), format.c_str(), args...);
         std::cout << zc.data();
     }
-
 private:
     static std::string getFmt(const char* color, const char* level, const std::string& fmt);
 };

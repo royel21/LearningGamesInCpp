@@ -200,7 +200,7 @@ namespace Plutus
             int x = ((int)gridCoords.x * w) + (tile.x * w);
             int y = ((int)gridCoords.y * h) - (tile.y * h);
             if (tex)
-                renderables[i++] = { tex->mTexId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation, false, false, -1, 99, false };
+                renderables[i++] = { tex, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation, false, false, -1, 99, false };
         }
     }
 

@@ -71,6 +71,14 @@ namespace Plutus
 		return onKeyDown(keyId) && !wasKeyDown(keyId);
 	}
 
+	void Input::setMouseWheel(int dir)
+	{
+		mMouseWheel = dir;
+		for (auto listener : mEventListeners) {
+			listener->onWheel(dir);
+		}
+	}
+
 	void Input::addEventListener(InputListener* listener)
 	{
 		mEventListeners.push_back(listener);

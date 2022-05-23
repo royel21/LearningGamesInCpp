@@ -19,68 +19,86 @@ namespace Plutus
 
 	bool Shader::init(const std::string& verData, const std::string& fragData, const std::string geoShader)
 	{
+		compileError = false;
 		bool hasGeoShader = !geoShader.empty();
 
 		auto vsdata = verData.empty() ? GLSL::vertexShader : verData;
 		auto fsdata = fragData.empty() ? GLSL::fragShader : fragData;
 
-		mProgId = glCreateProgram();
 
 		GLuint vertId = glCreateShader(GL_VERTEX_SHADER);
 		GLuint fragId = glCreateShader(GL_FRAGMENT_SHADER);
-		GLuint geoId = glCreateShader(GL_GEOMETRY_SHADER);
+		//Geometry Shader Id
+		GLuint geoId;
 
 		compileShader(vertId, vsdata);
-		if (hasGeoShader) compileShader(geoId, geoShader);
+
+		if (hasGeoShader) {
+			geoId = glCreateShader(GL_GEOMETRY_SHADER);
+			compileShader(geoId, geoShader);
+		}
+
 		compileShader(fragId, fsdata);
 
 		if (compileError)
 		{
-			cleanUp(vertId, fragId);
+			glDeleteShader(vertId);
+			glDeleteShader(fragId);
 			return false;
 		}
 
+		auto proId = glCreateProgram();
 
 		int result = vertId && fragId;
 
 		if (result)
 		{
 			//attach the shader to the program
-			glAttachShader(mProgId, vertId);
-			if (hasGeoShader) glAttachShader(mProgId, geoId);
-			glAttachShader(mProgId, fragId);
+			glAttachShader(proId, vertId);
+			if (hasGeoShader) glAttachShader(proId, geoId);
+			glAttachShader(proId, fragId);
 			//link the programs
-			glLinkProgram(mProgId);
+			glLinkProgram(proId);
 
-			glGetProgramiv(mProgId, GL_LINK_STATUS, &result);
+			glGetProgramiv(proId, GL_LINK_STATUS, &result);
 			if (result == GL_FALSE)
 			{
 				int InfogLenght;
-				glGetProgramiv(mProgId, GL_INFO_LOG_LENGTH, &InfogLenght);
+				glGetProgramiv(proId, GL_INFO_LOG_LENGTH, &InfogLenght);
 				std::vector<char> ProgramErrorMessage(InfogLenght + 1);
-				glGetProgramInfoLog(mProgId, InfogLenght, NULL, &ProgramErrorMessage[0]);
+				glGetProgramInfoLog(proId, InfogLenght, NULL, &ProgramErrorMessage[0]);
 				Logger::error("ProgError: %s\n", &ProgramErrorMessage[0]);
 			}
 
-			glDetachShader(mProgId, vertId);
-			if (hasGeoShader) glDetachShader(mProgId, geoId);
-			glDetachShader(mProgId, fragId);
+			glDetachShader(proId, vertId);
+			if (hasGeoShader) glDetachShader(proId, geoId);
+			glDetachShader(proId, fragId);
 		}
 
 		glDeleteShader(vertId);
 		glDeleteShader(fragId);
 		if (hasGeoShader) glDeleteShader(geoId);
+
+		if (result) {
+			destroy();
+			mProgId = proId;
+		}
+
 		return result;
 	}
 
-	void Shader::enable()
+	bool Shader::enable()
 	{
-		glUseProgram(mProgId);
-		//enable all the attributes we added with addAttribute
-		for (int i = 0; i < mNumAttributes; i++)
-		{
-			glEnableVertexAttribArray(i);
+		if (mProgId != -1) {
+			glUseProgram(mProgId);
+			//enable all the attributes we added with addAttribute
+			for (int i = 0; i < mNumAttributes; i++)
+			{
+				glEnableVertexAttribArray(i);
+			}
+			return true;
 		}
+		return false;
 	}
 
 	void Shader::disable()
@@ -95,8 +113,10 @@ namespace Plutus
 
 	void Shader::destroy()
 	{
-		if (mProgId)
+		if (mProgId != -1) {
 			glDeleteProgram(mProgId);
+		}
+		mProgId = -1;
 	}
 
 	uint32_t Shader::getUniform(std::string uName)

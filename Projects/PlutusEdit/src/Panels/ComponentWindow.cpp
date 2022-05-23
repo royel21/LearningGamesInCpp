@@ -84,10 +84,16 @@ namespace Plutus
 
             float textWidth = ImGui::GetContentRegionAvailWidth() * mTextColumnWidth;
             ImGui::Row("Position", textWidth);
-            Vec2f pos = { trans->x, trans->y };
+            Vec2f pos = trans->getPosition();
             if (ImGui::Draw2Float("Position##ent-pos", pos)) {
                 trans->x = pos.x;
                 trans->y = pos.y;
+            }
+            ImGui::Row("Offset", textWidth);
+            Vec2f offset = trans->getOffset();
+            if (ImGui::Draw2Float("offset##ent-offset", offset)) {
+                trans->offsetX = offset.x;
+                trans->offsetY = offset.y;
             }
             ImGui::Row("Size");
             Vec2f size = { trans->w, trans->h };

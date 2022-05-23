@@ -190,19 +190,24 @@ namespace Plutus
                     for (uint32_t i = 0; i < components.Size(); i++)
                     {
                         auto component = components[i].GetJsonObject();
+                        jhelper.value = &component;
+
                         std::string compType = component["name"].GetString();
                         if (compType == "Transform")
                         {
-                            float x = component["x"].GetFloat();
-                            float y = component["y"].GetFloat();
-                            int w = component["w"].GetInt();
-                            int h = component["h"].GetInt();
-                            float r = component["r"].GetFloat();
-                            int layer = component["l"].GetInt();
-                            bool sortY = component["sy"].GetBool();
-                            entity.addComponent<TransformComponent>(x, y, w, h, r, layer, sortY);
+                            auto trans = entity.addComponent<TransformComponent>();
+                            trans->x = jhelper.getFloat("x");
+                            trans->y = jhelper.getFloat("y");
+                            trans->offsetX = jhelper.getFloat("offset-x");
+                            trans->offsetY = jhelper.getFloat("offset-y");
+                            trans->w = jhelper.getInt("w");
+                            trans->h = jhelper.getInt("h");
+                            trans->r = jhelper.getFloat("r");
+                            trans->layer = jhelper.getInt("l");
+                            trans->sortY = jhelper.getBool("sy");
                             continue;
                         }
+
                         if (compType == "Sprite")
                         {
                             auto spr = entity.addComponent<SpriteComponent>(component["tex"].GetString());
@@ -228,7 +233,6 @@ namespace Plutus
                             auto script = entity.addComponent<ScriptComponent>(component["script"].GetString());
                         }
                         if (compType == "RigidBody") {
-                            jhelper.value = &component;
                             auto rbody = entity.addComponent<RigidBodyComponent>((BodyType)jhelper.getInt("type"));
 
                             rbody->mBullet = jhelper.getInt("isbullet");

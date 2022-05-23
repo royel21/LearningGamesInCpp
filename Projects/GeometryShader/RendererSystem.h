@@ -33,6 +33,7 @@ namespace Plutus
 
     private:
         Shader mTilemapShader;
+        Shader mSpriteShader;
         std::vector<Layer> mLayers;
         std::vector<Renderable> mRenderables;
     };

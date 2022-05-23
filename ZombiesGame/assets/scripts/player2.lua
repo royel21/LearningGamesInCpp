@@ -1,4 +1,4 @@
-local SPEED = 1
+local SPEED = 10
 local curAnime = "stand-r"
 
 local stand = {
@@ -28,8 +28,8 @@ function init()
     camera:setTarget(Player2, vec)
     local anim = Player2:getAnimate()
     if anim then anim:play(curAnime) end
-    --rbody = Player2:getRigidBody()
-    --rbody:setMaxVelocity(1, 1)
+    rbody = Player2:getRigidBody()
+    -- rbody:setMaxVelocity(1, 1)
 
     print("player2 init")
 end
@@ -38,20 +38,20 @@ function destroy() assetManager:removeSound("bg") end
 
 local vel = {x = 0, y = 0}
 
-function move() 
-	--rbody:applyForce(vel.x, vel.y) 
-	local trans = Player2:getTransform()
-	print("move")
-	trans.x = trans.x + vel.x
-	trans.y = trans.y + vel.y
-	print("move")
+function move()
+    rbody:applyForce(vel.x, vel.y)
+    -- local trans = Player2:getTransform()
+    -- print("move")
+    -- trans.x = trans.x + vel.x
+    -- trans.y = trans.y + vel.y
+    -- print("move")
 end
 
 function roll()
     vel.x = vel.x * 1.1;
     vel.y = vel.y * 1.1;
-   -- rbody:applyForce(vel.x, vel.y)
-	rbody:setVelocity(vel.x, vel.y)
+    rbody:applyForce(vel.x, vel.y)
+    -- rbody:setVelocity(vel.x, vel.y)
 end
 
 function jump() rbody:applyImpulse(0, 0.3) end
@@ -72,6 +72,12 @@ function update(dt)
     -- sound:play(false)
     --   print("play sound")
     -- end
+
+    if input:onKeyDown("V") then
+        SPEED = 20
+    else
+        SPEED = 10
+    end
 
     if state ~= "attacking" and state ~= "jumping" then
         -- Move Up - Down
@@ -117,36 +123,4 @@ function update(dt)
         state = "     "
     end
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

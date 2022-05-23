@@ -2,7 +2,7 @@
 #include <stb_image.h>
 #include <Utils/Utils.h>
 #include <Utils/FileIO.h>
-#include <Graphics/GLUtils.h>
+#include <Graphics/Graphic.h>
 
 #include <Log/Logger.h>
 
@@ -84,7 +84,7 @@ namespace Plutus
             auto format = ch == 3 ? GL_RGB8 : GL_RGBA8;
             auto gltype = ch == 3 ? GL_RGB : GL_RGBA;
             glActiveTexture(GL_TEXTURE0 + mTexureUnit);
-            mTexId = createTexture(mWidth, mHeight, out, format, gltype, GL_UNSIGNED_BYTE, mGlFilter, mGlFilter);
+            mTexId = Graphic::createTexture(mWidth, mHeight, out, format, gltype, GL_UNSIGNED_BYTE, mGlFilter);
             //unlink the texture
             glBindTexture(GL_TEXTURE_2D, 0);
             //delete the image buffer from memory

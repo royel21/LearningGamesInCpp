@@ -40,6 +40,8 @@ namespace Plutus
 
     void AppGeo::init()
     {
+        mCamControl.setCamera(&mCamera);
+
         mWindow.init("Plutus AppGeo", 1280, 768);
         glClearColor(0.0f, 0.65f, .95f, 1.0f);
         mInput = Input::get();
@@ -53,85 +55,32 @@ namespace Plutus
         // mCamera2.init(1280, 768);
 
         mSysManager.AddSystem<RendererSystem>(&mCamera);
-        // mSysManager.AddSystem<PhysicSystem>();
-        // mSysManager.AddSystem<AnimationSystem>();
-        // mSysManager.AddSystem<TileMapSystem>(&mCamera);
-        mSysManager.AddSystem<RenderSystem>(&mCamera);
-        // mSysManager.AddSystem<DebugSystem>(&mCamera);
-        // mMapRender.init(&mCamera);
-
-        // auto mapView = mProject.scene->getRegistry()->view<TileMapComponent>();
-
-        // for (auto [e, map] : mapView.each()) {
-        //     auto ent = Entity{ e, mProject.scene.get() };
-        //     mMapRender.addMap(ent.getName(), &map);
-        // }
+        mSysManager.AddSystem<ScriptSystem>(&mCamera);
+        mSysManager.AddSystem<PhysicSystem>();
+        mSysManager.AddSystem<AnimationSystem>();
+        mSysManager.AddSystem<DebugSystem>(&mCamera);
 
         mSysManager.init();
-        // mCamera.setTarget({}, {});
-
-        // Logger::info("size: %i", sizeof(SpriteVert) * 4 );
     }
 
     void AppGeo::update()
     {
-        auto pos = mCamera.getPosition();
-        if (mInput->onKeyDown("Right"))
-        {
-            pos.x -= speed;
-        }
-
-        if (mInput->onKeyDown("Left"))
-        {
-            pos.x += speed;
-        }
-
-        if (mInput->onKeyDown("Up"))
-        {
-            pos.y -= speed;
-        }
-
-        if (mInput->onKeyDown("Down"))
-        {
-            pos.y += speed;
-        }
-        mCamera.setPosition(pos);
-
-        auto scale = mCamera.getScale();
-        if (mInput->onKeyDown("NUMPAD+"))
-        {
-            scale += 0.05f;
-        }
-
-        if (mInput->onKeyDown("NUMPAD-"))
-        {
-            scale -= 0.05f;
-        }
-        mCamera.setScale(scale);
-
-
         mCamera.update();
+        auto pos = mCamera.getPosition();
 
         auto start = Time::micros();
         mSysManager.update(0.01667f);
         Logger::info("elapse: %llu", Time::micros() - start);
 
 
-        char title[128];
-        std::snprintf(title, 128, "FPS: %.2f", (Time::micros() - start) / 1000.0f);
-        mWindow.setTitle(title);
+        // char title[128];
+        // std::snprintf(title, 128, "FPS: %.2f", (Time::micros() - start) / 1000.0f);
+        // mWindow.setTitle(title);
+        // Logger::info("pos: %0.3f, %0.3f", pos.x, pos.y);
     }
 
     void AppGeo::draw()
     {
-        // glDisable(GL_BLEND);
-        // mMapRender.draw();
 
-        // if (mInput->onKeyPressed("MouseLeft")) {
-        //     auto mpos = mInput->getMouseCoords();
-        //     float pixels[4];
-        //     glReadPixels(static_cast<int>(mpos.x), static_cast<int>(mpos.y), 1, 1, GL_RGBA, GL_FLOAT, pixels);
-        //     Logger::info("values: %.6f, %.6f, %.6f, %.6f", pixels[0], pixels[1], pixels[2], pixels[3]);
-        // }
     }
 }

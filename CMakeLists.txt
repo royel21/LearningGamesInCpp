@@ -63,6 +63,11 @@ add_executable("GeometryShader"  ${GeometryShader_SRC})
 
 target_link_libraries(GeometryShader PUBLIC Plutus)
 
+#*************Shaders**********************
+file(GLOB_RECURSE ShaderSRC Projects/Shaders/*.h Projects/Shaders/*.cpp)
+add_executable("Shaders"  ${ShaderSRC})
+
+target_link_libraries(Shaders PUBLIC Plutus)
 #*************QuadTree**********************
 
 file(GLOB_RECURSE SRC_QUAD Projects/QuadTree/*.h Projects/QuadTree/*.cpp)

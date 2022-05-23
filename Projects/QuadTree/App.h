@@ -4,7 +4,6 @@
 #include <Graphics/Shader.h>
 #include <Graphics/Camera2D.h>
 #include <Graphics/SpriteBatch2D.h>
-#include "SpriteBatch.h"
 
 #include <vector>
 #include <Time/Limiter.h>
@@ -35,7 +34,6 @@ namespace Plutus
         Window mWindow;
         Camera2D mCamera;
         SpriteBatch2D mSpritebatch;
-        PlutusEngine::SpriteBatch mSpriteBatch2;
 
         std::vector<ColorRect> rects;
         QuadTreeContainer<ColorRect> mQTrees;

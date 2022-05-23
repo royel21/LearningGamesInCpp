@@ -3,7 +3,9 @@
 
 #include <ECS/Scene.h>
 #include <Core/Project.h>
+#include <Assets/Assets.h>
 #include <ECS/Components.h>
+#include <Graphics/Camera2D.h>
 
 #include "GLSLBatch.h"
 #include "TileMapBatch.h"
@@ -16,6 +18,7 @@ namespace Plutus
         mProject = project;
 
         mTilemapShader.init(GLSLBatch::tmapVShader, GLSLBatch::tmapFShader);
+        mSpriteShader.init(GLSLBatch::spriteVShader, GLSLBatch::spriteFShader);
 
         auto mapView = mProject->scene->getRegistry()->view<TileMapComponent>();
         for (auto [e, tmap] : mapView.each()) {
@@ -33,6 +36,36 @@ namespace Plutus
     void RendererSystem::update(float dt) {
 
         auto view = mProject->scene->getRegistry()->view<TransformComponent, SpriteComponent>();
+        mRenderables.clear();
+
+        mRenderables.reserve(view.size_hint());
+
+        //Get all visible sprite and create renderables
+        for (auto [e, trans, sprite] : view.each()) {
+            auto rect = trans.getRect();
+            if (mCamera->getViewPortDim().overlap(rect)) {
+                auto tex = AssetManager::get()->getAsset<Texture>(sprite.mTextureId);
+                mRenderables.emplace_back(tex, rect, sprite.mUVCoord, sprite.mColor,
+                    trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(e), trans.layer, trans.sortY, trans.offsetY);
+            }
+        }
+
+        // sort by layer, y position, texture
+        std::sort(mRenderables.begin(), mRenderables.end());
+
+        for (auto& r : mRenderables) {
+            if (r.layer + 1 > (int)mLayers.size()) {
+                mLayers.resize(r.layer + 1);
+            }
+            Layer& layer = mLayers[r.layer];
+            if (!layer.spriteBatch) {
+                layer.spriteBatch = new SpriteBatch(mCamera, &mSpriteShader);
+                layer.spriteBatch->init();
+            }
+
+            //Add sprite to this layer
+            layer.spriteBatch->addSprite(&r);
+        }
 
         for (auto& layer : mLayers) {
             for (auto mbatch : layer.tileMapBatchs) {
@@ -40,8 +73,9 @@ namespace Plutus
                     mbatch->draw();
                 }
             }
-            if (layer.spriteBatch)
+            if (layer.spriteBatch) {
                 layer.spriteBatch->draw();
+            }
         }
     }
 
@@ -56,5 +90,7 @@ namespace Plutus
             }
         }
         mLayers.clear();
+        mTilemapShader.destroy();
+        mSpriteShader.destroy();
     }
 }

@@ -104,13 +104,11 @@ namespace Plutus {
             for (auto& batch : mBatches)
             {
                 if (batch.texture) {
-                    glActiveTexture(GL_TEXTURE0 + batch.texture->mTexureUnit);
+                    mShader->setUniform1i("uHasTex", 1);
                     mShader->setUniform1i("uSampler", batch.texture->mTexureUnit);
 
-                    mShader->setUniform1i("uHasTex", 1);
-
                     glBindTexture(GL_TEXTURE_2D, batch.texture->mTexId);
-
+                    glActiveTexture(GL_TEXTURE0 + batch.texture->mTexureUnit);
                 }
                 else {
                     mShader->setUniform1i("uHasTex", 0);

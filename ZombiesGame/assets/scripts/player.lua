@@ -3,14 +3,14 @@ local SPEED = 1
 local rbody
 
 local size = camera:getVPSize();
-camera:setBounds( Vec4f.new(0, 0, 4096 - size.x, 2048 - size.y));
+camera:setBounds(Vec4f.new(0, 0, 4096 - size.x, 2048 - size.y));
 
 function init()
-	local size = camera:getVPSize();
-	camera:setTarget(Player, Vec2f.new(-size.x / 2 + 32, -size.y / 2 + 32))
-    --rbody = Player:getRigidBody()
- 	--rbody:setMaxVelocity(1, 2)
-	print("Player")
+    local size = camera:getVPSize();
+    camera:setTarget(Player, Vec2f.new(-size.x / 2 + 32, -size.y / 2 + 32))
+    -- rbody = Player:getRigidBody()
+    -- rbody:setMaxVelocity(1, 2)
+    print("Player")
 end
 
 function update(dt)
@@ -29,38 +29,9 @@ function update(dt)
     end
 
     local trans = Player:getTransform()
-	trans.x = trans.x + vel.x
-	trans.y = trans.y + vel.y
+    trans.x = trans.x + vel.x
+    trans.y = trans.y + vel.y
 end
 
 function destroy() end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

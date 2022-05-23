@@ -11,85 +11,85 @@
 
 namespace Plutus
 {
-    struct TileVert {
-        float x;
-        float y;
-        float uvx;
-        float uvy;
-        TileVert(float _x, float _y, float _ux, float _uy) : x(_x), y(_y), uvx(_ux), uvy(_uy) {}
-    };
-
-
     void TileMapBatch::init(TileMapComponent* tilemap)
     {
+        mVAO = Graphic::createVertexArray();
+        mBufferId = Graphic::createBufferArray();
+        //Size of Vertex Struct in bytes
+        auto vsize = sizeof(TileVert);
+        //bind the Shader position to the buffer object
+        Graphic::setFAttribute(0, 2, vsize);
+        //bind the Shader UV "Texture coordinate" to the buffer object
+        Graphic::setFAttribute(1, 2, vsize, (void*)offsetof(TileVert, uvx));
+        //bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
+        Graphic::setIAttribute(2, 1, vsize, (void*)offsetof(TileVert, texIndex));
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+
+        loadTiles(tilemap);
+    }
+
+    void TileMapBatch::loadTiles(TileMapComponent* tilemap) {
+        for (size_t i = 0; i < 16; i++) {
+            texIndices[i] = i;
+            textures[i] = nullptr;
+        }
+
         mLayer = tilemap->mLayer;
-        std::vector<TileVert> tiles;
 
         auto& mtiles = tilemap->mTiles;
 
         tiles.reserve(mtiles.size() * 4);
 
-        std::sort(mtiles.begin(), mtiles.end());
-
         uint32_t offset = 0;
-
-        Texture* tex = nullptr;
-        BatchTex* batch = nullptr;
+        int totalTiles = 0;
         for (auto t : mtiles) {
-            auto tTex = tilemap->getTexture(t.texture);
-            if (tTex) {
-                if (tTex != tex) {
-                    tex = tTex;
-                    batch = &mBatches[tex->mTexId];
-                    batch->texture = tTex;
-                    batch->iboOffset = offset;
-                }
+            Texture* tex = tilemap->getTexture(t.texture);
+            if (tex) {
+                textures[t.texture] = tex;
 
                 auto rect = tilemap->getRect(t);
                 auto uv = tex->getUV(t.texcoord);
 
-                tiles.emplace_back(rect.x, rect.y, uv.x, uv.w);
-                tiles.emplace_back(rect.x, rect.y + rect.w, uv.x, uv.y);
-                tiles.emplace_back(rect.x + rect.z, rect.y + rect.w, uv.z, uv.y);
-                tiles.emplace_back(rect.x + rect.z, rect.y, uv.z, uv.w);
+                tiles.emplace_back(rect.x, rect.y, uv.x, uv.w, t.texture);
+                tiles.emplace_back(rect.x, rect.y + rect.w, uv.x, uv.y, t.texture);
+                tiles.emplace_back(rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, t.texture);
+                tiles.emplace_back(rect.x + rect.z, rect.y, uv.z, uv.w, t.texture);
 
-                batch->vertCount += 6;
-                offset += 6;
+                mVerCount += 6;
+                totalTiles++;
             }
         }
 
-        mVAO = Graphic::createVertexArray();
-        mBufferId = Graphic::createBufferArray();
+        mIbo.init(totalTiles);
 
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(TileVert), (void*)NULL);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(TileVert), (void*)offsetof(TileVert, uvx));
-
-        mIbo.init(mtiles.size());
-
-        glBufferData(GL_ARRAY_BUFFER, tiles.size() * sizeof(TileVert), tiles.data(), GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+        Graphic::uploadBufferData(mBufferId, tiles.size() * sizeof(TileVert), tiles.data(), GL_STATIC_DRAW);
     }
 
     void TileMapBatch::draw() {
         mShader->enable();
         mShader->setUniform4f("uColor", { 1, 1, 1, 1 });
         mShader->setUniformMat4("uCamera", mCamera->getCameraMatrix());
+        mShader->setUniform1iv("uSampler", 16, texIndices);
 
         glBindVertexArray(mVAO);
+
         mIbo.bind();
-        for (auto& batch : mBatches) {
-            mShader->setUniform1i("uSampler", batch.second.texture->mTexureUnit);
-            glActiveTexture(GL_TEXTURE0 + batch.second.texture->mTexureUnit);
-            glBindTexture(GL_TEXTURE_2D, batch.second.texture->mTexId);
-            glDrawElements(GL_TRIANGLES, batch.second.vertCount, GL_UNSIGNED_INT, (void*)(batch.second.iboOffset * sizeof(GLuint)));
+        for (size_t i = 0; i < 16; i++) {
+            if (textures[i]) {
+                glActiveTexture(GL_TEXTURE0 + i);
+                glBindTexture(GL_TEXTURE_2D, textures[i]->mTexId);
+            }
         }
 
+        glDrawElements(GL_TRIANGLES, mVerCount, GL_UNSIGNED_INT, NULL);
+
         mIbo.unbind();
-        glBindVertexArray(0);
         mShader->disable();
+
+        glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     void TileMapBatch::destroy()
