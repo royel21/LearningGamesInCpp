@@ -91,8 +91,6 @@ namespace Plutus
 
     void App::Draw()
     {
-        Graphic::enableBlend();
-
         Renderable ren1;
 
         if (mShader.enable()) {
@@ -117,6 +115,7 @@ namespace Plutus
             // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
             mShader.disable();
 
+            Graphic::enableBlend(true);
 
             mLightShader.enable();
             mLightShader.setUniformMat4("uCamera", mCamera.getCameraMatrix());
@@ -132,6 +131,7 @@ namespace Plutus
 
             glBindVertexArray(0);
             mIbo.unbind();
+            Graphic::enableBlend();
         }
         // Logger::info("time %0.4f", Time::seconds());
         // Math::Log(Input::get()->getMouseCoords());
