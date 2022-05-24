@@ -14,7 +14,16 @@ namespace Plutus
 {
     constexpr size_t MAX_DEPTH = 20;
 
-    template<typename T>
+    class QuadTree;
+
+    struct QuadTreeItem {
+        Rect rect;
+        uint32_t index;
+        uint32_t itemIndex;
+        std::vector<QuadTreeItem>* owner;
+        QuadTreeItem(const Rect& r, uint32_t i, std::vector<QuadTreeItem>* q) : rect(r), index(i), owner(q) {}
+    };
+
     class QuadTree
     {
     public:
@@ -37,7 +46,7 @@ namespace Plutus
             return nCount;
         }
 
-        void insert(const T& item, const Rect& itemSize) {
+        void insert(uint32_t index, const Rect& itemSize) {
             auto curDepth = mDepth + 1;
 
             for (size_t i = 0; i < 4; i++)
@@ -46,14 +55,15 @@ namespace Plutus
                     if (curDepth < MAX_DEPTH) {
 
                         if (!mChilds[i]) {
-                            mChilds[i] = std::make_shared<QuadTree<T>>(mChildsArea[i], curDepth);
+                            mChilds[i] = std::make_shared<QuadTree>(mChildsArea[i], curDepth);
                         }
-                        mChilds[i]->insert(item, itemSize);
+                        mChilds[i]->insert(index, itemSize);
                         return;
                     }
                 }
             }
-            mItems.push_back({ itemSize, item });
+            mItems.push_back({ itemSize, index, &mItems });
+            mItems.back().itemIndex = mItems.size() - 1;
         }
 
         void resize(const Rect& area) {
@@ -70,16 +80,12 @@ namespace Plutus
             };
         }
 
-        std::list<T> query(const Rect& area) const {
-            std::list<T> listItems;
-            queryItems(area, listItems);
-            return listItems;
-        }
 
-        void queryItems(const Rect& area, std::list<T>& itemsList) const {
-            for (const auto& p : mItems) {
-                if (area.overlaps(p.first))
-                    itemsList.push_back(p.second);
+        void queryItems(const Rect& area, std::list<QuadTreeItem*>& itemsList) {
+
+            for (auto& p : mItems) {
+                if (area.overlaps(p.rect))
+                    itemsList.push_back(&p);
             }
 
             for (size_t i = 0; i < 4; i++)
@@ -95,9 +101,9 @@ namespace Plutus
             }
         }
 
-        void items(std::list<T>& itemsList) {
-            for (const auto& p : mItems)
-                itemsList.push_back(p.second);
+        void items(std::list<QuadTreeItem*>& itemsList) {
+            for (auto& p : mItems)
+                itemsList.push_back(&p);
 
             for (size_t i = 0; i < 4; i++)
                 if (mChilds[i])  mChilds[i]->items(itemsList);
@@ -114,9 +120,9 @@ namespace Plutus
         std::array<Rect, 4> mChildsArea{};
 
         // 4 child of the quad tree
-        std::array<std::shared_ptr<QuadTree<T>>, 4> mChilds{};
+        std::array<std::shared_ptr<QuadTree>, 4> mChilds{};
         //Items belonging to this qtree
-        std::vector<std::pair<Rect, T>> mItems;
+        std::vector<QuadTreeItem> mItems;
     };
 
     /************** Quad Tree Container *****************************************************/
@@ -127,7 +133,7 @@ namespace Plutus
 
     private:
         Container mAllItems;
-        QuadTree<uint32_t> root;
+        QuadTree root;
 
     public:
         QuadTreeContainer(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0) : root(area) { }
@@ -170,18 +176,12 @@ namespace Plutus
             // Logger::info("time: %llu %zu", Time::micros() - start, sizeof(it));
         }
 
-        std::vector<T*> query(const Rect& r)
+        std::list<QuadTreeItem*> query(const Rect& r)
         {
-            std::list<uint32_t> items;
-            std::vector<T*> founds;
+            std::list<QuadTreeItem*> items;
 
             root.queryItems(r, items);
-            founds.reserve(items.size());
-
-            for (auto i : items) {
-                founds.push_back(&mAllItems[i]);
-            }
-            return founds;
+            return items;
         }
 
 

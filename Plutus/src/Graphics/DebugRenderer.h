@@ -45,15 +45,15 @@ namespace Plutus
 		void drawBox(const Vec4f& destRect, float angle = 0, const ColorRGBA8& color = {});
 		void drawCircle(const Vec2f& center, float radius, const ColorRGBA8& color = {});
 
-		void drawBox(Box2d& box, const ColorRGBA8& color = {});
+		void drawBox(Box2d* box, const ColorRGBA8& color = {});
 
-		inline void drawLine(Line2d& line, const ColorRGBA8& color = {}) {
-			auto vertices = line.getVertices();
+		inline void drawLine(Line2d* line, const ColorRGBA8& color = {}) {
+			auto vertices = line->getVertices();
 			drawLine(vertices[0], vertices[1], 0, color);
 		}
 
-		inline void drawCircle(Circle2d& c, const ColorRGBA8& color = {}) {
-			drawCircle({ c.pos.x, c.pos.y }, c.radius, color);
+		inline void drawCircle(Circle2d* c, const ColorRGBA8& color = {}) {
+			drawCircle({ c->pos.x, c->pos.y }, c->radius, color);
 		}
 
 		Vec2i getCellSize() { return mCellSize; };

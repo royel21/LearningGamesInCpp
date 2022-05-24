@@ -77,12 +77,12 @@ namespace Plutus
 		mIndices.push_back(i);
 	}
 	/***************************** Shapes **********************************************/
-	void DebugRender::drawBox(Box2d& b, const ColorRGBA8& color)
+	void DebugRender::drawBox(Box2d* b, const ColorRGBA8& color)
 	{
 		// drawBox(Vec4f(b.pos.x, b.pos.y, b.size.x, b.size.y), b.rotation, color);
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 4);
-		auto vertices = b.getVertices();
+		auto vertices = b->getVertices();
 
 		int index = 0;
 		for (uint32_t j = i; j < i + 4; j++) {

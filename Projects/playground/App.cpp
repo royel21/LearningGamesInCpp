@@ -19,6 +19,11 @@
 
 namespace Plutus
 {
+    template<typename T>
+    T* castShape(Shape* shape) {
+        return static_cast<T*>(shape);
+    }
+
     App::App(const char* name, int width, int height)
     {
         mName = name;
@@ -57,28 +62,28 @@ namespace Plutus
 
         float x = 40;
         float y = 40;
-        for (size_t i = 0; i < 0; i++) {
+        for (size_t i = 0; i < 50; i++) {
             float x = (float)Utils::getRandom(30, 1100);
             float y = (float)Utils::getRandom(30, 700);
             float size = (float)Utils::getRandom(20, 35);
             mShapes.insert(new Circle2d{ x, y, size }, { x, y, size, size });
         }
-        // auto line = new Line2d{ 5, 5, 5, size.y };
+        // auto line = Line2d{ 5, 5, 5, size.y };
         // line->isStatic = true;
         auto size = mCamera.getScaleScreen() - 5;
-        mShapes.insert(new Line2d{ 5, 5, 5, size.y }, { 0, 0, 0, 0 });
+        mShapes.insert(new Line2d{ 5, 5, 5, size.y }, { 5, 5, 5, size.y });
         mShapes.back()->isStatic = true;
 
-        mShapes.insert(new Line2d{ 5, size.y, size.x, size.y }, { 0, 0, 0, 0 });
+        mShapes.insert(new Line2d{ 5, size.y, size.x, size.y }, { 5, size.y, size.x, size.y });
         mShapes.back()->isStatic = true;
 
-        mShapes.insert(new Line2d{ size.x, size.y, size.x, 5 }, { 0, 0, 0, 0 });
+        mShapes.insert(new Line2d{ size.x, size.y, size.x, 5 }, { size.x, size.y, size.x, 5 });
         mShapes.back()->isStatic = true;
 
-        mShapes.insert(new Line2d{ 5, 5, size.x, 5 }, { 0, 0, 0, 0 });
+        mShapes.insert(new Line2d{ 5, 5, size.x, 5 }, { 5, 5, size.x, 5 });
         mShapes.back()->isStatic = true;
 
-        mShapes.insert(new Line2d{ 80, 62, 600, 600 }, { 0, 0, 0, 0 });
+        mShapes.insert(new Line2d{ 80, 62, 600, 600 }, { 80, 62, 600, 600 });
         mShapes.back()->isStatic = true;
 
         // shapes.push_back(new Line2d{ 5, 5, 5, size.y }); // Left
@@ -119,7 +124,10 @@ namespace Plutus
             cscale -= 0.05f;
             mCamera.setScale(cscale);
         }
+        auto shape = mShapes[controller];
+
         auto cpos = mCamera.getPosition();
+
         if (Input::get()->isCtrl) {
             if (Input::get()->onKeyDown("Up")) { cpos.y += speed; }
             if (Input::get()->onKeyDown("Down")) { cpos.y -= speed; }
@@ -128,25 +136,25 @@ namespace Plutus
             mCamera.setPosition(cpos);
         }
         else {
-            if (Input::get()->onKeyDown("Up")) { mShapes[controller]->pos.y += speed; }
-            if (Input::get()->onKeyDown("Down")) { mShapes[controller]->pos.y -= speed; }
-            if (Input::get()->onKeyDown("Right")) { mShapes[controller]->pos.x += speed; }
-            if (Input::get()->onKeyDown("Left")) { mShapes[controller]->pos.x -= speed; }
+            if (Input::get()->onKeyDown("Up")) { shape->pos.y += speed; }
+            if (Input::get()->onKeyDown("Down")) { shape->pos.y -= speed; }
+            if (Input::get()->onKeyDown("Right")) { shape->pos.x += speed; }
+            if (Input::get()->onKeyDown("Left")) { shape->pos.x -= speed; }
         }
 
-        if (isMouseDownInBox) {
-            auto dis = initPos - mpos;
-            mShapes[1]->pos = pos - dis;
-        }
+        // if (isMouseDownInBox) {
+        //     auto dis = initPos - mpos;
+        //     mShapes[1]->pos = pos - dis;
+        // }
 
         if (isMouseDownInCircle) {
             auto dis = initPos - mpos;
         }
 
-        for (size_t i = 0; i < mShapes.size(); i++) {
-            auto shapeA = mShapes[i];
-            if (shapeA->type == CircleShape && !shapeA->isStatic) {
-                shapeA->pos.y -= 5;
+        for (auto& item : mShapes) {
+
+            if (!item->isStatic) {
+                item->pos.y -= 1;
             }
         }
 
@@ -159,8 +167,23 @@ namespace Plutus
             bool isBoxA = shapeA->type == BoxShape;
             bool isLineA = shapeA->type == EdgeShape;
 
-            for (size_t x = i + 1; x < mShapes.size(); x++) {
-                auto shapeB = mShapes[x];
+            Rect rect;
+
+            if (shapeA->type == CircleShape) {
+                rect = static_cast<Circle2d*>(shapeA)->getRect();
+            }
+            if (shapeA->type == BoxShape) {
+                rect = static_cast<Box2d*>(shapeA)->getRect();
+            }
+            if (shapeA->type == EdgeShape) {
+                rect = static_cast<Line2d*>(shapeA)->getRect();
+            }
+
+            auto items = mShapes.query(rect);
+
+            for (auto item : items) {
+                auto shapeB = mShapes[item->index];
+
                 bool isCircleB = shapeB->type == CircleShape;
                 bool isBoxB = shapeB->type == BoxShape;
                 bool isLineB = shapeB->type == EdgeShape;
@@ -217,15 +240,15 @@ namespace Plutus
         for (auto shape : mShapes) {
             switch (shape->type) {
             case BoxShape: {
-                mDebug->drawBox(*(Box2d*)shape);
+                mDebug->drawBox((Box2d*)shape);
                 break;
             }
             case EdgeShape: {
-                mDebug->drawLine(*(Line2d*)shape);
+                mDebug->drawLine((Line2d*)shape);
                 break;
             }
             case CircleShape: {
-                mDebug->drawCircle(*(Circle2d*)shape);
+                mDebug->drawCircle((Circle2d*)shape);
                 break;
             }
             }
@@ -237,16 +260,17 @@ namespace Plutus
 
     void App::Exit()
     {
-        for (auto shape : mShapes) {
-            delete shape;
+        for (auto item : mShapes) {
+            delete item;
         }
+        mShapes.clear();
     }
 
     void App::onKeyDown(const std::string& key)
     {
         initPos = Input::get()->getMouseCoords();
 
-        if (PUtils::PointInBox(initPos, (Box2d*)mShapes[1])) {
+        if (PUtils::PointInBox(initPos, (Box2d*)&mShapes[1])) {
             isMouseDownInBox = true;
             pos = mShapes[1]->pos;
         }

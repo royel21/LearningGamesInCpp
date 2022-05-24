@@ -237,15 +237,15 @@ namespace Plutus
         for (auto& shape : mShapes) {
             switch (shape->type) {
             case BoxShape: {
-                mDebug->drawBox(*(Box2d*)shape);
+                mDebug->drawBox((Box2d*)shape);
                 break;
             }
             case EdgeShape: {
-                mDebug->drawLine(*(Line2d*)shape);
+                mDebug->drawLine((Line2d*)shape);
                 break;
             }
             case CircleShape: {
-                mDebug->drawCircle(*(Circle2d*)shape);
+                mDebug->drawCircle((Circle2d*)shape);
                 break;
             }
             }
@@ -257,11 +257,11 @@ namespace Plutus
         mBatch.begin();
         mBatch.draw();
         mBatch.end();
-
-        mDebug->drawBox(capsule.getBox(), { 255,0,255,255 });
-        mDebug->drawBox(rect);
-        mDebug->drawCircle(capsule.getBCircle());
-        mDebug->drawCircle(capsule.getTCircle());
+        auto box = capsule.getBox();
+        // mDebug->drawBox(&box, { 255,0,255,255 });
+        // mDebug->drawBox(rect);
+        // mDebug->drawCircle(capsule.getBCircle());
+        // mDebug->drawCircle(capsule.getTCircle());
 
         mDebug->end();
         mDebug->render();

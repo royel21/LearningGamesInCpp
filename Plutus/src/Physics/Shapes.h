@@ -2,6 +2,8 @@
 #include <vector>
 #include <Math/Vectors.h>
 
+#include <Math/Rect.h>
+
 class b2Body;
 
 constexpr int EdgeShape = 0;
@@ -46,6 +48,10 @@ namespace Plutus
         Vec2f getCenter();
         Points getVertices();
 
+        Rect getRect() {
+            return Rect{ pos, end };
+        }
+
     private:
         float lastRotation = -1;
     };
@@ -58,6 +64,10 @@ namespace Plutus
         Circle2d(const Vec2f& _pos, float r) : Shape(_pos), radius(r) { type = CircleShape; }
 
         float radiusSqrt() const { return radius * radius; }
+
+        Rect getRect() {
+            return Rect{ pos - radius, {radius * 2, radius * 2} };
+        }
     };
 
     struct Box2d : public Shape
@@ -75,6 +85,10 @@ namespace Plutus
         Vec2f getCenter() const { return pos + half; }
 
         Points getVertices();
+
+        Rect getRect() {
+            return Rect{ pos, size };
+        }
 
     private:
         float lastRotation = -1;
