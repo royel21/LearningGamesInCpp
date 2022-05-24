@@ -12,7 +12,6 @@ namespace Plutus
         std::vector<CellItem>* cell;
     };
 
-    using Cell = std::vector<CellItem>;
 
     template<typename T>
     class Grid
@@ -30,7 +29,7 @@ namespace Plutus
             mCells.resize(mNumXCells * mNumYCells);
 
             for (size_t i = 0; i < mCells.size(); i++) {
-                // mCells[i]
+                mCells[i].reserve(ITEMS_TO_RESERVE);
             }
         }
 
@@ -39,12 +38,12 @@ namespace Plutus
 
         }
 
-        void moveItem(T* item, Cell* cell)
+        void moveItem(T* item, std::vector < CellItem<T>>* cell)
         {
 
         }
 
-        Cell* getCell(const Vec2f& pos)
+        std::vector < CellItem<T>* getCell(const Vec2f& pos)
         {
 
         }
@@ -55,7 +54,7 @@ namespace Plutus
         }
 
     private:
-        std::vector<Cell> mCells;
+        std::vector < std::vector<CellItem<T> > mCells;
         int mNumXCells;
         int mNumYCells;
     };
