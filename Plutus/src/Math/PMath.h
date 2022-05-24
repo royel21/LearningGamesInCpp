@@ -4,6 +4,8 @@
 
 #include "Vectors.h"
 
+#define CLAMP(v, min, max) v > min ? min : v > max ? max : v
+
 namespace Plutus
 {
     constexpr float PI = 3.14159265359f;

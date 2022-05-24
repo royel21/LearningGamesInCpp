@@ -37,28 +37,14 @@ namespace Plutus
     {
         mShapes.resize({ 0, 0, (float)mWidth, (float)mHeight });
         // setAlwaysOnTop(true);
-        // srand(time(NULL));   // Initialization, should only be called once.
         mDebug = DebugRender::get();
         mDebug->init(&mCamera);
 
-        // size = Vec2f(size.x, size.y);
-        // shapes.push_back(new Circle2d{ 70, 100, 30 });
-        // shapes.push_back(new Circle2d{ 640, 150, 30 });
-        // shapes.push_back(new Circle2d{ 640, 150, 30 });
-        // shapes.push_back(new Circle2d{ 70, 200, 30 });
-        // shapes.push_back(new Circle2d{ 70, 250, 30 });
-        // shapes.push_back(new Circle2d{ 70, 300, 30 });
-        // shapes.push_back(new Box2d{ 200, 100, 100, 100, 45 });
-        // shapes.push_back(new Circle2d{ 100, 50, 50 });
-        // shapes.push_back(new Circle2d{ 160, 170, 50 });
-        // shapes.push_back(new Circle2d{ 250, 100, 50 });
-        // shapes.push_back(new Circle2d{ 40, 80, 50 });
-
-        mShapes.insert(new Circle2d{ 70, 100, 30 }, { 70, 100, 30, 30 });
-        mShapes.insert(new Circle2d{ 640, 150, 30 }, { 640, 150, 30, 30 });
-        mShapes.insert(new Circle2d{ 640, 150, 30 }, { 640, 150, 30, 30 });
-        mShapes.back()->isStatic = true;
-        mShapes.insert(new Box2d{ 360, 90, 100, 100 }, { 360, 90, 100, 100 });
+        mShapes.insert<Circle2d>({ 70, 100, 30, 30 }, 70.0f, 100.0f, 30.0f);
+        mShapes.insert<Circle2d>({ 640, 150, 30, 30 }, 640.0f, 150.0f, 30.0f);
+        mShapes.insert<Circle2d>({ 640, 150, 30, 30 }, 640.0f, 150.0f, 30.0f);
+        mShapes.back().ref->isStatic = true;
+        mShapes.insert<Box2d>({ 360, 90, 100, 100 }, 360.0f, 90.0f, 100.0f, 100.0f);
 
         float x = 40;
         float y = 40;
@@ -66,39 +52,24 @@ namespace Plutus
             float x = (float)Utils::getRandom(30, 1100);
             float y = (float)Utils::getRandom(30, 700);
             float size = (float)Utils::getRandom(20, 35);
-            mShapes.insert(new Circle2d{ x, y, size }, { x, y, size, size });
+            mShapes.insert<Circle2d>({ x, y, size, size }, x, y, size);
         }
-        // auto line = Line2d{ 5, 5, 5, size.y };
-        // line->isStatic = true;
+
         auto size = mCamera.getScaleScreen() - 5;
-        mShapes.insert(new Line2d{ 5, 5, 5, size.y }, { 5, 5, 5, size.y });
-        mShapes.back()->isStatic = true;
+        mShapes.insert<Line2d>({ 5, 5, 5, size.y }, 5.0f, 5.0f, 5.0f, size.y);
+        mShapes.back().ref->isStatic = true;
 
-        mShapes.insert(new Line2d{ 5, size.y, size.x, size.y }, { 5, size.y, size.x, size.y });
-        mShapes.back()->isStatic = true;
+        mShapes.insert<Line2d>({ 5, size.y, size.x, size.y }, 5.0f, size.y, size.x, size.y);
+        mShapes.back().ref->isStatic = true;
 
-        mShapes.insert(new Line2d{ size.x, size.y, size.x, 5 }, { size.x, size.y, size.x, 5 });
-        mShapes.back()->isStatic = true;
+        mShapes.insert<Line2d>({ size.x, size.y, size.x, 5.0f }, size.x, size.y, size.x, 5.0f);
+        mShapes.back().ref->isStatic = true;
 
-        mShapes.insert(new Line2d{ 5, 5, size.x, 5 }, { 5, 5, size.x, 5 });
-        mShapes.back()->isStatic = true;
+        mShapes.insert<Line2d>({ 5, 5, size.x, 5 }, 5.0f, 5.0f, size.x, 5.0f);
+        mShapes.back().ref->isStatic = true;
 
-        mShapes.insert(new Line2d{ 80, 62, 600, 600 }, { 80, 62, 600, 600 });
-        mShapes.back()->isStatic = true;
-
-        // shapes.push_back(new Line2d{ 5, 5, 5, size.y }); // Left
-        // shapes.back()->isStatic = true;
-        // shapes.push_back(new Line2d{ 5, size.y, size.x, size.y }); // Top
-        // shapes.back()->isStatic = true;
-        // shapes.push_back(new Line2d{ size.x, size.y, size.x, 5 }); // Right
-        // shapes.back()->isStatic = true;
-        // shapes.push_back(new Line2d{ 5, 5, size.x, 5 }); // Bottom
-        // shapes.back()->isStatic = true;
-
-
-        // shapes.push_back(new Line2d{ 80, 62, 600, 600 });
-        // shapes.back()->isStatic = true;
-
+        mShapes.insert<Line2d>({ 80, 62, 600, 600 }, 80.0f, 62.0f, 600.0f, 600.0f);
+        mShapes.back().ref->isStatic = true;
     }
     bool isMouseDown = false;
     bool isMouseDownInCircle = false;
@@ -124,7 +95,7 @@ namespace Plutus
             cscale -= 0.05f;
             mCamera.setScale(cscale);
         }
-        auto shape = mShapes[controller];
+        auto shape = mShapes[controller].ref;
 
         auto cpos = mCamera.getPosition();
 
@@ -152,16 +123,21 @@ namespace Plutus
         }
 
         for (auto& item : mShapes) {
+            auto shape = item.ref;
 
-            if (!item->isStatic) {
-                item->pos.y -= 1;
+            if (!shape->isStatic) {
+                shape->pos.y -= 1;
+                auto qItemList = mShapes.getQuadItemListRef((*item.qItemsRef)[item.qIndex].first);
+                if (qItemList != item.qItemsRef) {
+                    printf("dif /n");
+                }
             }
         }
 
         Time::Log("collider: ");
         for (size_t i = 0; i < mShapes.size(); i++) {
             MTV mtvA;
-            auto shapeA = mShapes[i];
+            auto shapeA = mShapes[i].ref;
             if (shapeA->isStatic) continue;
             bool isCircleA = shapeA->type & CircleShape;
             bool isBoxA = shapeA->type == BoxShape;
@@ -181,8 +157,8 @@ namespace Plutus
 
             auto items = mShapes.query(rect);
 
-            for (auto item : items) {
-                auto shapeB = mShapes[item->index];
+            for (auto& item : items) {
+                auto shapeB = item->ref;
 
                 bool isCircleB = shapeB->type == CircleShape;
                 bool isBoxB = shapeB->type == BoxShape;
@@ -237,7 +213,8 @@ namespace Plutus
 
     void App::Draw()
     {
-        for (auto shape : mShapes) {
+        for (auto& item : mShapes) {
+            auto shape = item.ref;
             switch (shape->type) {
             case BoxShape: {
                 mDebug->drawBox((Box2d*)shape);
@@ -260,9 +237,6 @@ namespace Plutus
 
     void App::Exit()
     {
-        for (auto item : mShapes) {
-            delete item;
-        }
         mShapes.clear();
     }
 
@@ -270,9 +244,9 @@ namespace Plutus
     {
         initPos = Input::get()->getMouseCoords();
 
-        if (PUtils::PointInBox(initPos, (Box2d*)&mShapes[1])) {
+        if (PUtils::PointInBox(initPos, (Box2d*)mShapes[1].ref)) {
             isMouseDownInBox = true;
-            pos = mShapes[1]->pos;
+            pos = mShapes[1].ref->pos;
         }
 
         // if (PUtils::PointInCircle(initPos, &c1)) {

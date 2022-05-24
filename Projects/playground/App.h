@@ -26,7 +26,6 @@ namespace Plutus
 
     private:
         DebugRender* mDebug;
-        std::vector<Shape*> shapes;
-        QuadTreeContainer<Shape*> mShapes;
+        QuadTreeContainer<Shape> mShapes;
     };
 } // namespace Plurus
