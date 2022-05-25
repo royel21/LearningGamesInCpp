@@ -117,7 +117,7 @@ namespace Plutus
         line->body = mWorld->CreateBody(&bd);
 
         b2EdgeShape shape;
-        shape.SetTwoSided(toWorld(line->pos), toWorld(line->end));
+        shape.SetTwoSided(toWorld(line->pos), toWorld(line->size));
 
         line->body->CreateFixture(&shape, 0.0f);
 

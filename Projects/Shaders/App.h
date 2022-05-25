@@ -39,5 +39,7 @@ namespace Plutus
         std::vector<Renderable> mRenderables;
         std::vector<Renderable> mLights;
         SpriteBatch mBatch;
+        bool isAlwaysOnTop = false;
+        bool blink = false;
     };
 } // namespace Plutus

@@ -24,6 +24,8 @@ namespace Plutus
         void onKeyUp(const std::string& key);
         void onMouseMove(float x, float y);
 
+        void drawQuadrant(QuadTree* qt);
+
     private:
         DebugRender* mDebug;
         QuadTreeContainer<Shape> mShapes;

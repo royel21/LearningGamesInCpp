@@ -37,9 +37,6 @@ namespace Plutus
 	{
 		mCamera = camera;
 		mShader.init(GLSL::debug_vertshader, GLSL::debug_fragshader);
-		mShader.setAtribute("vertexPosition");
-		mShader.setAtribute("vertexColor");
-
 		// //Set up buffer
 		mVao = Graphic::createVertexArray();
 		mVbo = Graphic::createBufferArray();

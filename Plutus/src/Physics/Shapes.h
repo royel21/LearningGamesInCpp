@@ -23,6 +23,9 @@ namespace Plutus
 
     struct Shape {
         Vec2f pos;
+        Vec2f size;
+        float radius = 1.0f;
+
         int type;
         b2Body* body;
 
@@ -33,12 +36,12 @@ namespace Plutus
         Shape() = default;
         Shape(float x, float y) : pos(x, y) {}
         Shape(const Vec2f _pos) : pos(_pos) {}
+        Rect getRect();
 
         virtual void update();
     };
 
     struct Line2d : public Shape {
-        Vec2f end;
         float rotation = 0;
 
         Line2d() { type = EdgeShape; };
@@ -48,31 +51,21 @@ namespace Plutus
         Vec2f getCenter();
         Points getVertices();
 
-        Rect getRect() {
-            return Rect{ pos, end };
-        }
-
     private:
         float lastRotation = -1;
     };
 
     struct Circle2d : public Shape
     {
-        float radius = 1.0f;
         Circle2d() { type = CircleShape; };
-        Circle2d(float x, float y, float r) : Shape(x, y), radius(r) { type = CircleShape; }
-        Circle2d(const Vec2f& _pos, float r) : Shape(_pos), radius(r) { type = CircleShape; }
+        Circle2d(float x, float y, float r) : Shape(x, y) { radius = r; type = CircleShape; }
+        Circle2d(const Vec2f& _pos, float r) : Shape(_pos) { radius = r; type = CircleShape; }
 
         float radiusSqrt() const { return radius * radius; }
-
-        Rect getRect() {
-            return Rect{ pos - radius, {radius * 2, radius * 2} };
-        }
     };
 
     struct Box2d : public Shape
     {
-        Vec2f size;
         Vec2f half;
         Points axes;
         float rotation = 0;
@@ -85,10 +78,6 @@ namespace Plutus
         Vec2f getCenter() const { return pos + half; }
 
         Points getVertices();
-
-        Rect getRect() {
-            return Rect{ pos, size };
-        }
 
     private:
         float lastRotation = -1;

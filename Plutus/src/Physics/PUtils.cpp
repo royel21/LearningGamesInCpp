@@ -34,14 +34,14 @@ namespace Plutus
 
         bool PointOnLine(Vec2f& point, Line2d* line)
         {
-            float dy = line->end.y - line->pos.y;
-            float dx = line->end.x - line->pos.x;
+            float dy = line->size.y - line->pos.y;
+            float dx = line->size.x - line->pos.x;
             if (dx == 0) {
                 return compareF(point.x, line->pos.x);
             }
 
             float m = dy / dx;
-            float b = line->end.y - (m * line->end.x);
+            float b = line->size.y - (m * line->size.x);
 
             //check the line equation
             return point.y == m * point.x + b;

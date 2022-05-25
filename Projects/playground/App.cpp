@@ -40,35 +40,36 @@ namespace Plutus
         mDebug = DebugRender::get();
         mDebug->init(&mCamera);
 
-        mShapes.insert<Circle2d>({ 70, 100, 30, 30 }, 70.0f, 100.0f, 30.0f);
-        mShapes.insert<Circle2d>({ 640, 150, 30, 30 }, 640.0f, 150.0f, 30.0f);
-        mShapes.insert<Circle2d>({ 640, 150, 30, 30 }, 640.0f, 150.0f, 30.0f);
+        mShapes.insert<Circle2d>(70.0f, 100.0f, 30.0f);
+        mShapes.insert<Circle2d>(640.0f, 150.0f, 30.0f);
+        mShapes.insert<Circle2d>(640.0f, 100.0f, 30.0f);
         mShapes.back().ref->isStatic = true;
-        mShapes.insert<Box2d>({ 360, 90, 100, 100 }, 360.0f, 90.0f, 100.0f, 100.0f);
+        mShapes.insert<Box2d>(360.0f, 90.0f, 100.0f, 100.0f);
+        mShapes.back().ref->isStatic = true;
 
         float x = 40;
         float y = 40;
-        for (size_t i = 0; i < 50; i++) {
+        for (size_t i = 0; i < 300; i++) {
             float x = (float)Utils::getRandom(30, 1100);
             float y = (float)Utils::getRandom(30, 700);
-            float size = (float)Utils::getRandom(20, 35);
-            mShapes.insert<Circle2d>({ x, y, size, size }, x, y, size);
+            float size = (float)Utils::getRandom(20, 25);
+            mShapes.insert<Circle2d>(x, y, size);
         }
 
         auto size = mCamera.getScaleScreen() - 5;
-        mShapes.insert<Line2d>({ 5, 5, 5, size.y }, 5.0f, 5.0f, 5.0f, size.y);
+        mShapes.insert<Line2d>(5.0f, 5.0f, 5.0f, size.y);
         mShapes.back().ref->isStatic = true;
 
-        mShapes.insert<Line2d>({ 5, size.y, size.x, size.y }, 5.0f, size.y, size.x, size.y);
+        mShapes.insert<Line2d>(5.0f, size.y, size.x, size.y);
         mShapes.back().ref->isStatic = true;
 
-        mShapes.insert<Line2d>({ size.x, size.y, size.x, 5.0f }, size.x, size.y, size.x, 5.0f);
+        mShapes.insert<Line2d>(size.x, size.y, size.x, 5.0f);
         mShapes.back().ref->isStatic = true;
 
-        mShapes.insert<Line2d>({ 5, 5, size.x, 5 }, 5.0f, 5.0f, size.x, 5.0f);
+        mShapes.insert<Line2d>(5.0f, 5.0f, size.x, 5.0f);
         mShapes.back().ref->isStatic = true;
 
-        mShapes.insert<Line2d>({ 80, 62, 600, 600 }, 80.0f, 62.0f, 600.0f, 600.0f);
+        mShapes.insert<Line2d>(80.0f, 62.0f, 600.0f, 600.0f);
         mShapes.back().ref->isStatic = true;
     }
     bool isMouseDown = false;
@@ -80,7 +81,7 @@ namespace Plutus
     Vec2f mpos;
 
 
-    float speed = 5;
+    float speed = 10;
 
     int controller = 0;
 
@@ -126,47 +127,47 @@ namespace Plutus
             auto shape = item.ref;
 
             if (!shape->isStatic) {
-                shape->pos.y -= 1;
-                auto qItemList = mShapes.getQuadItemListRef((*item.qItemsRef)[item.qIndex].first);
-                if (qItemList != item.qItemsRef) {
-                    printf("dif /n");
+                // shape->pos.y -= 2;
+                auto qRef = mShapes.getQuadItemListRef(shape->getRect());
+                if (qRef != item.qRef) {
+                    // printf("dif \n", item.qIndex, item.index);
+
+                    qRef->mItems.push_back(item.qRef->mItems[item.qIndex]);
+
+                    if (item.qRef->size()) {
+                        item.qRef->mItems[item.qIndex] = item.qRef->mItems.back();
+                        mShapes[item.qRef->mItems[item.qIndex].second].qIndex = item.qIndex;
+                    }
+
+                    item.qRef->mItems.pop_back();
+
+                    item.qRef = qRef;
+                    item.qIndex = qRef->mItems.size() - 1;
                 }
             }
         }
 
-        Time::Log("collider: ");
+        auto start = Time::micros();
         for (size_t i = 0; i < mShapes.size(); i++) {
-            MTV mtvA;
             auto shapeA = mShapes[i].ref;
             if (shapeA->isStatic) continue;
             bool isCircleA = shapeA->type & CircleShape;
             bool isBoxA = shapeA->type == BoxShape;
             bool isLineA = shapeA->type == EdgeShape;
 
-            Rect rect;
-
-            if (shapeA->type == CircleShape) {
-                rect = static_cast<Circle2d*>(shapeA)->getRect();
-            }
-            if (shapeA->type == BoxShape) {
-                rect = static_cast<Box2d*>(shapeA)->getRect();
-            }
-            if (shapeA->type == EdgeShape) {
-                rect = static_cast<Line2d*>(shapeA)->getRect();
-            }
-
-            auto items = mShapes.query(rect);
+            auto items = mShapes.query(shapeA->getRect());
 
             for (auto& item : items) {
-                auto shapeB = item->ref;
-
+                if (i == item->index) continue;
+                auto shapeB = mShapes[item->index].ref;
+                // for (size_t x = 0; x < mShapes.size(); x++) {
+                //     auto shapeB = mShapes[x].ref;
                 bool isCircleB = shapeB->type == CircleShape;
                 bool isBoxB = shapeB->type == BoxShape;
                 bool isLineB = shapeB->type == EdgeShape;
                 bool collided = false;
 
                 MTV mtv;
-
                 if (isCircleA && isLineB) {
                     collided = Collider::isColliding((Circle2d*)shapeA, (Line2d*)shapeB, &mtv);
                 }
@@ -204,11 +205,18 @@ namespace Plutus
                     }
                 }
             }
-            if (isCircleA) {
-                DebugRender::get()->drawCircle(shapeA->pos, 5);
-            }
         }
-        Time::LogEnd("collider: ");
+        Logger::info("collider: %llu", Time::micros() - start);
+    }
+
+    void App::drawQuadrant(QuadTree* qt) {
+
+        for (auto& ch : qt->mChilds) {
+            if (ch) drawQuadrant(ch.get());
+        }
+
+        auto box = Box2d{ qt->mRect.pos, qt->mRect.size };
+        mDebug->drawBox(&box);
     }
 
     void App::Draw()
@@ -225,11 +233,19 @@ namespace Plutus
                 break;
             }
             case CircleShape: {
+                DebugRender::get()->drawCircle(shape->pos, 5);
                 mDebug->drawCircle((Circle2d*)shape);
                 break;
             }
             }
+            // if (shape->type == CircleShape) {
+            //     auto rect = shape->getRect();
+            //     auto box = Box2d{ rect.pos, rect.size };
+            //     mDebug->drawBox(&box);
+            // }
         }
+
+        drawQuadrant(&mShapes.root);
 
         mDebug->render();
         mDebug->end();

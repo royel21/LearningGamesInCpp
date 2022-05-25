@@ -17,9 +17,6 @@ namespace Plutus
 	class Shader
 	{
 	private:
-		bool compileError = false;
-		//Number of attributes for shader
-		int mNumAttributes = 0;
 		//Shader Program Id
 		uint32_t mProgId = -1;
 		//A map of uniform locations
@@ -43,8 +40,6 @@ namespace Plutus
 		uint32_t getUniform(std::string uName);
 		// Return the shader program ID
 		uint32_t getProgId() { return mProgId; }
-		// Acivate attributes by name
-		void setAtribute(const std::string& attributeName);
 		//Upload Uniform 1 boolean 
 		void setUniform1b(std::string name, GLboolean value);
 		//Upload Uniform 1 integer
@@ -67,7 +62,7 @@ namespace Plutus
 		void setUniformMat4(std::string name, const glm::mat4& value);
 
 	private:
-		void compileShader(uint32_t id, std::string shader);
+		bool compileShader(uint32_t id, std::string shader);
 		bool getCompileError(uint32_t id, std::string shader);
 		void cleanUp(GLuint verId, GLuint fragId);
 	};

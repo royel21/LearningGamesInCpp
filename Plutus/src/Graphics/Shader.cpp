@@ -19,7 +19,6 @@ namespace Plutus
 
 	bool Shader::init(const std::string& verData, const std::string& fragData, const std::string geoShader)
 	{
-		compileError = false;
 		bool hasGeoShader = !geoShader.empty();
 
 		auto vsdata = verData.empty() ? GLSL::vertexShader : verData;
@@ -31,16 +30,16 @@ namespace Plutus
 		//Geometry Shader Id
 		GLuint geoId;
 
-		compileShader(vertId, vsdata);
+		bool error = !compileShader(vertId, vsdata);
 
 		if (hasGeoShader) {
 			geoId = glCreateShader(GL_GEOMETRY_SHADER);
-			compileShader(geoId, geoShader);
+			error = !compileShader(geoId, geoShader);
 		}
 
-		compileShader(fragId, fsdata);
+		error = !compileShader(fragId, fsdata);
 
-		if (compileError)
+		if (error)
 		{
 			glDeleteShader(vertId);
 			glDeleteShader(fragId);
@@ -91,11 +90,6 @@ namespace Plutus
 	{
 		if (mProgId != -1) {
 			glUseProgram(mProgId);
-			//enable all the attributes we added with addAttribute
-			for (int i = 0; i < mNumAttributes; i++)
-			{
-				glEnableVertexAttribArray(i);
-			}
 			return true;
 		}
 		return false;
@@ -104,11 +98,6 @@ namespace Plutus
 	void Shader::disable()
 	{
 		glUseProgram(0);
-		//disable all the attributes we added with addAttribute
-		for (int i = 0; i < mNumAttributes; i++)
-		{
-			glDisableVertexAttribArray(i);
-		}
 	}
 
 	void Shader::destroy()
@@ -127,10 +116,6 @@ namespace Plutus
 		return mUniforms[uName] = glGetUniformLocation(mProgId, uName.c_str());
 	}
 
-	void Shader::setAtribute(const std::string& attributeName)
-	{
-		glBindAttribLocation(mProgId, mNumAttributes++, attributeName.c_str());
-	}
 	void Shader::setUniform1b(std::string name, GLboolean value)
 	{
 		glUniform1i(getUniform(name), value);
@@ -180,7 +165,7 @@ namespace Plutus
 		glUniformMatrix4fv(getUniform(name), 1, GL_FALSE, &value[0][0]);
 	}
 
-	void Shader::compileShader(uint32_t id, std::string shaderPath)
+	bool Shader::compileShader(uint32_t id, std::string shaderPath)
 	{
 		std::string data;
 		if (shaderPath.find("void main") != -1) {
@@ -190,8 +175,7 @@ namespace Plutus
 			auto str = FileIO::readFileAsString(shaderPath.c_str());
 			if (str.empty()) {
 				Logger::error("File: %s Don't Exist", shaderPath.c_str());
-				compileError = true;
-				return;
+				return false;
 			}
 			data = VERTEX_HEADER + str;
 		}
@@ -201,8 +185,7 @@ namespace Plutus
 		glShaderSource(id, 1, &vertSource, nullptr);
 		glCompileShader(id);
 
-		if (!getCompileError(id, shaderPath))
-			compileError = true;
+		return getCompileError(id, shaderPath);;
 	}
 
 	bool Shader::getCompileError(uint32_t id, std::string shader)

@@ -38,7 +38,6 @@ namespace Plutus
 
     void App::Init()
     {
-        // mWindow.setAlwaysOnTOp(true);
         mShader.init(ver, frag);
 
         auto tex = AssetManager::get()->addAsset<Texture>("player.png", "assets/textures/Player1.png");
@@ -74,7 +73,18 @@ namespace Plutus
         if (mFileCheck.hasChanged(lightFrag, 60)) {
             mLightShader.init(ver, lightFrag);
         }
+
+        if (Input::get()->onKeyPressed("Z")) {
+            isAlwaysOnTop = !isAlwaysOnTop;
+            mWindow.setAlwaysOnTOp(isAlwaysOnTop);
+        }
+
+        if (Input::get()->onKeyPressed("X")) {
+            blink = true;
+        }
     }
+
+    Timer timer;
 
     void App::Draw()
     {
@@ -87,6 +97,12 @@ namespace Plutus
             mShader.setUniform2f("u_mouse", mpos);
             mShader.setUniform1f("u_time", Time::seconds());
             mShader.setUniform1i("uSampler", 0);
+
+            if (blink && timer.IntervalMillis(200)) {
+                blink = false;
+            }
+
+            mShader.setUniform1b("blink", blink);
 
             for (auto& r : mRenderables) {
                 mBatch.addSprite(&r);

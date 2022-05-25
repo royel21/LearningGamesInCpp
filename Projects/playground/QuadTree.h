@@ -17,7 +17,6 @@ namespace Plutus
     class QuadTree;
 
     using QuadItem = std::pair<Rect, uint32_t>;
-    using QuadItemRef = std::pair<uint32_t, std::vector<QuadItem>*>;
 
     class QuadTree
     {
@@ -41,7 +40,7 @@ namespace Plutus
             return nCount;
         }
 
-        QuadItemRef insert(uint32_t index, const Rect& itemSize) {
+        std::pair<uint32_t, QuadTree*> insert(uint32_t index, const Rect& itemSize) {
             auto curDepth = mDepth + 1;
 
             for (size_t i = 0; i < 4; i++)
@@ -57,7 +56,7 @@ namespace Plutus
                 }
             }
             mItems.push_back({ itemSize, index });
-            return { mItems.size() - 1, &mItems };
+            return { mItems.size() - 1, this };
         }
 
         void resize(const Rect& area) {
@@ -106,26 +105,33 @@ namespace Plutus
 
         const Rect& getArea() { return mRect; }
 
-        std::vector<QuadItem>* getQuadItemListRef(const Rect& rect) {
-            if (mRect.contains(rect)) {
-                return &mItems;
+        QuadTree* getQuadItemListRef(const Rect& rect) {
+            auto curDepth = mDepth + 1;
+
+            for (size_t i = 0; i < 4; i++)
+            {
+                if (mChildsArea[i].contains(rect)) {
+                    if (curDepth < MAX_DEPTH) {
+
+                        if (!mChilds[i]) {
+                            mChilds[i] = std::make_shared<QuadTree>(mChildsArea[i], curDepth);
+                        }
+                        return mChilds[i]->getQuadItemListRef(rect);
+                    }
+                }
             }
 
-            for (auto& child : mChilds) {
-                auto itemList = child->getQuadItemListRef(rect);
-                if (itemList) return itemList;
-            }
-            return nullptr;
+            return this;
         }
 
     private:
         size_t mDepth = 0;
-        //Area of root quad tree
-        Rect mRect;
 
         // area of the 4 children
         std::array<Rect, 4> mChildsArea{};
-
+    public:
+        //Area of root quad tree
+        Rect mRect;
         // 4 child of the quad tree
         std::array<std::shared_ptr<QuadTree>, 4> mChilds{};
         //Items belonging to this qtree
@@ -138,9 +144,9 @@ namespace Plutus
         T* ref;
         uint32_t index;
         uint32_t qIndex;
-        std::vector<QuadItem>* qItemsRef;
+        QuadTree* qRef;
 
-        QuadTreeItem(T* rf, uint32_t i, uint32_t ii, std::vector<QuadItem>* qi) : ref(rf), index(i), qIndex(ii), qItemsRef(qi) {}
+        QuadTreeItem(T* rf, uint32_t i, uint32_t ii, QuadTree* qt) : ref(rf), index(i), qIndex(ii), qRef(qt) {}
     };
 
     template <typename T>
@@ -149,9 +155,9 @@ namespace Plutus
 
     private:
         Container mItems;
-        QuadTree root;
 
     public:
+        QuadTree root;
         QuadTreeContainer(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0) : root(area) { }
         ~QuadTreeContainer() {
             for (auto& item : mItems) {
@@ -189,18 +195,18 @@ namespace Plutus
         QuadTreeItem<T>& back() { return mItems.back(); }
 
         template <typename E, typename... TArgs>
-        E* insert(const Rect& itemSize, TArgs... args)
+        E* insert(TArgs... args)
         {
             E* item = new E(std::forward<TArgs>(args)...);
             // auto start = Time::micros();
-            auto qRef = root.insert(mItems.size(), itemSize);
+            auto qRef = root.insert(mItems.size(), item->getRect());
 
             mItems.push_back({ item, mItems.size(), qRef.first, qRef.second });
 
             return item;
         }
 
-        std::vector<QuadItem>* getQuadItemListRef(const Rect& rect) {
+        QuadTree* getQuadItemListRef(const Rect& rect) {
             return root.getQuadItemListRef(rect);
         }
 
