@@ -97,7 +97,7 @@ namespace Plutus {
 
             glBindVertexArray(mVAO);
 
-            Graphic::uploadBufferData(mBufferId, sprites.size() * mVertexSize, sprites.data(), GL_DYNAMIC_DRAW);
+            Graphic::uploadBufferData(mBufferId, sprites.size() * mVertexSize, sprites.data());
 
             mIbo.bind();
 

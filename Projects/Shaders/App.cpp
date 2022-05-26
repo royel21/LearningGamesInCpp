@@ -31,8 +31,7 @@ namespace Plutus
         mIbo.destroy();
         mLightShader.destroy();
 
-        glDeleteBuffers(1, &mVBO);
-        glDeleteVertexArrays(1, &mVAO);
+        Graphic::destroy(&mVAO, &mVBO);
     }
 
 

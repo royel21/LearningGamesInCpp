@@ -28,7 +28,7 @@ namespace Plutus
 	{
 		mRenderBatches.clear();
 		mShader.destroy();
-		Graphic::destroy(&mVAO, nullptr, &mVBO);
+		Graphic::destroy(&mVAO, &mVBO);
 		delete mIBO;
 	}
 
@@ -133,7 +133,7 @@ namespace Plutus
 		mShader.setUniform1i("mySampler", 0);
 		mShader.setUniformMat4("camera", mCamera->getCameraMatrix());
 
-		Graphic::uploadBufferData(mVBO, bufferVertices.size() * sizeof(Vertex), bufferVertices.data(), GL_DYNAMIC_DRAW);
+		Graphic::uploadBufferData(mVBO, bufferVertices.size() * sizeof(Vertex), bufferVertices.data());
 
 		Graphic::bind(mVAO);
 		mIBO->bind();

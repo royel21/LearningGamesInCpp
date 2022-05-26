@@ -25,8 +25,7 @@ namespace Plutus
 
     ParticleSystem::~ParticleSystem()
     {
-        glDeleteBuffers(1, &mVBO);
-        glDeleteVertexArrays(1, &mVAO);
+        Graphic::destroy(&mVAO, &mVBO);
     }
 
     void ParticleSystem::init(Project* project)
@@ -39,16 +38,15 @@ namespace Plutus
         mVAO = Graphic::createVertexArray();
         mVBO = Graphic::createBufferArray();
 
-        auto vsize = sizeof(RenderableParticle);
+        mVerByteSize = sizeof(RenderableParticle);
         //bind the Shader position to the buffer object
-        Graphic::setFAttribute(SHADER_P_POS, 2, vsize);
+        Graphic::setFAttribute(SHADER_P_POS, 2, mVerByteSize);
         //bind the Shader UV "Texture coordinate" to the buffer object
-        Graphic::setFAttribute(SHADER_P_SIZE, 1, vsize, offsetof(RenderableParticle, size));
+        Graphic::setFAttribute(SHADER_P_SIZE, 1, mVerByteSize, offsetof(RenderableParticle, size));
         //bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
-        Graphic::setFAttribute(SHADER_P_COLOR, 4, vsize, offsetof(RenderableParticle, color), GL_UNSIGNED_BYTE, GL_TRUE);
+        Graphic::setFAttribute(SHADER_P_COLOR, 4, mVerByteSize, offsetof(RenderableParticle, color), GL_UNSIGNED_BYTE, GL_TRUE);
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+        Graphic::unBind();
     }
 
     bool ParticleSystem::prepare(float dt) {
@@ -91,36 +89,36 @@ namespace Plutus
         mShader.enable();
         mShader.setUniformMat4("uCamera", mCamera->getCameraMatrix());
 
-        glBindVertexArray(mVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+        Graphic::bind(mVAO, mVBO);
+
         if (mBlend) {
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            Graphic::enableBlend();
         }
         else {
-            glDisable(GL_BLEND);
+            Graphic::disableBlend();
         }
 
         for (auto& b : mBatches) {
-            if (b.second.bufferVertices.size()) {
-                if (b.second.tex != nullptr) {
-                    glActiveTexture(GL_TEXTURE0 + b.second.tex->mTexureUnit);
-                    glBindTexture(GL_TEXTURE_2D, b.second.tex->mTexId);
-                    mShader.setUniform1i("uSampler", b.second.tex->mTexureUnit);
+            auto& batch = b.second;
+            auto size = batch.bufferVertices.size();
+
+            if (size) {
+
+                if (batch.tex != nullptr) {
+                    Graphic::bindTexture(batch.tex->mTexId, batch.tex->mTexureUnit);
+                    mShader.setUniform1i("uSampler", batch.tex->mTexureUnit);
                     mShader.setUniform1i("uhasTexture", 1);
-                    mShader.setUniform1fv("uTexData", 5, &b.second.tex->mTileSet.columns);
+                    mShader.setUniform1fv("uTexData", 5, &batch.tex->mTileSet.columns);
                 }
-                glBufferData(GL_ARRAY_BUFFER, b.second.bufferVertices.size() * sizeof(RenderableParticle), b.second.bufferVertices.data(), GL_DYNAMIC_DRAW);
+                Graphic::uploadBufferData(mVBO, size * mVerByteSize, batch.bufferVertices.data());
 
-                glDrawArrays(GL_POINTS, 0, b.second.bufferVertices.size());
+                glDrawArrays(GL_POINTS, 0, size);
 
-                glBindTexture(GL_TEXTURE_2D, 0);
-                b.second.bufferVertices.clear();
+                Graphic::unBindTexture();
+                batch.bufferVertices.clear();
             }
         }
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+        Graphic::unBind();
     }
 }

@@ -28,7 +28,7 @@ namespace Plutus
 
 	void DebugRender::dispose()
 	{
-		Graphic::destroy(&mVao, &mIbo, &mVbo);
+		Graphic::destroy(&mVao, &mVbo, &mIbo);
 
 		mShader.destroy();
 	}
@@ -42,6 +42,7 @@ namespace Plutus
 		mVbo = Graphic::createBufferArray();
 		mIbo = Graphic::createElementBuffer();
 		auto vsize = sizeof(DebugVertex);
+
 		Graphic::setFAttribute(0, 2, vsize);
 		Graphic::setFAttribute(1, 4, vsize, offsetof(DebugVertex, color), GL_UNSIGNED_BYTE, GL_TRUE);
 
@@ -50,7 +51,7 @@ namespace Plutus
 
 	void DebugRender::end()
 	{
-		Graphic::uploadBufferData(mVbo, mVertexs.size() * sizeof(DebugVertex), mVertexs.data(), GL_DYNAMIC_DRAW);
+		Graphic::uploadBufferData(mVbo, mVertexs.size() * sizeof(DebugVertex), mVertexs.data());
 		Graphic::uploadBufferData(mIbo, mIndices.size() * sizeof(GLuint), mIndices.data(), GL_DYNAMIC_DRAW, GL_ELEMENT_ARRAY_BUFFER);
 
 		mNumElements = (uint32_t)mIndices.size();

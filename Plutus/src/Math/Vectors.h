@@ -50,6 +50,8 @@ namespace Plutus
         bool operator> (const Vec2f& v) const;
         bool operator<= (const Vec2f& v) const;
         bool operator>= (const Vec2f& v) const;
+
+        Vec2f getDirection(const Vec2f& v);
     };
 
     struct Vec3f {

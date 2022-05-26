@@ -95,11 +95,14 @@ namespace Plutus
 
             fix.offset = jhelper.getFloat2("offset");
             fix.size = jhelper.getFloat2("size", { {1,1} });
-            fix.radius = jhelper.getFloat("radius", 0);
+            fix.radius = jhelper.getFloat("radius");
             fix.friction = jhelper.getFloat("frict", 0.3f);
             fix.density = jhelper.getFloat("dens", 1);
-            fix.restitution = jhelper.getFloat("restit", 0);
+            fix.restitution = jhelper.getFloat("restit");
             fix.isSensor = jhelper.getInt("sensor", false);
+            fix.mask |= jhelper.getInt("mask");
+            fix.group |= jhelper.getInt("group");
+            fix.category |= jhelper.getInt("category");
         }
     }
 

@@ -42,6 +42,7 @@ namespace Plutus
         Vec2f getPosition() { return { x,y }; }
         Vec2i getSize() { return { w, h }; }
         Vec2i getOffset() { return { offsetX, offsetY }; }
+        Vec2f getCenter() { return { x + (w >> 1), y + (h >> 1) }; }
     };
 
 } // namespace Plutus

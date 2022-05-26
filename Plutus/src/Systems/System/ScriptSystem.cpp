@@ -43,7 +43,7 @@ namespace Plutus
 
         /*****************************Register EntityManager**********************************************/
         auto scene_table = mGlobalLua.new_usertype<Scene>("Scene");
-        scene_table["getEntity"] = &Scene::getEntityByName;
+        scene_table["getEntity"] = sol::overload(&Scene::getEntityByName, &Scene::getEntity);
 
         /*****************************Register Input manager**********************************************/
         auto input = mGlobalLua.new_usertype<Input>("Input");
@@ -53,6 +53,8 @@ namespace Plutus
         auto lua_vec2 = mGlobalLua.new_usertype<Vec2f>("Vec2f", sol::constructors<Vec2f(), Vec2f(float, float), Vec2f(int, int)>());
         lua_vec2["x"] = &Vec2f::x;
         lua_vec2["y"] = &Vec2f::y;
+        lua_vec2["unit"] = &Vec2f::unit;
+        lua_vec2["getDirection"] = &Vec2f::getDirection;
 
         auto lua_vec4 = mGlobalLua.new_usertype<Vec4f>("Vec4f", sol::constructors<Vec4f(), Vec4f(float, float, float, float)>());
 
@@ -132,6 +134,10 @@ namespace Plutus
         entity["getSprite"] = &Entity::getComponent<SpriteComponent>;
         entity["getRigidBody"] = &Entity::getComponent<RigidBodyComponent>;
         entity["getVelocity"] = &Entity::getComponent<VelocityComponent>;
+
+        entity["getName"] = &Entity::getName;
+        entity["getPosition"] = &Entity::getPosition;
+        entity["getCenter"] = &Entity::getCenter;
     }
 
     void ScriptSystem::registerComponents()

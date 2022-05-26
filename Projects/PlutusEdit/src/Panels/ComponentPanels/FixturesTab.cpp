@@ -15,6 +15,28 @@ namespace Plutus
         "Edge", "Circle","Box"
     };
 
+    void bitmask(const char* id, uint16_t& val) {
+        ImGui::PushID(id);
+        ImGui::BeginGroup();
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 1.0f, 1.0f });
+        for (uint32_t i = 1; i < 0xffff; i *= 2) {
+
+            ImGui::PushStyleColor(ImGuiCol_Button, val & i ? ImVec4{ 1, 1, 1, 1 } : ImVec4{ 0, 0, 0, 1 });
+
+            if (ImGui::Button((id + std::to_string(i)).c_str(), { 15,15 })) {
+                val = val & i ? val - i : val + i;
+            }
+
+            if (i != 0x80) {
+                ImGui::SameLine();
+            }
+            ImGui::PopStyleColor();
+        }
+        ImGui::PopStyleVar();
+        ImGui::EndGroup();
+        ImGui::PopID();
+    }
+
     bool CollapseTab(const char* label, int id, bool& remove, bool& copy) {
         bool isOpen = ImGui::CollapsingHeader(label, ImGuiTreeNodeFlags_AllowItemOverlap);
 
@@ -50,16 +72,22 @@ namespace Plutus
                 ImGui::Draw2Float("##fix-size", fix.size, 1, "W", "H");
             }
 
-            ImGui::Row("friction", textWidth);
+            ImGui::Row("Friction", textWidth);
             ImGui::DragFloat("##fix-friction", &fix.friction, 0.01f, 0.01f, 5, "%0.2f");
             if (btype) {
-                ImGui::Row("density", textWidth);
+                ImGui::Row("Density", textWidth);
                 ImGui::DragFloat("##fix-density", &fix.density, 0.1f, 0, 20, "%0.02f");
-                ImGui::Row("restitution", textWidth);
+                ImGui::Row("Restitution", textWidth);
                 ImGui::DragFloat("##fix-restitution", &fix.restitution, 0.00f, 0.01f, 1, "%0.2f");
-                ImGui::Row("isSensor", textWidth);
+                ImGui::Row("IsSensor", textWidth);
                 ImGui::Checkbox("Is Sensor", &fix.isSensor);
             }
+            ImGui::Row("Category", textWidth);
+            bitmask(("##cat-" + std::to_string(index)).c_str(), fix.category);
+            ImGui::Row("GoupId", textWidth);
+            bitmask(("##gpid-" + std::to_string(index)).c_str(), fix.group);
+            ImGui::Row("Mask", textWidth);
+            bitmask(("##mask-" + std::to_string(index)).c_str(), fix.mask);
         }
         ImGui::PopID();
 

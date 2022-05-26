@@ -24,6 +24,9 @@ namespace Plutus
 
         void update(float dt);
 
+        void CollisionStart(uint32_t entId, bool isSensor);
+        void CollisionEnd(uint32_t entId, bool isSensor);
+
         void destroy();
 
     private:

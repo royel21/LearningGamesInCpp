@@ -32,6 +32,12 @@ function update(dt)
 
 end
 
+function collisionStart(ent)
+end
+
+function collisionEnd(ent)
+end
+
 function destroy()
 
 end)SCRIPT";

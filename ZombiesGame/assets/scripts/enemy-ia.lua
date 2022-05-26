@@ -3,6 +3,9 @@ local curAnime = "flight-down"
 local SPEED = 7.5
 
 local rbody
+local entToFollow
+
+print("enemy-ia")
 
 function init()
     local anim = Bat:getAnimate()
@@ -10,31 +13,44 @@ function init()
     rbody = Bat:getRigidBody()
 end
 
-function move(vel) rbody:applyForce(vel.x, vel.y) end
+function move(x, y) rbody:applyForce(x, y) end
 
 function update(dt)
-    local vel = {x = 0, y = 0}
 
-    if input:onKeyDown("Up") then
-        vel.y = SPEED
-        direction = "up"
-    end
-    if input:onKeyDown("Down") then
-        vel.y = -SPEED
-        direction = "down"
-    end
-    if input:onKeyDown("Right") then
-        vel.x = SPEED
-        direction = "right"
-    end
-    if input:onKeyDown("Left") then
-        vel.x = -SPEED
-        direction = "left"
-    end
+    if entToFollow ~= nil then
+        local dir = entToFollow:getCenter():getDirection(Bat:getPosition());
+        print("pos:", dir.x, dir.y)
+        dir.x = dir.x * SPEED
+        dir.y = dir.y * SPEED
+        move(dir.x, dir.y)
 
-    move(vel)
+        if dir.y > 0 then
+            vel.y = SPEED
+            direction = "up"
+        end
+
+        if dir.y < 0 then
+            vel.y = -SPEED
+            direction = "down"
+        end
+
+        if dir.x > 0 then
+            vel.x = SPEED
+            direction = "right"
+        end
+        if dir.y < 0 then
+            vel.x = -SPEED
+            direction = "left"
+        end
+    end
     Bat:getAnimate():play("flight-" .. direction)
 end
+
+function collisionStart(entId, isSensor)
+    if isSensor then entToFollow = scene:getEntity(entId) end
+end
+
+function collisionEnd(entId, isSensor) if isSensor then entToFollow = nil end end
 
 function destroy() end
 

@@ -11,6 +11,7 @@ namespace Plutus
 
         void init(Project* project);
         void update(float dt);
+
     private:
         sol::state mGlobalLua;
 

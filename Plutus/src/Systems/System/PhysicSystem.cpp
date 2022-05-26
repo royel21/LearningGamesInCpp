@@ -24,7 +24,9 @@ namespace Plutus
             fixDef.friction = fixture.friction;
             fixDef.restitution = fixture.restitution;
             fixDef.isSensor = fixture.isSensor;
-            // fixDef.filter.categoryBits
+            fixDef.filter.categoryBits = fixture.category;
+            fixDef.filter.maskBits = fixture.mask;
+            fixDef.filter.groupIndex = fixture.group;
 
             switch (fixture.type) {
             case P_Box: {
@@ -57,6 +59,7 @@ namespace Plutus
                 break;
             }
             }
+
         } // end fixture forloop
     }
 
@@ -64,6 +67,7 @@ namespace Plutus
         mProject = project;
         mWorld = new b2World({ mProject->gravity.x, mProject->gravity.y });
         mWorld->SetAutoClearForces(mProject->autoClearForce);
+        mWorld->SetContactListener(this);
 
         auto view = mProject->scene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
         for (auto [ent, trans, rbody] : view.each()) {
@@ -79,7 +83,6 @@ namespace Plutus
             body.userData.pointer = (uintptr_t)ent;
 
             rbody.mBody = mWorld->CreateBody(&body);
-            mWorld->SetContactListener(this);
 
             createFixture(rbody, trans.getPosition());
         } // end body forloop
@@ -113,6 +116,8 @@ namespace Plutus
             trans.x = pos.x;
             trans.y = pos.y;
         }
+
+        reportCollision();
     }
 
     void PhysicSystem::destroy() {
@@ -122,23 +127,45 @@ namespace Plutus
 
     void PhysicSystem::BeginContact(b2Contact* contact)
     {
-        auto ent = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
-        auto entityA = mProject->scene->getEntity(ent);
-        if (entityA) {
-            Logger::info("entity: %s", entityA.getName().c_str());
-        }
+        auto entA = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
+        bool sensorB = contact->GetFixtureA()->IsSensor();
 
-        ent = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
-        auto entityB = mProject->scene->getEntity(ent);
-        if (entityB) {
+        auto entB = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
+        bool sensorA = contact->GetFixtureB()->IsSensor();
 
-            Logger::info("entity: %s", entityB.getName().c_str());
-        }
+        mCollisionsStart.push_back({ {entA, sensorB}, {entB, sensorA} });
     }
 
     void PhysicSystem::EndContact(b2Contact* contact)
     {
+        auto entA = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
+        bool sensorB = contact->GetFixtureA()->IsSensor();
 
+        auto entB = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
+        bool sensorA = contact->GetFixtureB()->IsSensor();
+
+        mCollisionsEnd.push_back({ {entA, sensorB}, {entB, sensorA} });
+    }
+
+    void PhysicSystem::reportCollision() {
+        for (auto& [first, second] : mCollisionsStart) {
+            auto script1 = mProject->scene->getComponent<ScriptComponent>(first.entId);
+            if (script1) script1->CollisionStart(second.entId, first.isSensor);
+
+            auto script2 = mProject->scene->getComponent<ScriptComponent>(second.entId);
+            if (script2) script2->CollisionStart(first.entId, second.isSensor);
+        }
+
+        for (auto& [first, second] : mCollisionsEnd) {
+            auto script1 = mProject->scene->getComponent<ScriptComponent>(first.entId);
+            if (script1) script1->CollisionEnd(second.entId, first.isSensor);
+
+            auto script2 = mProject->scene->getComponent<ScriptComponent>(second.entId);
+            if (script2) script2->CollisionEnd(first.entId, second.isSensor);
+        }
+
+        mCollisionsStart.clear();
+        mCollisionsEnd.clear();
     }
 } // namespace Plutus
 

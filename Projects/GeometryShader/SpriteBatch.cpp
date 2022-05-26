@@ -95,9 +95,9 @@ namespace Plutus {
 
             Graphic::enableBlend();
 
-            glBindVertexArray(mVAO);
+            Graphic::bind(mVAO);
 
-            Graphic::uploadBufferData(mBufferId, sprites.size() * mVertexSize, sprites.data(), GL_DYNAMIC_DRAW);
+            Graphic::uploadBufferData(mBufferId, sprites.size() * mVertexSize, sprites.data());
 
             mIbo.bind();
 
@@ -127,8 +127,7 @@ namespace Plutus {
     }
 
     void SpriteBatch::destroy() {
-        glDeleteBuffers(1, &mBufferId);
-        glDeleteVertexArrays(1, &mVAO);
+        Graphic::destroy(&mVAO, &mBufferId);
         mIbo.destroy();
     }
 } // namespace Plutus

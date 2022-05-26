@@ -129,4 +129,8 @@ namespace Plutus
     bool Vec2f::operator>= (const Vec2f& v) const {
         return x >= v.x && y >= v.y;
     }
+
+    Vec2f Vec2f::getDirection(const Vec2f& v) {
+        return (*this - v).unit();
+    }
 } // namespace Plutus

@@ -10,7 +10,11 @@ namespace Plutus
 {
     struct Graphic
     {
-        //Create a Vertex Array and bind it, Remember to unbined the Vertex Array after this call
+        /**
+         * @brief Create a Vertex Array and bind it, Remember to unbined the Vertex Array after this call
+         *
+         * @return uint32_t Vertex Array Id
+         */
         inline static uint32_t createVertexArray()
         {
             uint32_t id = 0;
@@ -19,7 +23,11 @@ namespace Plutus
             return id;
         }
 
-        //Create a Element Array Buffer and bind it, Remember to unbined the Element Array Buffer after this call
+        /**
+         * @brief Create a Element Array Buffer and bind it, Remember to unbined the Element Array Buffer after this call
+         *
+         * @return uint32_t Buffer Element Id
+         */
         inline static uint32_t createElementBuffer()
         {
             uint32_t id = 0;
@@ -27,7 +35,11 @@ namespace Plutus
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
             return id;
         }
-        //Create a Array Buffer and bind it, Remember to unbined the Array Buffer after this call
+        /**
+         * @brief Create a Buffer Array object and bind it, Remember to unbined the Array Buffer after this call
+         *
+         * @return uint32_t Buffer Array Id
+         */
         inline static uint32_t createBufferArray()
         {
             uint32_t id = 0;
@@ -36,20 +48,20 @@ namespace Plutus
             return id;
         }
 
-        static void destroy(uint32_t* vertexOjectId, uint32_t* IndexBufferId = nullptr, uint32_t* BufferArrId = nullptr) {
-            if (vertexOjectId && *vertexOjectId > 0) {
+        static void destroy(uint32_t* vertexOjectId, uint32_t* BufferArrId = nullptr, uint32_t* IndexBufferId = nullptr) {
+            if (vertexOjectId && *vertexOjectId) {
                 glDeleteVertexArrays(1, vertexOjectId);
                 *vertexOjectId = -1;
             }
 
-            if (IndexBufferId && *IndexBufferId > 0) {
-                glDeleteBuffers(1, IndexBufferId);
-                *IndexBufferId = -1;
-            }
-
-            if (BufferArrId && *BufferArrId > 0) {
+            if (BufferArrId && *BufferArrId) {
                 glDeleteBuffers(1, BufferArrId);
                 *BufferArrId = -1;
+            }
+
+            if (IndexBufferId && *IndexBufferId) {
+                glDeleteBuffers(1, IndexBufferId);
+                *IndexBufferId = -1;
             }
         }
 
@@ -62,13 +74,7 @@ namespace Plutus
         //Enable blend mode GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA or addictive GL_SRC_ALPHA, GL_ONE
         inline static void enableBlend(bool additive = false) {
             glEnable(GL_BLEND);
-            if (additive) {
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            }
-            else {
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            }
-
+            glBlendFunc(GL_SRC_ALPHA, additive ? GL_ONE : GL_ONE_MINUS_SRC_ALPHA);
         }
 
         inline static void disableBlend() {
@@ -118,7 +124,7 @@ namespace Plutus
         static GLuint createTexture(int w, int h, unsigned char* buff, GLuint intFormat = GL_RGB,
             GLuint format = GL_RGB, GLint type = GL_UNSIGNED_BYTE, GLint glFilter = GL_NEAREST, uint32_t glTexWrap = GL_CLAMP_TO_EDGE)
         {
-            GLuint id;
+            GLuint id = 0;
             glGenTextures(1, &id);
             //link the image to a texture in the gpu texture array
             glBindTexture(GL_TEXTURE_2D, id);
@@ -161,11 +167,30 @@ namespace Plutus
             glActiveTexture(GL_TEXTURE0 + unit);
             glBindTexture(GL_TEXTURE_2D, id);
         }
+        /**
+         * @brief call glActiveTexture 0, bind GL_Texture_2D to 0
+         */
         inline static void unBindTexture() { glActiveTexture(GL_TEXTURE0); glBindTexture(GL_TEXTURE_2D, 0); }
-
-        inline static void drawElements(uint32_t count, uint32_t offset = 0, uint32_t type = GL_TRIANGLES, GLenum datatype = GL_UNSIGNED_INT) {
-            glDrawElements(type, count, datatype, (void*)(offset * sizeof(GLuint)));
+        /**
+         * @brief call OpenGL Draw Elements
+         *
+         * @param count total vertex to draw
+         * @param offset use to especfy the offset for multiple draw using single buffer object
+         * @param mode  Type of draw call GL_TRANGLES, GL_LINES, GL_POINTS, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN etc, default=GL_TRIANGLES.
+         * @param datatype index array buffer data type default=GL_UNSIGNED_INT
+         */
+        inline static void drawElements(uint32_t vertexCount, uint32_t offset = 0, uint32_t mode = GL_TRIANGLES, GLenum datatype = GL_UNSIGNED_INT) {
+            glDrawElements(mode, vertexCount, datatype, (void*)(offset * sizeof(GLuint)));
         }
-
+        /**
+         * @brief OpenGL glDrawArray
+         *
+         * @param mode Type of draw call GL_TRANGLES, GL_LINES, GL_POINTS, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN etc.
+         * @param numVertices total vertex to draw = buffer vertex size
+         * @param firstIndex first index default 0
+         */
+        inline static void drawArrays(uint32_t mode, GLsizei numVertices, uint32_t firstIndex = 0) {
+            glDrawArrays(mode, firstIndex, numVertices);
+        }
     };
 } // namespace Plutus

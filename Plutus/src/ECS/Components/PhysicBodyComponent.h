@@ -48,6 +48,13 @@ namespace Plutus
         float restitution = 0;
         // default = false
         bool isSensor = false;
+        //collision mask;
+        uint16_t mask = 0xFFFF;
+        //collision mask;
+        uint16_t group = 0;
+        //collision category;
+        uint16_t category = 0x0001;
+
         Fixture(int _type) : type(_type) {};
         /**
          * @brief Construct a new Box Or Edge Fixture

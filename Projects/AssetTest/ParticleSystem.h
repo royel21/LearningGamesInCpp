@@ -47,5 +47,7 @@ namespace Plutus
         std::unordered_map<int, ParticleBatch> mBatches;
 
         bool prepare(float dt);
+
+        uint32_t mVerByteSize = 0;
     };
 } // namespace Test

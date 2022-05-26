@@ -28,6 +28,7 @@ namespace Plutus
 
         const std::string getName();
         Vec2f getPosition();
+        Vec2f getCenter();
 
 
         void setName(const std::string& name);
@@ -85,7 +86,14 @@ namespace Plutus
 
         template<typename T>
         T* getComponentFromName(const std::string& name) {
-            return getEntityByName(name).getComponent<T>();
+            auto ent = getEntityByName(name);
+            if (ent) return &(mRegistry.get<T>(ent.mId));
+            return nullptr;
+        }
+
+        template<typename T>
+        T* getComponent(uint32_t id) {
+            return getEntity(id).getComponent<T>();
         }
 
         void copyScene(Scene* scene);
@@ -93,6 +101,7 @@ namespace Plutus
         inline void removeEntity(entt::entity ent) { mRegistry.destroy(ent); }
 
         inline bool isValid(Entity ent) { return mRegistry.valid(ent); }
+        inline bool isValid(uint32_t ent) { return mRegistry.valid(entt::entity(ent)); }
 
         inline entt::registry* getRegistry() { return &mRegistry; }
         // remove all entity from scene

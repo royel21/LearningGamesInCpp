@@ -37,6 +37,17 @@ namespace Plutus
         }
     }
 
+    void ScriptComponent::CollisionStart(uint32_t entId, bool isSensor) {
+        if (isLoaded && mEnv["collisionStart"] != sol::nil) {
+            mEnv["collisionStart"](entId, isSensor);
+        }
+    }
+    void ScriptComponent::CollisionEnd(uint32_t entId, bool isSensor) {
+        if (isLoaded && mEnv["collisionEnd"] != sol::nil) {
+            mEnv["collisionEnd"](entId, isSensor);
+        }
+    }
+
     void ScriptComponent::destroy() {
         if (isLoaded) {
             mEnv["destroy"]();
