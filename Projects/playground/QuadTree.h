@@ -14,8 +14,6 @@ namespace Plutus
 {
     constexpr size_t MAX_DEPTH = 20;
 
-    class QuadTree;
-
     using QuadItem = std::pair<Rect, uint32_t>;
 
     class QuadTree

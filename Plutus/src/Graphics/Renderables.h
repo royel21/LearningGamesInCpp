@@ -11,7 +11,7 @@ namespace Plutus
 
     struct Renderable {
         // Texture Id
-        Texture* texture;
+        Texture* texture = nullptr;
         //offsetY
         float offsetY;
         // Rectangle with position x,y and width, height
@@ -40,13 +40,24 @@ namespace Plutus
         }
 
         bool operator < (const Renderable& rend) const {
+            uint32_t tex1Id = 0;
+            uint32_t tex2Id = 0;
+
+            if (texture) {
+                tex1Id = texture->mTexId;
+            }
+
+            if (rend.texture) {
+                tex2Id = rend.texture->mTexId;
+            }
+
             if (sortY && rend.sortY) {
                 const float y1 = trans.y + offsetY;
                 const float y2 = rend.trans.y + rend.offsetY;
-                return std::tie(layer, y2, texture->mTexId) < std::tie(rend.layer, y1, texture->mTexId);
+                return std::tie(layer, y2, tex1Id) < std::tie(rend.layer, y1, tex2Id);
             }
             else {
-                return std::tie(layer, texture->mTexId) < std::tie(rend.layer, rend.texture->mTexId);
+                return std::tie(layer, tex1Id) < std::tie(rend.layer, tex2Id);
             }
         }
     };

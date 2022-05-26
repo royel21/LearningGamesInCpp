@@ -24,6 +24,7 @@ namespace Plutus
             fixDef.friction = fixture.friction;
             fixDef.restitution = fixture.restitution;
             fixDef.isSensor = fixture.isSensor;
+            // fixDef.filter.categoryBits
 
             switch (fixture.type) {
             case P_Box: {
@@ -75,8 +76,10 @@ namespace Plutus
             body.fixedRotation = rbody.mFixedRotation;
             body.linearDamping = rbody.mLinearDamping;
             body.gravityScale = rbody.mGravityScale;
+            body.userData.pointer = (uintptr_t)ent;
 
             rbody.mBody = mWorld->CreateBody(&body);
+            mWorld->SetContactListener(this);
 
             createFixture(rbody, trans.getPosition());
         } // end body forloop
@@ -84,14 +87,15 @@ namespace Plutus
         auto staticView = mProject->scene->getRegistry()->view<PhysicBodyComponent>();
 
         for (auto [ent, pbody] : staticView.each()) {
-            Entity ent = { ent, mProject->scene.get() };
-            auto trans = ent.getComponent<TransformComponent>();
+            Entity entity = { ent, mProject->scene.get() };
+            auto trans = entity.getComponent<TransformComponent>();
             b2Vec2 pos = { 0, 0 };
             if (trans) {
                 pos = toWorld(trans->getPosition());
             }
 
             b2BodyDef body;
+            body.userData.pointer = (uintptr_t)ent;
             body.type = (b2BodyType)pbody.mBodyType;
             body.position = pos;
             pbody.mBody = mWorld->CreateBody(&body);
@@ -114,6 +118,27 @@ namespace Plutus
     void PhysicSystem::destroy() {
         if (mWorld != nullptr) delete mWorld;
         mWorld = nullptr;
+    }
+
+    void PhysicSystem::BeginContact(b2Contact* contact)
+    {
+        auto ent = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
+        auto entityA = mProject->scene->getEntity(ent);
+        if (entityA) {
+            Logger::info("entity: %s", entityA.getName().c_str());
+        }
+
+        ent = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
+        auto entityB = mProject->scene->getEntity(ent);
+        if (entityB) {
+
+            Logger::info("entity: %s", entityB.getName().c_str());
+        }
+    }
+
+    void PhysicSystem::EndContact(b2Contact* contact)
+    {
+
     }
 } // namespace Plutus
 
