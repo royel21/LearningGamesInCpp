@@ -1,7 +1,12 @@
 {
     "format": "Plutus",
     "type": 0,
-    "bg-color": 16777215,
+    "bg-color": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
     "fonts": [],
     "scripts": [
         {

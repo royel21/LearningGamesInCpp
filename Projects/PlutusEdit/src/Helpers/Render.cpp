@@ -108,6 +108,7 @@ namespace Plutus
     void Render::drawPhysicBodies()
     {
         auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
+
         for (auto [e, trans, rbody] : view.each()) {
             drawFixtures(&rbody, &trans);
         }
@@ -120,7 +121,7 @@ namespace Plutus
             drawFixtures(&pbody, trans);
         }
 
-        if (view.size_hint()) {
+        if (view.size_hint() || view2.size()) {
             mDebugRender->end();
             mDebugRender->render();
         }

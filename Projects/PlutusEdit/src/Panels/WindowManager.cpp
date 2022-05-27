@@ -115,11 +115,13 @@ namespace Plutus
             if (mConfig->mProjects.size() > 0) {
                 mConfig->mProjects.erase(mProjToRemove);
 
-                if (mConfig->mProjects.size()) {
-                    mConfig->LoadProject(mConfig->mProjects.begin()->first);
-                }
-                else {
-                    mConfig->currentProject = "";
+                if (mProjToRemove.compare(mConfig->currentProject) == 0) {
+                    if (mConfig->mProjects.size()) {
+                        mConfig->LoadProject(mConfig->mProjects.begin()->first);
+                    }
+                    else {
+                        mConfig->currentProject = "";
+                    }
                 }
             }
         }
@@ -209,7 +211,6 @@ namespace Plutus
                         if (ImGui::MenuItem(item.c_str()))
                         {
                             mConfig->LoadProject(recent.first.c_str());
-                            mConfig->currentProject = recent.first;
                         }
                     }
                     ImGui::EndMenu();

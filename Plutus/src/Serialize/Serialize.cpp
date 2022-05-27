@@ -62,6 +62,18 @@ namespace Plutus
         EndArr();
     }
 
+    void Serializer::add4Float(const std::string& id, const Vec4f& v)
+    {
+        StartArr(id);
+        {
+            writer.Double(v.x);
+            writer.Double(v.y);
+            writer.Double(v.z);
+            writer.Double(v.w);
+        }
+        EndArr();
+    }
+
     void Serializer::StartObj(const std::string& id)
     {
         if (!id.empty())

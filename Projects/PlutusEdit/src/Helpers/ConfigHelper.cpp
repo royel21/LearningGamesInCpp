@@ -61,4 +61,30 @@ namespace Plutus
 
         FileIO::saveBufferToFile("config.json", ser.getString());
     }
+
+    void createProject(const char* path) {
+        const char* newProj = R"PROJ({
+    "win-title": "Plutus App",
+    "win-width": 1280,
+    "win-height": 768,
+    "vp-width": 1280,
+    "vp-height": 768,
+    "vp-pos": [
+        0.0,
+        0.0
+    ],
+    "zoom-level": 1.0,
+    "max-fps": 60.0,
+    "velocity-iter": 8,
+    "position-iter": 3,
+    "gravity": [
+        0.0,
+        0.0
+    ],
+    "auto-clear-force": 1,
+    "current-scene": "",
+    "scenes": []
+})PROJ";
+        FileIO::saveBufferToFile(path, newProj);
+    }
 }

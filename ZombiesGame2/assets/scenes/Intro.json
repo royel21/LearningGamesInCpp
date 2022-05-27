@@ -1,0 +1,15 @@
+{
+    "format": "Plutus",
+    "type": 0,
+    "bg-color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "fonts": [],
+    "scripts": [],
+    "sounds": [],
+    "textures": [],
+    "entities": []
+}

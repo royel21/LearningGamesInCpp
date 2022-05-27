@@ -36,6 +36,7 @@ namespace Plutus
             autoClearForce = true;
 
             scene->clear();
+            scenes.clear();
             currentScene = "";
             currentScenePath = "";
             AssetManager::get()->destroy();
@@ -47,10 +48,9 @@ namespace Plutus
         rapidjson::Document doc;
         if (loadJsonFromFile(path.c_str(), doc)) {
             isLoaded = true;
-            Plutus::AssetManager::get()->setBaseDir(Utils::getDirectory(path));
+            clear();
 
-            scene->clear();
-            scenes.clear();
+            Plutus::AssetManager::get()->setBaseDir(Utils::getDirectory(path));
 
             JsonHelper jhelper;
             auto obj = doc.GetJsonObject();
@@ -128,12 +128,17 @@ namespace Plutus
 
     void Project::loadScene(const std::string& name)
     {
-        auto tscene = scenes.find(name);
-        if (tscene != scenes.end()) {
-            scene->clear();
-            AssetManager::get()->destroy();
-            currentScenePath = AssetManager::get()->getBaseDir() + tscene->second;
-            SceneLoader::loadFromPath(tscene->second.c_str(), scene.get());
+        if (name == "") {
+            scene = CreateRef<Scene>();
+        }
+        else {
+            auto tscene = scenes.find(name);
+            if (tscene != scenes.end()) {
+                scene->clear();
+                AssetManager::get()->destroy();
+                currentScenePath = AssetManager::get()->getBaseDir() + tscene->second;
+                SceneLoader::loadFromPath(tscene->second.c_str(), scene.get());
+            }
         }
     }
 

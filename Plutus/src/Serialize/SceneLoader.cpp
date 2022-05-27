@@ -117,7 +117,7 @@ namespace Plutus
             auto docObj = doc.GetJsonObject();
             jhelper.value = &docObj;
 
-            scene->mBGColor = (int)jhelper.getInt("bg-color");
+            scene->mBGColor = jhelper.getFloat4("bg-color");
 
             if (doc.HasMember("fonts") && doc["fonts"].IsArray())
             {

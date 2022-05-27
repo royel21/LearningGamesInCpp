@@ -196,7 +196,7 @@ namespace Plutus
         ser.addString("format", "Plutus");
         ser.addInt("type", 0);
 
-        ser.addInt("bg-color", scene->mBGColor);
+        ser.add4Float("bg-color", scene->mBGColor);
 
         Textures_JSON(ser);
 

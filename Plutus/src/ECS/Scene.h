@@ -106,7 +106,7 @@ namespace Plutus
 
         inline entt::registry* getRegistry() { return &mRegistry; }
         // remove all entity from scene
-        inline void clear() { mRegistry.clear(); mBGColor = {}; }
+        inline void clear() { mRegistry.clear(); mBGColor = { 255,255,255,255 }; }
 
     private:
         entt::registry mRegistry;

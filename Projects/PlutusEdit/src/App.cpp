@@ -46,6 +46,7 @@ namespace Plutus
     }
 
     void App::Update(float dt) {
+        mWindow.setTitle(("Plutus Edit - " + mConfig.currentProject).c_str());
         mExit = mWinManager.mExit;
         mWinManager.update(dt);
     }
