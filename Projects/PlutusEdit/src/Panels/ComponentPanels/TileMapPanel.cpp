@@ -188,11 +188,11 @@ namespace Plutus
 
         auto tex = mTileMap->getTexture(mCurrentTexture);
 
-        std::vector<Renderable>& renderables = mConfig->mRender->mRenderables;
+        std::vector<Renderable>& renderables = mConfig->mRender.mRenderables;
         if (renderables.size() < mTempTiles.size()) {
             renderables.resize(mTempTiles.size());
         }
-        mConfig->mRender->mTotalTemp = (int)mTempTiles.size();
+        mConfig->mRender.mTotalTemp = (int)mTempTiles.size();
 
         int i = 0;
         for (auto tile : mTempTiles)
@@ -287,7 +287,7 @@ namespace Plutus
             renderTemp();
         }
         else {
-            mConfig->mRender->mTotalTemp = 0;
+            mConfig->mRender.mTotalTemp = 0;
         }
     }
 }

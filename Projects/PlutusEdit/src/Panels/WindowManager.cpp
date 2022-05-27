@@ -1,4 +1,4 @@
-#include "MianWindow.h"
+#include "WindowManager.h"
 
 #include <glm/glm.hpp>
 
@@ -7,6 +7,7 @@
 #include <Utils/FileIO.h>
 #include <Utils/Utils.h>
 
+#include "../App.h"
 #include "../Config.h"
 #include "../Helpers/ImGuiStyle.h"
 #include "../Helpers/ImGuiEx.h"
@@ -20,12 +21,15 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "../App.h"
-
 namespace Plutus
 {
-    MianWindow::~MianWindow()
-    {
+    WindowManager::~WindowManager() {
+
+        for (auto& window : mWindows) {
+            delete window;
+        }
+        mWindows.clear();
+
         if (isInitialized) {
             ImGui_ImplOpenGL3_Shutdown();
             ImGui_ImplGlfw_Shutdown();
@@ -33,7 +37,7 @@ namespace Plutus
         }
     }
 
-    void MianWindow::init(Config* config, App* app)
+    void WindowManager::init(Config* config, App* app)
     {
         mConfig = config;
         mApp = app;
@@ -61,9 +65,28 @@ namespace Plutus
             mImGui_IO->Fonts->AddFontDefault();
         }
         isInitialized = true;
+
+        for (auto& window : mWindows) {
+            window->init(mConfig);
+        }
     }
 
-    void MianWindow::Begin()
+    void WindowManager::update(float dt) {
+        for (auto& window : mWindows) {
+            window->update(dt);
+        }
+    }
+
+    void WindowManager::draw() {
+        Begin();
+        for (auto& window : mWindows) {
+            window->draw();
+        }
+        End();
+        mConfig->mRender.draw();
+    }
+
+    void WindowManager::Begin()
     {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -72,7 +95,7 @@ namespace Plutus
         DockingWindow();
     }
 
-    void MianWindow::End()
+    void WindowManager::End()
     {
         ImGui::Render();
         glClear(GL_COLOR_BUFFER_BIT);
@@ -103,7 +126,7 @@ namespace Plutus
         mProjToRemove = "";
     }
 
-    void MianWindow::DockingWindow() {
+    void WindowManager::DockingWindow() {
         static bool isOpen;
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_AutoHideTabBar;
 
@@ -140,7 +163,7 @@ namespace Plutus
         ImGui::End();
     }
 
-    void MianWindow::MenuGui(int flags) {
+    void WindowManager::MenuGui(int flags) {
         bool noSplit = (flags & ImGuiDockNodeFlags_NoSplit) != 0;
         static bool open = false;
         static bool edit = false;

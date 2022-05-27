@@ -175,10 +175,10 @@ namespace Plutus
                     if (fix.type > 0) {
                         ser.addFloat("dens", fix.density);
                         ser.addFloat("restit", fix.restitution);
-                        ser.addInt("mask", fix.mask);
-                        ser.addInt("group", fix.group);
-                        ser.addInt("category", fix.category);
                     }
+                    ser.addInt("mask", fix.mask);
+                    ser.addInt("group", fix.group);
+                    ser.addInt("category", fix.category);
                     ser.addInt("sensor", fix.isSensor);
                 }
                 ser.EndObj();

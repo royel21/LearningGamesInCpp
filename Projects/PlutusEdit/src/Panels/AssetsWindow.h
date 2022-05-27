@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <Assets/Assets.h>
 
+#include "ImWindow.h"
+
 #define umap std::unordered_map
 #define boolmap umap<std::string, bool>
 
@@ -24,12 +26,10 @@ namespace Plutus
         bool isNew = false;
     };
 
-    class AssetsWindow
+    class AssetsWindow : public ImWindow
     {
     private:
-        Config* mConfig;
         Scene* mScene;
-
         Sound mSound;
         Texture texture;
         Font mFont;
@@ -50,10 +50,9 @@ namespace Plutus
 
     public:
         AssetsWindow();
-        void init(Config* config) { mConfig = config; }
 
         void fileDrop(const std::string& file);
-        void draw();
+        void draw() override;
 
     private:
         void processFile();

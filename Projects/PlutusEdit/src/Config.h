@@ -7,10 +7,10 @@
 #include <Math/Vectors.h>
 #include <Utils/Pointer.h>
 #include <Core/Project.h>
+#include "Helpers/Render.h"
 
 namespace Plutus
 {
-    class Render;
     class Camera2D;
 
     enum State {
@@ -67,10 +67,10 @@ namespace Plutus
         bool isLoaded = false;
 
         State state = Editing;
-        Render* mRender;
+        Render mRender;
 
         Config() { load(); }
-        void init(Render* render);
+        void init(Camera2D* camera);
 
         ~Config();
 

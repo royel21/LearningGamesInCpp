@@ -56,9 +56,10 @@ namespace Plutus
         mTextEditor.SetShowWhitespaces(false);
 
         mSysManager.setProject(&mConfig->mTempProject);
-        mSysManager.AddSystem<ScriptSystem>(mConfig->mRender->mCamera);
+        mSysManager.AddSystem<ScriptSystem>(mConfig->mRender.mCamera);
         mSysManager.AddSystem<PhysicSystem>();
         mSysManager.AddSystem<AnimationSystem>();
+        mSysManager.AddSystem<DebugSystem>(mConfig->mRender.mCamera);
     }
 
 
@@ -66,7 +67,7 @@ namespace Plutus
     {
         if (mConfig->isHover) {
             auto pos = mConfig->mMouseCoords;
-            auto camera = mConfig->mRender->mCamera;
+            auto camera = mConfig->mRender.mCamera;
             auto scale = camera->getScale();
 
             if (Input::get()->onKeyPressed("F2"))
@@ -118,31 +119,17 @@ namespace Plutus
         if (!Input::get()->isCtrl) {
             if (Input::get()->onKeyPressed("MouseLeft"))
             {
-                // mMouseLastCoords = mConfig->mMouseCoords;
-
-                auto id = mConfig->mRender->mFramePicker.getEntId({ x, y });
+                auto id = mConfig->mRender.mFramePicker.getEntId({ x, y });
                 Entity ent = mConfig->mProject.scene->getEntity(id);
 
                 if (ent) project.mEnt = ent;
             }
-
-            // if (project.mEnt && Input::get()->onKeyDown("MouseLeft"))
-            // {
-            //     if (project.mEnt.hasComponent<TransformComponent>()) {
-            //         auto trans = project.mEnt.getComponent<TransformComponent>();
-            //         Vec2f result = mConfig->mMouseCoords - mMouseLastCoords;
-            //         result /= mConfig->mRender->mCamera->getScale();
-
-            //         trans->x = mEntLastPos.x + result.x;
-            //         trans->y = mEntLastPos.y + result.y;
-            //     }
-            // }
         }
     }
 
     void CenterWindow::showConfig()
     {
-        auto camera = mConfig->mRender->mCamera;
+        auto camera = mConfig->mRender.mCamera;
         auto& project = mConfig->mProject;
 
         auto winPos = ImGui::GetCursorScreenPos();
@@ -193,7 +180,7 @@ namespace Plutus
             ImGui::InvisibleButton("inv-c", { 1,1 });
             ImGui::SameLine(140);
             if (ImGui::Button("Close", ImVec2(120, 0))) {
-                mConfig->mRender->init(mConfig);
+                mConfig->mRender.init(mConfig);
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();
@@ -206,13 +193,13 @@ namespace Plutus
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImVec4 WHITE = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
         ImGui::PushStyleColor(ImGuiCol_ChildBg, WHITE);
-        auto& framebuffer = mConfig->mRender->mFrameBuffer;
+        auto& framebuffer = mConfig->mRender.mFrameBuffer;
         if (ImGui::BeginChild("v-port"))
         {
             auto winSize = framebuffer.getSize();
             float aspectRation = framebuffer.getAspectRatio();
 
-            Vec2f vpSize = mConfig->mRender->mCamera->getViewPortSize();
+            Vec2f vpSize = mConfig->mRender.mCamera->getViewPortSize();
 
             auto winPos = ImGui::GetContentRegionAvail();
             auto pos = ImGui::GetCursorPos();
@@ -232,8 +219,8 @@ namespace Plutus
             ImGui::SetCursorPos({ x, y });
 
             if ((int)winSize.x != (int)newSize.x && (int)winSize.y != (int)newSize.y) {
-                mConfig->mRender->resizeBuffers(newSize);
-                mConfig->mRender->mCamera->setVPSize(newSize);
+                mConfig->mRender.resizeBuffers(newSize);
+                mConfig->mRender.mCamera->setVPSize(newSize);
             }
 
             ImVec2 canvas_pos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
@@ -244,7 +231,6 @@ namespace Plutus
             float xPos = mapIn(localX, 0, newSize.x, 0, vpSize.x);
             float yPos = vpSize.y - mapIn(localY, 0, newSize.y, 0, vpSize.y);
 
-            // ImGui::Image((void*)mConfig->mRender->mFramePicker.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, { 0,0,0,1 }, { 0.0, 0.0, 0.0, 1.0 });
             ImGui::Image((void*)framebuffer.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
             if (mConfig->isHover = ImGui::IsItemHovered())
             {
@@ -323,12 +309,12 @@ namespace Plutus
                 if (ImGui::TransparentButton(isRunning ? ICON_FA_STOP : ICON_FA_PLAY)) {
                     if (isRunning) {
                         mConfig->state = Editing;
-                        mConfig->mRender->setScene(project.scene.get());
+                        mConfig->mRender.setScene(project.scene.get());
                         DebugRender::get()->setShouldDraw(mConfig->drawGrid);
 
                         mSysManager.stop();
                         mConfig->mTempProject.clearScene();
-                        mConfig->mRender->mCamera->setPosition(mCamCoords);
+                        mConfig->mRender.mCamera->setPosition(mCamCoords);
                     }
                     else {
                         mConfig->state = Running;
@@ -338,8 +324,8 @@ namespace Plutus
                         DebugRender::get()->setShouldDraw(false);
 
                         mSysManager.init();
-                        mConfig->mRender->setScene(mConfig->mTempProject.scene.get());
-                        mCamCoords = mConfig->mRender->mCamera->getPosition();
+                        mConfig->mRender.setScene(mConfig->mTempProject.scene.get());
+                        mCamCoords = mConfig->mRender.mCamera->getPosition();
                     }
                 }
                 ImGui::SameLine();

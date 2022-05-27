@@ -237,31 +237,31 @@ namespace Plutus
         for (auto& shape : mShapes) {
             switch (shape->type) {
             case BoxShape: {
-                mDebug->drawBox((Box2d*)shape);
+                mDebug->submitBox((Box2d*)shape);
                 break;
             }
             case EdgeShape: {
-                mDebug->drawLine((Line2d*)shape);
+                mDebug->submitLine((Line2d*)shape);
                 break;
             }
             case CircleShape: {
-                mDebug->drawCircle((Circle2d*)shape);
+                mDebug->submitCircle((Circle2d*)shape);
                 break;
             }
             }
         }
 
-        // mDebug->drawBox(Box2d(capsule.x, capsule.y, capsule.w, capsule.h));
+        // mDebug->submitBox(Box2d(capsule.x, capsule.y, capsule.w, capsule.h));
         Vec4f rect = { capsule.position, capsule.size };
         mBatch.submit(texture->mTexId, rect, texture->getUV(0));
         mBatch.begin();
         mBatch.draw();
         mBatch.end();
         auto box = capsule.getBox();
-        // mDebug->drawBox(&box, { 255,0,255,255 });
-        // mDebug->drawBox(rect);
-        // mDebug->drawCircle(capsule.getBCircle());
-        // mDebug->drawCircle(capsule.getTCircle());
+        // mDebug->submitBox(&box, { 255,0,255,255 });
+        // mDebug->submitBox(rect);
+        // mDebug->submitCircle(capsule.getBCircle());
+        // mDebug->submitCircle(capsule.getTCircle());
 
         mDebug->end();
         mDebug->render();

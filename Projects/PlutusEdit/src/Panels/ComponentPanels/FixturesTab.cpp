@@ -119,7 +119,7 @@ namespace Plutus
         int removeId = -1;
         int copyId = -1;
         if (ImGui::BeginChild("fixture-list", { 0, 0 }, false, ImGuiWindowFlags_HorizontalScrollbar)) {
-            auto pos = config->mRender->mCamera->convertScreenToWold(config->mMouseCoords);
+            auto pos = config->mRender.mCamera->convertScreenToWold(config->mMouseCoords);
             auto epos = config->mProject.mEnt.getPosition();
 
             for (auto& fix : physicBody->mFixtures) {
@@ -168,7 +168,7 @@ namespace Plutus
             }
 
             if (Input::get()->onKeyDown("MouseLeft")) {
-                auto offset = (config->mMouseCoords - startPos) / config->mRender->mCamera->getScale();;
+                auto offset = (config->mMouseCoords - startPos) / config->mRender.mCamera->getScale();;
                 mFixture->offset = startOffset + offset;
             }
         }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <typeinfo>
 #include <unordered_map>
 
 namespace Plutus
@@ -45,7 +44,7 @@ namespace Plutus
         template <typename T>
         T* getSystem()
         {
-            return static_cast<T>(mSystems[getListId<T>()]);
+            return static_cast<T*>(mSystems[getListId<T>()]);
         }
 
         template <typename T>

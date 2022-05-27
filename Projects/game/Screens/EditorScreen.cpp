@@ -103,8 +103,8 @@ void EditorScreen::Draw()
     // // mRender.draw();
     // // mRender.end();
     // auto box = Plutus::Box2d(10, h - 160.0f, 150, 150);
-    // mDebug->drawBox(box);
-    // mDebug->drawCircle({ 85.0f, h - 85.0f }, 70.0f);
+    // mDebug->submitBox(box);
+    // mDebug->submitCircle({ 85.0f, h - 85.0f }, 70.0f);
     // mDebug->end();
     // mDebug->render(2);
     // mDebug->setColor({ 255,255,255,25 });

@@ -75,9 +75,9 @@ namespace Plutus
 		mIndices.push_back(i);
 	}
 	/***************************** Shapes **********************************************/
-	void DebugRender::drawBox(Box2d* b, const ColorRGBA8& color)
+	void DebugRender::submitBox(Box2d* b, const ColorRGBA8& color)
 	{
-		// drawBox(Vec4f(b.pos.x, b.pos.y, b.size.x, b.size.y), b.rotation, color);
+		// submitBox(Vec4f(b.pos.x, b.pos.y, b.size.x, b.size.y), b.rotation, color);
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 4);
 		auto vertices = b->getVertices();
@@ -92,7 +92,7 @@ namespace Plutus
 	}
 	/*******************************************************************************************************/
 
-	void DebugRender::drawLine(const Vec2f& a, const Vec2f& b, float angle, const ColorRGBA8& color)
+	void DebugRender::submitLine(const Vec2f& a, const Vec2f& b, float angle, const ColorRGBA8& color)
 	{
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 2);
@@ -107,7 +107,7 @@ namespace Plutus
 		mIndices.push_back(i + 1);
 	}
 
-	void DebugRender::drawBox(const Vec4f& rect, float angle, const ColorRGBA8& color)
+	void DebugRender::submitBox(const Vec4f& rect, float angle, const ColorRGBA8& color)
 	{
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 4);
@@ -138,7 +138,7 @@ namespace Plutus
 		addIndices(i);
 	}
 
-	void DebugRender::drawCircle(const Vec2f& center, float radius, const ColorRGBA8& color)
+	void DebugRender::submitCircle(const Vec2f& center, float radius, const ColorRGBA8& color)
 	{
 		uint32_t start = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + NUmVERTS);
@@ -183,7 +183,7 @@ namespace Plutus
 
 				lineEnd.x = cpos.x + (currentLine);
 				lineEnd.y = cpos.y + size.y + th;
-				drawLine(lineStart, lineEnd, 0, mGridColor);
+				submitLine(lineStart, lineEnd, 0, mGridColor);
 			}
 
 			for (float currentLine = -3 * th; currentLine <= size.y + th; currentLine += th)
@@ -193,7 +193,7 @@ namespace Plutus
 
 				lineEnd.x = cpos.x + size.x + tw;
 				lineEnd.y = cpos.y + (currentLine);
-				drawLine(lineStart, lineEnd, 0, mGridColor);
+				submitLine(lineStart, lineEnd, 0, mGridColor);
 			}
 			end();
 

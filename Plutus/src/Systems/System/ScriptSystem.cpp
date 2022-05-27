@@ -125,7 +125,6 @@ namespace Plutus
 
     void ScriptSystem::registerEntity()
     {
-
         /*****************************Register Entity**********************************************/
         auto entity = mGlobalLua.new_usertype<Entity>("Entity");
         entity["getTransform"] = &Entity::getComponent<TransformComponent>;

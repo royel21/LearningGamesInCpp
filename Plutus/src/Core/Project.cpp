@@ -50,6 +50,7 @@ namespace Plutus
             Plutus::AssetManager::get()->setBaseDir(Utils::getDirectory(path));
 
             scene->clear();
+            scenes.clear();
 
             JsonHelper jhelper;
             auto obj = doc.GetJsonObject();

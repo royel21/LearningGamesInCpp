@@ -15,6 +15,7 @@
 namespace Plutus
 {
     void BottomWindow::draw() {
+        if (mConfig->state != Editing) return;
         ImGuiWindowClass window_class;
         window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
         ImGui::SetNextWindowClass(&window_class);
@@ -27,7 +28,7 @@ namespace Plutus
                         ImGui::TableNextColumn();
                         {
                             auto width = ImGui::GetContentRegionAvailWidth() * 0.3f;
-                            auto camera = mRender->mCamera;
+                            auto camera = mConfig->mRender.mCamera;
                             auto& zoom = mConfig->mProject.zoomLevel;
                             ImGui::Row("Zoom", width);
 

@@ -28,6 +28,8 @@ namespace Plutus
 
     void ComponentWindow::draw()
     {
+        if (mConfig->state != Editing) return;
+
         if (ImGui::Begin("##ComPanel")) {
             mEnt = mConfig->mProject.mEnt;
             if (mConfig->mProject.scene->isValid(mEnt)) {
@@ -118,7 +120,7 @@ namespace Plutus
             if (Input::get()->onKeyDown("MouseLeft") && !Input::get()->isCtrl) {
                 auto trans = mEnt.getComponent<TransformComponent>();
                 Vec2f result = mConfig->mMouseCoords - lastMPos;
-                result /= mConfig->mRender->mCamera->getScale();
+                result /= mConfig->mRender.mCamera->getScale();
 
                 trans->x = lastEntPos.x + result.x;
                 trans->y = lastEntPos.y + result.y;

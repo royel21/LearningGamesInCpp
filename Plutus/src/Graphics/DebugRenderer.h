@@ -40,20 +40,25 @@ namespace Plutus
 		Vec4f getGridLineColor() { return mGridColor; }
 
 		//Draw Shapes
+		void submitLine(const Vec2f& a, const Vec2f& b, float angle = 0, const ColorRGBA8& color = {});
+		void submitBox(const Vec4f& destRect, float angle = 0, const ColorRGBA8& color = {});
+		void submitCircle(const Vec2f& center, float radius, const ColorRGBA8& color = {});
 
-		void drawLine(const Vec2f& a, const Vec2f& b, float angle = 0, const ColorRGBA8& color = {});
-		void drawBox(const Vec4f& destRect, float angle = 0, const ColorRGBA8& color = {});
-		void drawCircle(const Vec2f& center, float radius, const ColorRGBA8& color = {});
+		void submitBox(Box2d* box, const ColorRGBA8& color = {});
 
-		void drawBox(Box2d* box, const ColorRGBA8& color = {});
-
-		inline void drawLine(Line2d* line, const ColorRGBA8& color = {}) {
+		inline void submitLine(Line2d* line, const ColorRGBA8& color = {}) {
 			auto vertices = line->getVertices();
-			drawLine(vertices[0], vertices[1], 0, color);
+			submitLine(vertices[0], vertices[1], 0, color);
 		}
 
-		inline void drawCircle(Circle2d* c, const ColorRGBA8& color = {}) {
-			drawCircle({ c->pos.x, c->pos.y }, c->radius, color);
+		inline void submitCircle(Circle2d* c, const ColorRGBA8& color = {}) {
+			submitCircle({ c->pos.x, c->pos.y }, c->radius, color);
+		}
+
+		inline void drawOneLine(const Vec2f& a, const Vec2f& b, float angle = 0, const ColorRGBA8& color = {}) {
+			submitLine(a, b, angle, color);
+			end();
+			render();
 		}
 
 		Vec2i getCellSize() { return mCellSize; };

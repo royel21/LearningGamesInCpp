@@ -24,23 +24,25 @@ function update(dt)
 
         move(dir.x, dir.y)
 
-        if dir.y > 0 then
-            vel.y = SPEED
-            direction = "up"
-        end
+        local stateH
+        local stateV
 
-        if dir.y < 0 then
-            vel.y = -SPEED
-            direction = "down"
+        if dir.y > 0 then
+            stateV = "up"
+        elseif dir.y < 0 then
+            stateV = "down"
         end
 
         if dir.x > 0 then
-            vel.x = SPEED
-            direction = "right"
+            stateH = "right"
+        elseif dir.x < 0 then
+            stateH = "left"
         end
-        if dir.y < 0 then
-            vel.x = -SPEED
-            direction = "left"
+
+        if math.abs(dir.x) < math.abs(dir.y) then
+            direction = stateV
+        else
+            direction = stateH
         end
     end
     Bat:getAnimate():play("flight-" .. direction)
@@ -53,5 +55,4 @@ end
 function collisionEnd(entId, isSensor) if isSensor then entToFollow = nil end end
 
 function destroy() end
-
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "System.h"
 #include <sol/sol.hpp>
+#include <memory>
 
 namespace Plutus
 {
@@ -11,6 +12,8 @@ namespace Plutus
 
         void init(Project* project);
         void update(float dt);
+
+        void registerGlobal(std::function<void(sol::state&)> func) { func(mGlobalLua); };
 
     private:
         sol::state mGlobalLua;

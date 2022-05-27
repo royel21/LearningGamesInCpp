@@ -5,6 +5,8 @@
 #include "../Helpers/ImGuiDialog.h"
 #include "../Helpers/IconsFontAwesome5.h"
 
+#include "../Config.h"
+
 #include <misc/cpp/imgui_stdlib.h>
 
 #include <Assets/Assets.h>
@@ -12,6 +14,8 @@
 namespace Plutus
 {
     void SceneWindow::draw() {
+        if (mConfig->state != Editing) return;
+
         auto& project = mConfig->mProject;
         static bool openNew = false;
         static bool showConfig = false;

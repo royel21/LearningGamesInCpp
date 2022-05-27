@@ -216,7 +216,7 @@ namespace Plutus
         }
 
         auto box = Box2d{ qt->mRect.pos, qt->mRect.size };
-        mDebug->drawBox(&box);
+        mDebug->submitBox(&box);
     }
 
     void App::Draw()
@@ -225,23 +225,23 @@ namespace Plutus
             auto shape = item.ref;
             switch (shape->type) {
             case BoxShape: {
-                mDebug->drawBox((Box2d*)shape);
+                mDebug->submitBox((Box2d*)shape);
                 break;
             }
             case EdgeShape: {
-                mDebug->drawLine((Line2d*)shape);
+                mDebug->submitLine((Line2d*)shape);
                 break;
             }
             case CircleShape: {
-                DebugRender::get()->drawCircle(shape->pos, 5);
-                mDebug->drawCircle((Circle2d*)shape);
+                DebugRender::get()->submitCircle(shape->pos, 5);
+                mDebug->submitCircle((Circle2d*)shape);
                 break;
             }
             }
             // if (shape->type == CircleShape) {
             //     auto rect = shape->getRect();
             //     auto box = Box2d{ rect.pos, rect.size };
-            //     mDebug->drawBox(&box);
+            //     mDebug->submitBox(&box);
             // }
         }
 

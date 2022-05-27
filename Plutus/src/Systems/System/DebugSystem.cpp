@@ -27,19 +27,19 @@ namespace Plutus
                 Vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
                 if (mCamera->getViewPortDim().overlap(rect))
                 {
-                    mDebug->drawBox(rect);
+                    mDebug->submitBox(rect);
                 }
                 break;
             }
             case EdgeShape: {
-                mDebug->drawLine(pos + fixture.offset, fixture.size + fixture.offset);
+                mDebug->submitLine(pos + fixture.offset, fixture.size + fixture.offset);
                 break;
             }
             case CircleShape: {
                 Vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
                 if (mCamera->getViewPortDim().overlap(rect))
                 {
-                    mDebug->drawCircle(pos + fixture.offset, fixture.radius);
+                    mDebug->submitCircle(pos + fixture.offset, fixture.radius);
                 }
                 break;
             }

@@ -100,9 +100,9 @@ namespace Plutus
             fix.density = jhelper.getFloat("dens", 1);
             fix.restitution = jhelper.getFloat("restit");
             fix.isSensor = jhelper.getInt("sensor", false);
-            fix.mask |= jhelper.getInt("mask");
-            fix.group |= jhelper.getInt("group");
-            fix.category |= jhelper.getInt("category");
+            fix.mask = jhelper.getInt("mask", 0xffff);
+            fix.group = jhelper.getInt("group");
+            fix.category = jhelper.getInt("category", 1);
         }
     }
 
@@ -214,11 +214,10 @@ namespace Plutus
                         if (compType == "Sprite")
                         {
                             auto spr = entity.addComponent<SpriteComponent>(component["tex"].GetString());
-                            spr->mFlipX = component["fx"].GetInt();
-                            spr->mFlipY = component["fy"].GetInt();
-                            spr->mColor = component["c"].GetInt();
-                            auto uvs = component["uvc"].GetArray();
-                            spr->mUVCoord = { uvs[0].GetFloat(),uvs[1].GetFloat(),uvs[2].GetFloat(),uvs[3].GetFloat() };
+                            spr->mFlipX = jhelper.getInt("fx");
+                            spr->mFlipY = jhelper.getInt("fy");
+                            spr->mColor = jhelper.getInt("c");
+                            spr->mUVCoord = jhelper.getFloat4("uvc");
                             continue;
                         }
                         if (compType == "Animation")

@@ -138,6 +138,8 @@ namespace Plutus
 
     void AssetsWindow::draw()
     {
+        if (mConfig->state != Editing) return;
+
         if (ImGui::Begin("Assets")) {
             if (std::filesystem::exists("./assets/")) {
 

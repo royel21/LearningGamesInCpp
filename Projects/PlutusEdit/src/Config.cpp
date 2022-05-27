@@ -41,9 +41,8 @@ namespace Plutus
 
     void Config::save() { SaveConfig(this); }
 
-    void Config::init(Render* render)
+    void Config::init(Camera2D* camera)
     {
-        mRender = render;
         if (!currentProject.empty()) {
             auto path = mProjects[currentProject];
             mProject.workingDir = Utils::getDirectory(path);
@@ -51,7 +50,8 @@ namespace Plutus
             mProject.load(path);
             mProject.loadScene(mProject.currentScene);
         }
-        mRender->init(this);
+        mRender.mCamera = camera;
+        mRender.init(this);
     }
 
     void Config::CreateProj()
@@ -69,6 +69,7 @@ namespace Plutus
 
             currentProject = name;
             mProjects[name] = filePath;
+            LoadProject(name);
         }
     }
 
@@ -79,7 +80,7 @@ namespace Plutus
             if (FileIO::exists(found->second)) {
                 mProject.workingDir = Utils::getDirectory(found->second);
                 mProject.load(found->second);
-                mRender->reload(this);
+                mRender.reload(this);
             }
         }
     }
