@@ -5,13 +5,21 @@ namespace Plutus
 {
 
     Vec2f Entity::getPosition() {
-        auto trans = &(mScene->mRegistry.get<TransformComponent>(mId));
+        auto trans = getComponent<TransformComponent>();
         return trans ? trans->getPosition() : Vec2f{};
     }
 
     Vec2f Entity::getCenter() {
-        auto trans = &(mScene->mRegistry.get<TransformComponent>(mId));
+        auto trans = getComponent<TransformComponent>();
         return trans ? trans->getCenter() : Vec2f{};
+    }
+
+    Vec2f Entity::getDirection(Entity& Ent) {
+        if (isValid() && Ent) {
+
+            return (getCenter() - Ent.getCenter()).unit();
+        }
+        return {};
     }
 
     const std::string Entity::getName()

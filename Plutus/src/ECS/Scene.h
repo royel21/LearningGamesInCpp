@@ -29,6 +29,7 @@ namespace Plutus
         const std::string getName();
         Vec2f getPosition();
         Vec2f getCenter();
+        Vec2f getDirection(Entity& Ent);
 
 
         void setName(const std::string& name);

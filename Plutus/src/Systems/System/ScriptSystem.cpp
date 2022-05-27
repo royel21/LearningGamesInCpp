@@ -138,6 +138,7 @@ namespace Plutus
         entity["getName"] = &Entity::getName;
         entity["getPosition"] = &Entity::getPosition;
         entity["getCenter"] = &Entity::getCenter;
+        entity["getDirection"] = &Entity::getDirection;
     }
 
     void ScriptSystem::registerComponents()

@@ -1,6 +1,6 @@
 local curAnime = "flight-down"
 
-local SPEED = 7.5
+local SPEED = 7
 
 local rbody
 local entToFollow
@@ -18,10 +18,10 @@ function move(x, y) rbody:applyForce(x, y) end
 function update(dt)
 
     if entToFollow ~= nil then
-        local dir = entToFollow:getCenter():getDirection(Bat:getPosition());
-        print("pos:", dir.x, dir.y)
+        local dir = entToFollow:getDirection(Bat);
         dir.x = dir.x * SPEED
         dir.y = dir.y * SPEED
+
         move(dir.x, dir.y)
 
         if dir.y > 0 then
@@ -53,4 +53,5 @@ end
 function collisionEnd(entId, isSensor) if isSensor then entToFollow = nil end end
 
 function destroy() end
+
 
