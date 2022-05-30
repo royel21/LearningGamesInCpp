@@ -65,7 +65,8 @@ namespace Plutus
         template<typename T>
         inline uint32_t getListId()
         {
-            return getId();
+            static int id = getId();
+            return id;
         }
     };
 } // namespace Plutus
