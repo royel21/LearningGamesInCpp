@@ -60,7 +60,6 @@ namespace Plutus
         shape->pos = { 10, 10 };
         shape->Points.push_back({ 100, 30 });
         shape->Points.push_back({ 50, 50 });
-        // shape->Points.push_back({ 0, 100 });
     }
 
     void App::Update(float dt)

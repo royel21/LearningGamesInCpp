@@ -4,26 +4,31 @@ local SPEED = 7
 
 local rbody
 local trans
+local anim
 local entToFollow
 
 print("enemy-ia")
 
 function init()
-    local anim = Bat:getAnimate()
-    if anim then anim:play(curAnime) end
-    rbody = Bat:getRigidBody()
-	trans=Bat:getTransform()
+    anim = entity:getAnimate()
+    if anim then
+        anim:play(curAnime)
+    end
+    rbody = entity:getRigidBody()
+    trans = entity:getTransform()
 end
 
-function move(x, y) rbody:applyForce(x, y) end
+function move(x, y)
+    rbody:applyForce(x, y)
+end
 
 function update(dt)
 
-    if entToFollow ~= nil and entToFollow:getDistance(Bat) > trans.w then
-        local dir = entToFollow:getDirection(Bat)
+    if entToFollow ~= nil and entToFollow:getDistance(entity) > trans.w then
+        local dir = entToFollow:getDirection(entity)
         dir.x = dir.x * SPEED
         dir.y = dir.y * SPEED
-		
+
         move(dir.x, dir.y)
 
         local stateH
@@ -47,35 +52,21 @@ function update(dt)
             direction = stateH
         end
     end
-    Bat:getAnimate():play("flight-" .. direction)
+    anim:play("flight-" .. direction)
 end
 
 function collisionStart(entId, isSensor)
-   if isSensor then entToFollow = scene:getEntity(entId) end
+    if isSensor then
+        entToFollow = scene:getEntity(entId)
+    end
 end
 
-function collisionEnd(entId, isSensor) 
-	if isSensor then
-		print(scene:getEntity(entId):getName(), isSensor) 
-		entToFollow = nil 
-	end 
+function collisionEnd(entId, isSensor)
+    if isSensor then
+        entToFollow = nil
+    end
 end
 
-function destroy() end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+function destroy()
+end
 

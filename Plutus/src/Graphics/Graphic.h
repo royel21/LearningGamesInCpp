@@ -74,7 +74,13 @@ namespace Plutus
         //Enable blend mode GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA or addictive GL_SRC_ALPHA, GL_ONE
         inline static void enableBlend(bool additive = false) {
             glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, additive ? GL_ONE : GL_ONE_MINUS_SRC_ALPHA);
+            if (additive) {
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            }
+            else
+            {
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            }
         }
 
         inline static void disableBlend() {

@@ -14,6 +14,7 @@ local direction = "right";
 local state = ""
 
 local rbody
+local anim
 
 local size = camera:getVPSize();
 
@@ -25,11 +26,12 @@ local bounds = Vec4f.new(0, 0, 1280 - size.x, 768 - size.y)
 camera:setBounds(bounds);
 
 function init()
-    camera:setTarget(Player2, vec)
-    local anim = Player2:getAnimate()
+    anim = entity:getAnimate()
+ 	rbody = entity:getRigidBody()
+
     if anim then anim:play(curAnime) end
-    rbody = Player2:getRigidBody()
-    -- rbody:setMaxVelocity(1, 1)
+   
+    camera:setTarget(entity, vec)
 
     print("player2 init")
 end
@@ -57,7 +59,6 @@ end
 function jump() rbody:applyImpulse(0, 0.3) end
 
 function update(dt)
-    local anim = Player2:getAnimate()
     -- local v = rbody:getVelocity()
     -- print(v.x)
 
@@ -123,4 +124,5 @@ function update(dt)
         state = "     "
     end
 end
+
 
