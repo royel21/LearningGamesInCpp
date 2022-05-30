@@ -1,52 +1,25 @@
 #pragma once
 
 #include <vector>
-#include "System/System.h"
 
 namespace Plutus
 {
+    class ISystem;
     struct Project;
 
     class SystemManager
     {
+
     public:
         SystemManager() = default;
         ~SystemManager() { cleanup(); };
 
         void setProject(Project* project) { mProject = project; }
 
-        inline void init() {
-            for (auto& sys : mSystems) {
-                if (sys) {
-                    sys->setManager(this);
-                    sys->setProject(mProject);
-                    sys->init();
-                }
-            }
-        }
+        void init();
+        void update(float dt);
+        void stop();
 
-        inline void update(float dt) {
-            for (auto& sys : mSystems) {
-                if (sys)sys->update(dt);
-            }
-        }
-
-        inline void stop() {
-            for (auto& sys : mSystems) {
-                if (sys)sys->destroy();
-            }
-        }
-
-        inline void cleanup() {
-            for (size_t i = 0; i < mSystems.size(); i++)
-            {
-                if (mSystems[i]) {
-                    mSystems[i]->destroy();
-                    delete mSystems[i];
-                    mSystems[i] = nullptr;
-                }
-            }
-        }
 
         template <typename T, typename... TArgs>
         T* AddSystem(TArgs &&... args)
@@ -78,6 +51,8 @@ namespace Plutus
             return mSystems[getListId<T>()] != nullptr;
         }
 
+        void cleanup();
+
     private:
         Project* mProject;
         std::vector<ISystem*> mSystems;
@@ -90,8 +65,7 @@ namespace Plutus
         template<typename T>
         inline uint32_t getListId()
         {
-            static int id = getId();
-            return id;
+            return getId();
         }
     };
 } // namespace Plutus
