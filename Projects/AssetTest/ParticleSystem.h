@@ -34,7 +34,7 @@ namespace Plutus
     public:
         ParticleSystem(Camera2D* camera) : ISystem(camera) {};
         ~ParticleSystem();
-        void init(Project* project);
+        void init();
         void update(float dt);
         inline void setBlend(bool blend) { mBlend = blend; };
 

@@ -30,9 +30,8 @@ namespace Plutus
         }
     };
 
-    void TileMapSystem::init(Project* project)
+    void TileMapSystem::init()
     {
-        mProject = project;
         mShader.init(MapShader::vertexShader, MapShader::fragShader, MapShader::geoShader);
 
         auto mapView = mProject->scene->getRegistry()->view<TileMapComponent>();

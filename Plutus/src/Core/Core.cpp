@@ -3,7 +3,6 @@
 #include "IScreen.h"
 
 #include <Time/Timer.h>
-#include <Input/Input.h>
 #include <Graphics/GLheaders.h>
 
 #ifdef __EMSCRIPTEN__
@@ -21,6 +20,7 @@ namespace Plutus
 #endif
     void Core::init() {
         Time::init();
+        mInput = Input::get();
 
         if (mProject) {
             mWidth = mProject.winWidth;
@@ -71,7 +71,7 @@ namespace Plutus
                 Update(dt);
                 Draw();
             }
-            Input::get()->update();
+            mInput->update();
             mWindow.update();
             mLimiter.end();
 

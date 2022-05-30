@@ -22,7 +22,7 @@ namespace Plutus
         TileMapSystem(Camera2D* camera) : ISystem(camera) {  };
         ~TileMapSystem() { destroy(); }
 
-        void init(Project* project);
+        void init();
         void update(float dt);
         void destroy() override;
 

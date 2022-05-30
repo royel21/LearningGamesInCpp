@@ -9,8 +9,7 @@
 
 namespace Plutus
 {
-    void AnimationSystem::init(Project* project) {
-        mProject = project;
+    void AnimationSystem::init() {
         auto view = mProject->scene->getRegistry()->view<SpriteComponent, AnimationComponent>();
         for (auto ent : view)
         {

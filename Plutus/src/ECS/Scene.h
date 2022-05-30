@@ -30,6 +30,7 @@ namespace Plutus
         Vec2f getPosition();
         Vec2f getCenter();
         Vec2f getDirection(Entity& Ent);
+        float getDistance(Entity& Ent);
 
 
         void setName(const std::string& name);
@@ -94,7 +95,15 @@ namespace Plutus
 
         template<typename T>
         T* getComponent(uint32_t id) {
-            return getEntity(id).getComponent<T>();
+            return getComponent<T>(entt::entity(id));
+        }
+
+        template<typename T>
+        T* getComponent(entt::entity id) {
+            if (mRegistry.valid(id) && mRegistry.any_of<T>(id)) {
+                return  &(mRegistry.get<T>(id));
+            }
+            return nullptr;
         }
 
         void copyScene(Scene* scene);
@@ -107,6 +116,16 @@ namespace Plutus
         inline entt::registry* getRegistry() { return &mRegistry; }
         // remove all entity from scene
         inline void clear() { mRegistry.clear(); mBGColor = { 255,255,255,255 }; }
+
+        template<typename... T>
+        inline auto getView() {
+            return mRegistry.view<T...>();
+        }
+
+        template<typename... T>
+        inline auto getGroup() {
+            return mRegistry.group<T...>();
+        }
 
     private:
         entt::registry mRegistry;

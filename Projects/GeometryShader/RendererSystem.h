@@ -27,7 +27,7 @@ namespace Plutus
         RendererSystem(Camera2D* camera) : ISystem(camera) {};
         ~RendererSystem() { destroy(); }
 
-        void init(Project* project) override;
+        void init() override;
         void update(float dt) override;
         void destroy() override;
 

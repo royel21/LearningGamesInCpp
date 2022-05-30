@@ -14,8 +14,7 @@
 
 namespace Plutus
 {
-    void RendererSystem::init(Project* project) {
-        mProject = project;
+    void RendererSystem::init() {
 
         mTilemapShader.init(GLSLBatch::tmapVShader, GLSLBatch::tmapFShader);
         mSpriteShader.init(GLSLBatch::spriteVShader, GLSLBatch::spriteFShader);

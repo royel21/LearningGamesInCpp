@@ -3,7 +3,6 @@
 
 namespace Plutus
 {
-
     Vec2f Entity::getPosition() {
         auto trans = getComponent<TransformComponent>();
         return trans ? trans->getPosition() : Vec2f{};
@@ -16,10 +15,16 @@ namespace Plutus
 
     Vec2f Entity::getDirection(Entity& Ent) {
         if (isValid() && Ent) {
-
             return (getCenter() - Ent.getCenter()).unit();
         }
         return {};
+    }
+
+    float Entity::getDistance(Entity& Ent) {
+        if (isValid() && Ent) {
+            return (getCenter() - Ent.getCenter()).length();
+        }
+        return 0;
     }
 
     const std::string Entity::getName()

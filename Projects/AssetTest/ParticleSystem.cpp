@@ -28,10 +28,8 @@ namespace Plutus
         Graphic::destroy(&mVAO, &mVBO);
     }
 
-    void ParticleSystem::init(Project* project)
+    void ParticleSystem::init()
     {
-        mProject = project;
-
         mShader.init(ParticleShader::vertexShader, ParticleShader::fragShader, ParticleShader::geoShader);
 
         mBatches[-1];

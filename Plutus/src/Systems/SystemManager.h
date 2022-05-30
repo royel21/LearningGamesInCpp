@@ -1,27 +1,26 @@
 #pragma once
 
 #include <vector>
-#include <unordered_map>
 
 namespace Plutus
 {
     class ISystem;
     struct Project;
 
+
     class SystemManager
     {
 
     public:
-        SystemManager();
+        SystemManager() = default;
         ~SystemManager() { cleanup(); };
 
         void setProject(Project* project) { mProject = project; }
 
         void init();
+        void update(float dt);
         void stop();
 
-        void update(float dt);
-        void draw();
 
         template <typename T, typename... TArgs>
         T* AddSystem(TArgs &&... args)

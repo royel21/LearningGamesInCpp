@@ -15,23 +15,17 @@
 
 #include <Core/Project.h>
 
+#include <Events/EventSystem.h>
+#include <Events/CollisionEvent.h>
+#include <Serialize/SceneLoader.h>
+
+#include "../SystemManager.h"
+#include "PhysicSystem.h"
+
 namespace Plutus
 {
-
-    void ScriptSystem::init(Project* project)
-    {
-        mProject = project;
-        //Scene References
-        mGlobalLua.set("scene", project->scene.get());
-
-        auto view = project->scene->getRegistry()->view<ScriptComponent>();
-
-        for (auto [ent, script] : view.each()) {
-            script.init(mGlobalLua, { ent, project->scene.get() });
-        }
-    }
-
     ScriptSystem::ScriptSystem(Camera2D* camera) : ISystem(camera) {
+
         mGlobalLua.open_libraries(
             sol::lib::base,
             sol::lib::math
@@ -44,6 +38,8 @@ namespace Plutus
         /*****************************Register EntityManager**********************************************/
         auto scene_table = mGlobalLua.new_usertype<Scene>("Scene");
         scene_table["getEntity"] = sol::overload(&Scene::getEntityByName, &Scene::getEntity);
+
+        mGlobalLua["SceneLoader"] = &SceneLoader::loadFromPath;
 
         /*****************************Register Input manager**********************************************/
         auto input = mGlobalLua.new_usertype<Input>("Input");
@@ -63,10 +59,24 @@ namespace Plutus
         lua_vec4["z"] = &Vec4f::z;
         lua_vec4["w"] = &Vec4f::w;
 
+        registerEntity();
         registerAssets();
         registerCamera();
-        registerEntity();
         registerComponents();
+    }
+
+    void ScriptSystem::init()
+    {
+        //Scene References
+        mGlobalLua.set("scene", mProject->scene.get());
+
+        auto view = mProject->scene->getRegistry()->view<ScriptComponent>();
+
+        for (auto [ent, script] : view.each()) {
+            script.init(mGlobalLua, { ent, mProject->scene.get() });
+        }
+
+        mSysManager->getSystem<PhysicSystem>()->AddListener(this);
     }
 
     void ScriptSystem::update(float dt)
@@ -82,8 +92,17 @@ namespace Plutus
     {
         /*****************************Register AssetManager**********************************************/
         auto assetManager_table = mGlobalLua.new_usertype<AssetManager>("AssetManager");
-        assetManager_table["addSound"] = sol::overload(&AssetManager::addAsset<Sound, std::string>, &AssetManager::addAsset<Sound, std::string, int>);
+        assetManager_table["addSound"] = sol::overload(
+            &AssetManager::addAsset<Sound, std::string>,
+            &AssetManager::addAsset<Sound, std::string, int>
+        );
         assetManager_table["removeSound"] = &AssetManager::removeAsset<Sound>;
+
+        /**************************Register Font Asset*************************************************/
+        mGlobalLua.new_usertype<Font>("Font", sol::constructors<Font(const std::string&, int)>());
+
+        /**************************Register Font Asset*************************************************/
+        mGlobalLua.new_usertype<Script>("Script", sol::constructors<Script(const std::string&)>());
 
         /**************************Register Sound Asset*************************************************/
         auto sound_table = mGlobalLua.new_usertype<Sound>("Sound",
@@ -104,7 +123,11 @@ namespace Plutus
             Texture(const std::string&, int, int),
             Texture(const std::string&, int, int, GLint)>()
             );
-        texture_table["getUV"] = sol::overload(&Texture::getUV<int>, &Texture::getUV<float, float, float, float>);
+
+        texture_table["getUV"] = sol::overload(
+            &Texture::getUV<int>,
+            &Texture::getUV<float, float, float, float>
+        );
     }
 
     void ScriptSystem::registerCamera() {
@@ -138,6 +161,7 @@ namespace Plutus
         entity["getPosition"] = &Entity::getPosition;
         entity["getCenter"] = &Entity::getCenter;
         entity["getDirection"] = &Entity::getDirection;
+        entity["getDistance"] = &Entity::getDistance;
     }
 
     void ScriptSystem::registerComponents()
@@ -155,7 +179,8 @@ namespace Plutus
         /*******************************************Register Animation Sequence**********************************************/
         auto sequence = mGlobalLua.new_usertype<Sequence>("Sequence",
             sol::constructors<Sequence(),
-            Sequence(const std::string&, std::vector<uint32_t>, int)>());
+            Sequence(const std::string&, std::vector<uint32_t>, int)>()
+            );
 
         sequence["frames"] = &Sequence::mFrames;
         sequence["texId"] = &Sequence::mTexId;
@@ -190,5 +215,19 @@ namespace Plutus
 
         velocity["velocity"] = &VelocityComponent::mVelocity;
         velocity["setVel"] = &VelocityComponent::setVel;
+    }
+
+    void ScriptSystem::CollisionEvent(uint32_t ent1, bool isSensorA, uint32_t ent2, bool isSensorB, bool collisionStart) {
+        auto script1 = mProject->scene->getComponent<ScriptComponent>(ent1);
+        auto script2 = mProject->scene->getComponent<ScriptComponent>(ent2);
+
+        if (collisionStart) {
+            if (script1) script1->CollisionStart(ent2, isSensorA);
+            if (script2) script2->CollisionStart(ent1, isSensorB);
+        }
+        else {
+            if (script1) script1->CollisionEnd(ent2, isSensorA);
+            if (script2) script2->CollisionEnd(ent1, isSensorB);
+        }
     }
 }

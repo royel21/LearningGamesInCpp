@@ -2,24 +2,18 @@
 
 #include "Systems.h"
 
+#include <Events/EventSystem.h>
+
 namespace Plutus
 {
-
-    SystemManager::SystemManager() {
-        mSystems.resize(6);
-
-        mSystems[getListId<ScriptSystem>()] = nullptr;
-        mSystems[getListId<PhysicSystem>()] = nullptr;
-        mSystems[getListId<AnimationSystem>()] = nullptr;
-        mSystems[getListId<TileMapSystem>()] = nullptr;
-        mSystems[getListId<RenderSystem>()] = nullptr;
-        // mSystems[getListId<DebugSystem>()] = nullptr;
-    }
-
     void SystemManager::init()
     {
         for (auto& sys : mSystems) {
-            if (sys)sys->init(mProject);
+            if (sys) {
+                sys->setManager(this);
+                sys->setProject(mProject);
+                sys->init();
+            }
         }
     }
 
@@ -35,6 +29,8 @@ namespace Plutus
         for (auto& sys : mSystems) {
             if (sys)sys->update(dt);
         }
+
+        EventSystem::get()->cleanUp();
     }
 
     void SystemManager::cleanup()
@@ -47,6 +43,7 @@ namespace Plutus
                 mSystems[i] = nullptr;
             }
         }
+        EventSystem::get()->cleanUp();
     }
 
 } // namespace Plutus

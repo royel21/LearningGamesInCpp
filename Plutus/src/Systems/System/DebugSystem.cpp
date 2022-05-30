@@ -11,9 +11,8 @@
 
 namespace Plutus
 {
-    void DebugSystem::init(Project* project)
+    void DebugSystem::init()
     {
-        mProject = project;
         mDebug = DebugRender::get();
         mDebug->init(mCamera);
     }

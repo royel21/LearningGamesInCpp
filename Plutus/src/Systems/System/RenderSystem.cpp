@@ -19,8 +19,7 @@ namespace Plutus
         mRenderer.init();
     }
 
-    void RenderSystem::init(Project* project) {
-        mProject = project;
+    void RenderSystem::init() {
         mRenderer.setCamera(mCamera);
     }
 

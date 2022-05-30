@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include <Core/Window.h>
+#include <Input/Input.h>
 #include <Time/Limiter.h>
 #include <Graphics/Camera2D.h>
 
@@ -13,6 +14,7 @@
 namespace Plutus
 {
     class IScreen;
+    class Input;
     /**
      * Base Class for create an app
      * @param mWidth
@@ -44,9 +46,11 @@ namespace Plutus
         //Game Main Camera
         Camera2D mCamera;
 
+        Input* mInput;
         std::string mNextScreen;
         IScreen* mCurrentScreen = nullptr;
         std::unordered_map<std::string, IScreen*> mScreenList;
+
 
     public:
         Project mProject;
