@@ -1,16 +1,14 @@
 #pragma once
 
 #include <vector>
+#include "System/System.h"
 
 namespace Plutus
 {
-    class ISystem;
     struct Project;
-
 
     class SystemManager
     {
-
     public:
         SystemManager() = default;
         ~SystemManager() { cleanup(); };
@@ -49,7 +47,6 @@ namespace Plutus
                 }
             }
         }
-
 
         template <typename T, typename... TArgs>
         T* AddSystem(TArgs &&... args)
