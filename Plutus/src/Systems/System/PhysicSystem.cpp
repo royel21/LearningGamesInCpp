@@ -1,18 +1,15 @@
 #include "PhysicSystem.h"
+#include "EventListener/ICollisionListener.h"
 
+#include <cmath>
 #include <box2d/box2d.h>
 
 #include <ECS/Scene.h>
 #include <Log/Logger.h>
+#include <Math/Vectors.h>
+#include <Core/Project.h>
 #include <ECS/Components.h>
 
-#include <Math/Vectors.h>
-
-#include <Core/Project.h>
-
-#include <cmath>
-
-#include "EventListener/ICollisionListener.h"
 
 namespace Plutus
 {

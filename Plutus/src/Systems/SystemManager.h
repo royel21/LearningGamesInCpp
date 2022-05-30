@@ -17,9 +17,38 @@ namespace Plutus
 
         void setProject(Project* project) { mProject = project; }
 
-        void init();
-        void update(float dt);
-        void stop();
+        inline void init() {
+            for (auto& sys : mSystems) {
+                if (sys) {
+                    sys->setManager(this);
+                    sys->setProject(mProject);
+                    sys->init();
+                }
+            }
+        }
+
+        inline void update(float dt) {
+            for (auto& sys : mSystems) {
+                if (sys)sys->update(dt);
+            }
+        }
+
+        inline void stop() {
+            for (auto& sys : mSystems) {
+                if (sys)sys->destroy();
+            }
+        }
+
+        inline void cleanup() {
+            for (size_t i = 0; i < mSystems.size(); i++)
+            {
+                if (mSystems[i]) {
+                    mSystems[i]->destroy();
+                    delete mSystems[i];
+                    mSystems[i] = nullptr;
+                }
+            }
+        }
 
 
         template <typename T, typename... TArgs>
@@ -51,8 +80,6 @@ namespace Plutus
         {
             return mSystems[getListId<T>()] != nullptr;
         }
-
-        void cleanup();
 
     private:
         Project* mProject;
