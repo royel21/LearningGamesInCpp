@@ -22,7 +22,8 @@ extern "C"
 #endif
 
 // extern "C" {
-//     _declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+//     _declspec(dllexport) unsigned long NvOptimusEnablement = 1;
+//     _declspec(dllexport) unsigned long AmdPowerXpressRequestHighPerformance = 1;
 // }
 
 #include <Input/Input.h>

@@ -29,7 +29,7 @@ namespace Plutus
         mProject.gravity = { 0,0 };
 
         mSysManager.setProject(&mProject);
-        for (size_t i = 0; i < 15; i++)
+        for (size_t i = 0; i < 25; i++)
         {
             auto ent = mProject.scene->createEntity("PhysicTest - " + std::to_string(i));
             float x = (float)Utils::getRandom(10, 1100);
@@ -49,9 +49,16 @@ namespace Plutus
         mSysManager.init();
 
         mPhysicSys->mRayCallBack = [&](b2Fixture* fixture, Vec2f point, Vec2f normal, float fraction) -> float {
-            Math::Log(point);
+            // Math::Log(point);
             auto entId = fixture->GetBody()->GetUserData().pointer;
-            Logger::info("Ent: %i frac:%0.4f", entId, fraction);
+            // Logger::info("Ent: %i frac:%0.4f", entId, fraction);
+            return 1.0f;
+        };
+
+        mPhysicSys->mQueryCallBack = [&](b2Fixture* fixture) -> bool {
+
+            auto entId = fixture->GetBody()->GetUserData().pointer;
+            Logger::info("Ent: %i frac:%0.4f", entId);
             return 1.0f;
         };
 
@@ -83,7 +90,20 @@ namespace Plutus
             start = mInput->getMouseCoords();
         }
 
-        mDbebug->drawOneLine(start, end);
+        auto pos = mInput->getMouseCoords();
+
+        Vec4f rect = { pos.x - 100, pos.y - 100, 200, 200 };
+
+        if (mInput->onKeyDown("MouseLeft")) {
+            // if (start != end) {
+            //     mPhysicSys->CastRay(start, end);
+            // }
+            mPhysicSys->queryWorld(rect);
+            Logger::info("end Querying");
+        }
+
+        mDbebug->drawRect(rect);
+        mDbebug->drawLine(start, end);
     }
 
     void App::Exit()

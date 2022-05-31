@@ -8,8 +8,11 @@
 
 #include <box2d/box2d.h>
 #include <Math/Vectors.h>
+#include <ECS/Components.h>
 
 namespace Plutus {
+
+	constexpr float QUERYOFFSET = 2;
 
 	class ICollisionListener;
 
@@ -18,9 +21,10 @@ namespace Plutus {
 		bool isSensor;
 	};
 
-	class PhysicSystem : public ISystem, public b2ContactListener, public b2RayCastCallback {
+	class PhysicSystem : public ISystem, public b2ContactListener, public b2RayCastCallback, public b2QueryCallback {
 	public:
 		std::function<float(b2Fixture*, Vec2f, Vec2f, float)> mRayCallBack = nullptr;
+		std::function<bool(b2Fixture*)> mQueryCallBack = nullptr;
 
 		~PhysicSystem() { destroy(); };
 
@@ -32,9 +36,22 @@ namespace Plutus {
 		// Called when two fixtures cease to touch
 		void EndContact(b2Contact* contact) override;
 
-		void CastRay(const Vec2f& start, const Vec2f& end);
+		void CastRay(const Vec2f& start, const Vec2f& end) {
+			mWorld->RayCast(this, toWorld(start), toWorld(end));
+		}
 
-		float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override;
+		void queryWorld(const Vec4f& rect) {
+			b2AABB aabb;
+			aabb.lowerBound = toWorld(rect.getLower() + QUERYOFFSET);
+			aabb.upperBound = toWorld(rect.getUpper() - QUERYOFFSET);
+			mWorld->QueryAABB(this, aabb);
+		}
+
+		bool ReportFixture(b2Fixture* fixture) override { return mQueryCallBack ? mQueryCallBack(fixture) : false; }
+
+		float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override {
+			return mRayCallBack ? mRayCallBack(fixture, fromWorld(point), fromWorld(normal), fraction) : 0;
+		}
 
 		void AddListener(ICollisionListener* listener) {
 			mCollisionListener.push_back(listener);

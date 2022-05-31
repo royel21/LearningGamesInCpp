@@ -55,7 +55,13 @@ namespace Plutus
 			submitCircle({ c->pos.x, c->pos.y }, c->radius, color);
 		}
 
-		inline void drawOneLine(const Vec2f& a, const Vec2f& b, float angle = 0, const ColorRGBA8& color = {}) {
+		inline void drawRect(const Vec4f& rect, const ColorRGBA8& color = {}) {
+			submitBox(rect, 0, color);
+			end();
+			render();
+		}
+
+		inline void drawLine(const Vec2f& a, const Vec2f& b, float angle = 0, const ColorRGBA8& color = {}) {
 			submitLine(a, b, angle, color);
 			end();
 			render();

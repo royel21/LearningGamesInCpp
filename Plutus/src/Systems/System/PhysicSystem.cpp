@@ -2,13 +2,10 @@
 #include "EventListener/ICollisionListener.h"
 
 #include <cmath>
-#include <box2d/box2d.h>
 
 #include <ECS/Scene.h>
 #include <Log/Logger.h>
-#include <Math/Vectors.h>
 #include <Core/Project.h>
-#include <ECS/Components.h>
 
 
 namespace Plutus
@@ -162,23 +159,6 @@ namespace Plutus
         bool sensorB = contact->GetFixtureB()->IsSensor();
 
         mCollisionsEnd.push_back({ {entA, sensorA}, {entB, sensorB} });
-    }
-
-    void PhysicSystem::CastRay(const Vec2f& start, const Vec2f& end)
-    {
-        auto p1 = toWorld(start);
-        auto p2 = toWorld(end);
-
-        mWorld->RayCast(this, p1, p2);
-    }
-
-    float PhysicSystem::ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction)
-    {
-        if (mRayCallBack) {
-            return mRayCallBack(fixture, fromWorld(point), fromWorld(normal), fraction);
-        }
-
-        return 0;
     }
 } // namespace Plutus
 

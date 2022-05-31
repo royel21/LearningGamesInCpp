@@ -139,5 +139,9 @@ namespace Plutus
         bool contain(const Vec2f& v);
         bool contain(const Vec4f& v);
         bool overlap(const Vec4f& v);
+
+        inline Vec2f getCenter() const { return { x + (z * 0.5f), y + (w * 0.5f) }; }
+        inline Vec2f getLower() const { return { x, y }; }
+        inline Vec2f getUpper() const { return { x + z, y + w }; }
     };
 } // namespace Plutus
