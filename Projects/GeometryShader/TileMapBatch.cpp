@@ -46,13 +46,13 @@ namespace Plutus
             if (tex) {
                 textures[t.texture] = tex;
 
-                auto rect = tilemap->getRect(t);
+                auto vertices = tilemap->getRect(t).getvertices();
                 auto uv = tex->getUV(t.texcoord);
 
-                tiles.emplace_back(rect.x, rect.y, uv.x, uv.w, t.texture);
-                tiles.emplace_back(rect.x, rect.y + rect.w, uv.x, uv.y, t.texture);
-                tiles.emplace_back(rect.x + rect.z, rect.y + rect.w, uv.z, uv.y, t.texture);
-                tiles.emplace_back(rect.x + rect.z, rect.y, uv.z, uv.w, t.texture);
+                tiles.emplace_back(vertices[0], uv.x, uv.w, t.texture);
+                tiles.emplace_back(vertices[1], uv.x, uv.y, t.texture);
+                tiles.emplace_back(vertices[2], uv.z, uv.y, t.texture);
+                tiles.emplace_back(vertices[3], uv.z, uv.w, t.texture);
 
                 mVerCount += 6;
                 totalTiles++;

@@ -12,6 +12,9 @@
 #include "ShapeSystem.h"
 #include "ShapeComponent.h"
 
+#include <Time/Timer.h>
+#include <Math/PMath.h>
+
 namespace Plutus
 {
     App::App() {
@@ -24,6 +27,8 @@ namespace Plutus
 
     void App::Init()
     {
+        mEntities.reserve(50);
+
         mDbebug = DebugRender::get();
 
         mProject.gravity = { 0,0 };
@@ -49,16 +54,22 @@ namespace Plutus
         mSysManager.init();
 
         mPhysicSys->mRayCallBack = [&](b2Fixture* fixture, Vec2f point, Vec2f normal, float fraction) -> float {
-            // Math::Log(point);
-            auto entId = fixture->GetBody()->GetUserData().pointer;
-            // Logger::info("Ent: %i frac:%0.4f", entId, fraction);
-            return 1.0f;
+            if (fraction == 1) {
+                mPoint = point;
+                blocked = fraction != 1;
+            }
+            else {
+                blocked = true;
+                return 0;
+            }
+
+            return 1;
         };
 
         mPhysicSys->mQueryCallBack = [&](b2Fixture* fixture) -> bool {
 
             auto entId = fixture->GetBody()->GetUserData().pointer;
-            Logger::info("Ent: %i frac:%0.4f", entId);
+            mEntities.push_back(entId);
             return 1.0f;
         };
 
@@ -68,6 +79,7 @@ namespace Plutus
         shape->Points.push_back({ 100, 30 });
         shape->Points.push_back({ 50, 50 });
     }
+
 
     void App::Update(float dt)
     {
@@ -92,18 +104,49 @@ namespace Plutus
 
         auto pos = mInput->getMouseCoords();
 
-        Vec4f rect = { pos.x - 100, pos.y - 100, 200, 200 };
+        Vec4f rect = { pos.x - 200, pos.y - 200, 400, 400 };
 
         if (mInput->onKeyDown("MouseLeft")) {
-            // if (start != end) {
-            //     mPhysicSys->CastRay(start, end);
-            // }
+            auto start = Time::micros();
             mPhysicSys->queryWorld(rect);
-            Logger::info("end Querying");
-        }
+            // Logger::info("end Querying: %zu", mEntities.size());
 
-        mDbebug->drawRect(rect);
+            if (mEntities.size()) {
+
+                for (auto ent : mEntities)
+                {
+                    auto vertices = mProject.scene->getTransform(ent)->getvertices();
+                    for (auto& v : vertices) {
+                        if (rect.contain(v)) {
+                            blocked = true;
+                            mPhysicSys->CastRay(rect.getCenter(), v);
+
+                            if (!blocked) {
+                                mVertices.push_back(mPoint);
+                            }
+                        }
+                    }
+                }
+
+                Logger::info("time: %llu", Time::micros() - start);
+
+                for (auto& v : mVertices) {
+                    mDbebug->submitLine(rect.getCenter(), v);
+                }
+
+                mVertices.clear();
+                mEntities.clear();
+            }
+        }
+        Logger::info("points: %zu", mVertices.size());
+        mDbebug->submitBox(rect);
+        mDbebug->end();
+        mDbebug->render();
         mDbebug->drawLine(start, end);
+        Vec2f p = end;
+        rotate(p, rect.getCenter(), -45);
+        mDbebug->drawLine(start, p);
+        mVertices.clear();
     }
 
     void App::Exit()

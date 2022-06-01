@@ -207,6 +207,7 @@ namespace Plutus
 			mShader.enable();
 			mShader.setUniformMat4("camera", mCamera->getCameraMatrix());
 			glLineWidth(lineWidth);
+			glEnable(GL_LINE_SMOOTH);
 
 			Graphic::bind(mVao, mIbo);
 

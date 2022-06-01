@@ -100,11 +100,6 @@ namespace Plutus
 		}
 
 	private:
-		Vec2f mtopLeft;
-		Vec2f mbottomLeft;
-		Vec2f mtopRight;
-		Vec2f mBottomRight;
-
 		void createVertices(uint32_t texture, const Vec4f& rect, Vec4f uv = DEF_UV, ColorRGBA8 c = {}, float r = 0, bool flipX = false, bool flipY = false, uint32_t entId = 0);
 		/*
 			Create a render Batch for this texture

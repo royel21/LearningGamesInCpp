@@ -69,24 +69,21 @@ namespace Plutus
 		if (flipY)
 			std::swap(uv.y, uv.w);
 
-		mbottomLeft = { rect.x, rect.y };
-		mtopLeft = { rect.x, rect.y + rect.w };
-		mtopRight = { rect.x + rect.z, rect.y + rect.w };
-		mBottomRight = { rect.x + rect.z, rect.y };
+		auto vertices = rect.getvertices();
 
 		if (r)
 		{
 			Vec2f center(rect.x + rect.z * 0.5f, rect.y + rect.w * 0.5f);
-			rotate(mbottomLeft, center, r);
-			rotate(mtopLeft, center, r);
-			rotate(mtopRight, center, r);
-			rotate(mBottomRight, center, r);
+			rotate(vertices[0], center, r);
+			rotate(vertices[1], center, r);
+			rotate(vertices[2], center, r);
+			rotate(vertices[3], center, r);
 		}
 
-		bufferVertices[mVertexCount++] = { mbottomLeft.x, mbottomLeft.y, uv.x, uv.w, c, id };
-		bufferVertices[mVertexCount++] = { mtopLeft.x, mtopLeft.y, uv.x, uv.y, c, id };
-		bufferVertices[mVertexCount++] = { mtopRight.x, mtopRight.y, uv.z, uv.y, c, id };
-		bufferVertices[mVertexCount++] = { mBottomRight.x, mBottomRight.y, uv.z, uv.w, c, id };
+		bufferVertices[mVertexCount++] = { vertices[0], uv.x, uv.w, c, id };
+		bufferVertices[mVertexCount++] = { vertices[1], uv.x, uv.y, c, id };
+		bufferVertices[mVertexCount++] = { vertices[2], uv.z, uv.y, c, id };
+		bufferVertices[mVertexCount++] = { vertices[3], uv.z, uv.w, c, id };
 	}
 
 	void SpriteBatch2D::submit(uint32_t texture, const Vec4f& rect, Vec4f uv, ColorRGBA8 c, float r, bool flipX, bool flipY, uint32_t entId) {

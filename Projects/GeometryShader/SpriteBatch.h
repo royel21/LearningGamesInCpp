@@ -31,10 +31,6 @@ namespace Plutus
         void destroy() override;
 
     private:
-        Vec2f mtopLeft;
-        Vec2f mbottomLeft;
-        Vec2f mtopRight;
-        Vec2f mBottomRight;
         uint32_t offset = 0;
         std::vector<BatchTex> mBatches;
         std::vector<SpriteVert> sprites;

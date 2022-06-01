@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 namespace Plutus
 {
     struct Vec2i;
@@ -143,5 +145,9 @@ namespace Plutus
         inline Vec2f getCenter() const { return { x + (z * 0.5f), y + (w * 0.5f) }; }
         inline Vec2f getLower() const { return { x, y }; }
         inline Vec2f getUpper() const { return { x + z, y + w }; }
+
+        std::array<Vec2f, 4> getvertices() const {
+            return std::array<Vec2f, 4>{ { {x, y}, { x,y + w }, { x + z, y + w }, { x + z, y } }};
+        }
     };
 } // namespace Plutus

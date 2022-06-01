@@ -41,6 +41,7 @@ namespace Plutus
         if (isValid())
             mScene->mRegistry.get<Tag>(mId).Name = name;
     }
+    /*******************************     Scene    ************************/
 
     Entity Scene::createEntity(const std::string& name)
     {
@@ -69,7 +70,14 @@ namespace Plutus
 
         return { ent, this };
     }
-    /*******************************     Scene    ************************/
+
+    TransformComponent* Scene::getTransform(entt::entity id) {
+        if (mRegistry.valid(id) && mRegistry.any_of<TransformComponent>(id)) {
+            return  &(mRegistry.get<TransformComponent>(id));
+        }
+
+        return nullptr;
+    }
 
     void Scene::copyScene(Scene* scene) {
 

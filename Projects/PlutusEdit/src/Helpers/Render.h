@@ -12,7 +12,7 @@ namespace Plutus
     class Scene;
     struct Config;
     class DebugRender;
-    class TransformComponent;
+    struct TransformComponent;
     struct PhysicBodyComponent;
 
     class Render

@@ -44,7 +44,7 @@ namespace Plutus
     }
 
     bool Vec4f::contain(const Vec2f& v) {
-        return v.x >= x && v.x >= y && v.x <= x + z && v.y <= y + w;
+        return v.x >= x && v.y >= y && v.x <= x + z && v.y <= y + w;
     }
 
     bool Vec4f::contain(const Vec4f& v) {

@@ -11,6 +11,7 @@ class b2World;
 namespace Plutus
 {
     class Scene;
+    struct TransformComponent;
 
     class Entity
     {
@@ -85,6 +86,9 @@ namespace Plutus
         Entity getEntity(int Id);
         Entity CreateCopy(Entity& ent);
         Entity getEntityByName(const std::string& name);
+
+        inline TransformComponent* getTransform(uint32_t id) { return getTransform(entt::entity(id)); }
+        TransformComponent* getTransform(entt::entity id);
 
         template<typename T>
         T* getComponentFromName(const std::string& name) {

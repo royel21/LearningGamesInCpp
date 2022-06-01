@@ -43,28 +43,23 @@ namespace Plutus {
         if (renderable->flipY)
             std::swap(uv.y, uv.w);
 
-        float w = rect.x + rect.z;
-        float h = rect.y + rect.w;
-
-        mbottomLeft = { rect.x, rect.y };
-        mtopLeft = { rect.x, h };
-        mtopRight = { w, h };
-        mBottomRight = { w, rect.y };
+        auto vertices = renderable->trans.getvertices();
 
         if (renderable->r)
         {
-            Vec2f center(w * 0.5f, h * 0.5f);
-
-            rotate(mbottomLeft, center, renderable->r);
-            rotate(mtopLeft, center, renderable->r);
-            rotate(mtopRight, center, renderable->r);
-            rotate(mBottomRight, center, renderable->r);
+            Vec2f center = vertices[2] * 0.5f;
+            rotate(vertices[0], center, renderable->r); // Bottom Left
+            rotate(vertices[1], center, renderable->r); // Top Left
+            rotate(vertices[2], center, renderable->r); // Top Right
+            rotate(vertices[3], center, renderable->r); // Bottom Left
         }
 
-        sprites.emplace_back(mbottomLeft.x, mbottomLeft.y, uv.x, uv.w, renderable->color);
-        sprites.emplace_back(mtopLeft.x, mtopLeft.y, uv.x, uv.y, renderable->color);
-        sprites.emplace_back(mtopRight.x, mtopRight.y, uv.z, uv.y, renderable->color);
-        sprites.emplace_back(mBottomRight.x, mBottomRight.y, uv.z, uv.w, renderable->color);
+        auto c = renderable->color;
+
+        sprites.emplace_back(vertices[0], uv.x, uv.w, c); // Bottom Left
+        sprites.emplace_back(vertices[1], uv.x, uv.y, c); // Top Left
+        sprites.emplace_back(vertices[2], uv.z, uv.y, c); // Top Right
+        sprites.emplace_back(vertices[3], uv.z, uv.w, c); // Bottom Left
     }
 
     void SpriteBatch::createBatch(Texture* tex) {
