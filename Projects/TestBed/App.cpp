@@ -106,46 +106,58 @@ namespace Plutus
 
         Vec4f rect = { pos.x - 200, pos.y - 200, 400, 400 };
 
-        if (mInput->onKeyDown("MouseLeft")) {
-            auto start = Time::micros();
-            mPhysicSys->queryWorld(rect);
-            // Logger::info("end Querying: %zu", mEntities.size());
+        // if (mInput->onKeyDown("MouseLeft")) {
+        //     auto start = Time::micros();
+        //     mPhysicSys->queryWorld(rect);
+        //     // Logger::info("end Querying: %zu", mEntities.size());
 
-            if (mEntities.size()) {
+        //     if (mEntities.size()) {
 
-                for (auto ent : mEntities)
-                {
-                    auto vertices = mProject.scene->getTransform(ent)->getvertices();
-                    for (auto& v : vertices) {
-                        if (rect.contain(v)) {
-                            blocked = true;
-                            mPhysicSys->CastRay(rect.getCenter(), v);
+        //         for (auto ent : mEntities)
+        //         {
+        //             auto vertices = mProject.scene->getTransform(ent)->getvertices();
+        //             for (auto& v : vertices) {
+        //                 if (rect.contain(v)) {
+        //                     blocked = true;
+        //                     mPhysicSys->CastRay(rect.getCenter(), v);
 
-                            if (!blocked) {
-                                mVertices.push_back(mPoint);
-                            }
-                        }
-                    }
-                }
+        //                     if (!blocked) {
+        //                         mVertices.push_back(mPoint);
+        //                     }
+        //                 }
+        //             }
+        //         }
 
-                Logger::info("time: %llu", Time::micros() - start);
+        //         Logger::info("time: %llu", Time::micros() - start);
 
-                for (auto& v : mVertices) {
-                    mDbebug->submitLine(rect.getCenter(), v);
-                }
+        //         for (auto& v : mVertices) {
+        //             mDbebug->submitLine(rect.getCenter(), v);
+        //         }
 
-                mVertices.clear();
-                mEntities.clear();
-            }
-        }
-        Logger::info("points: %zu", mVertices.size());
-        mDbebug->submitBox(rect);
+        //         mVertices.clear();
+        //         mEntities.clear();
+        //     }
+        // }
+        // Logger::info("points: %zu", mVertices.size());
+        // mDbebug->submitBox(rect);
+        // mDbebug->end();
+        // mDbebug->render();
+
+        // mDbebug->drawLine(start, end);
+
+        // Vec2f p = end;
+        // rotate(p, rect.getCenter(), -45);
+        // mDbebug->drawLine(start, p);
+        start = { mWidth * 0.5f, mHeight * 0.5f };
+        end = { mWidth * 1.0f, mHeight * 0.5f };
+        mDbebug->submitLine(start, end);
+        mDbebug->submitLine(start, rotateP(end, start, .1f));
+        mDbebug->submitLine(start, rotateP(end, start, -.1f));
+
+
         mDbebug->end();
         mDbebug->render();
-        mDbebug->drawLine(start, end);
-        Vec2f p = end;
-        rotate(p, rect.getCenter(), -45);
-        mDbebug->drawLine(start, p);
+
         mVertices.clear();
     }
 

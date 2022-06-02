@@ -20,6 +20,20 @@ namespace Plutus
         point.y = yPrime + origin.y;
     }
 
+    Vec2f rotateP(const Vec2f& point, const Vec2f& origin, float angle)
+    {
+        float x = point.x - origin.x;
+        float y = point.y - origin.y;
+
+        float cosAng = cosf(DEC2RA(angle));
+        float sinAng = sinf(DEC2RA(angle));
+
+        float xPrime = x * cosAng - y * sinAng;
+        float yPrime = x * sinAng + y * cosAng;
+
+        return { xPrime + origin.x,yPrime + origin.y };
+    }
+
     bool compareF(float x, float y, float epsilon)
     {
         return abs(x - y) <= epsilon * std::max(1.0f, std::max(abs(x), abs(y)));
