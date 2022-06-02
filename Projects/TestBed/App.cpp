@@ -14,6 +14,7 @@
 
 #include <Time/Timer.h>
 #include <Math/PMath.h>
+#include <Graphics/Graphic.h>
 
 namespace Plutus
 {
@@ -27,6 +28,15 @@ namespace Plutus
 
     void App::Init()
     {
+        mShader.init("Projects/TestBed/ver.glsl", "Projects/TestBed/frag.glsl");
+
+        mVAO = Graphic::createVertexArray();
+        mBuffId = Graphic::createBufferArray();
+
+        Graphic::setFAttribute(0, 2, 2 * sizeof(float));
+
+        Graphic::unBind();
+
         mEntities.reserve(50);
 
         mDbebug = DebugRender::get();
@@ -34,15 +44,36 @@ namespace Plutus
         mProject.gravity = { 0,0 };
 
         mSysManager.setProject(&mProject);
-        for (size_t i = 0; i < 25; i++)
-        {
-            auto ent = mProject.scene->createEntity("PhysicTest - " + std::to_string(i));
-            float x = (float)Utils::getRandom(10, 1100);
-            float y = (float)Utils::getRandom(10, 620);
+        if (true) {
+            for (size_t i = 0; i < 25; i++)
+            {
+                auto ent = mProject.scene->createEntity("PhysicTest - " + std::to_string(i));
+                float x = (float)Utils::getRandom(10, 1100);
+                float y = (float)Utils::getRandom(10, 620);
 
-            ent.addComponent<TransformComponent>(x, y, 60, 60);
+                ent.addComponent<TransformComponent>(x, y, 60, 60);
+
+                auto comp = ent.addComponent<RigidBodyComponent>();
+                comp->addBox({ 0,0 }, { 60, 60 });
+            }
+        }
+        else {
+            auto ent = mProject.scene->createEntity("PhysicTest");
+            ent.addComponent<TransformComponent>(300.0f, 300.0f, 60, 60);
 
             auto comp = ent.addComponent<RigidBodyComponent>();
+            comp->addBox({ 0,0 }, { 60, 60 });
+
+            ent = mProject.scene->createEntity("PhysicTest");
+            ent.addComponent<TransformComponent>(270.0f, 200.0f, 60, 60);
+
+            comp = ent.addComponent<RigidBodyComponent>();
+            comp->addBox({ 0,0 }, { 60, 60 });
+
+            ent = mProject.scene->createEntity("PhysicTest");
+            ent.addComponent<TransformComponent>(360.0f, 200.0f, 60, 60);
+
+            comp = ent.addComponent<RigidBodyComponent>();
             comp->addBox({ 0,0 }, { 60, 60 });
         }
 
@@ -54,15 +85,11 @@ namespace Plutus
         mSysManager.init();
 
         mPhysicSys->mRayCallBack = [&](b2Fixture* fixture, Vec2f point, Vec2f normal, float fraction) -> float {
-            if (fraction == 1) {
+            if (mDist > fraction) {
+                mDist = fraction;
                 mPoint = point;
-                blocked = fraction != 1;
+                hit = true;
             }
-            else {
-                blocked = true;
-                return 0;
-            }
-
             return 1;
         };
 
@@ -73,11 +100,11 @@ namespace Plutus
             return 1.0f;
         };
 
-        auto ent = mProject.scene->createEntity("shapec");
-        auto shape = ent.addComponent<ShapeComponent>();
-        shape->pos = { 10, 10 };
-        shape->Points.push_back({ 100, 30 });
-        shape->Points.push_back({ 50, 50 });
+        // ent = mProject.scene->createEntity("shapec");
+        // auto shape = ent.addComponent<ShapeComponent>();
+        // shape->pos = { 10, 10 };
+        // shape->Points.push_back({ 100, 30 });
+        // shape->Points.push_back({ 50, 50 });
     }
 
 
@@ -89,75 +116,106 @@ namespace Plutus
     Vec2f start;
     Vec2f end;
 
+    void App::castRay(const Vec2f& Start, const Vec2f& end, float max = 0, float angle) {
+        mDist = 1;
+        auto vEnd = end;
+
+        if (max) {
+            auto dir = (end - Start).unit();
+            vEnd = Start + (dir * max);
+        }
+
+        if (angle != 0) {
+            vEnd = rotateP(vEnd, Start, angle);
+        }
+        hit = false;
+        mPhysicSys->CastRay(Start, vEnd);
+        mVertices.push_back(hit ? mPoint : vEnd);
+    }
+
     void App::Draw()
     {
-        if (mInput->onKeyDown("MouseLeft")) {
-            end = mInput->getMouseCoords();;
-            if (start != end) {
-                mPhysicSys->CastRay(start, end);
+        if (true) {
+            auto pos = mInput->getMouseCoords();
+
+            Vec4f rect = { pos.x - 200, pos.y - 200, 400, 400 };
+            float max = rect.z * 0.5f;
+
+            if (mInput->onKeyDown("MouseLeft")) {
+                auto start = Time::micros();
+                mPhysicSys->queryWorld(rect);
+
+                if (mEntities.size()) {
+
+                    auto center = rect.getCenter();
+                    mVertices.push_back(center);
+                    auto vertices = rect.getvertices();
+                    for (auto& v : vertices) {
+                        castRay(center, v, max);
+                    }
+
+                    for (auto ent : mEntities)
+                    {
+                        vertices = mProject.scene->getTransform(ent)->getvertices();
+                        for (auto& v : vertices) {
+                            castRay(center, v, max);
+                            castRay(center, v, max, 0.10f);
+                            castRay(center, v, max, -0.10f);
+                        }
+                    }
+
+                    Logger::info("time: %llu", Time::micros() - start);
+
+                    for (auto& v : mVertices) {
+                        mDbebug->submitLine(center, v);
+                    }
+
+                    mEntities.clear();
+                }
             }
+
+            mDbebug->submitCircle(&Circle2d{ pos, 200.0f });
         }
+        else {
+            if (mInput->onKeyDown("MouseLeft")) {
+                end = mInput->getMouseCoords();;
+                if (start != end) {
+                    castRay(start, end);
+                    Logger::info("next");
+                }
+            }
 
-        if (mInput->onKeyPressed("MouseRight")) {
-            start = mInput->getMouseCoords();
+            if (mInput->onKeyPressed("MouseRight")) {
+                start = mInput->getMouseCoords();
+            }
+            mDbebug->submitLine(start, end);
+            mDbebug->submitLine(start, mPoint);
         }
-
-        auto pos = mInput->getMouseCoords();
-
-        Vec4f rect = { pos.x - 200, pos.y - 200, 400, 400 };
-
-        // if (mInput->onKeyDown("MouseLeft")) {
-        //     auto start = Time::micros();
-        //     mPhysicSys->queryWorld(rect);
-        //     // Logger::info("end Querying: %zu", mEntities.size());
-
-        //     if (mEntities.size()) {
-
-        //         for (auto ent : mEntities)
-        //         {
-        //             auto vertices = mProject.scene->getTransform(ent)->getvertices();
-        //             for (auto& v : vertices) {
-        //                 if (rect.contain(v)) {
-        //                     blocked = true;
-        //                     mPhysicSys->CastRay(rect.getCenter(), v);
-
-        //                     if (!blocked) {
-        //                         mVertices.push_back(mPoint);
-        //                     }
-        //                 }
-        //             }
-        //         }
-
-        //         Logger::info("time: %llu", Time::micros() - start);
-
-        //         for (auto& v : mVertices) {
-        //             mDbebug->submitLine(rect.getCenter(), v);
-        //         }
-
-        //         mVertices.clear();
-        //         mEntities.clear();
-        //     }
-        // }
-        // Logger::info("points: %zu", mVertices.size());
-        // mDbebug->submitBox(rect);
-        // mDbebug->end();
-        // mDbebug->render();
-
-        // mDbebug->drawLine(start, end);
-
-        // Vec2f p = end;
-        // rotate(p, rect.getCenter(), -45);
-        // mDbebug->drawLine(start, p);
-        start = { mWidth * 0.5f, mHeight * 0.5f };
-        end = { mWidth * 1.0f, mHeight * 0.5f };
-        mDbebug->submitLine(start, end);
-        mDbebug->submitLine(start, rotateP(end, start, .1f));
-        mDbebug->submitLine(start, rotateP(end, start, -.1f));
-
 
         mDbebug->end();
         mDbebug->render();
 
+        mShader.enable();
+        mShader.setUniformMat4("uCamera", mCamera.getCameraMatrix());
+        mShader.setUniform4f("uColor", { 1,1,1,1 });
+
+
+        // mBuffer.push_back({ 200,200 });
+        // mBuffer.push_back({ 400,200 });
+        // mBuffer.push_back({ 200,400 });
+        // mBuffer.push_back({ 0,200 });
+        // mBuffer.push_back({ 200,0 });
+        // mBuffer.push_back({ 400,200 });
+
+        Graphic::uploadBufferData(mBuffId, mVertices.size() * sizeof(float) * 2, mVertices.data());
+
+        Graphic::bind(mVAO);
+
+        Graphic::drawArrays(GL_TRIANGLE_FAN, mVertices.size() ? 5 : 0);
+
+        Graphic::unBind();
+        mShader.disable();
+        mBuffer.clear();
         mVertices.clear();
     }
 
