@@ -146,7 +146,6 @@ namespace Plutus
                 auto start = Time::micros();
 
                 auto center = rect.getCenter();
-                mVertices.push_back(center);
                 auto vertices = rect.getvertices();
 
                 for (auto& v : vertices) {
@@ -175,12 +174,13 @@ namespace Plutus
                 std::sort(points.begin(), points.end(), [](const auto& p1, const auto p2)-> bool {
                     return std::get<0>(p1) < std::get<0>(p2);
                     });
-                castRay(center, vertices[0]);
 
+                mVertices.push_back(center);
                 for (auto [f, p] : points) {
                     mDbebug->submitLine(center, p);
                     mVertices.push_back(p);
                 }
+                mVertices.push_back(mVertices[1]);
             }
 
             mDbebug->submitCircle(&Circle2d{ pos, 200.0f });
