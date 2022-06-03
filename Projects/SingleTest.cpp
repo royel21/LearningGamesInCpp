@@ -1,6 +1,8 @@
 #include <iostream>
 #include <memory>
 
+#include <vector>
+
 struct Test {
     float a;
     float b;
@@ -8,7 +10,11 @@ struct Test {
 
 int main(int argc, char const* argv[])
 {
-    Test t;
-    printf("size: %zu - %zu, %i, %i", sizeof(Test), sizeof(t), offsetof(Test, b), &Test::b);
+    std::vector<int> ints = { 1,2,3,4,5 };
+    ints.insert(ints.begin(), 0);
+    for (auto i : ints) {
+        printf("%i ", i);
+    }
+    printf("\n");
     return 0;
 }

@@ -44,7 +44,7 @@ namespace Plutus
         mProject.gravity = { 0,0 };
 
         mSysManager.setProject(&mProject);
-        if (false) {
+        if (true) {
             for (size_t i = 0; i < 25; i++)
             {
                 auto ent = mProject.scene->createEntity("PhysicTest - " + std::to_string(i));
@@ -94,19 +94,12 @@ namespace Plutus
         };
 
         mPhysicSys->mQueryCallBack = [&](b2Fixture* fixture) -> bool {
-
             auto entId = fixture->GetBody()->GetUserData().pointer;
             mEntities.push_back(entId);
             return 1.0f;
         };
 
-        // ent = mProject.scene->createEntity("shapec");
-        // auto shape = ent.addComponent<ShapeComponent>();
-        // shape->pos = { 10, 10 };
-        // shape->Points.push_back({ 100, 30 });
-        // shape->Points.push_back({ 50, 50 });
     }
-
 
     void App::Update(float dt)
     {
@@ -131,7 +124,7 @@ namespace Plutus
         hit = false;
         mPhysicSys->CastRay(Start, vEnd);
         auto p = hit ? mPoint : vEnd;
-        points.push_back({ atan2f(p.y, p.x), p });
+        points.push_back({ atan2f(p.y - mOrgVec.y, p.x - mOrgVec.x), p });
     }
 
     void App::Draw()
@@ -147,6 +140,7 @@ namespace Plutus
 
                 auto center = rect.getCenter();
                 auto vertices = rect.getvertices();
+                mOrgVec = center;
 
                 for (auto& v : vertices) {
                     castRay(center, v);
@@ -203,30 +197,18 @@ namespace Plutus
 
         mDbebug->end();
         mDbebug->render();
-
+        //Render Trangle Fan
         mShader.enable();
         mShader.setUniformMat4("uCamera", mCamera.getCameraMatrix());
         mShader.setUniform4f("uColor", { 1,1,1,1 });
-
-
-        // mBuffer.push_back({ 200,200 });
-        // mBuffer.push_back({ 400,200 });
-        // mBuffer.push_back({ 200,400 });
-        // mBuffer.push_back({ 0,200 });
-        // mBuffer.push_back({ 200,0 });
-        // mBuffer.push_back({ 400,200 });
-
         Graphic::uploadBufferData(mBuffId, mVertices.size() * sizeof(float) * 2, mVertices.data());
-
         Graphic::bind(mVAO);
-
         Graphic::drawArrays(GL_TRIANGLE_FAN, mVertices.size());
-
         Graphic::unBind();
         mShader.disable();
-        mBuffer.clear();
         points.clear();
         mVertices.clear();
+        //End Render Trangle Fan
     }
 
     void App::Exit()

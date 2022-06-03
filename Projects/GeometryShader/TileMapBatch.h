@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "Vertex.h"
+#include <Math/Vectors.h>
 
 namespace Plutus
 {
@@ -13,6 +14,7 @@ namespace Plutus
     struct TileVert : Vertex {
         int texIndex;
         TileVert(float x, float y, float ux, float uy, int ti) : texIndex(ti), Vertex(x, y, ux, uy) {}
+        TileVert(const Vec2f& v, float ux, float uy, int ti) : texIndex(ti), Vertex(v.x, v.y, ux, uy) {}
     };
 
     class TileMapBatch : public RenderBatch

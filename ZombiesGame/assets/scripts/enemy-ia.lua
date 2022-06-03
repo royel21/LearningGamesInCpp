@@ -58,6 +58,9 @@ end
 function collisionStart(entId, isSensor)
     if isSensor then
         entToFollow = scene:getEntity(entId)
+        if castRay(entity:getId(), entity:getCenter(), entToFollow:getCenter()) < 0.7 then
+            entToFollow = nil
+        end
     end
 end
 

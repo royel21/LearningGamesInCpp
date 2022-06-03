@@ -24,7 +24,43 @@
 
 namespace Plutus
 {
+
+    inline void my_panic(sol::optional<std::string> maybe_msg) {
+        std::cerr << "Lua is in a panic state and will now abort() the application" << std::endl;
+        if (maybe_msg) {
+            const std::string& msg = maybe_msg.value();
+            std::cerr << "\terror message: " << msg << std::endl;
+        }
+        // When this function exits, Lua will exhibit default behavior and abort()
+    }
+
+
+    int my_exception_handler(lua_State* L, sol::optional<const std::exception&> maybe_exception, sol::string_view description) {
+        // L is the lua state, which you can wrap in a state_view if necessary
+        // maybe_exception will contain exception, if it exists
+        // description will either be the what() of the exception or a description saying that we hit the general-case catch(...)
+        std::cout << "An exception occurred in a function, here's what it says ";
+        if (maybe_exception) {
+            std::cout << "(straight from the exception): ";
+            const std::exception& ex = *maybe_exception;
+            std::cout << ex.what() << std::endl;
+        }
+        else {
+            std::cout << "(from the description parameter): ";
+            std::cout.write(description.data(), static_cast<std::streamsize>(description.size()));
+            std::cout << std::endl;
+        }
+
+        // you must push 1 element onto the stack to be
+        // transported through as the error object in Lua
+        // note that Lua -- and 99.5% of all Lua users and libraries -- expects a string
+        // so we push a single string (in our case, the description of the error)
+        return sol::stack::push(L, description);
+    }
+
     ScriptSystem::ScriptSystem(Camera2D* camera) : ISystem(camera) {
+        mGlobalLua.set_panic(sol::c_call<decltype(&my_panic), &my_panic>);
+        mGlobalLua.set_exception_handler(&my_exception_handler);
 
         mGlobalLua.open_libraries(
             sol::lib::base,
@@ -76,7 +112,23 @@ namespace Plutus
             script.init(mGlobalLua, { ent, mProject->scene.get() });
         }
 
-        mSysManager->getSystem<PhysicSystem>()->AddListener(this);
+        auto phSys = mSysManager->getSystem<PhysicSystem>();
+        if (phSys) phSys->AddListener(this);
+
+
+        mGlobalLua["castRay"] = [&](uint32_t entId, Vec2f start, Vec2f end) {
+            auto pSys = mSysManager->getSystem<PhysicSystem>();
+
+            float frac = 0;
+
+            if (pSys) {
+                pSys->CastRay(
+                    [&](b2Fixture* fixture, Vec2f point, Vec2f normal, float fraction) -> float { frac = fraction; return 1;  },
+                    start, end);
+            }
+
+            return frac;
+        };
     }
 
     void ScriptSystem::update(float dt)
@@ -150,6 +202,7 @@ namespace Plutus
     {
         /*****************************Register Entity**********************************************/
         auto entity = mGlobalLua.new_usertype<Entity>("Entity");
+        entity["getId"] = &Entity::getId;
         entity["getTransform"] = &Entity::getComponent<TransformComponent>;
         entity["getTileMap"] = &Entity::getComponent<TileMapComponent>;
         entity["getAnimate"] = &Entity::getComponent<AnimationComponent>;

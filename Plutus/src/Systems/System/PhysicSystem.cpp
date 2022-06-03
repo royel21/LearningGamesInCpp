@@ -10,6 +10,7 @@
 
 namespace Plutus
 {
+
     void createFixture(PhysicBodyComponent& pbody, const Vec2f& pos);
 
     void PhysicSystem::init() {

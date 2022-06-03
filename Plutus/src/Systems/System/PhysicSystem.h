@@ -12,6 +12,8 @@
 
 namespace Plutus {
 
+	using RayCastCallBack = std::function<float(b2Fixture*, Vec2f, Vec2f, float)>;
+
 	constexpr float QUERYOFFSET = 2;
 
 	class ICollisionListener;
@@ -21,9 +23,11 @@ namespace Plutus {
 		bool isSensor;
 	};
 
+	class ScriptSystem;
+
 	class PhysicSystem : public ISystem, public b2ContactListener, public b2RayCastCallback, public b2QueryCallback {
 	public:
-		std::function<float(b2Fixture*, Vec2f, Vec2f, float)> mRayCallBack = nullptr;
+		RayCastCallBack mRayCallBack = nullptr;
 		std::function<bool(b2Fixture*)> mQueryCallBack = nullptr;
 
 		~PhysicSystem() { destroy(); };
@@ -38,6 +42,11 @@ namespace Plutus {
 
 		void CastRay(const Vec2f& start, const Vec2f& end) {
 			mWorld->RayCast(this, toWorld(start), toWorld(end));
+		}
+
+		void CastRay(RayCastCallBack callBack, const Vec2f& start, const Vec2f& end) {
+			mRayCallBack = callBack;
+			CastRay(start, end);
 		}
 
 		void queryWorld(const Vec4f& rect) {
@@ -59,8 +68,10 @@ namespace Plutus {
 
 	private:
 		b2World* mWorld = nullptr;
+		RayCastCallBack mRayScriptCallBack = nullptr;
 		std::vector<std::pair<CollisionData, CollisionData>> mCollisionsStart;
 		std::vector<std::pair<CollisionData, CollisionData>> mCollisionsEnd;
 		std::vector<ICollisionListener* > mCollisionListener;
+		friend ScriptSystem;
 	};
 }

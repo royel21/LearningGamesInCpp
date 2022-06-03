@@ -21,6 +21,7 @@ namespace Plutus
 
     private:
         sol::state mGlobalLua;
+        uint32_t mEndId;
 
         void registerAssets();
         void registerCamera();

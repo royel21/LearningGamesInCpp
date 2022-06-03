@@ -48,6 +48,13 @@ namespace Plutus
         }
     }
 
+    float ScriptComponent::report(uint32_t id, float frac) {
+        if (isLoaded && mEnv["reportRay"] != sol::nil) {
+            return mEnv["reportRay"](id, frac);
+        }
+        return 0;
+    }
+
     void ScriptComponent::destroy() {
         if (isLoaded) {
             mEnv["destroy"]();

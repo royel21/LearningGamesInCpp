@@ -33,10 +33,9 @@ namespace Plutus
         std::vector<uint32_t> mEntities;
         std::vector<Vec2f> mVertices;
         Vec2f mPoint;
+        Vec2f mOrgVec;
         bool hit = false;
-        bool usecircle = true;
         float mDist = 0;
-        std::vector<Vec2f> mBuffer;
         std::vector<std::tuple<float, Vec2f>> points;
 
         uint32_t mVAO;

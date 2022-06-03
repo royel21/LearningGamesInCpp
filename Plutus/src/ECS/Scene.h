@@ -25,6 +25,8 @@ namespace Plutus
         Entity(const Entity* ent) : mId(ent->mId), mScene(ent->mScene) { }
         Entity(entt::entity ent, Scene* scene) : mId(ent), mScene(scene) {}
 
+        uint32_t getId() { return (uint32_t)mId; }
+
         entt::entity getEntityId() const { return mId; }
 
         const std::string getName();

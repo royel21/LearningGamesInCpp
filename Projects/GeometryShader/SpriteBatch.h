@@ -16,6 +16,7 @@ namespace Plutus
     struct SpriteVert : Vertex {
         ColorRGBA8 color;
         SpriteVert(float x, float y, float ux, float uy, ColorRGBA8 c) : color(c), Vertex(x, y, ux, uy) {}
+        SpriteVert(const Vec2f& v, float ux, float uy, ColorRGBA8 c) : color(c), Vertex(v.x, v.y, ux, uy) {}
     };
 
     class SpriteBatch : public RenderBatch
