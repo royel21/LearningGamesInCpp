@@ -37,6 +37,7 @@ namespace Plutus
         bool usecircle = true;
         float mDist = 0;
         std::vector<Vec2f> mBuffer;
+        std::vector<std::tuple<float, Vec2f>> points;
 
         uint32_t mVAO;
         uint32_t mBuffId;

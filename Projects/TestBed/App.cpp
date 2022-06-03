@@ -44,7 +44,7 @@ namespace Plutus
         mProject.gravity = { 0,0 };
 
         mSysManager.setProject(&mProject);
-        if (true) {
+        if (false) {
             for (size_t i = 0; i < 25; i++)
             {
                 auto ent = mProject.scene->createEntity("PhysicTest - " + std::to_string(i));
@@ -130,7 +130,8 @@ namespace Plutus
         }
         hit = false;
         mPhysicSys->CastRay(Start, vEnd);
-        mVertices.push_back(hit ? mPoint : vEnd);
+        auto p = hit ? mPoint : vEnd;
+        points.push_back({ atan2f(p.y, p.x), p });
     }
 
     void App::Draw()
@@ -143,16 +144,18 @@ namespace Plutus
 
             if (mInput->onKeyDown("MouseLeft")) {
                 auto start = Time::micros();
+
+                auto center = rect.getCenter();
+                mVertices.push_back(center);
+                auto vertices = rect.getvertices();
+
+                for (auto& v : vertices) {
+                    castRay(center, v);
+                }
+
                 mPhysicSys->queryWorld(rect);
 
                 if (mEntities.size()) {
-
-                    auto center = rect.getCenter();
-                    mVertices.push_back(center);
-                    auto vertices = rect.getvertices();
-                    for (auto& v : vertices) {
-                        castRay(center, v, max);
-                    }
 
                     for (auto ent : mEntities)
                     {
@@ -166,11 +169,17 @@ namespace Plutus
 
                     Logger::info("time: %llu", Time::micros() - start);
 
-                    for (auto& v : mVertices) {
-                        mDbebug->submitLine(center, v);
-                    }
-
                     mEntities.clear();
+                }
+
+                std::sort(points.begin(), points.end(), [](const auto& p1, const auto p2)-> bool {
+                    return std::get<0>(p1) < std::get<0>(p2);
+                    });
+                castRay(center, vertices[0]);
+
+                for (auto [f, p] : points) {
+                    mDbebug->submitLine(center, p);
+                    mVertices.push_back(p);
                 }
             }
 
@@ -211,11 +220,12 @@ namespace Plutus
 
         Graphic::bind(mVAO);
 
-        Graphic::drawArrays(GL_TRIANGLE_FAN, mVertices.size() ? 5 : 0);
+        Graphic::drawArrays(GL_TRIANGLE_FAN, mVertices.size());
 
         Graphic::unBind();
         mShader.disable();
         mBuffer.clear();
+        points.clear();
         mVertices.clear();
     }
 
