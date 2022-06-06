@@ -134,6 +134,13 @@ namespace Plutus
         mCollisionsEnd.clear();
     }
 
+
+    bool PhysicSystem::ReportFixture(b2Fixture* fix) {
+        if (fix->GetFilterData().categoryBits & mQueryMask)
+            mEntities.push_back(fix->GetBody()->GetUserData().pointer);
+        return true;
+    }
+
     void PhysicSystem::destroy() {
         if (mWorld != nullptr) delete mWorld;
         mWorld = nullptr;

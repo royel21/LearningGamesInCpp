@@ -36,5 +36,12 @@ namespace Plutus
         Shader mSpriteShader;
         std::vector<Layer> mLayers;
         std::vector<Renderable> mRenderables;
+
+        Layer& getLayer(uint32_t index) {
+            if (index + 1 > mLayers.size()) {
+                mLayers.resize(index + 1);
+            }
+            return mLayers[index];
+        }
     };
 } // namespace Plutus

@@ -37,14 +37,20 @@ namespace Plutus
 
         Graphic::unBind();
 
-        mEntities.reserve(50);
-
         mDbebug = DebugRender::get();
 
         mProject.gravity = { 0,0 };
 
         mSysManager.setProject(&mProject);
         if (true) {
+            // auto ent = mProject.scene->createEntity("PhysicTest");
+
+            // auto comp = ent.addComponent<PhysicBodyComponent>();
+            // comp->addEdge({ 5,5 }, { mWidth - 10, 1 });
+            // comp->addEdge({ mWidth - 10, 5 }, { 1, mHeight - 10 });
+            // comp->addEdge({ 5, mHeight - 5 }, { mWidth, 1 });
+            // comp->addEdge({ 5,5 }, { 0, mHeight - 10 });
+
             for (size_t i = 0; i < 25; i++)
             {
                 auto ent = mProject.scene->createEntity("PhysicTest - " + std::to_string(i));
@@ -93,12 +99,6 @@ namespace Plutus
             return 1;
         };
 
-        mPhysicSys->mQueryCallBack = [&](b2Fixture* fixture) -> bool {
-            auto entId = fixture->GetBody()->GetUserData().pointer;
-            mEntities.push_back(entId);
-            return 1.0f;
-        };
-
     }
 
     void App::Update(float dt)
@@ -132,13 +132,13 @@ namespace Plutus
         if (true) {
             auto pos = mInput->getMouseCoords();
 
-            Vec4f rect = { pos.x - 200, pos.y - 200, 400, 400 };
-            float max = rect.z * 0.5f;
+            Vec4f rect = { 0.0f, 0.f, (float)mWidth, (float)mHeight };
+            float max = rect.z;
 
             if (mInput->onKeyDown("MouseLeft")) {
                 auto start = Time::micros();
 
-                auto center = rect.getCenter();
+                auto center = pos;
                 auto vertices = rect.getvertices();
                 mOrgVec = center;
 
@@ -146,11 +146,11 @@ namespace Plutus
                     castRay(center, v);
                 }
 
-                mPhysicSys->queryWorld(rect);
+                auto entities = mPhysicSys->queryWorld(rect);
 
-                if (mEntities.size()) {
+                if (entities.size()) {
 
-                    for (auto ent : mEntities)
+                    for (auto ent : entities)
                     {
                         vertices = mProject.scene->getTransform(ent)->getvertices();
                         for (auto& v : vertices) {
@@ -161,8 +161,6 @@ namespace Plutus
                     }
 
                     Logger::info("time: %llu", Time::micros() - start);
-
-                    mEntities.clear();
                 }
 
                 std::sort(points.begin(), points.end(), [](const auto& p1, const auto p2)-> bool {
@@ -177,7 +175,7 @@ namespace Plutus
                 mVertices.push_back(mVertices[1]);
             }
 
-            mDbebug->submitCircle(&Circle2d{ pos, 200.0f });
+            // mDbebug->submitCircle(&Circle2d{ pos, 200.0f });
         }
         else {
             if (mInput->onKeyDown("MouseLeft")) {

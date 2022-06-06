@@ -11,22 +11,6 @@
 
 namespace Plutus
 {
-    void TileMapBatch::init(TileMapComponent* tilemap)
-    {
-        mVAO = Graphic::createVertexArray();
-        mBufferId = Graphic::createBufferArray();
-        //bind the Shader position to the buffer object
-        Graphic::setFAttribute(0, 2, mVertexSize);
-        //bind the Shader UV "Texture coordinate" to the buffer object
-        Graphic::setFAttribute(1, 2, mVertexSize, offsetof(TileVert, uvx));
-        //bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
-        Graphic::setIAttribute(2, 1, mVertexSize, offsetof(TileVert, texIndex));
-
-        Graphic::unBind();
-
-        loadTiles(tilemap);
-    }
-
     void TileMapBatch::loadTiles(TileMapComponent* tilemap) {
         for (size_t i = 0; i < 16; i++) {
             texIndices[i] = i;
@@ -62,6 +46,22 @@ namespace Plutus
         mIbo.init(totalTiles);
 
         Graphic::uploadBufferData(mBufferId, tiles.size() * mVertexSize, tiles.data(), GL_STATIC_DRAW);
+    }
+
+    void TileMapBatch::init(TileMapComponent* tilemap)
+    {
+        mVAO = Graphic::createVertexArray();
+        mBufferId = Graphic::createBufferArray();
+        //bind the Shader position to the buffer object
+        Graphic::setFAttribute(0, 2, mVertexSize);
+        //bind the Shader UV "Texture coordinate" to the buffer object
+        Graphic::setFAttribute(1, 2, mVertexSize, offsetof(TileVert, uvx));
+        //bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
+        Graphic::setIAttribute(2, 1, mVertexSize, offsetof(TileVert, texIndex));
+
+        Graphic::unBind();
+
+        loadTiles(tilemap);
     }
 
     void TileMapBatch::draw(Shader* shader) {

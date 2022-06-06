@@ -16,6 +16,8 @@
 
 namespace Plutus
 {
+    class DebugRender;
+
     struct Point {
         float x;
         float y;
@@ -36,7 +38,7 @@ namespace Plutus
         Camera2D mCamera;
         Limiter mLimiter;
         CameraControl mCamControl;
-
+        DebugRender* mDebug;
         // Shader mShader;
         // uint32_t mVertexArray;
         // uint32_t mBufferArray;

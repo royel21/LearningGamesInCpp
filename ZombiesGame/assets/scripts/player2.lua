@@ -68,6 +68,12 @@ function update(dt)
         anim:play(curAnime)
         vel = {x = 0, y = 0}
     end
+	
+	if input:onKeyDown("A") then
+		local pos = entity:getPosition()
+		local entities = queryWorld(pos.x, pos.y, 50, 0x80)
+		print(#entities)
+	end
 
     -- if (input:onKeyDown("X")) then
     -- sound:play(false)
@@ -124,6 +130,11 @@ function update(dt)
         state = "     "
     end
 end
+
+
+
+
+
 
 
 

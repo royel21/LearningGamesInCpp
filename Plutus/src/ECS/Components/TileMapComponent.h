@@ -47,6 +47,11 @@ namespace Plutus
         }
     };
 
+    // struct Layer {
+    //     bool visible = true;
+    //     std::vector<Tile> mTiles;
+    // };
+
     struct TileMapComponent
     {
         int mWidth = 60;

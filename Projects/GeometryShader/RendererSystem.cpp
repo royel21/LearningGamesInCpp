@@ -11,7 +11,6 @@
 #include "TileMapBatch.h"
 #include "SpriteBatch.h"
 
-
 namespace Plutus
 {
     void RendererSystem::init() {
@@ -21,10 +20,7 @@ namespace Plutus
 
         auto mapView = mProject->scene->getRegistry()->view<TileMapComponent>();
         for (auto [e, tmap] : mapView.each()) {
-            if (tmap.mLayer + 1 > (int)mLayers.size()) {
-                mLayers.resize(tmap.mLayer + 1);
-            }
-            Layer& layer = mLayers[tmap.mLayer];
+            Layer& layer = getLayer(tmap.mLayer);
 
             auto batchMap = new TileMapBatch(mCamera, &mTilemapShader);
             batchMap->init(&tmap);
@@ -53,10 +49,8 @@ namespace Plutus
         std::sort(mRenderables.begin(), mRenderables.end());
 
         for (auto& r : mRenderables) {
-            if (r.layer + 1 > (int)mLayers.size()) {
-                mLayers.resize(r.layer + 1);
-            }
-            Layer& layer = mLayers[r.layer];
+            Layer& layer = getLayer(r.layer + 1);
+
             if (!layer.spriteBatch) {
                 layer.spriteBatch = new SpriteBatch(mCamera, &mSpriteShader);
                 layer.spriteBatch->init();

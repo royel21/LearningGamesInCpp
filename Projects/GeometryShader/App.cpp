@@ -22,6 +22,7 @@
 #include "RendererSystem.h"
 
 // #include "SpriteBatch.h"
+#include <Graphics/DebugRenderer.h> 
 
 namespace Plutus
 {
@@ -40,9 +41,12 @@ namespace Plutus
 
     void AppGeo::init()
     {
+        mWindow.init("Plutus AppGeo", 1280, 768);
+
+        mDebug = DebugRender::get();
+        mDebug->init(&mCamera);
         mCamControl.setCamera(&mCamera);
 
-        mWindow.init("Plutus AppGeo", 1280, 768);
         glClearColor(0.0f, 0.65f, .95f, 1.0f);
         mInput = Input::get();
 
@@ -76,6 +80,15 @@ namespace Plutus
         // std::snprintf(title, 128, "FPS: %.2f", (Time::micros() - start) / 1000.0f);
         // mWindow.setTitle(title);
         // Logger::info("pos: %0.3f, %0.3f", pos.x, pos.y);
+
+        auto ent = mProject.scene->getEntityByName("Player2");
+        if (ent) {
+            auto dir = ent.getCenter();
+            mDebug->submitCircle(dir, 16);
+            mDebug->end();
+            mDebug->render();
+        }
+
     }
 
     void AppGeo::draw()

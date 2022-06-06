@@ -30,7 +30,6 @@ namespace Plutus
         SystemManager mSysManager;
         DebugRender* mDbebug;
         PhysicSystem* mPhysicSys;
-        std::vector<uint32_t> mEntities;
         std::vector<Vec2f> mVertices;
         Vec2f mPoint;
         Vec2f mOrgVec;
