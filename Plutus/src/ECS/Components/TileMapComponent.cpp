@@ -32,6 +32,10 @@ namespace Plutus
         return  AssetManager::get()->getAsset<Texture>(mTextures[tile.texture])->getUV(tile.texcoord);
     }
 
+    Vec4f TileMapComponent::getTexCoord(int texId, int coordIndex) {
+        return  AssetManager::get()->getAsset<Texture>(mTextures[texId])->getUV(coordIndex);
+    }
+
     void TileMapComponent::addTile(Tile& tile)
     {
         mTiles.push_back(tile);

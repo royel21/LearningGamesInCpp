@@ -47,10 +47,21 @@ namespace Plutus
         }
     };
 
-    // struct Layer {
-    //     bool visible = true;
-    //     std::vector<Tile> mTiles;
-    // };
+    struct TileAnimation {
+        int texId;
+        float duration;
+        std::vector<uint16_t> frames;
+    };
+
+    struct AnimateTile {
+        int x = 0;
+        int y = 0;
+        int frame = 0;
+        int coordIndex;
+        int animIndex;
+        float currentTime = 0;
+        TileAnimation* anim;
+    };
 
     struct TileMapComponent
     {
@@ -60,10 +71,11 @@ namespace Plutus
         int mTileHeight = 32;
         int mLayer = 0;
         std::vector<Tile> mTiles;
+        std::vector<AnimateTile> mAnimateTiles;
         std::array<std::string, 16> mTextures;
+        std::vector<TileAnimation> mTileAnims;
 
         TileMapComponent() = default;
-        // TileMap(const TileMap& tilemap);
         TileMapComponent(int tileWidth, int tileHeight, int layer = 0) : mTileWidth(tileWidth), mTileHeight(tileHeight), mLayer(layer) {}
 
         void addTexture(int id, const std::string& texture);
@@ -72,6 +84,7 @@ namespace Plutus
 
         Texture* getTexture(int id);
         Vec4f getTexCoord(Tile& tile);
+        Vec4f getTexCoord(int texId, int coordIndex);
 
         void addTile(Tile& tile);
         Tile* getTile(const Vec2i& mCoords);

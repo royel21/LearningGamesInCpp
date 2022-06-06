@@ -38,7 +38,7 @@ namespace Plutus
         }
     }
 
-    void loadTileMap(Entity& ent, const rapidjson::Value::Object& value)
+    void loadTileMap(Entity& ent, const rapidjson::Value::Object& value, JsonHelper& jhelper)
     {
         int w = value["width"].GetInt();
         int h = value["height"].GetInt();
@@ -52,6 +52,38 @@ namespace Plutus
         for (auto& obj : value["textures"].GetArray())
         {
             tmap->addTexture(obj["id"].GetInt(), obj["name"].GetString());
+        }
+
+        if (value.HasMember("animations")) {
+            for (auto& obj : value["animations"].GetArray())
+            {
+                tmap->mTileAnims.push_back({});
+                auto& anim = tmap->mTileAnims.back();
+
+                anim.texId = obj["texId"].GetInt();
+                anim.duration = obj["duration"].GetFloat();
+                for (auto& f : obj["frames"].GetArray())
+                {
+                    anim.frames.push_back(f.GetInt());
+                }
+            }
+        }
+
+        if (value.HasMember("animateTiles")) {
+            for (auto& atile : value["animateTiles"].GetArray())
+            {
+                tmap->mAnimateTiles.push_back({});
+                auto& tanim = tmap->mAnimateTiles.back();
+
+                auto i = atile.GetInt();
+
+                tanim.x = ((i >> 12) % tmap->mWidth);
+                tanim.y = (i >> 12) / tmap->mWidth;
+
+                tanim.animIndex = 0xfff & i;
+                tanim.anim = &tmap->mTileAnims[tanim.animIndex];
+                tanim.coordIndex = tanim.anim->frames[0];
+            }
         }
 
         auto tiles = value["tiles"].GetArray();
@@ -227,7 +259,7 @@ namespace Plutus
                         }
                         if (compType == "TileMap")
                         {
-                            loadTileMap(entity, components[i].GetJsonObject());
+                            loadTileMap(entity, components[i].GetJsonObject(), jhelper);
                             continue;
                         }
                         if (compType == "Script")

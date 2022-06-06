@@ -127,6 +127,30 @@ namespace Plutus
                 }
             }
             ser.EndArr();
+            //Animations
+            ser.StartArr("animations");
+            for (auto& anim : tilemap->mTileAnims)
+            {
+                ser.StartObj();
+                ser.addInt("texId", anim.texId);
+                ser.addFloat("duration", anim.duration);
+                ser.StartArr("frames");
+                for (auto f : anim.frames)
+                    ser.addInt(f);
+                ser.EndArr();
+
+                ser.EndObj();
+            }
+            ser.EndArr();
+
+            ser.StartArr("animateTiles");
+            for (auto& anim : tilemap->mAnimateTiles)
+            {
+                int index = (anim.y * tilemap->mWidth) + anim.x;
+                ser.addInt((index << 12) | anim.animIndex);
+            }
+            ser.EndArr();
+
             //Tiles Array
             ser.StartArr("tiles");
             {

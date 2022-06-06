@@ -63,6 +63,7 @@ namespace Plutus
         for (auto& layer : mLayers) {
             for (auto mbatch : layer.tileMapBatchs) {
                 if (mbatch) {
+                    mbatch->update(dt);
                     mbatch->draw();
                 }
             }
