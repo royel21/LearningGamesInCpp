@@ -7,14 +7,17 @@ camera:setBounds(Vec4f.new(0, 0, 4096 - size.x, 2048 - size.y));
 
 function init()
     local size = camera:getVPSize();
-    camera:setTarget(Player, Vec2f.new(-size.x / 2 + 32, -size.y / 2 + 32))
-    -- rbody = Player:getRigidBody()
+    camera:setTarget(entity, Vec2f.new(-size.x / 2 + 32, -size.y / 2 + 32))
+    -- rbody = entity:getRigidBody()
     -- rbody:setMaxVelocity(1, 2)
-    print("Player")
+    print("entity")
 end
 
 function update(dt)
-    local vel = {x = 0, y = 0}
+    local vel = {
+        x = 0,
+        y = 0
+    }
 
     if input:onKeyDown("Up") then
         vel.y = SPEED
@@ -28,10 +31,11 @@ function update(dt)
         vel.x = -SPEED
     end
 
-    local trans = Player:getTransform()
+    local trans = entity:getTransform()
     trans.x = trans.x + vel.x
     trans.y = trans.y + vel.y
 end
 
-function destroy() end
+function destroy()
+end
 

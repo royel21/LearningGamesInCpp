@@ -111,8 +111,6 @@ namespace Plutus
             ser.addString("name", "TileMap");
             ser.addInt("width", tilemap->mWidth);
             ser.addInt("height", tilemap->mHeight);
-            ser.addInt("tileWidth", tilemap->mTileWidth);
-            ser.addInt("tileHeight", tilemap->mTileHeight);
             ser.addInt("layer", tilemap->mLayer);
 
             //Array of textures
@@ -227,8 +225,10 @@ namespace Plutus
         ser.StartArr("entities");
         scene->getRegistry()->each([&](entt::entity e) {
             Plutus::Entity ent = { e, scene };
+            auto tag = ent.getComponent<TagComponent>();
             ser.StartObj();
-            ser.addString("name", ent.getName());
+            ser.addString("name", tag->Name);
+            ser.addInt("visible", tag->Visible);
 
             ser.StartArr("components");
             {

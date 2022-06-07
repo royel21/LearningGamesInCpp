@@ -47,7 +47,6 @@ namespace Plutus
         mDebug->init(&mCamera);
         mCamControl.setCamera(&mCamera);
 
-        glClearColor(0.0f, 0.65f, .95f, 1.0f);
         mInput = Input::get();
 
         mProject.load("ZombiesGame/ZombiesGame.json");
@@ -56,7 +55,6 @@ namespace Plutus
         mCamera.init(mProject.vpWidth, mProject.vpHeight);
         mCamera.setScale(mProject.zoomLevel);
         mSysManager.setProject(&mProject);
-        // mCamera2.init(1280, 768);
 
         mSysManager.AddSystem<ScriptSystem>(&mCamera);
         mSysManager.AddSystem<PhysicSystem>();
@@ -64,6 +62,8 @@ namespace Plutus
         mSysManager.AddSystem<RendererSystem>(&mCamera);
 
         mSysManager.init();
+
+        mWindow.onResize = [&](int w, int h) { glViewport(0, 0, w, h);  };
     }
 
     void AppGeo::update()

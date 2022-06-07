@@ -97,6 +97,8 @@ namespace Plutus
         winHeight = proj.winHeight;
         vpWidth = proj.vpWidth;
         vpHeight = proj.vpHeight;
+        tileWidth = proj.tileWidth;
+        tileHeight = proj.tileHeight;
         vpPos = proj.vpPos;
         zoomLevel = proj.zoomLevel;
         maxFPS = proj.maxFPS;

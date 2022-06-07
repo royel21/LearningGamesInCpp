@@ -10,6 +10,7 @@
 #include <misc/cpp/imgui_stdlib.h>
 
 #include <Assets/Assets.h>
+#include <ECS/Components/TagComponent.h>
 
 namespace Plutus
 {
@@ -19,6 +20,7 @@ namespace Plutus
         auto& project = mConfig->mProject;
         static bool openNew = false;
         static bool showConfig = false;
+        std::string toRemove = "";
         if (ImGui::Begin("Scene Editor"))
         {
             float width = ImGui::GetContentRegionAvailWidth();
@@ -44,7 +46,11 @@ namespace Plutus
                 }
                 ImGui::SameLine();
                 if (ImGui::ButtonIcon((ICON_FA_TRASH " ##rm-" + sc.first).c_str(), { 1,0,0,1 })) {
-                    sceneName = sc.first;
+                    if (isOpen) {
+                        showContent = false;
+                        ImGui::TreePop();
+                    }
+                    toRemove = sc.first;
                 }
 
                 if (showContent)
@@ -105,30 +111,43 @@ namespace Plutus
         }
         ImGui::End();
 
+        if (!toRemove.empty()) {
+            project.scenes.erase(toRemove);
+        }
     }
 
     void SceneWindow::drawEntity(Entity ent)
     {
         auto& project = mConfig->mProject;
         bool isCurrent = project.mEnt == ent;
-        auto& tag = ent.getName();
+        auto tag = ent.getComponent<TagComponent>();
+        float width = ImGui::GetContentRegionAvailWidth();
 
         ImGuiTreeNodeFlags flags = (isCurrent ? ImGuiTreeNodeFlags_Selected : 0);
-        flags |= ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Leaf;
+        flags |= ImGuiTreeNodeFlags_NoTreePushOnOpen
+            | ImGuiTreeNodeFlags_Leaf
+            | ImGuiTreeNodeFlags_AllowItemOverlap;
 
-        ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)ent, flags, (ICON_FA_MOBILE " " + tag).c_str());
+        ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)ent, flags, (ICON_FA_MOBILE " " + tag->Name).c_str());
+        float pos = ImGui::GetMousePos().x - ImGui::GetItemRectSize().x;
+
         if (ImGui::IsItemClicked())
         {
             project.mEnt = ent;
         }
 
+        ImGui::SameLine(width - 10);
+        if (ImGui::TransparentButton(((tag->Visible ? ICON_FA_EYE : ICON_FA_EYE_SLASH) + std::string(" ##cp-v") + tag->Name).c_str())) {
+            tag->Visible = !tag->Visible;
+        }
+
         if (ImGui::BeginPopupContextItem())
         {
-            if (ImGui::MenuItem(("Copy " + tag).c_str())) {
+            if (ImGui::MenuItem(("Copy " + tag->Name).c_str())) {
                 project.mEnt = project.scene->CreateCopy(ent);
             }
 
-            if (ImGui::MenuItem(("Delete " + tag).c_str()))
+            if (ImGui::MenuItem(("Delete " + tag->Name).c_str()))
             {
                 if (isCurrent)
                     project.mEnt = ent;

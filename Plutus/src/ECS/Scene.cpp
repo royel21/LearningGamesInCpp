@@ -29,7 +29,7 @@ namespace Plutus
 
     const std::string Entity::getName()
     {
-        return isValid() ? mScene->mRegistry.get<Tag>(mId).Name : "";
+        return isValid() ? mScene->mRegistry.get<TagComponent>(mId).Name : "";
     }
 
     bool Entity::isValid() const {
@@ -39,15 +39,15 @@ namespace Plutus
     void Entity::setName(const std::string& name)
     {
         if (isValid())
-            mScene->mRegistry.get<Tag>(mId).Name = name;
+            mScene->mRegistry.get<TagComponent>(mId).Name = name;
     }
     /*******************************     Scene    ************************/
 
-    Entity Scene::createEntity(const std::string& name)
+    Entity Scene::createEntity(const std::string& name, bool visible)
     {
         auto ent = Entity{ mRegistry.create(), this };
-        ent.addComponent<Tag>(name);
-
+        auto tag = ent.addComponent<TagComponent>(name);
+        tag->Visible = visible;
         return { ent.mId, this };
     }
 
@@ -60,7 +60,7 @@ namespace Plutus
     Entity Scene::getEntityByName(const std::string& name)
     {
         entt::entity ent = entt::null;
-        auto view = mRegistry.view<const Tag>();
+        auto view = mRegistry.view<const TagComponent>();
         for (const auto& [e, tag] : view.each()) {
             if (tag.Name.compare(name) == 0) {
                 ent = e;

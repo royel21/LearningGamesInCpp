@@ -42,10 +42,8 @@ namespace Plutus
     {
         int w = value["width"].GetInt();
         int h = value["height"].GetInt();
-        int tw = value["tileWidth"].GetInt();
-        int th = value["tileHeight"].GetInt();
         int layer = value["layer"].GetInt();
-        auto tmap = ent.addComponent<TileMapComponent>(tw, th, layer);
+        auto tmap = ent.addComponent<TileMapComponent>(layer);
         tmap->mWidth = w;
         tmap->mHeight = h;
 
@@ -219,7 +217,12 @@ namespace Plutus
                     auto entObj = entities[i].GetJsonObject();
 
                     auto name = entObj["name"].GetString();
-                    Entity entity = scene->createEntity(name);
+                    bool visible = true;
+                    if (entObj.HasMember("visible")) {
+                        visible = entObj["visible"].GetInt();
+                    }
+
+                    Entity entity = scene->createEntity(name, visible);
 
                     auto components = entObj["components"].GetArray();
                     for (uint32_t i = 0; i < components.Size(); i++)

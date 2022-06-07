@@ -67,16 +67,15 @@ namespace Plutus
     {
         int mWidth = 60;
         int mHeight = 34;
-        int mTileWidth = 32;
-        int mTileHeight = 32;
         int mLayer = 0;
         std::vector<Tile> mTiles;
         std::vector<AnimateTile> mAnimateTiles;
         std::array<std::string, 16> mTextures;
         std::vector<TileAnimation> mTileAnims;
 
-        TileMapComponent() = default;
-        TileMapComponent(int tileWidth, int tileHeight, int layer = 0) : mTileWidth(tileWidth), mTileHeight(tileHeight), mLayer(layer) {}
+        TileMapComponent(int layer = 0) {
+            mLayer = layer;
+        }
 
         void addTexture(int id, const std::string& texture);
         void addTexture(const std::string& texture);
@@ -90,14 +89,6 @@ namespace Plutus
         Tile* getTile(const Vec2i& mCoords);
         int getIndex(const Vec2i& mCoords);
         bool removeTile(const Vec2i& mCoords);
-
-        inline Vec4f getRect(float x, float y) {
-            return { x * mTileWidth, y * mTileHeight, mTileWidth, mTileHeight };
-        }
-
-        inline Vec4f getRect(Tile tile) {
-            return { tile.x * mTileWidth, tile.y * mTileHeight, mTileWidth, mTileHeight };
-        }
 
         bool operator < (const TileMapComponent& ref) const {
             return mLayer < ref.mLayer;

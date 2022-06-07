@@ -20,6 +20,8 @@ namespace Plutus
         // View Port Size
         int vpWidth = 1280;
         int vpHeight = 768;
+        int tileWidth = 32;
+        int tileHeight = 32;
         Vec2f vpPos = { 0, 0 };
 
         float zoomLevel = 1.0f;
@@ -47,6 +49,17 @@ namespace Plutus
         operator bool() const { return isLoaded; }
 
         void clear();
+
+        template<typename T>
+        Vec4f getRect(const T& tile) {
+            return { float(tile.x * tileWidth), float(tile.y * tileHeight), tileWidth, tileHeight };
+        }
+
+        inline Vec4f getRect(float x, float y) {
+            return { x * tileWidth, y * tileHeight, tileWidth, tileHeight };
+        }
+
+        inline Vec4f getRect(int x, int y) { return getRect(float(x), float(y)); }
 
         void load(const std::string& path);
         void save(const std::string& path);

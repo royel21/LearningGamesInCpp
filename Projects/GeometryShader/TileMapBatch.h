@@ -9,6 +9,7 @@
 
 namespace Plutus
 {
+    struct Project;
     struct TileMapComponent;
 
     struct TileVert : Vertex {
@@ -25,7 +26,7 @@ namespace Plutus
         TileMapBatch(Camera2D* camera, Shader* shader) : RenderBatch(camera, shader) {  };
         ~TileMapBatch() { destroy(); }
 
-        void init(TileMapComponent* tilemap);
+        void init(TileMapComponent* tilemap, Project* proj);
         void draw(Shader* shader = nullptr) override;
         void update(float dt);
         void destroy() override;
@@ -44,5 +45,6 @@ namespace Plutus
         std::vector<TileVert> mtiles;
         const uint32_t mVertexSize = sizeof(TileVert);
         TileMapComponent* mTileMap;
+        Project* mProject;
     };
 } // namespace Plutus

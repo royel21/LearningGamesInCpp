@@ -4,6 +4,7 @@
 
 #include <Graphics/Shader.h>
 
+#include <Core/Project.h>
 #include <Assets/Assets.h>
 #include <Graphics/Graphic.h>
 #include <Graphics/Camera2D.h>
@@ -30,7 +31,7 @@ namespace Plutus
         uint32_t offset = 0;
         for (auto t : tiles) {
             if (textures[t.texture]) {
-                auto vertices = tilemap->getRect(t).getvertices();
+                auto vertices = mProject->getRect(t).getvertices();
                 auto uv = textures[t.texture]->getUV(t.texcoord);
 
                 mtiles.emplace_back(vertices[0], uv.x, uv.w, t.texture);
@@ -45,8 +46,9 @@ namespace Plutus
         }
     }
 
-    void TileMapBatch::init(TileMapComponent* tilemap)
+    void TileMapBatch::init(TileMapComponent* tilemap, Project* proj)
     {
+        mProject = proj;
         mTileMap = tilemap;
         mVAO = Graphic::createVertexArray();
         mBufferId = Graphic::createBufferArray();
@@ -80,7 +82,7 @@ namespace Plutus
                 animTile.currentTime = 0;
             }
 
-            auto vertices = mTileMap->getRect((float)animTile.x, (float)animTile.y).getvertices();
+            auto vertices = mProject->getRect(animTile).getvertices();
             auto uv = mTileMap->getTexCoord(anim->texId, animTile.coordIndex);
 
             mtiles[mStaticTilesCount + tileVers + 0] = { vertices[0], uv.x, uv.w, anim->texId };

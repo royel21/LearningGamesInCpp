@@ -63,6 +63,10 @@ namespace Plutus
 
             vpWidth = jhelper.getInt("vp-width");
             vpHeight = jhelper.getInt("vp-height");
+
+            tileWidth = jhelper.getInt("tile-width", 32);
+            tileHeight = jhelper.getInt("tile-height", 32);
+
             vpPos = jhelper.getFloat2("vp-pos");
 
             zoomLevel = jhelper.getFloat("zoom-level");
@@ -97,6 +101,8 @@ namespace Plutus
             ser.addInt("win-height", winHeight);
             ser.addInt("vp-width", vpWidth);
             ser.addInt("vp-height", vpHeight);
+            ser.addInt("tile-width", tileWidth);
+            ser.addInt("tile-height", tileHeight);
             ser.add2Float("vp-pos", vpPos);
             ser.addFloat("zoom-level", zoomLevel);
             ser.addFloat("max-fps", maxFPS);

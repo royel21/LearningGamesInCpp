@@ -33,10 +33,11 @@ namespace Plutus
         void reload(Config* config);
 
         void draw();
+        void update(float dt);
 
         void resizeBuffers(const Vec2f& size);
 
-        void setScene(Scene* scene) { mScene = scene; }
+        void setScene(Scene* scene) { mScene = scene;  mRenderables.clear(); }
 
     private:
         void prepare();

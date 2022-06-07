@@ -79,7 +79,7 @@ namespace Plutus
             auto dir = Utils::getDirectory(dst);
             if (!exists(dir)) mkdirs(dir);
 
-            if (src.compare(dst) == 0) return true;
+            if (Utils::getFileName(src).compare(Utils::getFileName(dst)) == 0) return true;
 
             return std::filesystem::copy_file(src, dst, std::filesystem::copy_options::overwrite_existing);
         }

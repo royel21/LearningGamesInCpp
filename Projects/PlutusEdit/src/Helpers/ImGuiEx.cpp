@@ -23,12 +23,13 @@ namespace ImGui {
         bool isActive = false;
         ImGui::PushStyleColor(ImGuiCol_Text, color);
         ImGui::PushStyleColor(ImGuiCol_Button, { 0,0,0,0 });
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0,0,0,0 });
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0,0,0,6 });
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0,0,0,0 });
 
         if (ImGui::Button(label, buttonSize)) {
             isActive = true;
         }
-        ImGui::PopStyleColor(3);
+        ImGui::PopStyleColor(4);
         if (isIcon) {
             ImGui::PopStyleVar();
             if (sameline)

@@ -55,10 +55,6 @@ namespace Plutus
             ImGui::InputInt("##tm-w", &mTileMap->mWidth);
             ImGui::Row("Height", textWidth);
             ImGui::InputInt("##tm-h", &mTileMap->mHeight);
-            ImGui::Row("Tile Width", textWidth);
-            ImGui::InputInt("##tm-tw", &mTileMap->mTileWidth);
-            ImGui::Row("Tile Heigth", textWidth);
-            ImGui::InputInt("##tm-th", &mTileMap->mTileHeight);
             ImGui::Row("Layer", textWidth);
             ImGui::InputInt("##tm-l", &mTileMap->mLayer);
 
@@ -183,8 +179,8 @@ namespace Plutus
     void TileMapPanel::renderTemp()
     {
         auto gridCoords = getCoords(mConfig);
-        int w = mTileMap->mTileWidth;
-        int h = mTileMap->mTileHeight;
+        int w = mConfig->mProject.tileWidth;
+        int h = mConfig->mProject.tileHeight;
 
         auto tex = mTileMap->getTexture(mCurrentTexture);
 

@@ -75,6 +75,7 @@ namespace Plutus
         for (auto& window : mWindows) {
             window->update(dt);
         }
+        mConfig->mRender.update(dt);
     }
 
     void WindowManager::draw() {

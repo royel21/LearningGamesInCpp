@@ -23,7 +23,7 @@ namespace Plutus
             Layer& layer = getLayer(tmap.mLayer);
 
             auto batchMap = new TileMapBatch(mCamera, &mTilemapShader);
-            batchMap->init(&tmap);
+            batchMap->init(&tmap, mProject);
             layer.tileMapBatchs.push_back(batchMap);
         }
     }

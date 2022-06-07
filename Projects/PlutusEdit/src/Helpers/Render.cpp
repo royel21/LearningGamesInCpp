@@ -21,7 +21,7 @@ namespace Plutus
         if (!isLoaded) {
             mDebugRender = Plutus::DebugRender::get();
             mDebugRender->init(mCamera);
-            mDebugRender->setCellSize({ mConfig->tileWidth, mConfig->tileHeight });
+            mDebugRender->setCellSize({ mConfig->mProject.tileWidth, mConfig->mProject.tileHeight });
             isLoaded = true;
         }
     }
@@ -46,6 +46,31 @@ namespace Plutus
     void Render::resizeBuffers(const Vec2f& size) {
         mFrameBuffer.resize(size);
         mFramePicker.resize(size);
+    }
+
+    void Render::update(float dt) {
+        auto viewMap = mScene->getRegistry()->view<TagComponent, TileMapComponent>();
+        for (auto [ent, tag, tilemap] : viewMap.each()) {
+            if (tag.Visible) {
+                for (auto& tile : tilemap.mAnimateTiles)
+                {
+                    auto rect = mConfig->mProject.getRect(tile);
+
+                    if (mCamera->getViewPortDim().overlap(rect))
+                    {
+                        tile.currentTime += dt;
+
+                        auto anim = tile.anim;
+
+                        if (tile.currentTime > anim->duration) {
+                            tile.frame = ++tile.frame % anim->frames.size();
+                            tile.coordIndex = anim->frames[tile.frame];
+                            tile.currentTime = 0;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     void Render::draw()
@@ -107,21 +132,25 @@ namespace Plutus
 
     void Render::drawPhysicBodies()
     {
-        auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
+        auto view = mScene->getRegistry()->view<TagComponent, TransformComponent, RigidBodyComponent>();
 
-        for (auto [e, trans, rbody] : view.each()) {
-            drawFixtures(&rbody, &trans);
+        for (auto [e, tag, trans, rbody] : view.each()) {
+            if (tag.Visible) {
+                drawFixtures(&rbody, &trans);
+            }
         }
 
-        auto view2 = mScene->getRegistry()->view<PhysicBodyComponent>();
-        for (auto [e, pbody] : view2.each()) {
-            Entity ent = { ent, mConfig->mProject.scene.get() };
-            auto trans = ent.getComponent<TransformComponent>();
+        auto view2 = mScene->getRegistry()->view<TagComponent, PhysicBodyComponent>();
+        for (auto [e, tag, pbody] : view2.each()) {
+            if (tag.Visible) {
+                Entity ent = { ent, mConfig->mProject.scene.get() };
+                auto trans = ent.getComponent<TransformComponent>();
 
-            drawFixtures(&pbody, trans);
+                drawFixtures(&pbody, trans);
+            }
         }
 
-        if (view.size_hint() || view2.size()) {
+        if (view.size_hint() || view2.size_hint()) {
             mDebugRender->end();
             mDebugRender->render();
         }
@@ -129,14 +158,14 @@ namespace Plutus
 
     void Render::prepare()
     {
-        auto viewMap = mScene->getRegistry()->view<TileMapComponent>();
-        auto view = mScene->getRegistry()->view<TransformComponent, SpriteComponent>();
+        auto viewMap = mScene->getRegistry()->view<TagComponent, TileMapComponent>();
+        auto view = mScene->getRegistry()->view<TagComponent, TransformComponent, SpriteComponent>();
 
         /******************Resize temp buffer************************/
         auto size = view.size_hint();
 
-        for (auto [ent, map] : viewMap.each()) {
-            size += map.mTiles.size();
+        for (auto [ent, tag, map] : viewMap.each()) {
+            size += map.mTiles.size() + map.mAnimateTiles.size();
         }
 
         if (mRenderables.size() != size + mTotalTemp) {
@@ -146,26 +175,24 @@ namespace Plutus
         /******************************************/
 
         int i = mTotalTemp;
-        for (auto ent : viewMap)
+        for (auto [ent, tag, tilemap] : viewMap.each())
         {
-            auto [tilemap] = viewMap.get(ent);
-            if (tilemap.mTiles.size())
+            auto texIndex = -1;
+            Texture* tex = nullptr;
+
+            if (tag.Visible && tilemap.mTiles.size())
             {
-                const int w = tilemap.mTileWidth;
-                const int h = tilemap.mTileHeight;
+                const int w = mConfig->mProject.tileWidth;
+                const int h = mConfig->mProject.tileHeight;
 
                 for (auto& tile : tilemap.mTiles)
                 {
-                    auto rect = tilemap.getRect(tile);
+                    auto rect = mConfig->mProject.getRect(tile);
                     if (mCamera->getViewPortDim().overlap(rect))
                     {
-                        auto texIndex = -1;
-                        Texture* tex = nullptr;
-                        uint32_t texId;
-
                         if (texIndex != tile.texture) {
                             tex = tilemap.getTexture(tile.texture);
-                            texId = tex ? tex->mTexId : -1;
+                            texIndex = tile.texture;
                         }
 
                         if (tex) {
@@ -173,12 +200,31 @@ namespace Plutus
                         }
                     }
                 }
+
+                for (auto& tile : tilemap.mAnimateTiles)
+                {
+                    auto rect = mConfig->mProject.getRect(tile);
+
+                    if (mCamera->getViewPortDim().overlap(rect))
+                    {
+                        auto texIndex = tile.anim->texId;
+
+                        if (texIndex != texIndex) {
+                            tex = tilemap.getTexture(texIndex);
+                            texIndex = texIndex;
+                        }
+                        if (tex) {
+                            mRenderables[i++] = { tex, rect, tex->getUV(tile.coordIndex), {}, 0, false, false, (int)entt::to_integral(ent), tilemap.mLayer, false };
+                        }
+                    }
+                }
             }
         }
 
-        for (auto ent : view)
+        for (auto [ent, tag, trans, sprite] : view.each())
         {
-            auto [trans, sprite] = view.get(ent);
+            if (!tag.Visible) continue;
+
             auto rect = trans.getRect();
             if (mCamera->getViewPortDim().overlap(rect))
             {

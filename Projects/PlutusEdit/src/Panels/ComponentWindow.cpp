@@ -34,7 +34,7 @@ namespace Plutus
             mEnt = mConfig->mProject.mEnt;
             if (mConfig->mProject.scene->isValid(mEnt)) {
                 ImGui::Row("Name");
-                ImGui::InputString("##c-tag", mEnt.getComponent<Tag>()->Name);
+                ImGui::InputString("##c-tag", mEnt.getComponent<TagComponent>()->Name);
 
                 if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE " Add Component##cp")) {
                     ImGui::OpenPopup("AddComponent");

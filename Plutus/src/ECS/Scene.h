@@ -18,6 +18,7 @@ namespace Plutus
     public:
         entt::entity mId{ entt::null };
         Scene* mScene = nullptr;
+        bool mVisible = true;
 
     public:
         Entity() = default;
@@ -83,7 +84,7 @@ namespace Plutus
 
         ~Scene() { mRegistry.clear(); }
 
-        Entity createEntity(const std::string& name);
+        Entity createEntity(const std::string& name, bool visible = true);
 
         Entity getEntity(int Id);
         Entity CreateCopy(Entity& ent);
