@@ -10,15 +10,18 @@ namespace Plutus
     struct Texture;
     struct TileMapComponent;
 
-    struct Tile
-    {
+    struct BaseTile {
         int x = 0;
         int y = 0;
+        int texture = 0;
+        int texcoord = 0;
+    };
+
+    struct Tile : BaseTile
+    {
         bool flipX;
         bool flipY;
         float rotate;
-        int texcoord = 0;
-        int texture = 0;
         Tile() = default;
         Tile(int _x, int _y, int _texcoord, unsigned int _texture, bool fx = false, bool fy = false, float _rotate = 0)
         {
@@ -68,10 +71,10 @@ namespace Plutus
         int mWidth = 60;
         int mHeight = 34;
         int mLayer = 0;
-        std::vector<Tile> mTiles;
-        std::vector<AnimateTile> mAnimateTiles;
         std::array<std::string, 16> mTextures;
+        std::vector<AnimateTile> mAnimateTiles;
         std::vector<TileAnimation> mTileAnims;
+        std::vector<Tile> mTiles;
 
         TileMapComponent(int layer = 0) {
             mLayer = layer;
