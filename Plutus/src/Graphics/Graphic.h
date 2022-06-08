@@ -128,7 +128,7 @@ namespace Plutus
          * @return GLuint glTextureID
          */
         static GLuint createTexture(int w, int h, unsigned char* buff, GLuint intFormat = GL_RGB,
-            GLuint format = GL_RGB, GLint type = GL_UNSIGNED_BYTE, GLint glFilter = GL_NEAREST, uint32_t glTexWrap = GL_CLAMP_TO_EDGE)
+            GLuint format = GL_RGB, GLint type = GL_UNSIGNED_BYTE, GLint glFilter = GL_NEAREST, uint32_t glTexWrap = GL_CLAMP_TO_BORDER)
         {
             GLuint id = 0;
             glGenTextures(1, &id);

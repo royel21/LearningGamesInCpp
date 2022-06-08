@@ -145,7 +145,7 @@ namespace Plutus
             for (auto& anim : tilemap->mAnimateTiles)
             {
                 int index = (anim.y * tilemap->mWidth) + anim.x;
-                ser.addInt((index << 12) | anim.animIndex);
+                ser.addInt((index << 12) | anim.texture);
             }
             ser.EndArr();
 

@@ -78,9 +78,9 @@ namespace Plutus
                 tanim.x = ((i >> 12) % tmap->mWidth);
                 tanim.y = (i >> 12) / tmap->mWidth;
 
-                tanim.animIndex = 0xfff & i;
-                tanim.anim = &tmap->mTileAnims[tanim.animIndex];
-                tanim.coordIndex = tanim.anim->frames[0];
+                tanim.texture = 0xfff & i;
+                tanim.anim = &tmap->mTileAnims[tanim.texture];
+                tanim.texcoord = tanim.anim->frames[0];
             }
         }
 

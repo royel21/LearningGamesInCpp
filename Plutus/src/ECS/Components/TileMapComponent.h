@@ -56,12 +56,9 @@ namespace Plutus
         std::vector<uint16_t> frames;
     };
 
-    struct AnimateTile {
-        int x = 0;
-        int y = 0;
+    struct AnimateTile : BaseTile {
         int frame = 0;
-        int coordIndex;
-        int animIndex;
+        float delay = 0;
         float currentTime = 0;
         TileAnimation* anim;
     };

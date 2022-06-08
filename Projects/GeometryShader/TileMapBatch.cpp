@@ -78,12 +78,12 @@ namespace Plutus
 
             if (animTile.currentTime > anim->duration) {
                 animTile.frame = ++animTile.frame % anim->frames.size();
-                animTile.coordIndex = anim->frames[animTile.frame];
+                animTile.texcoord = anim->frames[animTile.frame];
                 animTile.currentTime = 0;
             }
 
             auto vertices = mProject->getRect(animTile).getvertices();
-            auto uv = mTileMap->getTexCoord(anim->texId, animTile.coordIndex);
+            auto uv = mTileMap->getTexCoord(anim->texId, animTile.texcoord);
 
             mtiles[mStaticTilesCount + tileVers + 0] = { vertices[0], uv.x, uv.w, anim->texId };
             mtiles[mStaticTilesCount + tileVers + 1] = { vertices[1], uv.x, uv.y, anim->texId };

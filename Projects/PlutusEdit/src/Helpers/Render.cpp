@@ -64,7 +64,7 @@ namespace Plutus
 
                         if (tile.currentTime > anim->duration) {
                             tile.frame = ++tile.frame % anim->frames.size();
-                            tile.coordIndex = anim->frames[tile.frame];
+                            tile.texcoord = anim->frames[tile.frame];
                             tile.currentTime = 0;
                         }
                     }
@@ -214,7 +214,7 @@ namespace Plutus
                             texIndex = texIndex;
                         }
                         if (tex) {
-                            mRenderables[i++] = { tex, rect, tex->getUV(tile.coordIndex), {}, 0, false, false, (int)entt::to_integral(ent), tilemap.mLayer, false };
+                            mRenderables[i++] = { tex, rect, tex->getUV(tile.texcoord), {}, 0, false, false, (int)entt::to_integral(ent), tilemap.mLayer, false };
                         }
                     }
                 }
