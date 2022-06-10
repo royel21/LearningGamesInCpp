@@ -27,8 +27,15 @@ namespace Plutus
     {
     public:
         AnimationComponent() = default;
+
         void addSequence(const std::string& id, const Sequence& seq);
-        void addSeq(const std::string& id, Frames frames, int frameTime, bool isDefault = false);
+
+        template<typename ...TArgs>
+        inline void addSeq(TArgs ... args) {
+            addSeq(std::forward<TArgs>(args)...);
+        }
+
+        void addSeq(const std::string& id, Frames frames, int frameTime = 0, bool isDefault = false);
 
         void setTexture(const std::string& texId);
 

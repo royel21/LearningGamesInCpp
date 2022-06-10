@@ -21,7 +21,6 @@
 
 #include "RendererSystem.h"
 
-// #include "SpriteBatch.h"
 #include <Graphics/DebugRenderer.h> 
 
 namespace Plutus

@@ -14,7 +14,7 @@
 #include <Math/Vectors.h>
 
 #include <Core/Project.h>
-
+#include <Utils/FileIO.h>
 #include <Events/EventSystem.h>
 #include <Events/CollisionEvent.h>
 #include <Serialize/SceneLoader.h>
@@ -29,7 +29,8 @@ namespace Plutus
 
         mGlobalLua.open_libraries(
             sol::lib::base,
-            sol::lib::math
+            sol::lib::math,
+            sol::lib::package
         );
 
         mGlobalLua.set("input", Input::get());
@@ -71,12 +72,6 @@ namespace Plutus
         //Scene References
         mGlobalLua.set("scene", mProject->scene.get());
 
-        auto view = mProject->scene->getRegistry()->view<ScriptComponent>();
-
-        for (auto [ent, script] : view.each()) {
-            script.init(mGlobalLua, { ent, mProject->scene.get() });
-        }
-
         auto phSys = mSysManager->getSystem<PhysicSystem>();
         if (phSys) phSys->AddListener(this);
 
@@ -97,6 +92,18 @@ namespace Plutus
 
             return frac;
         };
+
+        auto initScript = AssetManager::get()->getBaseDir() + "/assets/scripts/init.lua";
+
+        if (FileIO::exists(initScript)) {
+            mGlobalLua.script_file(initScript);
+        }
+
+        auto view = mProject->scene->getRegistry()->view<ScriptComponent>();
+
+        for (auto [ent, script] : view.each()) {
+            script.init(mGlobalLua, { ent, mProject->scene.get() });
+        }
     }
 
     void ScriptSystem::update(float dt)
@@ -192,7 +199,13 @@ namespace Plutus
         animate["play"] = &AnimationComponent::play;
         animate["setLoop"] = &AnimationComponent::setLoop;
         animate["loop"] = &AnimationComponent::loop;
-        animate["addSeq"] = &AnimationComponent::addSeq;
+
+        animate["addSeq"] = sol::overload(
+            &AnimationComponent::addSeq<const std::string&, Frames>,
+            &AnimationComponent::addSeq<const std::string&, Frames, int>,
+            &AnimationComponent::addSeq<const std::string&, Frames, int, bool>
+        );
+
         animate["addSeq2"] = &AnimationComponent::addSequence;
         animate["setTexture"] = &AnimationComponent::setTexture;
 

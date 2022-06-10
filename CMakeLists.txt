@@ -7,6 +7,8 @@ project(game C CXX)
 
 file(GLOB_RECURSE GAME_SRC Projects/game/*.h Projects/game/*.cpp)
 
+add_definitions(-DSOL_CHECK_ARGUMENTS=1)
+
 add_subdirectory(Plutus)
 
 # Add Game Target
