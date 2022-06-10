@@ -76,8 +76,8 @@ namespace Plutus
                             ImGui::Row("Cell Size", width);
                             if (ImGui::DragInt2("##Cell-Size", &cellSize.x)) {
                                 mDebugRender->setCellSize(cellSize);
-                                mConfig->mProject.tileWidth = cellSize.x;
-                                mConfig->mProject.tileHeight = cellSize.y;
+                                mConfig->mProject.scene->mTileWidth = cellSize.x;
+                                mConfig->mProject.scene->mTileHeight = cellSize.y;
                             }
 
                             static Vec4f color = mDebugRender->getGridLineColor();

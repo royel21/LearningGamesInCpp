@@ -179,8 +179,8 @@ namespace Plutus
     void TileMapPanel::renderTemp()
     {
         auto gridCoords = getCoords(mConfig);
-        int w = mConfig->mProject.tileWidth;
-        int h = mConfig->mProject.tileHeight;
+        int w = mConfig->mProject.scene->mTileWidth;
+        int h = mConfig->mProject.scene->mTileHeight;
 
         auto tex = mTileMap->getTexture(mCurrentTexture);
 

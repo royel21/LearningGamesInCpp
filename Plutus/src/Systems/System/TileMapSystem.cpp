@@ -67,8 +67,8 @@ namespace Plutus
         tileMaps.emplace_back();
         auto& currentMap = tileMaps.back();
 
-        tileWidth = mProject->tileWidth;
-        tileHeight = mProject->tileHeight;
+        tileWidth = mProject->scene->mTileWidth;
+        tileHeight = mProject->scene->mTileHeight;
 
         std::unordered_map<std::string, std::vector<TileVert>> tilesMap;
         std::string tex = "";

@@ -219,6 +219,8 @@ namespace Plutus
         ser.addInt("type", 0);
 
         ser.add4Float("bg-color", scene->mBGColor);
+        ser.addInt("tile-width", scene->mTileWidth);
+        ser.addInt("tile-height", scene->mTileHeight);
 
         Textures_JSON(ser);
 

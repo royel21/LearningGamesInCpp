@@ -73,9 +73,7 @@ namespace Plutus
         std::vector<TileAnimation> mTileAnims;
         std::vector<Tile> mTiles;
 
-        TileMapComponent(int layer = 0) {
-            mLayer = layer;
-        }
+        TileMapComponent(int layer = 0) { mLayer = layer; }
 
         void addTexture(int id, const std::string& texture);
         void addTexture(const std::string& texture);

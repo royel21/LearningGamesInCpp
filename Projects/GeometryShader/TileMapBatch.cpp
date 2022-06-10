@@ -31,7 +31,7 @@ namespace Plutus
         uint32_t offset = 0;
         for (auto t : tiles) {
             if (textures[t.texture]) {
-                auto vertices = mProject->getRect(t).getvertices();
+                auto vertices = mProject->scene->getRect(t).getvertices();
                 auto uv = textures[t.texture]->getUV(t.texcoord);
 
                 mtiles.emplace_back(vertices[0], uv.x, uv.w, t.texture);
@@ -82,7 +82,7 @@ namespace Plutus
                 animTile.currentTime = 0;
             }
 
-            auto vertices = mProject->getRect(animTile).getvertices();
+            auto vertices = mProject->scene->getRect(animTile).getvertices();
             auto uv = mTileMap->getTexCoord(anim->texId, animTile.texcoord);
 
             mtiles[mStaticTilesCount + tileVers + 0] = { vertices[0], uv.x, uv.w, anim->texId };

@@ -10,7 +10,9 @@
 #include <misc/cpp/imgui_stdlib.h>
 
 #include <Assets/Assets.h>
+#include <Graphics/DebugRenderer.h>
 #include <ECS/Components/TagComponent.h>
+
 
 namespace Plutus
 {
@@ -59,6 +61,7 @@ namespace Plutus
                     //Load Scene only once
                     if (!isOpen) {
                         project.loadScene(sc.first);
+                        DebugRender::get()->setCellSize(project.scene->getTileSize());
                     }
 
                     if (isOpen) {

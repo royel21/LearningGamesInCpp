@@ -21,8 +21,6 @@ namespace Plutus
 
             config->winWidth = jhelper.getInt("win-width", 1280);
             config->winHeight = jhelper.getInt("win-height", 768);
-            config->tileWidth = jhelper.getInt("tile-width", 32);
-            config->tileHeight = jhelper.getInt("tile-height", 32);
             config->currentProject = jhelper.getString("current-project");
 
             //Create All Projects
@@ -39,8 +37,6 @@ namespace Plutus
         {
             ser.addInt("win-width", config->winWidth ? config->winWidth : 1280);
             ser.addInt("win-height", config->winHeight ? config->winHeight : 1280);
-            ser.addInt("tile-width", config->tileWidth);
-            ser.addInt("tile-height", config->tileHeight);
             ser.addString("current-project", config->currentProject);
 
             ser.StartArr("projects");

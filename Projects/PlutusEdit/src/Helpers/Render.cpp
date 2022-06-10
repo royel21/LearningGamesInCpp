@@ -21,7 +21,7 @@ namespace Plutus
         if (!isLoaded) {
             mDebugRender = Plutus::DebugRender::get();
             mDebugRender->init(mCamera);
-            mDebugRender->setCellSize({ mConfig->mProject.tileWidth, mConfig->mProject.tileHeight });
+            mDebugRender->setCellSize(mConfig->mProject.scene->getTileSize());
             isLoaded = true;
         }
     }
@@ -54,7 +54,7 @@ namespace Plutus
             if (tag.Visible) {
                 for (auto& tile : tilemap.mAnimateTiles)
                 {
-                    auto rect = mConfig->mProject.getRect(tile);
+                    auto rect = mScene->getRect(tile);
 
                     if (mCamera->getViewPortDim().overlap(rect))
                     {
@@ -182,12 +182,12 @@ namespace Plutus
 
             if (tag.Visible && tilemap.mTiles.size())
             {
-                const int w = mConfig->mProject.tileWidth;
-                const int h = mConfig->mProject.tileHeight;
+                const int w = mScene->mTileWidth;
+                const int h = mScene->mTileHeight;
 
                 for (auto& tile : tilemap.mTiles)
                 {
-                    auto rect = mConfig->mProject.getRect(tile);
+                    auto rect = mScene->getRect(tile);
                     if (mCamera->getViewPortDim().overlap(rect))
                     {
                         if (texIndex != tile.texture) {
@@ -196,14 +196,18 @@ namespace Plutus
                         }
 
                         if (tex) {
-                            mRenderables[i++] = { tex, rect, tex->getUV(tile.texcoord), {}, tile.rotate, tile.flipX, tile.flipY, (int)entt::to_integral(ent), tilemap.mLayer, false };
+                            mRenderables[i++] = {
+                                tex, rect, tex->getUV(tile.texcoord), {},
+                                tile.rotate, tile.flipX, tile.flipY, (int)entt::to_integral(ent),
+                                tilemap.mLayer, false
+                            };
                         }
                     }
                 }
 
                 for (auto& tile : tilemap.mAnimateTiles)
                 {
-                    auto rect = mConfig->mProject.getRect(tile);
+                    auto rect = mScene->getRect(tile);
 
                     if (mCamera->getViewPortDim().overlap(rect))
                     {
@@ -214,7 +218,11 @@ namespace Plutus
                             texIndex = texIndex;
                         }
                         if (tex) {
-                            mRenderables[i++] = { tex, rect, tex->getUV(tile.texcoord), {}, 0, false, false, (int)entt::to_integral(ent), tilemap.mLayer, false };
+                            mRenderables[i++] = {
+                                tex, rect, tex->getUV(tile.texcoord), {},
+                                0, false, false, (int)entt::to_integral(ent),
+                                tilemap.mLayer, false
+                            };
                         }
                     }
                 }
@@ -230,8 +238,11 @@ namespace Plutus
             {
                 auto tex = AssetManager::get()->getAsset<Texture>(sprite.mTextureId);
 
-                mRenderables[i++] = { tex, rect, sprite.mUVCoord, sprite.mColor,
-                    trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
+                mRenderables[i++] = {
+                    tex, rect, sprite.mUVCoord, sprite.mColor,
+                    trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent),
+                    trans.layer, trans.sortY
+                };
             }
 
         }

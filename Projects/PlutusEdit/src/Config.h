@@ -51,9 +51,6 @@ namespace Plutus
         // Window height
         int winHeight = 768;
 
-        int tileWidth = 32;
-        int tileHeight = 32;
-
         Camera2D* mCamera = nullptr;
 
         EditorProject mProject;

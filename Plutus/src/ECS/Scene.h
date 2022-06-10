@@ -81,8 +81,23 @@ namespace Plutus
     {
     public:
         ColorRGBA8 mBGColor;
+        int mTileWidth = 32;
+        int mTileHeight = 32;
 
         ~Scene() { mRegistry.clear(); }
+
+        inline Vec2f getTileSize() { return { mTileWidth, mTileHeight }; }
+
+        template<typename T>
+        Vec4f getRect(const T& tile) {
+            return { float(tile.x * mTileWidth), float(tile.y * mTileHeight), mTileWidth, mTileHeight };
+        }
+
+        inline Vec4f getRect(float x, float y) {
+            return { x * mTileWidth, y * mTileHeight, mTileWidth, mTileHeight };
+        }
+
+        inline Vec4f getRect(int x, int y) { return getRect(float(x), float(y)); }
 
         Entity createEntity(const std::string& name, bool visible = true);
 
