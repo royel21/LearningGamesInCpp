@@ -58,7 +58,7 @@ namespace Plutus {
 			aabb.upperBound = toWorld(rect.getUpper() - QUERYOFFSET);
 			mWorld->QueryAABB(this, aabb);
 
-			// DebugRender::get()->drawRect(rect);
+			DebugRender::get()->drawRect(rect);
 
 			return mEntities;
 		}

@@ -40,3 +40,16 @@ function initPlayer(anim)
     anim:addSeq("roll-down", {55, 56, 57, 58, 59}, frametime)
 end
 
+function spawnBomb(x, y)
+    local ent = scene:createEntity("bomb", true)
+
+    local trans = ent:addTransform(x - 8, y - 8, 16, 16)
+    trans.sortY = true
+    trans.layer = 1
+
+    ent:addSprite()
+
+    local script = ent:addScript("bomb.lua")
+    script:setScript("bomb.lua")
+    initScript(ent:getId())
+end

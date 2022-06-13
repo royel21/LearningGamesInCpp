@@ -1,4 +1,4 @@
-local SPEED = 10
+local SPEED = 10.0
 local curAnime = "stand-r"
 
 local stand = {
@@ -35,68 +35,37 @@ function init()
     end
 
     camera:setTarget(entity, vec)
-
-    print("player2 init")
+    local trans = entity:getTransform()
+    print("player2 init", trans.layer)
 end
 
 function destroy()
     assetManager:removeSound("bg")
 end
 
-local vel = {
-    x = 0,
-    y = 0
-}
+local vel = Vec2f.new(0, 0);
 
 function move()
+    vel = vel:unit() * SPEED
     rbody:applyForce(vel.x, vel.y)
-    -- local trans = Player2:getTransform()
-    -- print("move")
-    -- trans.x = trans.x + vel.x
-    -- trans.y = trans.y + vel.y
-    -- print("move")
 end
 
 function roll()
-    vel.x = vel.x * 1.1;
-    vel.y = vel.y * 1.1;
+    vel = vel * 1.1;
     rbody:applyForce(vel.x, vel.y)
-    -- rbody:setVelocity(vel.x, vel.y)
 end
 
 function jump()
     rbody:applyImpulse(0, 0.3)
 end
 
-function createEnt()
-    local ent = scene:createEntity("bomb", true)
-
-    local trans = ent:addTransform(5.0, 5.0, 32, 32)
-    trans.layer = 5
-
-    ent:addSprite()
-
-    local script = ent:addScript("bomb.lua")
-    script:setScript("bomb.lua")
-    local id = ent:getId()
-
-    initScript(id)
-
-    print("create", anim, type(id))
-end
-
 function update(dt)
-    -- local v = rbody:getVelocity()
-    -- print(v.x)
 
     if not anim.loop then
         state = ""
         curAnime = stand[direction]
         anim:play(curAnime)
-        vel = {
-            x = 0,
-            y = 0
-        }
+        vel = Vec2f.new(0, 0);
     end
 
     if input:onKeyDown("A") then
@@ -114,7 +83,8 @@ function update(dt)
     -- end
 
     if input:onKeyPressed("T") then
-        createEnt()
+        local dir = getDirection(entity:getCenter(), direction, 16)
+        spawnBomb(dir.x, dir.y)
     end
 
     if input:onKeyDown("V") then
@@ -152,7 +122,7 @@ function update(dt)
         -- Jump animation
         if input:onKeyPressed("X") and state == "running" then
             state = "jumping"
-            anim:play("jump-" .. direction)
+            anim:play("roll-" .. direction)
             anim:setLoop(true)
             roll()
         elseif not anim.loop and state == "running" then

@@ -42,13 +42,11 @@ namespace Plutus
                 if (animation.currentTime > seq->mSeqTime)
                 {
                     seq->mFrame = ++seq->mFrame % framesCount;
-                    animation.currentTime = 0;
                     if (framesCount > 1 && seq->mFrame + 1 == framesCount) {
 
                         if (animation.loop) {
                             animation.loop = false;
                             seq->mFrame = 0;
-                            animation.currentTime = 0;
                         }
 
                         auto script = mProject->scene->getComponent<ScriptComponent>(ent);
@@ -56,6 +54,7 @@ namespace Plutus
                             script->animationEnd(animation.currentSeq);
                         }
                     }
+                    animation.currentTime = 0;
                 }
 
                 sprite.mTextureId = seq->mTexId;

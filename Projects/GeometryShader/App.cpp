@@ -35,6 +35,7 @@ namespace Plutus
             draw();
             mWindow.update();
             mLimiter.end();
+            mProject.scene->remove();
         }
     }
 

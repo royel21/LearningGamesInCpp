@@ -20,12 +20,21 @@
 
 namespace Plutus
 {
+    using EntList = std::vector<Entity>;
 
-    std::vector<Entity> getEntList(Project* proj, const std::vector<uint32_t> list) {
+    bool containsEnt(EntList ents, uint32_t e) {
+        auto found = std::find_if(ents.begin(), ents.end(),
+            [e](const Entity& ent) { return ent == e; });
+        return found != ents.end();
+    }
+
+    EntList getEntList(Project* proj, const std::vector<uint32_t> list) {
         std::vector<Entity> ents;
         ents.reserve(list.size());
         for (auto e : list) {
-            ents.push_back(proj->scene->getEntity(e));
+            if (!containsEnt(ents, e)) {
+                ents.push_back(proj->scene->getEntity(e));
+            }
         }
         return ents;
     }
@@ -122,8 +131,12 @@ namespace Plutus
         mGlobalLua["initScript"] = [&](uint32_t entId) {
             auto script = mProject->scene->getComponent<ScriptComponent>(entId);
             if (script) script->init(mGlobalLua, { entId, mProject->scene.get() });
-            printf("initialize %i\n", entId);
         };
+
+        mGlobalLua["getDirection"] = sol::overload(
+            [&](const Vec2f& pos, const std::string& dir, float offset) { return getDirection(pos.x, pos.y, dir, offset); },
+            &getDirection
+        );
     }
 
     void ScriptSystem::init()
@@ -336,6 +349,7 @@ namespace Plutus
         transform["rotation"] = &TransformComponent::r;
         transform["layer"] = &TransformComponent::layer;
         transform["sortY"] = &TransformComponent::sortY;
+        transform["getRect"] = &TransformComponent::getRect;
 
         /*****************************Register Tilemap and Tile**********************************************/
         auto tileMap = mGlobalLua.new_usertype<TileMapComponent>("TileMap");
