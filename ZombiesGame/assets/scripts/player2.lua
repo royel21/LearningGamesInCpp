@@ -27,18 +27,26 @@ camera:setBounds(bounds);
 
 function init()
     anim = entity:getAnimate()
- 	rbody = entity:getRigidBody()
+    rbody = entity:getRigidBody()
+    initPlayer(anim)
 
-    if anim then anim:play(curAnime) end
-   
+    if anim then
+        anim:play(curAnime)
+    end
+
     camera:setTarget(entity, vec)
 
     print("player2 init")
 end
 
-function destroy() assetManager:removeSound("bg") end
+function destroy()
+    assetManager:removeSound("bg")
+end
 
-local vel = {x = 0, y = 0}
+local vel = {
+    x = 0,
+    y = 0
+}
 
 function move()
     rbody:applyForce(vel.x, vel.y)
@@ -56,7 +64,26 @@ function roll()
     -- rbody:setVelocity(vel.x, vel.y)
 end
 
-function jump() rbody:applyImpulse(0, 0.3) end
+function jump()
+    rbody:applyImpulse(0, 0.3)
+end
+
+function createEnt()
+    local ent = scene:createEntity("bomb", true)
+
+    local trans = ent:addTransform(5.0, 5.0, 32, 32)
+    trans.layer = 5
+
+    ent:addSprite()
+
+    local script = ent:addScript("bomb.lua")
+    script:setScript("bomb.lua")
+    local id = ent:getId()
+
+    initScript(id)
+
+    print("create", anim, type(id))
+end
 
 function update(dt)
     -- local v = rbody:getVelocity()
@@ -66,19 +93,29 @@ function update(dt)
         state = ""
         curAnime = stand[direction]
         anim:play(curAnime)
-        vel = {x = 0, y = 0}
+        vel = {
+            x = 0,
+            y = 0
+        }
     end
-	
-	if input:onKeyDown("A") then
-		local pos = entity:getPosition()
-		local entities = queryWorld(pos.x, pos.y, 50, 0x80)
-		print(#entities)
-	end
+
+    if input:onKeyDown("A") then
+        local pos = entity:getCenter()
+
+        local ents = queryWorld(pos.x, pos.y, 25, MASK.Enemy, 10, direction)
+        if #ents > 0 then
+            -- print("found:", ents[1]:getCenter())
+        end
+    end
 
     -- if (input:onKeyDown("X")) then
     -- sound:play(false)
     --   print("play sound")
     -- end
+
+    if input:onKeyPressed("T") then
+        createEnt()
+    end
 
     if input:onKeyDown("V") then
         SPEED = 20
@@ -108,7 +145,9 @@ function update(dt)
             vel.x = -SPEED
         end
 
-        if input:onKeyPressed("C") then jump() end
+        if input:onKeyPressed("C") then
+            jump()
+        end
 
         -- Jump animation
         if input:onKeyPressed("X") and state == "running" then
@@ -122,7 +161,9 @@ function update(dt)
         end
     end
     -- Jumping
-    if state == "jumping" or state == "running" then move() end
+    if state == "jumping" or state == "running" then
+        move()
+    end
     -- Attack Animation
     if input:onKeyPressed("Z") and state ~= "jumping" then
         anim:play("attack-" .. direction)
@@ -131,10 +172,6 @@ function update(dt)
     end
 end
 
-
-
-
-
-
-
-
+function animationEnd(id)
+    print(id)
+end

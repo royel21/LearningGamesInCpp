@@ -94,6 +94,7 @@ namespace Plutus
             drawPhysicBodies();
 
             mFrameBuffer.unBind();
+            mScene->remove();
         }
     }
 
@@ -143,7 +144,7 @@ namespace Plutus
         auto view2 = mScene->getRegistry()->view<TagComponent, PhysicBodyComponent>();
         for (auto [e, tag, pbody] : view2.each()) {
             if (tag.Visible) {
-                Entity ent = { ent, mConfig->mProject.scene.get() };
+                Entity ent = { e, mConfig->mProject.scene.get() };
                 auto trans = ent.getComponent<TransformComponent>();
 
                 drawFixtures(&pbody, trans);

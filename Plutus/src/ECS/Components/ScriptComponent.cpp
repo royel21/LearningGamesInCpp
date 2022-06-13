@@ -23,16 +23,23 @@ namespace Plutus
             auto result = lua.script(script->mBuffer, mEnv);
             if (result.valid()) {
                 mEnv["entity"] = Entity{ ent.mId, ent.mScene };
+
                 if (mEnv["init"] != sol::nil) {
                     mEnv["init"]();
-                    isLoaded = true;
                 }
+                isLoaded = true;
             }
         }
     }
 
+    void ScriptComponent::animationEnd(const std::string id) {
+        if (isLoaded && mEnv["animationEnd"] != sol::nil) {
+            mEnv["animationEnd"](id);
+        }
+    }
+
     void ScriptComponent::update(float dt) {
-        if (isLoaded) {
+        if (isLoaded && mEnv["update"] != sol::nil) {
             mEnv["update"](dt);
         }
     }
@@ -56,7 +63,7 @@ namespace Plutus
     }
 
     void ScriptComponent::destroy() {
-        if (isLoaded) {
+        if (isLoaded && mEnv["destroy"] != sol::nil) {
             mEnv["destroy"]();
         }
         mEnv = sol::environment();

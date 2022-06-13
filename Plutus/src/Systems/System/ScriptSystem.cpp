@@ -1,29 +1,51 @@
 #include "ScriptSystem.h"
+#include "PhysicSystem.h"
+#include "../SystemManager.h"
 
 #include <ECS/Scene.h>
 #include <ECS/Components.h>
 
 #include <Time/Timer.h>
 #include <Input/Input.h>
+#include <Core/Project.h>
+#include <Utils/FileIO.h>
+#include <Assets/Assets.h>
 
 #include <Graphics/Camera2D.h>
 #include <Graphics/GLheaders.h>
 
-#include <Assets/Assets.h>
-
-#include <Math/Vectors.h>
-
-#include <Core/Project.h>
-#include <Utils/FileIO.h>
-#include <Events/EventSystem.h>
 #include <Events/CollisionEvent.h>
 #include <Serialize/SceneLoader.h>
 
-#include "../SystemManager.h"
-#include "PhysicSystem.h"
 
 namespace Plutus
 {
+
+    std::vector<Entity> getEntList(Project* proj, const std::vector<uint32_t> list) {
+        std::vector<Entity> ents;
+        ents.reserve(list.size());
+        for (auto e : list) {
+            ents.push_back(proj->scene->getEntity(e));
+        }
+        return ents;
+    }
+
+    Vec2f getDirection(float x, float y, const std::string& dir, float offset) {
+
+        if (dir == "right") {
+            x += offset;
+        }
+        else if (dir == "left") {
+            x -= offset;
+        }
+        else if (dir == "up") {
+            y += offset;
+        }
+        else if (dir == "down") {
+            y -= offset;
+        }
+        return { x, y };
+    }
 
     ScriptSystem::ScriptSystem(Camera2D* camera) : ISystem(camera) {
 
@@ -32,7 +54,14 @@ namespace Plutus
             sol::lib::math,
             sol::lib::package
         );
+        registerEntity();
+        registerAssets();
+        registerCamera();
+        registerComponents();
+        registerGlobals();
+    }
 
+    void ScriptSystem::registerGlobals() {
         mGlobalLua.set("input", Input::get());
         mGlobalLua.set("getMillis", &Time::millis);
         mGlobalLua.set("assetManager", AssetManager::get());
@@ -40,6 +69,12 @@ namespace Plutus
         /*****************************Register EntityManager**********************************************/
         auto scene_table = mGlobalLua.new_usertype<Scene>("Scene");
         scene_table["getEntity"] = sol::overload(&Scene::getEntityByName, &Scene::getEntity);
+        scene_table["removeEntity"] = sol::overload(
+            sol::resolve<void(Entity)>(&Scene::removeEntity),
+            sol::resolve<void(uint32_t)>(&Scene::removeEntity)
+        );
+
+        scene_table["createEntity"] = &Scene::createEntity;
 
         mGlobalLua["SceneLoader"] = &SceneLoader::loadFromPath;
 
@@ -48,10 +83,32 @@ namespace Plutus
         input["onKeyDown"] = &Input::onKeyDown;
         input["onKeyPressed"] = &Input::onKeyPressed;
 
-        auto lua_vec2 = mGlobalLua.new_usertype<Vec2f>("Vec2f", sol::constructors<Vec2f(), Vec2f(float, float), Vec2f(int, int)>());
+        auto lua_vec2 = mGlobalLua.new_usertype<Vec2f>(
+            "Vec2f", sol::constructors<Vec2f(),
+            Vec2f(float, float), Vec2f(int, int)>(),
+            sol::meta_function::multiplication, &Vec2f::operator*,
+            sol::meta_function::addition,
+            sol::overload(
+                sol::resolve<Vec2f(const Vec2f&) const>(&Vec2f::operator+),
+                sol::resolve<Vec2f(const float) const>(&Vec2f::operator+)
+            ),
+            sol::meta_function::subtraction,
+            sol::overload(sol::resolve<Vec2f(const Vec2f&) const>(&Vec2f::operator-)),
+            sol::meta_function::unary_minus,
+            sol::overload(sol::resolve<Vec2f(const float) const>(&Vec2f::operator-)),
+            sol::meta_function::equal_to, &Vec2f::operator==,
+            sol::meta_function::less_than, &Vec2f::operator<,
+            sol::meta_function::less_than_or_equal_to, &Vec2f::operator<=
+            );
+
         lua_vec2["x"] = &Vec2f::x;
         lua_vec2["y"] = &Vec2f::y;
+        lua_vec2["dot"] = &Vec2f::dot;
         lua_vec2["unit"] = &Vec2f::unit;
+        lua_vec2["cross"] = &Vec2f::cross;
+        lua_vec2["normal"] = &Vec2f::normal;
+        lua_vec2["length"] = &Vec2f::length;
+        lua_vec2["invLength"] = &Vec2f::invLength;
         lua_vec2["getDirection"] = &Vec2f::getDirection;
 
         auto lua_vec4 = mGlobalLua.new_usertype<Vec4f>("Vec4f", sol::constructors<Vec4f(), Vec4f(float, float, float, float)>());
@@ -61,10 +118,12 @@ namespace Plutus
         lua_vec4["z"] = &Vec4f::z;
         lua_vec4["w"] = &Vec4f::w;
 
-        registerEntity();
-        registerAssets();
-        registerCamera();
-        registerComponents();
+
+        mGlobalLua["initScript"] = [&](uint32_t entId) {
+            auto script = mProject->scene->getComponent<ScriptComponent>(entId);
+            if (script) script->init(mGlobalLua, { entId, mProject->scene.get() });
+            printf("initialize %i\n", entId);
+        };
     }
 
     void ScriptSystem::init()
@@ -72,26 +131,11 @@ namespace Plutus
         //Scene References
         mGlobalLua.set("scene", mProject->scene.get());
 
-        auto phSys = mSysManager->getSystem<PhysicSystem>();
-        if (phSys) phSys->AddListener(this);
-
-        mGlobalLua["queryWorld"] = [&](float x, float y, float size, uint32_t mask = 0xffff)-> std::vector<uint32_t> {
-            auto pSys = mSysManager->getSystem<PhysicSystem>();
-            if (phSys) return pSys->queryWorld({ x,y,size,size }, mask);
-            return {};
-        };
-
-        mGlobalLua["castRay"] = [&](uint32_t entId, Vec2f start, Vec2f end) {
-            auto pSys = mSysManager->getSystem<PhysicSystem>();
-
-            float frac = 0;
-
-            if (pSys) {
-                pSys->CastRay(start, end, [&](b2Fixture* fixture, Vec2f point, Vec2f normal, float fraction) -> float { frac = fraction; return 1;  });
-            }
-
-            return frac;
-        };
+        mPhysicSys = mSysManager->getSystem<PhysicSystem>();
+        if (mPhysicSys) {
+            mPhysicSys->AddListener(this);
+            registerPhysics();
+        }
 
         auto initScript = AssetManager::get()->getBaseDir() + "/assets/scripts/init.lua";
 
@@ -113,6 +157,48 @@ namespace Plutus
         for (auto [ent, script] : view.each()) {
             script.update(dt);
         }
+    }
+
+
+    uint32_t ScriptSystem::castRay(const Vec2f& start, const Vec2f& end, uint32_t mask) {
+        uint32_t entId = 0;
+        mPhysicSys->CastRay(start, end,
+            [&](b2Fixture* fixture, Vec2f point, Vec2f normal, float fraction) -> float
+            {
+                if (fixture->GetFilterData().categoryBits & mask) {
+                    entId = fixture->GetBody()->GetUserData().pointer;
+                    return 0;
+                }
+                return 1;
+            }
+        );
+        return entId;
+    }
+
+    void ScriptSystem::registerPhysics() {
+
+        mGlobalLua["castRay"] = sol::overload(
+            [&](Vec2f start, Vec2f end) { return Entity{ castRay(start, end), mProject->scene.get() }; },
+            [&](Vec2f start, Vec2f end, uint32_t mask) { return Entity{ castRay(start, end, mask), mProject->scene.get() }; }
+        );
+
+        mGlobalLua["queryWorld"] = sol::overload(
+            [&](float x, float y, float size) {
+                float half = size * 0.5f;
+                return getEntList(mProject, mPhysicSys->queryWorld({ x - half, y - half, size, size }, 0xffff));
+            },
+            [&](float x, float y, float size, uint32_t mask)
+            {
+                float half = size * 0.5f;
+                return getEntList(mProject, mPhysicSys->queryWorld({ x - half, y - half, size, size }, mask));
+            },
+                [&](float x, float y, float size, uint32_t mask, float offset, const std::string& dir)
+            {
+                auto pos = getDirection(x, y, dir, offset);
+                float half = size * 0.5f;
+                return getEntList(mProject, mPhysicSys->queryWorld({ pos.x - half, pos.y - half, size, size }, mask));
+            }
+            );
     }
 
     void ScriptSystem::registerAssets()
@@ -152,8 +238,8 @@ namespace Plutus
             );
 
         texture_table["getUV"] = sol::overload(
-            &Texture::getUV<int>,
-            &Texture::getUV<float, float, float, float>
+            sol::resolve<Vec4f(int)>(&Texture::getUV),
+            sol::resolve<Vec4f(float, float, float, float)>(&Texture::getUV)
         );
     }
 
@@ -163,8 +249,8 @@ namespace Plutus
         lua_camera["setBounds"] = &Camera2D::setBounds;
 
         lua_camera["setPosition"] = sol::overload(
-            [&](float x, float y) {mCamera->setPosition(x, y); },
-            [&](const Vec2f& pos) {mCamera->setPosition(pos); }
+            sol::resolve<void(float, float)>(&Camera2D::setPosition),
+            sol::resolve<void(const Vec2f&)>(&Camera2D::setPosition)
         );
 
         lua_camera["setTarget"] = &Camera2D::setTarget;
@@ -176,14 +262,35 @@ namespace Plutus
     void ScriptSystem::registerEntity()
     {
         /*****************************Register Entity**********************************************/
-        auto entity = mGlobalLua.new_usertype<Entity>("Entity");
+        auto entity = mGlobalLua.new_usertype<Entity>("Entity",
+            sol::meta_function::equal_to,
+            sol::overload(sol::resolve<bool(const Entity&) const>(&Entity::operator==))
+            );
+
         entity["getId"] = &Entity::getId;
+        entity["isValid"] = &Entity::isValid;
+
         entity["getTransform"] = &Entity::getComponent<TransformComponent>;
         entity["getTileMap"] = &Entity::getComponent<TileMapComponent>;
         entity["getAnimate"] = &Entity::getComponent<AnimationComponent>;
         entity["getSprite"] = &Entity::getComponent<SpriteComponent>;
         entity["getRigidBody"] = &Entity::getComponent<RigidBodyComponent>;
         entity["getVelocity"] = &Entity::getComponent<VelocityComponent>;
+
+
+        entity["addTransform"] = sol::overload(
+            &Entity::addComponent<TransformComponent, float, float, int, int>,
+            &Entity::addComponent<TransformComponent, float, float, int, int, float>,
+            &Entity::addComponent<TransformComponent, float, float, int, int, float, int>,
+            &Entity::addComponent<TransformComponent, float, float, int, int, float, int, bool>
+        );
+
+        entity["addTileMap"] = &Entity::addComponent<TileMapComponent>;
+        entity["addAnimate"] = &Entity::addComponent<AnimationComponent>;
+        entity["addSprite"] = &Entity::addComponent<SpriteComponent>;
+        entity["addRigidBody"] = &Entity::addComponent<RigidBodyComponent>;
+        entity["addVelocity"] = &Entity::addComponent<VelocityComponent>;
+        entity["addScript"] = &Entity::addComponent<ScriptComponent>;
 
         entity["getName"] = &Entity::getName;
         entity["getPosition"] = &Entity::getPosition;
@@ -201,9 +308,9 @@ namespace Plutus
         animate["loop"] = &AnimationComponent::loop;
 
         animate["addSeq"] = sol::overload(
-            &AnimationComponent::addSeq<const std::string&, Frames>,
-            &AnimationComponent::addSeq<const std::string&, Frames, int>,
-            &AnimationComponent::addSeq<const std::string&, Frames, int, bool>
+            sol::resolve<void(const std::string&, Frames)>(&AnimationComponent::addSeq),
+            sol::resolve<void(const std::string&, Frames, int)>(&AnimationComponent::addSeq),
+            sol::resolve<void(const std::string&, Frames, int, bool)>(&AnimationComponent::addSeq)
         );
 
         animate["addSeq2"] = &AnimationComponent::addSequence;
@@ -227,6 +334,8 @@ namespace Plutus
         transform["w"] = &TransformComponent::w;
         transform["h"] = &TransformComponent::h;
         transform["rotation"] = &TransformComponent::r;
+        transform["layer"] = &TransformComponent::layer;
+        transform["sortY"] = &TransformComponent::sortY;
 
         /*****************************Register Tilemap and Tile**********************************************/
         auto tileMap = mGlobalLua.new_usertype<TileMapComponent>("TileMap");
@@ -249,6 +358,11 @@ namespace Plutus
 
         velocity["velocity"] = &VelocityComponent::mVelocity;
         velocity["setVel"] = &VelocityComponent::setVel;
+
+        auto luascript = mGlobalLua.new_usertype<ScriptComponent>("Script",
+            sol::constructors<ScriptComponent(), ScriptComponent(const std::string&)>()
+            );
+        luascript["setScript"] = &ScriptComponent::setScript;
     }
 
     void ScriptSystem::CollisionEvent(uint32_t ent1, bool isSensorA, uint32_t ent2, bool isSensorB, bool collisionStart) {

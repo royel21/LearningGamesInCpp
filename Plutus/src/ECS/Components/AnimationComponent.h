@@ -30,18 +30,16 @@ namespace Plutus
 
         void addSequence(const std::string& id, const Sequence& seq);
 
-        template<typename ...TArgs>
-        inline void addSeq(TArgs ... args) {
-            addSeq(std::forward<TArgs>(args)...);
-        }
-
-        void addSeq(const std::string& id, Frames frames, int frameTime = 0, bool isDefault = false);
+        void addSeq(const std::string& id, Frames frames, int frameTime, bool isDefault);
+        inline void addSeq(const std::string& id, Frames frames) { addSeq(id, frames, 0, false); }
+        inline void addSeq(const std::string& id, Frames frames, int frameTime) { addSeq(id, frames, frameTime, false); }
 
         void setTexture(const std::string& texId);
 
         void updateSeq(const std::string& oldid, const std::string& newid);
 
-        void setLoop(bool _loop) { loop = _loop; }
+        inline void setLoop(bool _loop) { loop = _loop; }
+
         void play(const std::string& id);
 
         Sequence* getCurrentSeq();

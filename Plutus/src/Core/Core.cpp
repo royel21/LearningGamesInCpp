@@ -76,6 +76,7 @@ namespace Plutus
             mLimiter.end();
 
             if (mScreenList.size()) swapScreen();
+            if (mProject) mProject.scene->remove();
         };
 #ifdef __EMSCRIPTEN__
         emscripten_set_main_loop(main_loop2, 0, true);

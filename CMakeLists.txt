@@ -79,11 +79,20 @@ add_executable("QuadTree" ${SRC_QUAD})
 target_link_libraries(QuadTree PUBLIC Plutus)
 #*************Test Bed**********************
 
+file(GLOB_RECURSE SRC_Raycast Projects/Raycast/*.h Projects/Raycast/*.cpp)
+
+add_executable("Raycast" ${SRC_Raycast})
+
+target_link_libraries(Raycast PUBLIC Plutus)
+
+#*************TestBed**********************
+
 file(GLOB_RECURSE SRC_TestBed Projects/TestBed/*.h Projects/TestBed/*.cpp)
 
 add_executable("TestBed" ${SRC_TestBed})
 
 target_link_libraries(TestBed PUBLIC Plutus)
+
 
 #*************Single Test**********************
 add_executable("SingleTest" Projects/SingleTest.cpp)

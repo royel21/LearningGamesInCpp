@@ -26,42 +26,49 @@ function init()
 end
 
 function update(dt)
-
     if not anim.loop then
-        vel = {
-            x = 0,
-            y = 0
-        }
+        vel.x = 0
+        vel.y = 0
         state = "stand-"
     end
 
-    if input:onKeyDown("Up") then
-        direction = "up"
-        vel.y = SPEED
-    elseif input:onKeyDown("Down") then
-        direction = "down"
-        vel.y = -SPEED
-    end
-    -- Move Right - Left
-    if input:onKeyDown("Right") then
-        direction = "right"
-        vel.x = SPEED
-    elseif input:onKeyDown("Left") then
-        direction = "left"
-        vel.x = -SPEED
+    if state ~= "attacking" and state ~= "jumping" then
+        if input:onKeyDown("Up") then
+            direction = "up"
+            vel.y = SPEED
+        elseif input:onKeyDown("Down") then
+            direction = "down"
+            vel.y = -SPEED
+        end
+        -- Move Right - Left
+        if input:onKeyDown("Right") then
+            direction = "right"
+            vel.x = SPEED
+        elseif input:onKeyDown("Left") then
+            direction = "left"
+            vel.x = -SPEED
+        end
+
+        if vel.x ~= 0 or vel.y ~= 0 then
+            state = "run-"
+        end
+
+        if state == "run-" then
+            if input:onKeyPressed("X") then
+
+            end
+        end
     end
 
-    local trans = entity:getTransform()
-    trans.x = trans.x + vel.x
-    trans.y = trans.y + vel.y
-
-    if vel.x ~= 0 or vel.y ~= 0 then
-        state = "run-"
+    if input:onKeyPressed("Z") and state ~= "jumping" then
+        anim:play("attack-" .. direction)
+        anim.loop = true
+        local ents = queryWorld(trans.x, trans.y, 30, MASK.Enemy, 20, direction)
+        print("found:", #ents)
+    elseif anim.loop == false then
+        local trans = entity:getTransform()
+        trans.x = trans.x + vel.x
+        trans.y = trans.y + vel.y
+        anim:play(state .. direction)
     end
-    -- print(state .. direction)
-    anim:play(state .. direction)
 end
-
-function destroy()
-end
-

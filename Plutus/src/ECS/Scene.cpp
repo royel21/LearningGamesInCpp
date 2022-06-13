@@ -3,6 +3,11 @@
 
 namespace Plutus
 {
+    Entity::~Entity() {
+        mId = entt::null;
+        mScene = nullptr;
+    }
+
     Vec2f Entity::getPosition() {
         auto trans = getComponent<TransformComponent>();
         return trans ? trans->getPosition() : Vec2f{};
@@ -33,7 +38,7 @@ namespace Plutus
     }
 
     bool Entity::isValid() const {
-        return mScene && mScene->mRegistry.valid(mId);
+        return mScene != nullptr && mScene->mRegistry.valid(mId);
     }
 
     void Entity::setName(const std::string& name)
@@ -50,13 +55,14 @@ namespace Plutus
         tag->Visible = visible;
         return { ent.mId, this };
     }
-
+    // Get Entity by entt::id = int
     Entity Scene::getEntity(int Id)
     {
         auto ent = entt::entity(Id);
         return { mRegistry.valid(ent) ? ent : entt::null , this };
     }
 
+    // Get Entity by name using std::string as key to find the entity
     Entity Scene::getEntityByName(const std::string& name)
     {
         entt::entity ent = entt::null;

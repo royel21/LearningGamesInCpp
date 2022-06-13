@@ -2,6 +2,7 @@
 
 #include <ECS/Scene.h>
 #include <ECS/Components/SpriteComponent.h> 
+#include <ECS/Components/ScriptComponent.h>
 #include <ECS/Components/AnimationComponent.h>
 
 #include <Assets/Assets.h>
@@ -32,18 +33,28 @@ namespace Plutus
         {
             auto [sprite, animation] = view.get(ent);
             auto seq = animation.getCurrentSeq();
+
             if (seq && !seq->mTexId.empty() && seq->mFrames.size()) {
+                auto framesCount = seq->mFrames.size();
+
                 animation.currentTime += dt;
-                auto& frames = seq->mFrames;
 
                 if (animation.currentTime > seq->mSeqTime)
                 {
-                    seq->mFrame = ++seq->mFrame % frames.size();
+                    seq->mFrame = ++seq->mFrame % framesCount;
                     animation.currentTime = 0;
-                    if (seq->mFrame + 1 == frames.size() && animation.loop) {
-                        animation.loop = false;
-                        seq->mFrame = 0;
-                        animation.currentTime = 0;
+                    if (framesCount > 1 && seq->mFrame + 1 == framesCount) {
+
+                        if (animation.loop) {
+                            animation.loop = false;
+                            seq->mFrame = 0;
+                            animation.currentTime = 0;
+                        }
+
+                        auto script = mProject->scene->getComponent<ScriptComponent>(ent);
+                        if (script) {
+                            script->animationEnd(animation.currentSeq);
+                        }
                     }
                 }
 

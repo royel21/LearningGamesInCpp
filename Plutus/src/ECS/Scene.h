@@ -22,13 +22,15 @@ namespace Plutus
 
     public:
         Entity() = default;
-        Entity(const Entity& ent) : mId(ent.mId), mScene(ent.mScene) { }
-        Entity(const Entity* ent) : mId(ent->mId), mScene(ent->mScene) { }
-        Entity(entt::entity ent, Scene* scene) : mId(ent), mScene(scene) {}
+        ~Entity();
+        Entity(const Entity& ent) : mId(ent.mId), mScene(ent.mScene), mVisible(ent.mVisible) { }
+        Entity(const Entity* ent) : mId(ent->mId), mScene(ent->mScene), mVisible(ent->mVisible) { }
+        Entity(entt::entity ent, Scene* scene, bool visible = true) : mId(ent), mScene(scene), mVisible(visible) {}
+        Entity(uint32_t ent, Scene* scene, bool visible = true) : mId(entt::entity(ent)), mScene(scene), mVisible(visible) {}
 
-        uint32_t getId() { return (uint32_t)mId; }
+        inline uint32_t getId() { return (uint32_t)mId; }
 
-        entt::entity getEntityId() const { return mId; }
+        inline entt::entity getEntityId() const { return mId; }
 
         const std::string getName();
         Vec2f getPosition();
@@ -105,6 +107,13 @@ namespace Plutus
         Entity CreateCopy(Entity& ent);
         Entity getEntityByName(const std::string& name);
 
+        void remove() {
+            for (auto e : toRemove) {
+                mRegistry.destroy(e);
+            }
+            toRemove.clear();
+        }
+
         inline TransformComponent* getTransform(uint32_t id) { return getTransform(entt::entity(id)); }
         TransformComponent* getTransform(entt::entity id);
 
@@ -130,7 +139,15 @@ namespace Plutus
 
         void copyScene(Scene* scene);
 
-        inline void removeEntity(entt::entity ent) { mRegistry.destroy(ent); }
+        inline void removeEntity(entt::entity ent) {
+            toRemove.push_back(ent);
+        }
+        inline void removeEntity(Entity ent) {
+            toRemove.push_back(ent.mId);
+        }
+        inline void removeEntity(uint32_t ent) {
+            toRemove.push_back(entt::entity(ent));
+        }
 
         inline bool isValid(Entity ent) { return mRegistry.valid(ent); }
         inline bool isValid(uint32_t ent) { return mRegistry.valid(entt::entity(ent)); }
@@ -151,6 +168,7 @@ namespace Plutus
 
     private:
         entt::registry mRegistry;
+        std::vector<entt::entity> toRemove;
 
         friend class Entity;
         friend class System;

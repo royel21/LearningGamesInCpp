@@ -10,6 +10,8 @@
 #include <Math/Vectors.h>
 #include <ECS/Components.h>
 
+#include <Graphics/DebugRenderer.h>
+
 namespace Plutus {
 
 	using RayCastCallBack = std::function<float(b2Fixture*, Vec2f, Vec2f, float)>;
@@ -55,6 +57,8 @@ namespace Plutus {
 			aabb.lowerBound = toWorld(rect.getLower() + QUERYOFFSET);
 			aabb.upperBound = toWorld(rect.getUpper() - QUERYOFFSET);
 			mWorld->QueryAABB(this, aabb);
+
+			// DebugRender::get()->drawRect(rect);
 
 			return mEntities;
 		}

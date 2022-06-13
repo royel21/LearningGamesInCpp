@@ -102,7 +102,7 @@ namespace Plutus
                 break;
             }
             }
-            auto fix = pbody.mBody->CreateFixture(&fixDef);
+            fixture.b2fixture = pbody.mBody->CreateFixture(&fixDef);
 
         } // end fixture forloop
     }

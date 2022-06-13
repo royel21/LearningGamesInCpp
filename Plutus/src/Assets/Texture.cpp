@@ -32,7 +32,7 @@ namespace Plutus
         }
     }
 
-    Vec4f Texture::getUVs(float column, float row, float w, float h)
+    Vec4f Texture::getUV(float column, float row, float w, float h)
     {
         float xw = column * mTileWidth;
         float yh = row * mTileHeight;

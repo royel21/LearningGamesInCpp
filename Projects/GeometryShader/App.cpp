@@ -80,13 +80,13 @@ namespace Plutus
         // mWindow.setTitle(title);
         // Logger::info("pos: %0.3f, %0.3f", pos.x, pos.y);
 
-        auto ent = mProject.scene->getEntityByName("Player2");
-        if (ent) {
-            auto dir = ent.getCenter();
-            mDebug->submitCircle(dir, 16);
-            mDebug->end();
-            mDebug->render();
-        }
+        // auto ent = mProject.scene->getEntityByName("Player2");
+        // if (ent) {
+        //     auto dir = ent.getCenter();
+        //     mDebug->submitCircle(dir, 16);
+        //     mDebug->end();
+        //     mDebug->render();
+        // }
 
     }
 

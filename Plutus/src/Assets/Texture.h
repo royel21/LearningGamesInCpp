@@ -40,21 +40,16 @@ namespace Plutus
 
         ~Texture() { destroy(); }
 
-        inline Vec4f getUVs(int uvIndex)
+        inline Vec4f getUV(int uvIndex)
         {
-            return uvs.size() && uvIndex < (int)uvs.size() ? uvs[uvIndex] : Vec4f(0, 0, 1, 1);
+            return uvIndex < (int)uvs.size() ? uvs[uvIndex] : Vec4f(0, 0, 1, 1);
         }
 
-        Vec4f getUVs(float column, float row, float w, float h);
+        Vec4f getUV(float column, float row, float w, float h);
 
         void destroy() override;
 
         void calculateUV();
-
-        template<typename ...TArgs>
-        inline Vec4f getUV(TArgs &&... args) {
-            return getUVs(std::forward<TArgs>(args)...);
-        }
 
     private:
         void loadTexture();

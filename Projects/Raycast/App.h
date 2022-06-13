@@ -40,5 +40,7 @@ namespace Plutus
         uint32_t mVAO;
         uint32_t mBuffId;
         Shader mShader;
+
+        void castRay(const Vec2f& Start, const Vec2f& end, float max, float angle = 0);
     };
 } //End of Plutus namespace

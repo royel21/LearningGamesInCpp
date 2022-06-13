@@ -79,9 +79,13 @@ namespace Plutus
             auto dir = Utils::getDirectory(dst);
             if (!exists(dir)) mkdirs(dir);
 
-            if (Utils::getFileName(src).compare(Utils::getFileName(dst)) == 0) return true;
+            if (src.compare(dst) == 0) return true;
 
-            return std::filesystem::copy_file(src, dst, std::filesystem::copy_options::overwrite_existing);
+            if (exists(dst)) {
+                std::filesystem::remove(dst);
+            }
+
+            return std::filesystem::copy_file(src, dst);
         }
 
         void openDir(const std::string& dir)
