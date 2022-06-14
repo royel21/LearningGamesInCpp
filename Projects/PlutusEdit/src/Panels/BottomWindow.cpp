@@ -85,7 +85,7 @@ namespace Plutus
                             if (ImGui::ColorEdit3("##Grid-Color", &color.x))
                             {
                                 color.w = 1;
-                                mDebugRender->setColor({ color });
+                                mDebugRender->setColor(color);
                             }
                         }
                         ImGui::EndTable();

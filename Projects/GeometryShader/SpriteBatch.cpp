@@ -5,8 +5,10 @@
 #include <Math/PMath.h>
 #include <Graphics/Shader.h>
 #include <Graphics/Graphic.h>
-#include <Graphics/Renderables.h>
 #include <Graphics/Camera2D.h>
+#include <Graphics/Renderables.h>
+
+#include <Assets/Assets.h>
 
 #include "GLSLBatch.h"
 
@@ -32,10 +34,9 @@ namespace Plutus {
     }
 
     void SpriteBatch::addSprite(Renderable* renderable) {
-        createBatch(renderable->texture);
+        createBatch(renderable->texture->mTexId, renderable->texture->mTexureUnit);
 
         auto uv = renderable->uv;
-        auto& rect = renderable->trans;
 
         if (renderable->flipX)
             std::swap(uv.x, uv.z);
@@ -54,18 +55,42 @@ namespace Plutus {
             rotate(vertices[3], center, renderable->r); // Bottom Left
         }
 
-        auto c = renderable->color;
-
-        sprites.emplace_back(vertices[0], uv.x, uv.w, c); // Bottom Left
-        sprites.emplace_back(vertices[1], uv.x, uv.y, c); // Top Left
-        sprites.emplace_back(vertices[2], uv.z, uv.y, c); // Top Right
-        sprites.emplace_back(vertices[3], uv.z, uv.w, c); // Bottom Left
+        sprites.emplace_back(vertices[0], uv.x, uv.w, renderable->color); // Bottom Left
+        sprites.emplace_back(vertices[1], uv.x, uv.y, renderable->color); // Top Left
+        sprites.emplace_back(vertices[2], uv.z, uv.y, renderable->color); // Top Right
+        sprites.emplace_back(vertices[3], uv.z, uv.w, renderable->color); // Bottom Left
     }
 
-    void SpriteBatch::createBatch(Texture* tex) {
+
+    void SpriteBatch::addText(const std::string& fontId, float x, float y, const std::string& text, ColorRGBA8 color, float scale) {
+        auto font = AssetManager::get()->getAsset<Font>(fontId);
+        if (font != nullptr) {
+
+            sprites.reserve(sprites.size() + (text.size() * 4));
+
+            for (auto i : text) {
+                createBatch(font->mTexId, 0);
+                auto& ch = font->ch[i];
+                GLfloat xpos = x + ch.bl * scale;
+                GLfloat ypos = y - (ch.bh - ch.bt) * scale; // shift the letter down for Top-Left origin camera
+
+                // Advance cursors for next glyph (note that advance is number of 1/64 pixels)
+                x += ch.ax * scale;
+
+                auto vertices = Vec4f(xpos, ypos, ch.bw * scale, ch.bh * scale).getvertices();
+
+                sprites.emplace_back(vertices[0], ch.uv.x, ch.uv.w, color); // Bottom Left
+                sprites.emplace_back(vertices[1], ch.uv.x, ch.uv.y, color); // Top Left
+                sprites.emplace_back(vertices[2], ch.uv.z, ch.uv.y, color); // Top Right
+                sprites.emplace_back(vertices[3], ch.uv.z, ch.uv.w, color); // Bottom Left
+            }
+        }
+    }
+
+    void SpriteBatch::createBatch(uint32_t texId, uint32_t texUnit) {
         BatchTex* batch = nullptr;
 
-        if (mBatches.size() > 0 && mBatches.back().texture == tex)
+        if (mBatches.size() > 0 && mBatches.back().texId == texId)
         {
             batch = &mBatches.back();
         }
@@ -73,7 +98,8 @@ namespace Plutus {
         {
             mBatches.emplace_back();
             batch = &mBatches.back();
-            batch->texture = tex;
+            batch->texId = texId;
+            batch->texUnit = texUnit;
             batch->iboOffset = offset;
         }
 
@@ -98,11 +124,11 @@ namespace Plutus {
 
             for (auto& batch : mBatches)
             {
-                if (batch.texture) {
+                if (batch.texId) {
                     mShader->setUniform1i("uHasTex", 1);
-                    mShader->setUniform1i("uSampler", batch.texture->mTexureUnit);
+                    mShader->setUniform1i("uSampler", batch.texUnit);
 
-                    Graphic::bindTexture(batch.texture->mTexId, batch.texture->mTexureUnit);
+                    Graphic::bindTexture(batch.texId, batch.texUnit);
                 }
                 else {
                     mShader->setUniform1i("uHasTex", 0);

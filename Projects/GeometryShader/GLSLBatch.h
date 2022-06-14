@@ -3,40 +3,40 @@
 namespace GLSLBatch
 {
     const std::string spriteVShader = R"END(
-layout(location = 0) in vec2 vertexPosition;
-layout(location = 1) in vec2 vertexUV;
-layout(location = 2) in vec4 vertexColor;
+        layout(location = 0) in vec2 vertexPosition;
+        layout(location = 1) in vec2 vertexUV;
+        layout(location = 2) in vec4 vertexColor;
 
-out vec2 uv;
-out vec4 color;
+        out vec2 uv;
+        out vec4 color;
 
-uniform mat4 uCamera;
+        uniform mat4 uCamera;
 
-void main() {
-    //Set the x,y position on the screen
-    gl_Position = uCamera * vec4(vertexPosition, 0, 1.0);
-    
-    uv = vertexUV;
-    
-    color = vertexColor;
-})END";
+        void main() {
+            //Set the x,y position on the screen
+            gl_Position = uCamera * vec4(vertexPosition, 0, 1.0);
+            
+            uv = vertexUV;
+            
+            color = vertexColor;
+        })END";
 
     const std::string spriteFShader = R"END(
-in vec2 uv;
-in vec4 color;
+        in vec2 uv;
+        in vec4 color;
 
-uniform int uHasTex;
-uniform sampler2D uSampler;
+        uniform int uHasTex;
+        uniform sampler2D uSampler;
 
-out vec4 fragColor;
+        out vec4 fragColor;
 
-void main() {
+        void main() {
 
-    vec4 tex = texture(uSampler, uv);
+        vec4 tex = texture(uSampler, uv);
 
-    fragColor = uHasTex > 0 ? color * tex : color;
+        fragColor = uHasTex > 0 ? color * tex : color;
 
-})END";
+    })END";
 
     //Vertex Shader for Tile Map
     const std::string tmapVShader = R"END(
@@ -139,6 +139,22 @@ void main() {
             fragColor = tex * uColor;
         }
     )END";
+    const std::string textFrag = R"END(
+        in vec2 uv;
+        in vec4 color;
 
+        uniform sampler2D mySampler;
+
+        out vec4 fragColor;
+
+        void main() {
+            vec4 tex = texture(mySampler, uv);
+            
+            if (tex.r < 0.5)
+                discard;
+                
+            fragColor = color;
+        }
+    )END";
 
 } // namespace GLSLBatch

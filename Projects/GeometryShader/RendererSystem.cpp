@@ -11,12 +11,15 @@
 #include "TileMapBatch.h"
 #include "SpriteBatch.h"
 
+#include "TextComponent.h"
+
 namespace Plutus
 {
     void RendererSystem::init() {
 
         mTilemapShader.init(GLSLBatch::tmapVShader, GLSLBatch::tmapFShader);
         mSpriteShader.init(GLSLBatch::spriteVShader, GLSLBatch::spriteFShader);
+        mTextShader.init(GLSLBatch::spriteVShader, GLSLBatch::textFrag);
 
         auto mapView = mProject->scene->getRegistry()->view<TileMapComponent>();
         for (auto [e, tmap] : mapView.each()) {
@@ -26,6 +29,9 @@ namespace Plutus
             batchMap->init(&tmap, mProject);
             layer.tileMapBatchs.push_back(batchMap);
         }
+
+        mTextbatch = new SpriteBatch(mCamera, &mTextShader);
+        mTextbatch->init();
     }
 
     void RendererSystem::update(float dt) {
@@ -60,6 +66,14 @@ namespace Plutus
             layer.spriteBatch->addSprite(&r);
         }
 
+        auto textview = mProject->scene->getRegistry()->view<TransformComponent, TextComponent>();
+
+        for (auto [e, trans, textc] : textview.each()) {
+
+            auto pos = textc.mOffset + trans.getPosition();
+            mTextbatch->addText(textc.mFontId, pos.x, pos.y, textc.mText, textc.mColor, textc.mScale);
+        }
+
         for (auto& layer : mLayers) {
             for (auto mbatch : layer.tileMapBatchs) {
                 if (mbatch) {
@@ -71,6 +85,7 @@ namespace Plutus
                 layer.spriteBatch->draw();
             }
         }
+        mTextbatch->draw();
     }
 
     void RendererSystem::destroy() {
@@ -83,7 +98,9 @@ namespace Plutus
                 delete layer.spriteBatch;
             }
         }
+        delete mTextbatch;
         mLayers.clear();
+        mTextShader.destroy();
         mTilemapShader.destroy();
         mSpriteShader.destroy();
     }

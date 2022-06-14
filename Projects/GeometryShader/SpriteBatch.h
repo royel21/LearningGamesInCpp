@@ -6,12 +6,20 @@
 #include <vector>
 #include <Math/Vectors.h>
 #include <Utils/ColorRGBA8.h>
-
+#include <string>
 
 namespace Plutus
 {
     struct Project;
     struct Renderable;
+
+    struct BatchTex {
+        uint32_t texId = 0;
+        uint32_t texUnit = 0;
+        uint32_t vertCount = 0;
+        uint32_t iboOffset = 0;
+        BatchTex() {}
+    };
 
     struct SpriteVert : Vertex {
         ColorRGBA8 color;
@@ -28,6 +36,7 @@ namespace Plutus
 
         void init(uint32_t MAX_SPRITE = 60000);
         void addSprite(Renderable* renderable);
+        void addText(const std::string& fontId, float x, float y, const std::string& text, ColorRGBA8 color = {}, float scale = 1);
         void draw(Shader* shader = nullptr) override;
         void destroy() override;
 
@@ -37,7 +46,7 @@ namespace Plutus
         std::vector<SpriteVert> sprites;
         const uint32_t mVertexSize = sizeof(SpriteVert);
 
-        void createBatch(Texture* tex);
+        void createBatch(uint32_t texId, uint32_t texUnit);
 
     };
 } // namespace Plutus

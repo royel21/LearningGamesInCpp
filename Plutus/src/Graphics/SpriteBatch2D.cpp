@@ -117,9 +117,9 @@ namespace Plutus
 				GLfloat xpos = x + ch.bl * scale;
 				GLfloat ypos = y - (ch.bh - ch.bt) * scale; // shift the letter down for Top-Left origin camera
 
+				createVertices(font->mTexId, { xpos, ypos, ch.bw * scale, ch.bh * scale }, ch.uv, color);
 				// Advance cursors for next glyph (note that advance is number of 1/64 pixels)
 				x += ch.ax * scale;
-				createVertices(font->mTexId, { xpos, ypos, ch.bw * scale, ch.bh * scale }, ch.uv, color);
 			}
 		}
 	}

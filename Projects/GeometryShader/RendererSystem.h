@@ -34,8 +34,10 @@ namespace Plutus
     private:
         Shader mTilemapShader;
         Shader mSpriteShader;
+        Shader mTextShader;
         std::vector<Layer> mLayers;
         std::vector<Renderable> mRenderables;
+        SpriteBatch* mTextbatch;
 
         Layer& getLayer(uint32_t index) {
             if (index + 1 > mLayers.size()) {

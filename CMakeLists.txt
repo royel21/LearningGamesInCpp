@@ -21,10 +21,10 @@ file(GLOB_RECURSE PE_SRC ${PE_DIR}/*.h ${PE_DIR}/*.cpp)
 
 set(IMGUI_DIR Projects/PlutusEdit/libs/imgui/src)
 
-file(GLOB_RECURSE IMGUI_SRC 
-    ${IMGUI_DIR}/*.c 
-    ${IMGUI_DIR}/*.cpp 
-    ${IMGUI_DIR}/*.h 
+file(GLOB_RECURSE IMGUI_SRC
+    ${IMGUI_DIR}/*.c
+    ${IMGUI_DIR}/*.cpp
+    ${IMGUI_DIR}/*.h
     ${IMGUI_DIR}/*.hpp
 )
 
@@ -35,65 +35,67 @@ include_directories(${IMGUI_DIR})
 # Add PlutusEdit Target
 add_executable("PlutusEdit" ${PE_SRC} ${IMGUI_SRC})
 target_link_libraries("PlutusEdit" PUBLIC Plutus)
+
 # ***************************End Plutus Editor********************************#
 
-
-#**************Playground***********************************#
+# **************Playground***********************************#
 # play ground
 file(GLOB_RECURSE P_Ground Projects/playground/*.h Projects/playground/*.cpp)
 
 add_executable("playground" ${P_Ground})
 target_link_libraries("playground" PUBLIC Plutus)
 
-#***************TestingBox2d*************************
-
+# ***************TestingBox2d*************************
 file(GLOB TEST_SRC Projects/TestingBox2d/*.cpp Projects/TestingBox2d/*.h)
 
 add_executable(TestingBox2d ${TEST_SRC})
 target_link_libraries(TestingBox2d PUBLIC Plutus)
 
-
-#*************Asset Test**********************
+# *************Asset Test**********************
 file(GLOB_RECURSE AssetTest Projects/AssetTest/*.h Projects/AssetTest/*.cpp)
 add_executable("AssetTest" ${AssetTest})
 target_link_libraries(AssetTest PUBLIC Plutus)
 
-
-#*************Geometry Shader**********************
+# *************Geometry Shader**********************
 file(GLOB_RECURSE GeometryShader_SRC Projects/GeometryShader/*.h Projects/GeometryShader/*.cpp)
-add_executable("GeometryShader"  ${GeometryShader_SRC})
+add_executable("GeometryShader" ${GeometryShader_SRC})
 
 target_link_libraries(GeometryShader PUBLIC Plutus)
 
-#*************Shaders**********************
+# *************Shaders**********************
 file(GLOB_RECURSE ShaderSRC Projects/Shaders/*.h Projects/Shaders/*.cpp)
-add_executable("Shaders"  ${ShaderSRC})
+add_executable("Shaders" ${ShaderSRC})
 
 target_link_libraries(Shaders PUBLIC Plutus)
-#*************QuadTree**********************
 
+# *************QuadTree**********************
 file(GLOB_RECURSE SRC_QUAD Projects/QuadTree/*.h Projects/QuadTree/*.cpp)
 
 add_executable("QuadTree" ${SRC_QUAD})
 
 target_link_libraries(QuadTree PUBLIC Plutus)
-#*************Test Bed**********************
 
+# *************Test Bed**********************
 file(GLOB_RECURSE SRC_Raycast Projects/Raycast/*.h Projects/Raycast/*.cpp)
 
 add_executable("Raycast" ${SRC_Raycast})
 
 target_link_libraries(Raycast PUBLIC Plutus)
 
-#*************TestBed**********************
-
+# *************TestBed**********************
 file(GLOB_RECURSE SRC_TestBed Projects/TestBed/*.h Projects/TestBed/*.cpp)
 
 add_executable("TestBed" ${SRC_TestBed})
 
 target_link_libraries(TestBed PUBLIC Plutus)
 
-
-#*************Single Test**********************
+# *************Single Test**********************
 add_executable("SingleTest" Projects/SingleTest.cpp)
 target_link_libraries(SingleTest PUBLIC Plutus)
+
+# *************SDFonts**********************
+file(GLOB_RECURSE SRC_SDFonts Projects/SDFonts/*.h Projects/SDFonts/*.cpp)
+
+add_executable("SDFonts" ${SRC_SDFonts})
+
+target_link_libraries(SDFonts PUBLIC Plutus)

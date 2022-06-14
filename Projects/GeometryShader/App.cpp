@@ -23,6 +23,10 @@
 
 #include <Graphics/DebugRenderer.h> 
 
+#include <Assets/Assets.h>
+
+#include "TextComponent.h"
+
 namespace Plutus
 {
     void AppGeo::run()
@@ -51,6 +55,11 @@ namespace Plutus
 
         mProject.load("ZombiesGame/ZombiesGame.json");
         mProject.loadScene(mProject.currentScene);
+
+        auto ent = mProject.scene->getEntityByName("Player2");
+        if (ent) {
+            ent.addComponent<TextComponent>("arial.ttf", "Text Component", 16.0f, 48.0f, ColorRGBA8{ 255, 255, 0, 255 });
+        }
 
         mCamera.init(mProject.vpWidth, mProject.vpHeight);
         mCamera.setScale(mProject.zoomLevel);

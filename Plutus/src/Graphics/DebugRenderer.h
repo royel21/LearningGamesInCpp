@@ -76,7 +76,7 @@ namespace Plutus
 		void setShouldDraw(bool shouldDraw) { isDraw = shouldDraw; }
 		bool getShouldDraw() { return isDraw; }
 
-		void setColor(ColorRGBA8 color) { mGridColor = color; }
+		void setColor(Vec4f color) { mGridColor.setColor(color); }
 
 	private:
 		void addIndices(int index);

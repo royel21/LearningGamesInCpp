@@ -8,13 +8,6 @@ namespace Plutus
     class Shader;
     class Camera2D;
 
-    struct BatchTex {
-        Texture* texture = nullptr;
-        uint32_t vertCount = 0;
-        uint32_t iboOffset = 0;
-        BatchTex() {}
-    };
-
     class RenderBatch {
     protected:
         uint32_t mVAO;

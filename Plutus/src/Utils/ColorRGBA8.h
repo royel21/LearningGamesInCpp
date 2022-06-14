@@ -19,7 +19,7 @@ namespace Plutus
         ColorRGBA8() { r = 255; g = 255; b = 255; a = 255; }
         ColorRGBA8(uint8_t _r, uint8_t _g = 255, uint8_t _b = 255, uint8_t _a = 255) : r(_r), g(_g), b(_b), a(_a) {}
 
-        ColorRGBA8(const Vec4f& v) { setColor(v); }
+        // ColorRGBA8(const Vec4f& v) { setColor(v); }
 
         inline uint32_t get() { return r | g << 8 | b << 16 | a << 24; };
 
