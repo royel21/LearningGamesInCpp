@@ -58,7 +58,7 @@ namespace Plutus
 
         auto ent = mProject.scene->getEntityByName("Player2");
         if (ent) {
-            ent.addComponent<TextComponent>("arial.ttf", "Text Component", 16.0f, 48.0f, ColorRGBA8{ 255, 255, 0, 255 });
+            ent.addComponent<TextComponent>("arial.ttf", "Text Component LAND", 16.0f, 48.0f, ColorRGBA8{ 255, 255, 0, 255 });
         }
 
         mCamera.init(mProject.vpWidth, mProject.vpHeight);

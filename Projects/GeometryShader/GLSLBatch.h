@@ -142,18 +142,34 @@ namespace GLSLBatch
     const std::string textFrag = R"END(
         in vec2 uv;
         in vec4 color;
-
+        
         uniform sampler2D mySampler;
+
+        const float width = 0.5;
+        const float edge = 0.05;
+
+        const float borderWidth = 0.2;
+        const float borderEdge = 0.45;
+
+        const vec3 outlineColor = vec3(1.0, 0.0, 0.0);
 
         out vec4 fragColor;
 
+        vec2 offset = vec2(0.000, 0.003);
+
         void main() {
-            vec4 tex = texture(mySampler, uv);
-            
-            if (tex.r < 0.5)
-                discard;
+            float dist = 1.0 - texture(mySampler, uv).r;
+            float alpha = 1.0-smoothstep(width, width+edge, dist);
+
+
+            float dist2 = 1.0 - texture(mySampler, uv+offset).r;
+            float outlineAlpha = 1.0-smoothstep(borderWidth, borderWidth+borderEdge, dist2);
+
+            float overalAlpha = alpha + (1.0 - alpha) * outlineAlpha;
+
+            vec3 overalColor = mix(outlineColor,color.rgb, alpha/outlineAlpha);
                 
-            fragColor = color;
+            fragColor = vec4(overalColor, overalAlpha);
         }
     )END";
 
