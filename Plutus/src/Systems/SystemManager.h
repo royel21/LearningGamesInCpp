@@ -24,31 +24,26 @@ namespace Plutus
         template <typename T, typename... TArgs>
         T* AddSystem(TArgs &&... args)
         {
-            auto id = getListId<T>();
+            auto id = getId<T>();
             if (id == mSystems.size()) {
-                mSystems.resize(id + 1);
+                T* newSystem = new T(std::forward<TArgs>(args)...);
+                mSystems.push_back(newSystem);
+                return newSystem;
             }
 
-            T* newSystem = nullptr;
-
-            if (mSystems[id] == nullptr) {
-                newSystem = new T(std::forward<TArgs>(args)...);
-                mSystems[id] = newSystem;
-            }
-
-            return newSystem;
+            return getSystem<T>();
         }
 
         template <typename T>
         T* getSystem()
         {
-            return static_cast<T*>(mSystems[getListId<T>()]);
+            return hasSystem<T>() ? static_cast<T*>(mSystems[getId<T>()]) : nullptr;
         }
 
         template <typename T>
         bool hasSystem()
         {
-            return mSystems[getListId<T>()] != nullptr;
+            return getId<T>() < mSystems.size();
         }
 
         void cleanup();
@@ -57,15 +52,15 @@ namespace Plutus
         Project* mProject;
         std::vector<ISystem*> mSystems;
 
-        inline uint32_t getId() {
+        inline uint32_t genId() {
             static int id = 0;
             return id++;
         }
 
         template<typename T>
-        inline uint32_t getListId()
+        inline uint32_t getId()
         {
-            static int id = getId();
+            static int id = genId();
             return id;
         }
     };

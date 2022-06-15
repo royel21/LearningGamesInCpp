@@ -41,7 +41,7 @@ namespace Plutus {
 		// Called when two fixtures cease to touch
 		void EndContact(b2Contact* contact) override;
 
-		void CastRay(const Vec2f& start, const Vec2f& end) {
+		inline void CastRay(const Vec2f& start, const Vec2f& end) {
 			mWorld->RayCast(this, toWorld(start), toWorld(end));
 		}
 
@@ -69,16 +69,18 @@ namespace Plutus {
 			return mRayCallBack ? mRayCallBack(fixture, fromWorld(point), fromWorld(normal), fraction) : 0;
 		}
 
-		void AddListener(ICollisionListener* listener) {
+		inline void AddListener(ICollisionListener* listener) {
 			mCollisionListener.push_back(listener);
 		}
+
+		void removeListener(ICollisionListener* listener);
 
 	private:
 		b2World* mWorld = nullptr;
 		RayCastCallBack mRayScriptCallBack = nullptr;
 		std::vector<std::pair<CollisionData, CollisionData>> mCollisionsStart;
 		std::vector<std::pair<CollisionData, CollisionData>> mCollisionsEnd;
-		std::vector<ICollisionListener* > mCollisionListener;
+		std::vector<ICollisionListener*> mCollisionListener;
 		std::vector<uint32_t> mEntities;
 		uint32_t mQueryMask;
 		friend ScriptSystem;

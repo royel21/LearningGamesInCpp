@@ -141,6 +141,15 @@ namespace Plutus
         return true;
     }
 
+
+    void PhysicSystem::removeListener(ICollisionListener* listener) {
+        auto it = std::find_if(mCollisionListener.begin(), mCollisionListener.end(), [&](ICollisionListener* lstn) {
+            return listener == lstn;
+            });
+
+        if (it != mCollisionListener.end()) mCollisionListener.erase(it);
+    }
+
     void PhysicSystem::destroy() {
         if (mWorld != nullptr) delete mWorld;
         mWorld = nullptr;

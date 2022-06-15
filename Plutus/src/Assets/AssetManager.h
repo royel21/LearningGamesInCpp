@@ -28,20 +28,20 @@ namespace Plutus
         T* addAsset(const std::string& id, TArgs &&... args)
         {
             auto listId = getListId<T>();
+
             if (!hasAssetList<T>()) mAssets.resize(listId + 1);
 
             auto& repo = mAssets[listId];
 
-            if (hasAsset<T>(id)) {
-                return static_cast<T*>(repo[id]);
-            }
-            else {
+            if (!hasAsset<T>(id)) {
                 T* asset = new T();
                 repo[id] = asset;
                 asset->setDir(baseDir);
                 asset->init(std::forward<TArgs>(args)...);
                 return asset;
             }
+
+            return static_cast<T*>(repo[id]);
         }
 
         template<typename T>

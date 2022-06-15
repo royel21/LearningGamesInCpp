@@ -148,7 +148,7 @@ namespace GLSLBatch
         const float width = 0.5;
         const float edge = 0.05;
 
-        const float borderWidth = 0.2;
+        const float borderWidth = 0.4;
         const float borderEdge = 0.45;
 
         const vec3 outlineColor = vec3(1.0, 0.0, 0.0);
@@ -160,7 +160,6 @@ namespace GLSLBatch
         void main() {
             float dist = 1.0 - texture(mySampler, uv).r;
             float alpha = 1.0-smoothstep(width, width+edge, dist);
-
 
             float dist2 = 1.0 - texture(mySampler, uv+offset).r;
             float outlineAlpha = 1.0-smoothstep(borderWidth, borderWidth+borderEdge, dist2);
