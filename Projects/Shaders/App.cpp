@@ -120,8 +120,8 @@ namespace Plutus
         mLightShader.enable();
         mLightShader.setUniformMat4("uCamera", mCamera.getCameraMatrix());
         mLightShader.setUniform2f("u_mouse", Input::get()->getMouseCoords());
-        mLightShader.setUniform2f("u_resolution", { size });
         mLightShader.setUniform1f("uSoftness", 4.0f / size);
+
 
         int w = Input::get()->getMouseWheel();
 
@@ -134,11 +134,22 @@ namespace Plutus
             }
         }
 
+
         auto& light = mLights[0];
         light.trans.x = mpos.x - size * .5f;
         light.trans.y = mpos.y - size * .5f;
         light.trans.z = size;
-        light.trans.w = size;
+        // light.trans.w = size;
+
+        if (Input::get()->onKeyDown("Z")) {
+            light.trans.w += 4;
+        }
+        if (Input::get()->onKeyDown("X")) {
+            light.trans.w -= 4;
+        }
+
+        mLightShader.setUniform2f("u_resolution", { light.trans.z, light.trans.w });
+        // Logger::info("time %0.3f %0.3f", 25.0f / light.trans.z, 25.0f / light.trans.w);
 
         for (auto& r : mLights) {
             mBatch.addSprite(&r);
