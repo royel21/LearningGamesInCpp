@@ -19,13 +19,17 @@ uniform vec2 u_resolution;
 uniform float uSoftness;
 
 void main(){
+    vec2 uv2 = uv+1.;
     float dist=1.;
 
-    if(uv.x > .80 && uv.y > 0.8){
-        vec2 pos = uv * .8;
-        float dist2 = 1.-length(pos);
+    if(uv2.x > 1.8 && uv2.y > 1.8){
+        float dist2 = 1.-length(abs(uv2));
         dist = smoothstep(uSoftness,uSoftness*2., dist2);
     }
+
+    if(uv2.x>1.8&&uv2.y<0.2) discard;
+    if(uv2.x<.2&&uv2.y<.2) discard;
+    if(uv2.x<.2&&uv2.y>1.8) discard;
 
     gl_FragColor=vec4(color.rgb, dist);
 }
