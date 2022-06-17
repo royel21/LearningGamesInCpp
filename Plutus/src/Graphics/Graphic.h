@@ -145,12 +145,12 @@ namespace Plutus
             return id;
         }
         //Set glClearColor - default to WHITE Color
-        inline void setBackgoundColor(float r = 1, float g = 1, float b = 1, float a = 1)
+        inline static void setBackgoundColor(float r = 1, float g = 1, float b = 1, float a = 1)
         {
             glClearColor(r, g, b, a);
         }
 
-        inline void getViewPortSize(int size[4]) {
+        inline static void getViewPortSize(int size[4]) {
             glGetIntegerv(GL_VIEWPORT, size);
         }
         //Bind vertex object and buffer element array if provided

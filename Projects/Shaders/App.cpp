@@ -34,6 +34,7 @@ namespace Plutus
         Graphic::destroy(&mVAO, &mVBO);
     }
 
+    float size = 200;
 
     void App::Init()
     {
@@ -54,8 +55,7 @@ namespace Plutus
         color.g = 255;
         color.b = 0;
         mRenderables.push_back({ nullptr, { 640,350, 100, 200 }, uv, color });
-
-        mLights.push_back({ nullptr, { -400, -400, 400, 400 }, { -1.0f, -1.0f, 1.0f, 1.0f }, { 255, 255,255,255 } });
+        mLights.push_back({ nullptr, { -size, -size, size, size }, { -1.0f, -1.0f, 1.0f, 1.0f }, { 255, 255,255,255 } });
     }
 
     void App::Update(float)
@@ -88,9 +88,11 @@ namespace Plutus
     void App::Draw()
     {
         Renderable ren1;
+        auto mpos = Input::get()->getMouseCoords();
 
+        Graphic::setBackgoundColor(0, 0);
         if (mShader.enable()) {
-            auto mpos = Input::get()->getMouseCoords();
+            Graphic::disableBlend();
             mShader.setUniformMat4("uCamera", mCamera.getCameraMatrix());
             mShader.setUniform2f("u_resolution", mCamera.getViewPortSize());
             mShader.setUniform2f("u_mouse", mpos);
@@ -107,34 +109,49 @@ namespace Plutus
                 mBatch.addSprite(&r);
             }
 
+            Graphic::enableBlend();
             mBatch.draw(&mShader);
 
             mShader.disable();
-
-            Graphic::enableBlend(true);
-
-            mLightShader.enable();
-            mLightShader.setUniformMat4("uCamera", mCamera.getCameraMatrix());
-            mLightShader.setUniform2f("u_mouse", Input::get()->getMouseCoords());
-            mLightShader.setUniform2f("u_resolution", mCamera.getViewPortSize());
-
-            auto& light = mLights[0];
-            light.trans.x = mpos.x - 200;
-            light.trans.y = mpos.y - 200;
-
-            for (auto& r : mLights) {
-                mBatch.addSprite(&r);
-            }
-
-            mBatch.draw(&mLightShader);
-
-            mLightShader.disable();
-
-            glBindVertexArray(0);
-            mIbo.unbind();
-            Graphic::enableBlend();
         }
-        // Logger::info("time %0.4f", Time::seconds());
-        // Math::Log(Input::get()->getMouseCoords());
+
+        Graphic::enableBlend(true);
+
+        mLightShader.enable();
+        mLightShader.setUniformMat4("uCamera", mCamera.getCameraMatrix());
+        mLightShader.setUniform2f("u_mouse", Input::get()->getMouseCoords());
+        mLightShader.setUniform2f("u_resolution", { size });
+        mLightShader.setUniform1f("uSoftness", 4.0f / size);
+
+        int w = Input::get()->getMouseWheel();
+
+        if (w != 0) {
+            if (w > 0) {
+                size += 4.0f;
+            }
+            else {
+                size -= 4.0f;
+            }
+        }
+
+        auto& light = mLights[0];
+        light.trans.x = mpos.x - size * .5f;
+        light.trans.y = mpos.y - size * .5f;
+        light.trans.z = size;
+        light.trans.w = size;
+
+        for (auto& r : mLights) {
+            mBatch.addSprite(&r);
+        }
+
+        mBatch.draw(&mLightShader);
+
+        mLightShader.disable();
+
+        glBindVertexArray(0);
+        mIbo.unbind();
+        Graphic::enableBlend();
     }
+    // Logger::info("time %0.4f", Time::seconds());
+    // Math::Log(Input::get()->getMouseCoords());
 }
