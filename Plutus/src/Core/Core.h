@@ -86,6 +86,8 @@ namespace Plutus
         void printGLVersion();
 
         void setBackgoundColor(float r = 1, float g = 1, float b = 1, float a = 1);
+        //Terminate app Process
+        void close() { mExit = true; }
 
     private:
         void init();

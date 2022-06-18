@@ -51,7 +51,7 @@ namespace Plutus
 
         mRenderables.push_back({ tex, { 0,0, 128, 128 }, uv,color });
         color.g = 0;
-        mRenderables.push_back({ nullptr, { 200,200, 100, 50 }, uv, color });
+        mRenderables.push_back({ nullptr, { 200,200, 100, 100 }, uv, color });
         color.g = 255;
         color.b = 0;
         mRenderables.push_back({ nullptr, { 640,350, 100, 200 }, uv, color });
@@ -120,7 +120,6 @@ namespace Plutus
         mLightShader.enable();
         mLightShader.setUniformMat4("uCamera", mCamera.getCameraMatrix());
         mLightShader.setUniform2f("u_mouse", Input::get()->getMouseCoords());
-        mLightShader.setUniform1f("uSoftness", 4.0f / size);
 
 
         int w = Input::get()->getMouseWheel();
@@ -141,11 +140,15 @@ namespace Plutus
         light.trans.z = size;
         // light.trans.w = size;
 
-        if (Input::get()->onKeyDown("Z")) {
-            light.trans.w += 4;
-        }
+        // if (Input::get()->onKeyDown("Z")) {
+        //     light.trans.w += 4;
+        // }
         if (Input::get()->onKeyDown("X")) {
             light.trans.w -= 4;
+        }
+
+        if (Input::get()->onKeyDown("Scape")) {
+            close();
         }
 
         mLightShader.setUniform2f("u_resolution", { light.trans.z, light.trans.w });
