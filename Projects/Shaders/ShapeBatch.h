@@ -7,6 +7,8 @@
 #include <Math/Vectors.h>
 #include <Utils/ColorRGBA8.h>
 
+#include <Graphics/Shader.h>
+
 
 namespace Plutus
 {
@@ -19,31 +21,38 @@ namespace Plutus
     struct Shape;
 
     struct ShapeVert : Vertex {
+        Vec2f size;
         ColorRGBA8 color;
-        float radius;
-        float type = 0;
-        ShapeVert(float x, float y, float ux, float uy, ColorRGBA8 c, float r, float t) : color(c), radius(r), type(t), Vertex(x, y, ux, uy) {}
+        float radius = 0;
+        int type = 0;
+        ShapeVert(const Vec2f& p, float ux, float uy, const Vec2f& s, ColorRGBA8 c, float r = 0, int t = 0) : size(s), color(c), radius(r), type(t), Vertex(p.x, p.y, ux, uy) {}
     };
 
-    class ShapeBatch : public RenderBatch
+    class ShapeBatch
     {
     public:
         ShapeBatch() {}
-        ShapeBatch(Camera2D* camera, Shader* shader = nullptr) : RenderBatch(camera, shader) {  };
         ~ShapeBatch() { destroy(); }
 
-        void init(uint32_t MAX_SPRITE = 60000);
-        void addSprite(const Vec4f& rect, ColorRGBA8 c, float radius, int type = CIRCLE);
-        void draw(Shader* shader = nullptr) override;
-        void destroy() override;
+        void init(Camera2D* camera);
+        inline void addRect(const Vec4f& rect, float radius = 0, ColorRGBA8 c = {}) { addShape(rect, c, radius, ROUNDRECT); }
+        inline void addCircle(const Vec2f& pos, float radius, ColorRGBA8 c = {}) { addShape({ pos - radius * .5f, radius, radius }, c); }
+        void draw();
+        void destroy();
 
     private:
-        Vec4f mUv = { 0,0,1,1 };
-        uint32_t offset = 0;
+        Shader mShader;
+        Camera2D* mCamera;
+        uint32_t mVAO;
+        IndexBuffer mIbo;
+        uint32_t mBufferId;
+
+        Vec4f mUv = { -1,-1,1,1 };
+        uint32_t mIndexCount = 0;
+
         std::vector<ShapeVert> mShapes;
         const uint32_t mVertexSize = sizeof(ShapeVert);
 
-        void createBatch(int type);
-
+        void addShape(const Vec4f& rect, ColorRGBA8 c = {}, float radius = 0, int type = CIRCLE);
     };
 } // namespace Plutus

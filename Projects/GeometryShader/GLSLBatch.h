@@ -135,7 +135,7 @@ namespace GLSLBatch
                     break;
                 }
             }
-            
+            if(tex.a < 0.1) discard;
             fragColor = tex * uColor;
         }
     )END";

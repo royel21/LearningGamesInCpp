@@ -12,6 +12,7 @@
 #include <Math/LogVec.h>
 #include <Assets/Assets.h>
 
+
 namespace Plutus
 {
     const char* ver = "Projects/Shaders/ver.vert";
@@ -30,7 +31,7 @@ namespace Plutus
         mShader.destroy();
         mIbo.destroy();
         mLightShader.destroy();
-
+        mSBatch.destroy();
         Graphic::destroy(&mVAO, &mVBO);
     }
 
@@ -56,6 +57,9 @@ namespace Plutus
         color.b = 0;
         mRenderables.push_back({ nullptr, { 640,350, 100, 200 }, uv, color });
         mLights.push_back({ nullptr, { -size, -size, size, size }, { -1.0f, -1.0f, 1.0f, 1.0f }, { 255, 255,255,255 } });
+
+        mSBatch.init(&mCamera);
+
     }
 
     void App::Update(float)
@@ -151,8 +155,9 @@ namespace Plutus
             close();
         }
 
-        mLightShader.setUniform2f("u_resolution", { light.trans.z, light.trans.w });
-        // Logger::info("time %0.3f %0.3f", 25.0f / light.trans.z, 25.0f / light.trans.w);
+        // mLightShader.setUniform2f("u_resolution", { light.trans.z, light.trans.w });
+        mLightShader.setUniform2f("u_resolution", mCamera.getViewPortSize());
+
 
         for (auto& r : mLights) {
             mBatch.addSprite(&r);
@@ -162,9 +167,14 @@ namespace Plutus
 
         mLightShader.disable();
 
-        glBindVertexArray(0);
-        mIbo.unbind();
         Graphic::enableBlend();
+
+        // mSBatch.addRect({ 97, 447, 206, 206 }, 30, { 255, 0, 0, 100 });
+        // mSBatch.addRect({ 100, 450, 200,200 }, 25, { 255,255,255,100 });
+
+        // mSBatch.addCircle({ 100, 300 }, 206, { 0,0,0 });
+        // mSBatch.addCircle({ 100, 300 }, 200);
+        // mSBatch.draw();
     }
     // Logger::info("time %0.4f", Time::seconds());
     // Math::Log(Input::get()->getMouseCoords());

@@ -20,6 +20,8 @@ namespace Plutus
 		void calculateIndex(uint32_t count);
 		void bind() const;
 
+		inline uint32_t getCount() { return mCount; }
+
 		void unbind() const;
 
 		void destroy();

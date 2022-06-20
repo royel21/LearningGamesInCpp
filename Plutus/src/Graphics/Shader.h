@@ -49,9 +49,9 @@ namespace Plutus
 		//Upload Uniform 1 float
 		void setUniform1f(std::string name, float value);
 		//Upload Uniform 2 float
-		void setUniform2f(std::string name, Vec2f value);
+		void setUniform2f(std::string name, const Vec2f& value);
 		//Upload Uniform 3 float
-		void setUniform3f(std::string name, Vec3f value);
+		void setUniform3f(std::string name, const Vec3f& value);
 		//Upload Uniform 4 float
 		void setUniform4f(std::string name, const Vec4f& value);
 		//Upload Uniform array of float

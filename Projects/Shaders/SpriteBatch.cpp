@@ -93,8 +93,8 @@ namespace Plutus {
             nShader->enable();
             nShader->setUniformMat4("uCamera", mCamera->getCameraMatrix());
 
-            Graphic::bind(mVAO);
 
+            Graphic::bind(mVAO);
             Graphic::uploadBufferData(mBufferId, sprites.size() * mVertexSize, sprites.data());
 
             mIbo.bind();

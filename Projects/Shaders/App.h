@@ -11,6 +11,8 @@
 #include "SpriteBatch.h"
 #include <Graphics/Renderables.h>
 
+#include "ShapeBatch.h"
+
 namespace Plutus
 {
     struct VertexPoint {
@@ -39,6 +41,7 @@ namespace Plutus
         std::vector<Renderable> mRenderables;
         std::vector<Renderable> mLights;
         SpriteBatch mBatch;
+        ShapeBatch mSBatch;
         bool isAlwaysOnTop = false;
         bool blink = false;
     };
