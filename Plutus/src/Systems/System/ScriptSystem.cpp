@@ -95,7 +95,7 @@ namespace Plutus
         auto lua_vec2 = mGlobalLua.new_usertype<Vec2f>(
             "Vec2f", sol::constructors<Vec2f(),
             Vec2f(float, float), Vec2f(int, int)>(),
-            sol::meta_function::multiplication, &Vec2f::operator*,
+            sol::meta_function::multiplication, sol::resolve<Vec2f(float) const>(&Vec2f::operator*),
             sol::meta_function::addition,
             sol::overload(
                 sol::resolve<Vec2f(const Vec2f&) const>(&Vec2f::operator+),

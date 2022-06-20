@@ -20,5 +20,7 @@ namespace Plutus
 
     bool compare(const Vec2f& v1, const Vec2f& v2, float epsilon = std::numeric_limits<float>::min());
 
+    Vec2f max(const Vec2f& a, float y);
+
     float invSqrt(float n);
 } // namespace Plutus

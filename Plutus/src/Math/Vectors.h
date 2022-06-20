@@ -32,6 +32,7 @@ namespace Plutus
 
         Vec2f operator+(const Vec2f& v) const;
         Vec2f operator-(const Vec2f& v) const;
+        Vec2f operator*(const Vec2f& v) const;
 
         Vec2f operator+(float v) const;
         Vec2f operator-(float v) const;

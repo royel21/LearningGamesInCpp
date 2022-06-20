@@ -90,8 +90,8 @@ add_executable("TestBed" ${SRC_TestBed})
 target_link_libraries(TestBed PUBLIC Plutus)
 
 # *************Single Test**********************
-add_executable("SingleTest" Projects/SingleTest.cpp)
-target_link_libraries(SingleTest PUBLIC Plutus)
+add_executable("SingleTest2" Projects/SingleTest.cpp)
+target_link_libraries(SingleTest2 PUBLIC Plutus)
 
 # *************SDFonts**********************
 file(GLOB_RECURSE SRC_SDFonts Projects/SDFonts/*.h Projects/SDFonts/*.cpp)

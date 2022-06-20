@@ -10,28 +10,68 @@ namespace Plutus
 
     const std::string shapeVShader = R"END(
         layout(location = 0) in vec2  vPosition;
-        layout(location = 1) in vec2  vUV;
-        layout(location = 2) in vec2  vSize;
-        layout(location = 3) in vec4  vColor;
-        layout(location = 4) in float vRadius;
-        layout(location = 5) in int vType;
+        layout(location = 1) in vec2  vSize;
+        layout(location = 2) in vec4  vColor;
+        layout(location = 3) in float vRadius;
+        layout(location = 4) in int vType;
 
         uniform mat4 uCamera;
 
-        out vec2 uv;
-        out vec2 size;
-        out vec4 color;
-        out float radius;
-        flat out int type;
+        out vec4 colors;
+        out vec2 sizes;
+        out float radiuses;
+        flat out int types;
 
         void main(){
-            uv = vUV;
-            size = vSize;
-            color = vColor;
-            radius = vRadius;
-            type = vType;
+            sizes = vSize;
+            colors = vColor;
+            radiuses = vRadius;
+            types = vType;
 
-            gl_Position = uCamera * vec4(vPosition, 0, 1.0);
+            gl_Position = vec4(vPosition, 0., 1.);
+        }
+    )END";
+
+    const std::string shapeGShader = R"END(
+        layout(points) in;
+        layout(triangle_strip, max_vertices = 4) out;
+
+        in vec4 colors[];
+        in vec2 sizes[];
+        in float radiuses[];
+        flat in int types[];
+
+        out vec2 uv;
+        out vec4 color;
+        out vec2 size;
+        out float radius; 
+        flat out int type;
+
+        uniform mat4 uCamera;
+
+        void createVert(float x, float y, vec2 uUv){
+            uv = uUv;
+            color = colors[0];
+            size = sizes[0];
+            radius = radiuses[0];
+            type = types[0];
+
+            gl_Position = uCamera * (gl_in[0].gl_Position + vec4(x, y, 0.0, 0.0));
+            EmitVertex();
+        }
+
+        void main()
+        {
+            vec4 uvCoords = vec4(-1., -1., 1., 1.);
+
+            vec2 pSize = sizes[0];
+
+            createVert(0, 0, uvCoords.xw);
+            createVert(0, pSize.y, uvCoords.xy);
+            createVert(pSize.x, 0, uvCoords.zw);
+            createVert(pSize.x, pSize.y, uvCoords.zy);
+
+            EndPrimitive();
         }
     )END";
 
@@ -43,7 +83,7 @@ namespace Plutus
         flat in int type;
 
         out vec4 fragColor;
-
+        
         void main(){
             float alpha;
             
@@ -66,7 +106,7 @@ namespace Plutus
 
     void ShapeBatch::init(Camera2D* camera) {
         mCamera = camera;
-        mShader.init(shapeVShader, shapeFShader);
+        mShader.init(shapeVShader, shapeFShader, shapeGShader);
 
         mVAO = Graphic::createVertexArray();
         mBufferId = Graphic::createBufferArray();
@@ -75,26 +115,13 @@ namespace Plutus
         //bind the Shader UV "Texture coordinate" to the buffer object
         Graphic::setFAttribute(1, 2, mVertexSize, offsetof(ShapeVert, uvx));
         //bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
-        Graphic::setFAttribute(2, 2, mVertexSize, offsetof(ShapeVert, size));
+        Graphic::setFAttribute(2, 4, mVertexSize, offsetof(ShapeVert, color), GL_UNSIGNED_BYTE, GL_TRUE);
         //bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
-        Graphic::setFAttribute(3, 4, mVertexSize, offsetof(ShapeVert, color), GL_UNSIGNED_BYTE, GL_TRUE);
+        Graphic::setFAttribute(3, 1, mVertexSize, offsetof(ShapeVert, radius));
         //bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
-        Graphic::setFAttribute(4, 1, mVertexSize, offsetof(ShapeVert, radius));
-        //bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
-        Graphic::setIAttribute(5, 1, mVertexSize, offsetof(ShapeVert, type));
+        Graphic::setIAttribute(4, 1, mVertexSize, offsetof(ShapeVert, type));
 
         Graphic::unBind();
-    }
-
-    void ShapeBatch::addShape(const Vec4f& rect, ColorRGBA8 c, float radius, int type) {
-        auto vertices = rect.getvertices();
-        auto size = rect.getSize();
-
-        mShapes.emplace_back(vertices[0], mUv.x, mUv.w, size, c, radius, type); // Bottom Left
-        mShapes.emplace_back(vertices[1], mUv.x, mUv.y, size, c, radius, type); // Top Left
-        mShapes.emplace_back(vertices[2], mUv.z, mUv.y, size, c, radius, type); // Top Right
-        mShapes.emplace_back(vertices[3], mUv.z, mUv.w, size, c, radius, type); // Bottom Left
-        mIndexCount += 6;
     }
 
     void ShapeBatch::draw() {
@@ -104,23 +131,16 @@ namespace Plutus
         Graphic::bind(mVAO);
 
         Graphic::uploadBufferData(mBufferId, mShapes.size() * mVertexSize, mShapes.data());
-        if (mIndexCount != mIbo.getCount()) {
-            mIbo.init(mIndexCount);
-        }
 
-        mIbo.bind();
-
-        Graphic::drawElements(mIndexCount);
+        Graphic::drawArrays(GL_POINTS, mShapes.size());
 
         Graphic::unBind();
         mShader.disable();
-        mIndexCount = 0;
         mShapes.clear();
     }
 
     void ShapeBatch::destroy() {
         Graphic::destroy(&mVAO, &mBufferId);
-        mIbo.destroy();
         mShader.destroy();
     }
 } // namespace Plutus

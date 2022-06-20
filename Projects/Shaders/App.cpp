@@ -51,10 +51,10 @@ namespace Plutus
         ColorRGBA8 color(255, 255, 255, 255);
 
         mRenderables.push_back({ tex, { 0,0, 128, 128 }, uv,color });
-        color.g = 0;
+        color.g = 255;
         mRenderables.push_back({ nullptr, { 200,200, 100, 100 }, uv, color });
         color.g = 255;
-        color.b = 0;
+        color.b = 255;
         mRenderables.push_back({ nullptr, { 640,350, 100, 200 }, uv, color });
         mLights.push_back({ nullptr, { -size, -size, size, size }, { -1.0f, -1.0f, 1.0f, 1.0f }, { 255, 255,255,255 } });
 
@@ -142,11 +142,6 @@ namespace Plutus
         light.trans.x = mpos.x - size * .5f;
         light.trans.y = mpos.y - size * .5f;
         light.trans.z = size;
-        // light.trans.w = size;
-
-        // if (Input::get()->onKeyDown("Z")) {
-        //     light.trans.w += 4;
-        // }
         if (Input::get()->onKeyDown("X")) {
             light.trans.w -= 4;
         }
@@ -155,8 +150,7 @@ namespace Plutus
             close();
         }
 
-        // mLightShader.setUniform2f("u_resolution", { light.trans.z, light.trans.w });
-        mLightShader.setUniform2f("u_resolution", mCamera.getViewPortSize());
+        mLightShader.setUniform2f("u_resolution", { light.trans.z, light.trans.w });
 
 
         for (auto& r : mLights) {
@@ -169,12 +163,16 @@ namespace Plutus
 
         Graphic::enableBlend();
 
-        // mSBatch.addRect({ 97, 447, 206, 206 }, 30, { 255, 0, 0, 100 });
-        // mSBatch.addRect({ 100, 450, 200,200 }, 25, { 255,255,255,100 });
+        mSBatch.addRect({ 110, 447, 56, 206 }, 10, { 255, 0, 0 });
+        mSBatch.addRect({ 100, 450, 50,200 }, 10);
 
-        // mSBatch.addCircle({ 100, 300 }, 206, { 0,0,0 });
-        // mSBatch.addCircle({ 100, 300 }, 200);
-        // mSBatch.draw();
+        mSBatch.addCircle({ 100, 300 }, 206, { 0,0,0 });
+        mSBatch.addCircle({ 100, 300 }, 200);
+
+        mSBatch.draw();
+        char title[128];
+        snprintf(title, 128, "fps: %.03f", getFPS());
+        mWindow.setTitle(title);
     }
     // Logger::info("time %0.4f", Time::seconds());
     // Math::Log(Input::get()->getMouseCoords());

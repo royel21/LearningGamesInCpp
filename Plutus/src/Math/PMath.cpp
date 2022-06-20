@@ -62,4 +62,8 @@ namespace Plutus
         y = y * (threehalfs - (x2 * y * y));
         return y;
     }
+
+    Vec2f max(const Vec2f& a, float y) {
+        return { std::max(a.x, y), std::max(a.y, y) };
+    }
 }
