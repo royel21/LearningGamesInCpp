@@ -8,46 +8,47 @@ uniform vec2 u_resolution;
 
 out vec4 outColor;
 
-int type=2;
+int type=1;
 
 void main()
 {
     float alpha;
-    float alpha2;
-    float radius=25.;
+    float alpha2=0;
+    float radius=10;
+    float border=1.;
+    vec4 borderColor=vec4(0,0,0,1);
+    
+    vec4 color4;
     
     switch(type){
         case 1:{
             float uSoftness=4./u_resolution.x;
             
-            float dist=1.-length(uv);
+            float dist=1.-length(uv)-border/u_resolution.x;
             alpha=smoothstep(uSoftness,uSoftness*2.,dist);
+            
+            if(border>0){
+                float dist2=1.-length(uv);
+                alpha2=smoothstep(uSoftness,uSoftness*2.,dist2);
+            }
+            
+            color4=vec4(color*alpha)+vec4(borderColor*alpha2);
             break;
         }
         case 2:{
-            float mul=.5;
-            vec2 pos=(abs(uv)*u_resolution*mul);
+            vec2 halfSize=u_resolution*.5;
+            vec2 pos=(abs(uv)*halfSize);
+            float rect=length(max(pos-(halfSize-radius),0.))-radius;
             
-            alpha=1.-clamp(length(max(pos-(u_resolution*mul-radius),0.))-radius,0.,1.);
+            alpha=1.-clamp(rect+border,0.,1.);
+            
+            if(border>0)
+            alpha2=1.-clamp(rect,0.,1.);
+            
+            color4=vec4(color*alpha)+vec4(borderColor*alpha2);
             break;
         }
     }
     
-    float rx=radius/u_resolution.x*2;
-    float ry=radius/u_resolution.y*2;
-    
-    vec4 color4=vec4(1,1,1,1);
-    
-    vec2 nuv=abs(uv);
-    
-    // vec2 pixel=1.-2./u_resolution;
-    
-    // if(nuv.x>pixel.x||nuv.y>pixel.y||alpha==0){
-        //     color4=vec4(1,0,0,1);
-    // }
-    if(nuv.x>1.-rx&&nuv.y>1.-ry){
-        
-        color4.a=length(vec2(1.-nuv.x,1.-nuv.y));
-    }
     outColor=color4;
 }

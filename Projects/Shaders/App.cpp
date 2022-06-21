@@ -119,7 +119,7 @@ namespace Plutus
             mShader.disable();
         }
 
-        Graphic::enableBlend(true);
+        Graphic::enableBlend();
 
         mLightShader.enable();
         mLightShader.setUniformMat4("uCamera", mCamera.getCameraMatrix());
