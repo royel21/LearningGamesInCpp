@@ -163,10 +163,10 @@ namespace Plutus
 
         Graphic::enableBlend();
 
-        mSBatch.addRect({ 110, 447, 56, 206 }, 10, { 255, 0, 0 });
-        mSBatch.addRect({ 100, 450, 50,200 }, 10);
+        // mSBatch.addRect({ 110, 447, 56, 206 }, 10, { 255, 0, 0 });
+        mSBatch.addRect({ 100, 450, 10,200 }, 5);
 
-        mSBatch.addCircle({ 100, 300 }, 206, { 0,0,0 });
+        // mSBatch.addCircle({ 100, 300 }, 206, { 0,0,0 });
         mSBatch.addCircle({ 100, 300 }, 200);
 
         mSBatch.draw();

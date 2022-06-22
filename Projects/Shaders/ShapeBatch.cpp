@@ -83,25 +83,44 @@ namespace Plutus
         flat in int type;
 
         out vec4 fragColor;
-        
+
+        uniform float border;
+        uniform vec4 borderColor;
+
         void main(){
-            float alpha;
+            float alpha=0;
+            float alpha2=0;
             
             switch(type){
                 case 1:{
-                    vec2 pos=(abs(uv)*size*.5);
+                    vec2 halfSize=size*.5;
+                    vec2 pos=(abs(uv)*halfSize);
+                    float rect=length(max(pos-(halfSize-radius),0.))-radius;
                     
-                    alpha=1.-clamp(length(max(pos-(size*.5-radius),0.))-radius,0.,1.);
+                    alpha=1.-clamp(rect+border,0.,1.);
+                    
+                    if(border>0){
+                        alpha2=1.-clamp(rect,0.,1.);
+                    }
                     break;
                 }
                 default:{
                     float uSoftness=4./size.x;
+                    float b=border/size.x;
                     
                     float dist=1.-length(uv);
-                    alpha=smoothstep(uSoftness,uSoftness*2.,dist);
+                    alpha=smoothstep(uSoftness,uSoftness*1.5,dist-b);
+                    
+                    if(border>0){
+                        alpha2=smoothstep(uSoftness,uSoftness*1.5,dist);
+                    }
                 }
             }
-            fragColor=vec4(color.rgb,alpha*color.a);
+            if(border>0){
+                fragColor=vec4(color*alpha)+vec4(borderColor*alpha2);
+            }else{
+                fragColor=vec4(color.rgb,alpha);
+            }   
         })END";
 
     void ShapeBatch::init(Camera2D* camera) {
@@ -127,6 +146,8 @@ namespace Plutus
     void ShapeBatch::draw() {
         mShader.enable();
         mShader.setUniformMat4("uCamera", mCamera->getCameraMatrix());
+        mShader.setUniform1f("border", mBorderWidth);
+        mShader.setUniform4f("borderColor", mBorderColor);
 
         Graphic::bind(mVAO);
 

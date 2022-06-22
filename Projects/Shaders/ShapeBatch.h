@@ -44,8 +44,8 @@ namespace Plutus
         Camera2D* mCamera;
         uint32_t mVAO;
         uint32_t mBufferId;
-
-        Vec4f mUv = { -1,-1,1,1 };
+        float mBorderWidth = 1.f;
+        ColorRGBA8 mBorderColor = { 0,0,0,255 };
 
         std::vector<ShapeVert> mShapes;
         const uint32_t mVertexSize = sizeof(ShapeVert);

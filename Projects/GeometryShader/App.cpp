@@ -56,7 +56,7 @@ namespace Plutus
         mProject.load("ZombiesGame/ZombiesGame.json");
         mProject.loadScene(mProject.currentScene);
 
-        auto ent = mProject.scene->getEntityByName("Player2");
+        auto ent = mProject.scene->getEntityByName("Player");
         if (ent) {
             ent.addComponent<TextComponent>("arial.ttf", "Text Component LAND", 16.0f, 48.0f, ColorRGBA8{ 255, 255, 0, 255 });
         }

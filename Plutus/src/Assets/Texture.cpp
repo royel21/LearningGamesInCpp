@@ -54,8 +54,8 @@ namespace Plutus
             mTileSet.columns = float(mWidth / mTileWidth);
             mTileSet.width = float(mTileWidth) / float(mWidth);
             mTileSet.height = float(mTileHeight) / float(mHeight);
-            mTileSet.spacingX = float(mSpacing) / float(mWidth);
-            mTileSet.spacingY = float(mSpacing) / float(mHeight);
+            mTileSet.spacingX = (float(mSpacing) + .0005f) / float(mWidth);
+            mTileSet.spacingY = (float(mSpacing) + .0005f) / float(mHeight);
 
             uvs.clear();
             Vec4f UV;

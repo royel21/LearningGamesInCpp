@@ -15,6 +15,49 @@
 
 namespace Plutus
 {
+    void Layer::destroy() {
+        for (auto& mbatch : tileMapBatchs) {
+            mbatch->destroy();
+            delete mbatch;
+        }
+        if (spriteBatch) {
+            spriteBatch->destroy();
+            delete spriteBatch;
+        }
+        if (textBatch) {
+            textBatch->destroy();
+            delete textBatch;
+        }
+    }
+
+    Layer& RendererSystem::getLayer(uint32_t index) {
+        if (index + 1 > mLayers.size()) {
+            mLayers.resize(index + 1);
+        }
+        return mLayers[index];
+    }
+
+    SpriteBatch* RendererSystem::getSpriteBatch(uint32_t layerIndex) {
+        Layer& layer = getLayer(layerIndex);
+
+        if (!layer.spriteBatch) {
+            layer.spriteBatch = new SpriteBatch(mCamera, &mSpriteShader);
+            layer.spriteBatch->init();
+        }
+
+        return layer.spriteBatch;
+    }
+
+    SpriteBatch* RendererSystem::getTextBatch(uint32_t layerIndex) {
+        Layer& layer = getLayer(layerIndex);
+        if (!layer.textBatch) {
+            layer.textBatch = new SpriteBatch(mCamera, &mTextShader);
+            layer.textBatch->init();
+        }
+
+        return layer.textBatch;
+    }
+
     void RendererSystem::init() {
 
         mTilemapShader.init(GLSLBatch::tmapVShader, GLSLBatch::tmapFShader);
@@ -29,9 +72,6 @@ namespace Plutus
             batchMap->init(&tmap, mProject);
             layer.tileMapBatchs.push_back(batchMap);
         }
-
-        mTextbatch = new SpriteBatch(mCamera, &mTextShader);
-        mTextbatch->init();
     }
 
     void RendererSystem::update(float dt) {
@@ -54,24 +94,26 @@ namespace Plutus
         // sort by layer, y position, texture
         std::sort(mRenderables.begin(), mRenderables.end());
 
+        SpriteBatch* bath = nullptr;
+
         for (auto& r : mRenderables) {
-            Layer& layer = getLayer(r.layer + 1);
 
-            if (!layer.spriteBatch) {
-                layer.spriteBatch = new SpriteBatch(mCamera, &mSpriteShader);
-                layer.spriteBatch->init();
+            if (!bath) {
+                bath = getSpriteBatch(r.layer);
             }
-
             //Add sprite to this layer
-            layer.spriteBatch->addSprite(&r);
+            bath->addSprite(&r);
         }
 
         auto textview = mProject->scene->getRegistry()->view<TransformComponent, TextComponent>();
-
+        bath = nullptr;
         for (auto [e, trans, textc] : textview.each()) {
 
+            if (!bath) {
+                bath = getTextBatch(trans.layer);
+            }
             auto pos = textc.mOffset + trans.getPosition();
-            mTextbatch->addText(textc.mFontId, pos.x, pos.y, textc.mText, textc.mColor, textc.mScale);
+            bath->addText(textc.mFontId, pos.x, pos.y, textc.mText, textc.mColor, textc.mScale);
         }
 
         for (auto& layer : mLayers) {
@@ -81,24 +123,22 @@ namespace Plutus
                     mbatch->draw();
                 }
             }
+
             if (layer.spriteBatch) {
                 layer.spriteBatch->draw();
             }
+
+            if (layer.textBatch) {
+                layer.textBatch->draw();
+            }
         }
-        mTextbatch->draw();
     }
 
     void RendererSystem::destroy() {
         for (auto& layer : mLayers) {
-            for (auto& mbatch : layer.tileMapBatchs) {
-                mbatch->destroy();
-                delete mbatch;
-            }
-            if (layer.spriteBatch) {
-                delete layer.spriteBatch;
-            }
+            layer.destroy();
         }
-        delete mTextbatch;
+
         mLayers.clear();
         mTextShader.destroy();
         mTilemapShader.destroy();

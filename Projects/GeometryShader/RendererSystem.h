@@ -18,7 +18,9 @@ namespace Plutus
     struct Layer {
         std::vector<TileMapBatch*> tileMapBatchs;
         SpriteBatch* spriteBatch = nullptr;
+        SpriteBatch* textBatch = nullptr;
         Layer() {};
+        void destroy();
     };
 
     class RendererSystem : public ISystem
@@ -37,13 +39,9 @@ namespace Plutus
         Shader mTextShader;
         std::vector<Layer> mLayers;
         std::vector<Renderable> mRenderables;
-        SpriteBatch* mTextbatch;
 
-        Layer& getLayer(uint32_t index) {
-            if (index + 1 > mLayers.size()) {
-                mLayers.resize(index + 1);
-            }
-            return mLayers[index];
-        }
+        SpriteBatch* getTextBatch(uint32_t layer);
+        SpriteBatch* getSpriteBatch(uint32_t layer);
+        Layer& getLayer(uint32_t index);
     };
 } // namespace Plutus

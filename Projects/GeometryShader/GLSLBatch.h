@@ -135,7 +135,7 @@ namespace GLSLBatch
                     break;
                 }
             }
-            if(tex.a < 0.1) discard;
+            if(tex.a < 0.2) discard;
             fragColor = tex * uColor;
         }
     )END";
@@ -151,7 +151,7 @@ namespace GLSLBatch
         const float borderWidth = 0.4;
         const float borderEdge = 0.45;
 
-        const vec3 outlineColor = vec3(1.0, 0.0, 0.0);
+        const vec3 outlineColor = vec3(0.0, 0.0, 0.0);
 
         out vec4 fragColor;
 
