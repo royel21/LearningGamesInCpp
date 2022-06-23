@@ -15,7 +15,7 @@ void main()
     float alpha;
     float alpha2=0;
     float radius=25;
-    float border=0;
+    float border=2;
     vec4 borderColor=vec4(0,0,0,1);
     
     vec4 color4;
@@ -28,7 +28,7 @@ void main()
             float dist=1.-length(uv);
             alpha=smoothstep(uSoftness,uSoftness*2.,dist-b);
             if(border>0){
-                alpha2=smoothstep(uSoftness,uSoftness*2.,dist);
+                alpha2=smoothstep(uSoftness,uSoftness*2,dist);
             }
             break;
         }

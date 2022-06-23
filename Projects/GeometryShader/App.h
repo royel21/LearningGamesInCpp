@@ -53,7 +53,7 @@ namespace Plutus
         // std::vector<Point> points;
 
         void init();
-        void update();
+        void update(float dt);
         void draw();
     };
 } // namespace Plutus

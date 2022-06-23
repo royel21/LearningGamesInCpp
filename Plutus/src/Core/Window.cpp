@@ -158,9 +158,14 @@ namespace Plutus
         glfwSwapInterval(state);
     }
 
-    void Window::setTitle(const char* title)
+    void Window::setTitle(const char* title, ...)
     {
-        glfwSetWindowTitle(mWindow, title);
+        va_list args;
+        va_start(args, title);
+        char data[128];
+        stbsp_snprintf(data, 128, title, args);
+        glfwSetWindowTitle(mWindow, data);
+        va_end(args);
     }
 
     void initKeys()

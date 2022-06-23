@@ -1,4 +1,4 @@
-local SPEED = 1
+local SPEED = 4
 
 local rbody
 
@@ -13,7 +13,7 @@ local vel = {
     y = 0
 }
 
-camera:setBounds(Vec4f.new(0, 0, 4096 - size.x, 2048 - size.y));
+camera:setBounds(Vec4f.new(0, 0, 7680 - size.x, 5120 - size.y));
 
 local anim
 local frametime = 120
@@ -72,3 +72,7 @@ function update(dt)
         anim:play(state .. direction)
     end
 end
+
+
+
+

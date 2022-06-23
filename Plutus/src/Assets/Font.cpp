@@ -39,8 +39,8 @@ namespace Plutus
         glGenTextures(1, &mTexId);
         glBindTexture(GL_TEXTURE_2D, mTexId);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -55,7 +55,7 @@ namespace Plutus
             if (FT_Load_Char(face, i, FT_LOAD_RENDER))
                 continue;
 
-            FT_Render_Glyph(g, FT_RENDER_MODE_SDF); // <-- And this is new
+            // FT_Render_Glyph(g, FT_RENDER_MODE_SDF); // <-- And this is new
 
             if (height < g->bitmap.rows) {
                 height = g->bitmap.rows;

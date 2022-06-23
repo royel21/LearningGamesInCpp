@@ -74,7 +74,6 @@ namespace Plutus
             mInput->update();
             mWindow.update();
             mLimiter.end();
-
             if (mScreenList.size()) swapScreen();
             if (mProject) mProject.scene->remove();
         };

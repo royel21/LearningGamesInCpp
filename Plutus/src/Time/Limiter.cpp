@@ -16,7 +16,6 @@ namespace Plutus
         // if we are on window set the time precision to 1ms for sleep function
         timeBeginPeriod(1);
 #endif
-
     }
 
     Limiter::~Limiter()
@@ -28,20 +27,13 @@ namespace Plutus
 
     float Limiter::start()
     {
-#ifdef _WIN32
-        // if we are on window set the time precision to 1ms for sleep function
-        timeBeginPeriod(1);
-#endif
         mStartPoint = Clock::now();
         return (float)mLastElapsed;
     }
 
     void Limiter::end()
     {
-#ifdef __EMSCRIPTEN__
-        Duration currentFrame = Clock::now() - mStartPoint;
-        mLastElapsed = currentFrame.count();
-#else
+#ifndef __EMSCRIPTEN__
         if (limitFPS) {
             Duration drawTime = Clock::now() - mStartPoint;
             if (drawTime.count() < mSpecFps)
@@ -49,13 +41,14 @@ namespace Plutus
                 Sleep(uint32_t((mSpecFps - drawTime.count()) * 1000.0f));
             }
         }
+#endif
         Duration currentFrame = Clock::now() - mStartPoint;
         mLastElapsed = currentFrame.count();
-#endif
+
         mFrameTime += mLastElapsed;
         mnFrameTime++;
 
-        if (mFrameTime > 1.000)
+        if (mFrameTime > 0.5)
         {
             mFps = 1.0f / static_cast<float>(mFrameTime / mnFrameTime);
             mFrameTime = 0.0f;

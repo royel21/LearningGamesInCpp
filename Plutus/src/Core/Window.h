@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <stdarg.h>
 
 struct GLFWwindow;
 
@@ -27,7 +28,7 @@ namespace Plutus
 
         void setAlwaysOnTOp(bool isOnTop);
         void setVSYNC(int state = 0);
-        void setTitle(const char* title);
+        void setTitle(const char* title, ...);
 
         void setSize(int w, int h);
 

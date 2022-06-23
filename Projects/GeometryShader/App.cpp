@@ -32,14 +32,19 @@ namespace Plutus
     void AppGeo::run()
     {
         init();
+        mWindow.setVSYNC(1);
+        auto start = Time::micros();
         while (mWindow.isFinish())
         {
-            mLimiter.start();
-            update();
+            auto end = Time::micros();
+            auto dt = end - start;
+            start = end;
+
+            update(0.01667f);
             draw();
             mWindow.update();
-            mLimiter.end();
             mProject.scene->remove();
+            mWindow.setTitle("fps: %llu", dt);
         }
     }
 
@@ -58,7 +63,7 @@ namespace Plutus
 
         auto ent = mProject.scene->getEntityByName("Player");
         if (ent) {
-            ent.addComponent<TextComponent>("arial.ttf", "Text Component LAND", 16.0f, 48.0f, ColorRGBA8{ 255, 255, 0, 255 });
+            ent.addComponent<TextComponent>("Zoika.ttf", "Text Component LAND", 16.0f, 48.0f, ColorRGBA8{ 255, 255, 0, 255 });
         }
 
         mCamera.init(mProject.vpWidth, mProject.vpHeight);
@@ -76,29 +81,10 @@ namespace Plutus
         mWindow.onResize = [&](int w, int h) { glViewport(0, 0, w, h);  };
     }
 
-    void AppGeo::update()
+    void AppGeo::update(float dt)
     {
         mCamera.update();
-        auto pos = mCamera.getPosition();
-
-        // auto start = Time::micros();
-        mSysManager.update(0.01667f);
-        // Logger::info("elapse: %llu", Time::micros() - start);
-
-
-        // char title[128];
-        // std::snprintf(title, 128, "FPS: %.2f", (Time::micros() - start) / 1000.0f);
-        // mWindow.setTitle(title);
-        // Logger::info("pos: %0.3f, %0.3f", pos.x, pos.y);
-
-        // auto ent = mProject.scene->getEntityByName("Player2");
-        // if (ent) {
-        //     auto dir = ent.getCenter();
-        //     mDebug->submitCircle(dir, 16);
-        //     mDebug->end();
-        //     mDebug->render();
-        // }
-
+        mSysManager.update(dt);
     }
 
     void AppGeo::draw()

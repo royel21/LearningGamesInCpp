@@ -86,6 +86,9 @@ namespace Plutus
     }
 
     void Scene::copyScene(Scene* scene) {
+        mBGColor = scene->mBGColor;
+        mTileHeight = scene->mTileHeight;
+        mTileWidth = scene->mTileWidth;
 
         mRegistry.clear();
         scene->getRegistry()->each([&](auto& e) {

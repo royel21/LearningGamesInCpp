@@ -139,14 +139,14 @@ namespace GLSLBatch
             fragColor = tex * uColor;
         }
     )END";
-    const std::string textFrag = R"END(
+    const std::string textSDFFrag = R"END(
         in vec2 uv;
         in vec4 color;
         
         uniform sampler2D mySampler;
 
         const float width = 0.5;
-        const float edge = 0.05;
+        const float edge = 0.08;
 
         const float borderWidth = 0.4;
         const float borderEdge = 0.45;
@@ -170,6 +170,17 @@ namespace GLSLBatch
                 
             fragColor = vec4(overalColor, overalAlpha);
         }
+    )END";
+    const std::string textFrag = R"END(
+    in vec2 uv;
+    in vec4 color;
+    out vec4 fragColor;
+    uniform sampler2D mySampler;
+    void main(){
+        vec4 tex = texture(mySampler, uv);
+         
+        fragColor = vec4(color.rgb, smoothstep(.25,.35, tex.r));
+    }
     )END";
 
 } // namespace GLSLBatch
