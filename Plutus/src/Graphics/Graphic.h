@@ -199,4 +199,61 @@ namespace Plutus
             glDrawArrays(mode, firstIndex, numVertices);
         }
     };
+
+    class VertexClass {
+        uint32_t mVAO = 0;
+        uint32_t mBufferId = 0;
+        uint32_t mIBufferId = 0;
+
+    public:
+        ~VertexClass() { destroy(); }
+        inline void destroy() { Graphic::destroy(&mVAO, &mBufferId, mIBufferId ? &mIBufferId : nullptr); }
+
+        void init(bool unbind = true, bool useIBO = false) {
+            mVAO = Graphic::createVertexArray();
+            mBufferId = Graphic::createBufferArray();
+            if (useIBO) {
+                mIBufferId = Graphic::createElementBuffer();
+            }
+        }
+        inline void bind() { Graphic::bind(mVAO, mIBufferId); }
+        inline void unBind() { Graphic::unBind(); }
+
+        // Bind the buffer buffId and upload the data unbind after data upload
+        inline void uploadBufferData(uint32_t buffId, uint32_t buffsize, const void* buffer, uint32_t drawType = GL_DYNAMIC_DRAW, uint32_t bufferType = GL_ARRAY_BUFFER) {
+            bind();
+            glBindBuffer(bufferType, buffId);
+            glBufferData(bufferType, buffsize, buffer, drawType);
+            glBindBuffer(bufferType, 0);
+            unBind();
+        }
+
+        /**
+         * @brief Enable VertexAttibute and set vertex attribute float pointer
+         *
+         * @param pos Layout position on the vertex shader
+         * @param size count of elements of this attributes float = 1, vec2 = 2 etc
+         * @param vertexSize size in bytes of the struct or class use sizeof()
+         * @param offset use offsetof or calculate
+         * @param type GLenum TYPE def: GL_FLOAT
+         * @param normalize if should be normalize to float def: GL_FALSE
+         */
+        inline void setFAttribute(int pos, int size, uint32_t vertexSize, size_t offset = NULL, GLenum type = GL_FLOAT, GLboolean normalize = GL_FALSE) {
+            glEnableVertexAttribArray(pos);
+            glVertexAttribPointer(pos, size, type, normalize, vertexSize, (void*)offset);
+        }
+        /**
+        * @brief Enable VertexAttibute and set vertex attribute integer pointer
+        *
+        * @param pos Layout position on the vertex shader
+        * @param size count of elements of this attributes float = 1, vec2 = 2 etc
+        * @param vertexSize size in bytes of the struct or class use sizeof()
+        * @param offset use offsetof or calculate
+        * @param type GLenum TYPE def: GL_INT
+        */
+        inline void setIAttribute(int pos, int size, uint32_t vertexSize, size_t offset = NULL, GLenum type = GL_INT) {
+            glEnableVertexAttribArray(pos);
+            glVertexAttribIPointer(pos, size, type, vertexSize, (void*)offset);
+        }
+    };
 } // namespace Plutus

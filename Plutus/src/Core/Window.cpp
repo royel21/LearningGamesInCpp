@@ -113,9 +113,6 @@ namespace Plutus
                 win->onResize(width, height);
             }
             });
-        //Enable alpha blend
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         return true;
     }
@@ -138,8 +135,8 @@ namespace Plutus
     void Window::update()
     {
         Input::get()->update();
-        glfwSwapBuffers(mWindow);
         glfwPollEvents();
+        glfwSwapBuffers(mWindow);
     }
 
     void Window::close()
@@ -158,14 +155,9 @@ namespace Plutus
         glfwSwapInterval(state);
     }
 
-    void Window::setTitle(const char* title, ...)
+    void Window::setTitle(const char* title)
     {
-        va_list args;
-        va_start(args, title);
-        char data[128];
-        stbsp_snprintf(data, 128, title, args);
-        glfwSetWindowTitle(mWindow, data);
-        va_end(args);
+        glfwSetWindowTitle(mWindow, title);
     }
 
     void initKeys()

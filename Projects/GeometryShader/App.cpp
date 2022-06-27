@@ -32,19 +32,24 @@ namespace Plutus
     void AppGeo::run()
     {
         init();
-        mWindow.setVSYNC(1);
-        auto start = Time::micros();
+        // mWindow.setVSYNC(1);
+        // auto start = Time::micros();
         while (mWindow.isFinish())
         {
-            auto end = Time::micros();
-            auto dt = end - start;
-            start = end;
+            // auto end = Time::micros();
+            // auto dt = end - start;
+            // start = end;
 
-            update(0.01667f);
+            // update(dt / 1000000.0f);
+            auto dt = mLimiter.start();
+
+            update(dt);
             draw();
             mWindow.update();
             mProject.scene->remove();
-            mWindow.setTitle("fps: %llu", dt);
+
+            mLimiter.end();
+            mWindow.setTitle("fps: %.03f\n", mLimiter.getFPS());
         }
     }
 
@@ -63,7 +68,7 @@ namespace Plutus
 
         auto ent = mProject.scene->getEntityByName("Player");
         if (ent) {
-            ent.addComponent<TextComponent>("Zoika.ttf", "Text Component LAND", 16.0f, 48.0f, ColorRGBA8{ 255, 255, 0, 255 });
+            ent.addComponent<TextComponent>("arial.ttf", "Text Component LAND", 16.0f, 20.0f, ColorRGBA8{ 255, 255, 0, 255 });
         }
 
         mCamera.init(mProject.vpWidth, mProject.vpHeight);

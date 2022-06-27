@@ -38,7 +38,8 @@ namespace Plutus
             Duration drawTime = Clock::now() - mStartPoint;
             if (drawTime.count() < mSpecFps)
             {
-                Sleep(uint32_t((mSpecFps - drawTime.count()) * 1000.0f));
+                auto slpTime = (uint32_t)floorf((mSpecFps - drawTime.count()) * 1000.0f);
+                Sleep(slpTime);
             }
         }
 #endif
@@ -48,7 +49,7 @@ namespace Plutus
         mFrameTime += mLastElapsed;
         mnFrameTime++;
 
-        if (mFrameTime > 0.5)
+        if (mFrameTime > 1.0f)
         {
             mFps = 1.0f / static_cast<float>(mFrameTime / mnFrameTime);
             mFrameTime = 0.0f;

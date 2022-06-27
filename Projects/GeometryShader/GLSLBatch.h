@@ -145,8 +145,8 @@ namespace GLSLBatch
         
         uniform sampler2D mySampler;
 
-        const float width = 0.5;
-        const float edge = 0.08;
+        const float width = 0.4;
+        const float edge = 0.1;
 
         const float borderWidth = 0.4;
         const float borderEdge = 0.45;

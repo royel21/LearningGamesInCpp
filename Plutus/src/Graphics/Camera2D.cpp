@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <Log/Logger.h>
 #include <ECS/Components/TransformComponent.h>
-
+#include <Math/LogVec.h>
 #include <Input/Input.h>
 
 namespace Plutus

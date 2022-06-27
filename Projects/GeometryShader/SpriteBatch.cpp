@@ -67,7 +67,7 @@ namespace Plutus {
         if (font != nullptr) {
 
             sprites.reserve(sprites.size() + (text.size() * 4));
-
+            scale *= 1.0f / mCamera->getScale();
             for (auto i : text) {
                 createBatch(font->mTexId, 0);
                 auto& ch = font->ch[i];

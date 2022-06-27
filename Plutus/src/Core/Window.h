@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include <stdarg.h>
+#include <stb_sprintf.h>
 
 struct GLFWwindow;
 
@@ -28,7 +28,15 @@ namespace Plutus
 
         void setAlwaysOnTOp(bool isOnTop);
         void setVSYNC(int state = 0);
-        void setTitle(const char* title, ...);
+
+        template <typename... TArgs>
+        void setTitle(const char* title, TArgs &&...args) {
+            char data[128];
+            stbsp_snprintf(data, 128, title, std::forward<TArgs>(args)...);
+            setTitle(data);
+        }
+
+        void setTitle(const char* title);
 
         void setSize(int w, int h);
 

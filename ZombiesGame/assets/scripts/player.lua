@@ -1,4 +1,4 @@
-local SPEED = 4
+local SPEED = 20
 
 local rbody
 
@@ -67,12 +67,9 @@ function update(dt)
         print("found:", #ents)
     elseif anim.loop == false then
         local trans = entity:getTransform()
-        trans.x = trans.x + vel.x
-        trans.y = trans.y + vel.y
+        trans.x = trans.x + vel.x * dt
+        trans.y = trans.y + vel.y * dt
         anim:play(state .. direction)
     end
 end
-
-
-
 
