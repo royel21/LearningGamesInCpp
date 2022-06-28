@@ -7,14 +7,13 @@
 #include <Utils/Utils.h>
 #include <Graphics/DebugRenderer.h>
 
-#include <Math/LogVec.h>
-
 #include "ShapeSystem.h"
 #include "ShapeComponent.h"
 
 #include <Time/Timer.h>
 #include <Math/PMath.h>
 #include <Graphics/Graphic.h>
+#include <Log/Logger.h>
 
 namespace Plutus
 {
@@ -119,7 +118,7 @@ namespace Plutus
         }
 
         if (angle != 0) {
-            vEnd = rotateP(vEnd, Start, angle);
+            vEnd = PMath::rotateP(vEnd, Start, angle);
         }
         hit = false;
         mPhysicSys->CastRay(Start, vEnd);

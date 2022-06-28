@@ -9,7 +9,7 @@
 #include <Log/Logger.h>
 #include <filesystem>
 
-#include <Math/LogVec.h>
+#include <Log/Logger.h>
 #include <Assets/Assets.h>
 
 

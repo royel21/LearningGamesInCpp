@@ -7,8 +7,6 @@
 #include <Utils/Utils.h>
 #include <Graphics/DebugRenderer.h>
 
-#include <Math/LogVec.h>
-
 #include <Time/Timer.h>
 #include <Math/PMath.h>
 #include <Graphics/Graphic.h>

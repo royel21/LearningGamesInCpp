@@ -55,10 +55,10 @@ namespace Plutus {
         {
             Vec2f center(w * 0.5f, h * 0.5f);
 
-            rotate(mbottomLeft, center, renderable->r);
-            rotate(mtopLeft, center, renderable->r);
-            rotate(mtopRight, center, renderable->r);
-            rotate(mBottomRight, center, renderable->r);
+            PMath::rotate(mbottomLeft, center, renderable->r);
+            PMath::rotate(mtopLeft, center, renderable->r);
+            PMath::rotate(mtopRight, center, renderable->r);
+            PMath::rotate(mBottomRight, center, renderable->r);
         }
 
         sprites.emplace_back(mbottomLeft.x, mbottomLeft.y, uv.x, uv.w, renderable->color);

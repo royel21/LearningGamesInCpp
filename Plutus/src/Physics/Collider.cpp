@@ -22,7 +22,7 @@ namespace Plutus
             bool isColliding = sqrtLength < r* r;
 
             if (isColliding && mtv) {
-                float length = 1 / invSqrt(sqrtLength);
+                float length = 1 / PMath::invSqrt(sqrtLength);
                 float collisionDepth = r - length;
 
                 Vec2f collisionDepthVec = (distVec / length) * collisionDepth;
@@ -43,7 +43,7 @@ namespace Plutus
             bool result = lengthSqtr < circle->radiusSqrt();
 
             if (result && mtv) {
-                float length = 1.0f / invSqrt(lengthSqtr);
+                float length = 1.0f / PMath::invSqrt(lengthSqtr);
 
                 float sept = circle->radius - length;
                 if (sept > 0) {
@@ -62,7 +62,7 @@ namespace Plutus
             auto cpos = circle->pos;
 
             if (box->rotation)
-                rotate(cpos, box->getCenter(), box->rotation);
+                PMath::rotate(cpos, box->getCenter(), box->rotation);
 
             auto closest = cpos;
 
@@ -77,7 +77,7 @@ namespace Plutus
 
             if (result && mtv) {
 
-                float length = 1 / invSqrt(lengthSqrt);
+                float length = 1 / PMath::invSqrt(lengthSqrt);
                 // circle->pos += ((dirVec / length) * (circle->radius - length));
                 mtv->axis += ((dirVec / length) * (circle->radius - length));
             }

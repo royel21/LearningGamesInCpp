@@ -116,6 +116,8 @@ namespace Plutus
             bath->addText(textc.mFontId, pos.x, pos.y, textc.mText, textc.mColor, textc.mScale);
         }
 
+        glDisable(GL_DEPTH_TEST);
+
         for (auto& layer : mLayers) {
             for (auto mbatch : layer.tileMapBatchs) {
                 if (mbatch) {

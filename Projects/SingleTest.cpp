@@ -27,7 +27,7 @@ int main(int argc, char const* argv[])
         Vec2f pos = uv * halfres;
         Vec2f result = pos - (halfres - radius);
 
-        Vec2f m = max(result, 0.);
+        Vec2f m = PMath::max(result, 0.);
 
         float alpha = 1.f - clamp(m.length() - radius, 0., 1.f);
 

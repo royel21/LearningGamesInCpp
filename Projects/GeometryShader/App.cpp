@@ -18,6 +18,7 @@
 
 #include <Log/Logger.h>
 #include <Time/Timer.h>
+#include <Math/PMath.h>
 
 #include "RendererSystem.h"
 
@@ -27,29 +28,52 @@
 
 #include "TextComponent.h"
 
+#include <GLFW/glfw3.h>
+
 namespace Plutus
 {
+    double SPEED = 60;
     void AppGeo::run()
     {
         init();
-        // mWindow.setVSYNC(1);
-        // auto start = Time::micros();
+        mWindow.setVSYNC(1);
+        auto start = glfwGetTime();
         while (mWindow.isFinish())
         {
-            // auto end = Time::micros();
-            // auto dt = end - start;
-            // start = end;
+            auto end = glfwGetTime();
+            auto dt = end - start;
+            start = end;
 
             // update(dt / 1000000.0f);
-            auto dt = mLimiter.start();
 
-            update(dt);
+            // auto dt = mLimiter.start();
+
+            auto mCamPos = mCamera.getPosition();
+            if (Input::get()->onKeyDown("Up")) {
+                mCamPos.y += SPEED * dt;
+            }
+            if (Input::get()->onKeyDown("Down")) {
+                mCamPos.y -= SPEED * dt;
+            }
+            if (Input::get()->onKeyDown("Right")) {
+                mCamPos.x += SPEED * dt;
+            }
+            if (Input::get()->onKeyDown("Left")) {
+                mCamPos.x -= SPEED * dt;
+            }
+            mCamPos.x += SPEED * dt;
+            // auto rounded = PMath::round(mCamPos);
+            mCamera.setPosition(mCamPos);
+            Logger::info("X:%.0f Y:%0.3f dt:%0.5f", mCamPos.x, mCamPos.y, dt);
+
+            mCamera.update();
+            update((float)dt);
             draw();
             mWindow.update();
             mProject.scene->remove();
 
-            mLimiter.end();
-            mWindow.setTitle("fps: %.03f\n", mLimiter.getFPS());
+            // mLimiter.end();
+            mWindow.setTitle("fps: %.04f\n", dt);
         }
     }
 
@@ -88,7 +112,6 @@ namespace Plutus
 
     void AppGeo::update(float dt)
     {
-        mCamera.update();
         mSysManager.update(dt);
     }
 

@@ -48,7 +48,7 @@ namespace Plutus
         Points vertices{ pos, size };
         if (rotation != 0.0f) {
             for (auto& vert : vertices) {
-                rotate(vert, getCenter(), rotation);
+                PMath::rotate(vert, getCenter(), rotation);
             }
         }
 
@@ -86,7 +86,7 @@ namespace Plutus
         Points vertices{ {min}, {max.x, min.y}, {max}, {min.x, max.y} };
         if (rotation) {
             for (auto& vert : vertices) {
-                rotate(vert, getCenter(), rotation);
+                PMath::rotate(vert, getCenter(), rotation);
             }
         }
 

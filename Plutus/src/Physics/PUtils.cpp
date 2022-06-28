@@ -37,7 +37,7 @@ namespace Plutus
             float dy = line->size.y - line->pos.y;
             float dx = line->size.x - line->pos.x;
             if (dx == 0) {
-                return compareF(point.x, line->pos.x);
+                return PMath::compareF(point.x, line->pos.x);
             }
 
             float m = dy / dx;
@@ -51,7 +51,7 @@ namespace Plutus
         {
             Vec2f p = point;
             if (box->rotation) {
-                rotate(p, box->getCenter(), box->rotation);
+                PMath::rotate(p, box->getCenter(), box->rotation);
             }
             return p >= box->pos && p <= box->getMax();
         }
