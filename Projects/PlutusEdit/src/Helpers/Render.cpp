@@ -7,6 +7,7 @@
 #include <Graphics/DebugRenderer.h>
 
 #include <Assets/Assets.h>
+#include <Graphics/Graphic.h>
 
 namespace Plutus
 {
@@ -75,6 +76,7 @@ namespace Plutus
 
     void Render::draw()
     {
+        Graphic::enableBlend();
         if (mScene && mConfig) {
             // auto start = Time::millis();
             mFrameBuffer.setColor(mScene->mBGColor);
@@ -96,6 +98,7 @@ namespace Plutus
             mFrameBuffer.unBind();
             mScene->remove();
         }
+        Graphic::disableBlend();
     }
 
     void Render::drawFixtures(PhysicBodyComponent* pbody, TransformComponent* trans) {

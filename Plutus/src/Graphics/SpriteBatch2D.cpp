@@ -74,10 +74,10 @@ namespace Plutus
 		if (r)
 		{
 			Vec2f center(rect.x + rect.z * 0.5f, rect.y + rect.w * 0.5f);
-			rotate(vertices[0], center, r);
-			rotate(vertices[1], center, r);
-			rotate(vertices[2], center, r);
-			rotate(vertices[3], center, r);
+			PMath::rotate(vertices[0], center, r);
+			PMath::rotate(vertices[1], center, r);
+			PMath::rotate(vertices[2], center, r);
+			PMath::rotate(vertices[3], center, r);
 		}
 
 		bufferVertices[mVertexCount++] = { vertices[0], uv.x, uv.w, c, id };

@@ -32,47 +32,36 @@
 
 namespace Plutus
 {
-    double SPEED = 60;
+    float SPEED = 1;
     void AppGeo::run()
     {
         init();
         mWindow.setVSYNC(1);
-        auto start = glfwGetTime();
+
         while (mWindow.isFinish())
         {
-            auto end = glfwGetTime();
-            auto dt = end - start;
-            start = end;
+
 
             // update(dt / 1000000.0f);
 
-            // auto dt = mLimiter.start();
+            auto dt = mLimiter.start();
 
             auto mCamPos = mCamera.getPosition();
-            if (Input::get()->onKeyDown("Up")) {
-                mCamPos.y += SPEED * dt;
-            }
-            if (Input::get()->onKeyDown("Down")) {
-                mCamPos.y -= SPEED * dt;
-            }
-            if (Input::get()->onKeyDown("Right")) {
-                mCamPos.x += SPEED * dt;
-            }
-            if (Input::get()->onKeyDown("Left")) {
-                mCamPos.x -= SPEED * dt;
-            }
-            mCamPos.x += SPEED * dt;
+            mCamPos.x += SPEED;
             // auto rounded = PMath::round(mCamPos);
             mCamera.setPosition(mCamPos);
-            Logger::info("X:%.0f Y:%0.3f dt:%0.5f", mCamPos.x, mCamPos.y, dt);
-
             mCamera.update();
-            update((float)dt);
-            draw();
-            mWindow.update();
-            mProject.scene->remove();
+            update(dt);
 
-            // mLimiter.end();
+            draw();
+            auto start = glfwGetTime();
+            mWindow.update();
+            auto end = glfwGetTime();
+            float dt2 = float(end - start);
+            Logger::info("dt:%.05f dt2:%0.5f", dt, dt2);
+            // mProject.scene->remove();
+
+            mLimiter.end();
             mWindow.setTitle("fps: %.04f\n", dt);
         }
     }

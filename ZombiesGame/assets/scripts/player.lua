@@ -1,4 +1,4 @@
-local SPEED = 20
+local SPEED = 40
 
 local rbody
 

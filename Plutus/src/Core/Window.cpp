@@ -134,9 +134,9 @@ namespace Plutus
 
     void Window::update()
     {
+        glfwSwapBuffers(mWindow);
         Input::get()->update();
         glfwPollEvents();
-        glfwSwapBuffers(mWindow);
     }
 
     void Window::close()

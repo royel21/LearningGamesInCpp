@@ -29,15 +29,15 @@ namespace Plutus
 
 	void Camera2D::update()
 	{
-		// if (mEntity && !Input::get()->isCtrl) {
-		// 	mCamPos = mEntity.getPosition() + mOffset;
-		// 	if (mHasBounds) {
-		// 		if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
-		// 		if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
-		// 		if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
-		// 		if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
-		// 	}
-		// }
+		if (mEntity && !Input::get()->isCtrl) {
+			mCamPos = mEntity.getPosition() + mOffset;
+			if (mHasBounds) {
+				if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
+				if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
+				if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
+				if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
+			}
+		}
 
 		mCameraMatrix = mOrtho * glm::translate(glm::mat4(1.0f), { -mCamPos.x, -mCamPos.y, 0.0f });
 	}

@@ -124,10 +124,10 @@ namespace Plutus
 		{
 			Vec2f halfDim(rect.z * 0.5f, rect.w * 0.5f);
 			Vec2f center = Vec2f(rect.x, rect.y) + halfDim;
-			rotate(bl, center, angle);
-			rotate(tl, center, angle);
-			rotate(tr, center, angle);
-			rotate(br, center, angle);
+			PMath::rotate(bl, center, angle);
+			PMath::rotate(tl, center, angle);
+			PMath::rotate(tr, center, angle);
+			PMath::rotate(br, center, angle);
 		}
 
 		mVertexs[i + 0] = { bl, color };
@@ -145,7 +145,7 @@ namespace Plutus
 
 		for (size_t i = 0; i < NUmVERTS; i++)
 		{
-			float angle = ((float)i / NUmVERTS) * 2.0f * PI;
+			float angle = ((float)i / NUmVERTS) * 2.0f * PMath::PI;
 			mVertexs[start + i].position.x = cos(angle) * radius + center.x;
 			mVertexs[start + i].position.y = sin(angle) * radius + center.y;
 			mVertexs[start + i].color = color;

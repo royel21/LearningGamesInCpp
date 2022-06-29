@@ -61,7 +61,6 @@ void main() {
             break;
         }
         default:{
-             if(tex.a < 0.2) discard;
             fragColor = hasTexture > 0 ? color * tex : color;
         }
     }

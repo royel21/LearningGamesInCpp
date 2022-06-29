@@ -54,20 +54,22 @@ namespace Plutus
             mTileSet.columns = float(mWidth / mTileWidth);
             mTileSet.width = float(mTileWidth) / float(mWidth);
             mTileSet.height = float(mTileHeight) / float(mHeight);
-            mTileSet.spacingX = (float(mSpacing) + .0005f) / float(mWidth);
-            mTileSet.spacingY = (float(mSpacing) + .0005f) / float(mHeight);
+            mTileSet.spacingX = float(mSpacing) / float(mWidth);
+            mTileSet.spacingY = float(mSpacing) / float(mHeight);
+            float spacingX = 0.01f / float(mWidth);
+            float spacingY = 0.01f / float(mHeight);
 
             uvs.clear();
             Vec4f UV;
             for (int y = 0; y < mHeight / mTileHeight; y++)
             {
-                UV.y = (y * mTileSet.height) + (mTileSet.spacingY * (y + 1));
-                UV.w = UV.y + mTileSet.height - mTileSet.spacingY;
+                UV.y = (y * mTileSet.height) + (mTileSet.spacingY * (y + 1)) + spacingY;
+                UV.w = UV.y + mTileSet.height - mTileSet.spacingY - spacingY;
 
                 for (int x = 0; x < mWidth / mTileWidth; x++)
                 {
-                    UV.x = (x * mTileSet.width) + (mTileSet.spacingX * (x + 1));
-                    UV.z = UV.x + mTileSet.width - mTileSet.spacingX;
+                    UV.x = (x * mTileSet.width) + (mTileSet.spacingX * (x + 1)) + spacingX;
+                    UV.z = UV.x + mTileSet.width - mTileSet.spacingX - spacingX;
                     uvs.push_back(UV);
                 }
             }
