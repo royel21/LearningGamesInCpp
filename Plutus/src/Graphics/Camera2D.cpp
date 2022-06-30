@@ -3,8 +3,6 @@
 
 #include <cmath>
 #include <algorithm>
-#include <Log/Logger.h>
-#include <ECS/Components/TransformComponent.h>
 #include <Input/Input.h>
 
 namespace Plutus
@@ -14,7 +12,8 @@ namespace Plutus
 		mScreenWidth = screenWidth;
 		mScreenHeight = screenHeight;
 		if (isViewPortWindowSize) {
-			mWindowWidth = screenWidth; mWindowHeight = screenHeight;
+			mWindowWidth = screenWidth;
+			mWindowHeight = screenHeight;
 		}
 
 		setScale(mScale);
@@ -24,13 +23,14 @@ namespace Plutus
 	void Camera2D::setScale(float scale) {
 		mScale = std::clamp(scale, 0.1f, 20.0f);
 		mScaleSize = { mScreenWidth / mScale, mScreenHeight / mScale };
-		mOrtho = glm::ortho(0.0f, (float)mScreenWidth / mScale, 0.0f, (float)mScreenHeight / mScale, 0.0f, 100.0f);
+		mOrtho = glm::ortho(0.0f, mScaleSize.x, 0.0f, mScaleSize.y, 0.0f, 100.0f);
 	}
 
 	void Camera2D::update()
 	{
 		if (mEntity && !Input::get()->isCtrl) {
-			mCamPos = mEntity.getPosition() + mOffset;
+			auto size = mEntity.getRect().getSize();
+			mCamPos = mEntity.getPosition() - (mScaleSize / 2.0f - size / 2.0f);
 			if (mHasBounds) {
 				if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
 				if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;

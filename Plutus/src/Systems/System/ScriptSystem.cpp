@@ -102,12 +102,16 @@ namespace Plutus
                 sol::resolve<Vec2f(const float) const>(&Vec2f::operator+)
             ),
             sol::meta_function::subtraction,
-            sol::overload(sol::resolve<Vec2f(const Vec2f&) const>(&Vec2f::operator-)),
+            sol::overload(
+                sol::resolve<Vec2f(const Vec2f&) const>(&Vec2f::operator-),
+                sol::resolve<Vec2f(const float) const>(&Vec2f::operator-)
+            ),
             sol::meta_function::unary_minus,
             sol::overload(sol::resolve<Vec2f(const float) const>(&Vec2f::operator-)),
             sol::meta_function::equal_to, &Vec2f::operator==,
             sol::meta_function::less_than, &Vec2f::operator<,
-            sol::meta_function::less_than_or_equal_to, &Vec2f::operator<=
+            sol::meta_function::less_than_or_equal_to, &Vec2f::operator<=,
+            sol::meta_function::division, &Vec2f::operator/
             );
 
         lua_vec2["x"] = &Vec2f::x;

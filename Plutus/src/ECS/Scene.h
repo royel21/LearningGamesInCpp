@@ -38,6 +38,8 @@ namespace Plutus
         Vec2f getDirection(Entity& Ent);
         float getDistance(Entity& Ent);
 
+        Vec4f getRect();
+
 
         void setName(const std::string& name);
         bool isValid() const;

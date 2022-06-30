@@ -11,9 +11,10 @@ namespace Plutus
     class RenderBatch {
     protected:
         uint32_t mVAO;
+        uint32_t mIboId;
         uint32_t mBufferId;
+
         uint8_t mLayer;
-        IndexBuffer mIbo;
     public:
         Camera2D* mCamera;
         Shader* mShader;

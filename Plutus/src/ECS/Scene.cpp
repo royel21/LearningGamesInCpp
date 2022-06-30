@@ -32,6 +32,11 @@ namespace Plutus
         return 0;
     }
 
+    Vec4f Entity::getRect() {
+        auto trans = getComponent<TransformComponent>();
+        return trans ? trans->getRect() : Vec4f{};
+    }
+
     const std::string Entity::getName()
     {
         return isValid() ? mScene->mRegistry.get<TagComponent>(mId).Name : "";

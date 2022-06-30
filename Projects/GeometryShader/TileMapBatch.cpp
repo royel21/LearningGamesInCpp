@@ -52,6 +52,7 @@ namespace Plutus
         mTileMap = tilemap;
         mVAO = Graphic::createVertexArray();
         mBufferId = Graphic::createBufferArray();
+        mIboId = Graphic::createElementBuffer();
         //bind the Shader position to the buffer object
         Graphic::setFAttribute(0, 2, mVertexSize);
         //bind the Shader UV "Texture coordinate" to the buffer object
@@ -72,29 +73,33 @@ namespace Plutus
 
         for (size_t i = 0; i < mTileMap->mAnimateTiles.size(); i++) {
             auto& animTile = mTileMap->mAnimateTiles[i];
-            animTile.currentTime += dt;
+            auto rect = mProject->scene->getRect(animTile);
 
-            auto anim = animTile.anim;
+            if (mCamera->getViewPortDim().overlap(rect)) {
+                animTile.currentTime += dt;
 
-            if (animTile.currentTime > anim->duration) {
-                animTile.frame = ++animTile.frame % anim->frames.size();
-                animTile.texcoord = anim->frames[animTile.frame];
-                animTile.currentTime = 0;
+                auto anim = animTile.anim;
+
+                if (animTile.currentTime > anim->duration) {
+                    animTile.frame = ++animTile.frame % anim->frames.size();
+                    animTile.texcoord = anim->frames[animTile.frame];
+                    animTile.currentTime = 0;
+                }
+
+                auto vertices = rect.getvertices();
+                auto uv = mTileMap->getTexCoord(anim->texId, animTile.texcoord);
+
+                mtiles[mStaticTilesCount + tileVers + 0] = { vertices[0], uv.x, uv.w, anim->texId };
+                mtiles[mStaticTilesCount + tileVers + 1] = { vertices[1], uv.x, uv.y, anim->texId };
+                mtiles[mStaticTilesCount + tileVers + 2] = { vertices[2], uv.z, uv.y, anim->texId };
+                mtiles[mStaticTilesCount + tileVers + 3] = { vertices[3], uv.z, uv.w, anim->texId };
+                indexCount++;
+                animVert += 6;
+                tileVers += 4;
             }
-
-            auto vertices = mProject->scene->getRect(animTile).getvertices();
-            auto uv = mTileMap->getTexCoord(anim->texId, animTile.texcoord);
-
-            mtiles[mStaticTilesCount + tileVers + 0] = { vertices[0], uv.x, uv.w, anim->texId };
-            mtiles[mStaticTilesCount + tileVers + 1] = { vertices[1], uv.x, uv.y, anim->texId };
-            mtiles[mStaticTilesCount + tileVers + 2] = { vertices[2], uv.z, uv.y, anim->texId };
-            mtiles[mStaticTilesCount + tileVers + 3] = { vertices[3], uv.z, uv.w, anim->texId };
-            indexCount++;
-            animVert += 6;
-            tileVers += 4;
         }
 
-        mIbo.init(mIndexCount + indexCount);
+        Graphic::uploadIndices(mIboId, mIndexCount + indexCount);
         Graphic::uploadBufferData(mBufferId, mtiles.size() * mVertexSize, mtiles.data(), GL_STATIC_DRAW);
     }
 
@@ -106,9 +111,8 @@ namespace Plutus
             nShader->setUniformMat4("uCamera", mCamera->getCameraMatrix());
             nShader->setUniform1iv("uSampler", 16, texIndices);
 
-            Graphic::bind(mVAO);
+            Graphic::bind(mVAO, mIboId);
 
-            mIbo.bind();
             for (size_t i = 0; i < 16; i++) {
                 if (textures[i]) {
                     Graphic::bindTexture(textures[i]->mTexId, i);
@@ -117,20 +121,14 @@ namespace Plutus
 
             Graphic::drawElements(staticVert + animVert);
 
-            mIbo.unbind();
-            nShader->disable();
-
             Graphic::unBind();
+            nShader->disable();
         }
     }
 
     void TileMapBatch::destroy()
     {
-        glDeleteVertexArrays(1, &mVAO);
-        glDeleteBuffers(1, &mBufferId);
-        mIbo.destroy();
-        mVAO = -1;
-        mBufferId = -1;
+        Graphic::destroy(&mVAO, &mBufferId, &mIboId);
     }
 }
 

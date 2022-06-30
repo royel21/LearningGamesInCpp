@@ -21,6 +21,7 @@ namespace Plutus {
     void SpriteBatch::init(uint32_t MAX_SPRITE) {
         mVAO = Graphic::createVertexArray();
         mBufferId = Graphic::createBufferArray();
+        mIboId = Graphic::createElementBuffer();
         //bind the Shader position to the buffer object
         Graphic::setFAttribute(SHADER_VERTEX_INDEX, 2, mVertexSize);
         //bind the Shader UV "Texture coordinate" to the buffer object
@@ -28,7 +29,7 @@ namespace Plutus {
         //bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
         Graphic::setFAttribute(SHADER_COLOR_INDEX, 4, mVertexSize, offsetof(SpriteVert, color), GL_UNSIGNED_BYTE, GL_TRUE);
 
-        mIbo.init(MAX_SPRITE);
+        Graphic::uploadIndices(mIboId, MAX_SPRITE);
 
         Graphic::unBind();
     }
@@ -116,11 +117,9 @@ namespace Plutus {
 
             Graphic::enableBlend();
 
-            Graphic::bind(mVAO);
+            Graphic::bind(mVAO, mIboId);
 
             Graphic::uploadBufferData(mBufferId, sprites.size() * mVertexSize, sprites.data());
-
-            mIbo.bind();
 
             for (auto& batch : mBatches)
             {
@@ -136,7 +135,6 @@ namespace Plutus {
                 Graphic::drawElements(batch.vertCount, batch.iboOffset);
             }
 
-            mIbo.unbind();
             nShader->disable();
 
             Graphic::unBind();
@@ -148,7 +146,6 @@ namespace Plutus {
     }
 
     void SpriteBatch::destroy() {
-        Graphic::destroy(&mVAO, &mBufferId);
-        mIbo.destroy();
+        Graphic::destroy(&mVAO, &mBufferId, &mIboId);
     }
 } // namespace Plutus

@@ -37,6 +37,7 @@ namespace Plutus
     {
         init();
         mWindow.setVSYNC(1);
+        mLimiter.setFPSLimiter(false);
 
         while (mWindow.isFinish())
         {
@@ -46,19 +47,18 @@ namespace Plutus
 
             auto dt = mLimiter.start();
 
-            auto mCamPos = mCamera.getPosition();
-            mCamPos.x += SPEED;
-            // auto rounded = PMath::round(mCamPos);
-            mCamera.setPosition(mCamPos);
+            // auto mCamPos = mCamera.getPosition();
+            // mCamPos.x += SPEED;
+            // // auto rounded = PMath::round(mCamPos);
+            // mCamera.setPosition(mCamPos);
             mCamera.update();
             update(dt);
 
-            draw();
             auto start = glfwGetTime();
             mWindow.update();
-            auto end = glfwGetTime();
-            float dt2 = float(end - start);
-            Logger::info("dt:%.05f dt2:%0.5f", dt, dt2);
+            // auto end = glfwGetTime();
+            // float dt2 = float(end - start);
+            // Logger::info("dt:%.05f dt2:%0.5f", dt, dt2);
             // mProject.scene->remove();
 
             mLimiter.end();

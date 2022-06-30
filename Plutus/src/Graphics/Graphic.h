@@ -48,22 +48,7 @@ namespace Plutus
             return id;
         }
 
-        static void destroy(uint32_t* vertexOjectId, uint32_t* BufferArrId = nullptr, uint32_t* IndexBufferId = nullptr) {
-            if (vertexOjectId && *vertexOjectId) {
-                glDeleteVertexArrays(1, vertexOjectId);
-                *vertexOjectId = -1;
-            }
-
-            if (BufferArrId && *BufferArrId) {
-                glDeleteBuffers(1, BufferArrId);
-                *BufferArrId = -1;
-            }
-
-            if (IndexBufferId && *IndexBufferId) {
-                glDeleteBuffers(1, IndexBufferId);
-                *IndexBufferId = -1;
-            }
-        }
+        static void destroy(uint32_t* vertexOjectId, uint32_t* BufferArrId = nullptr, uint32_t* IndexBufferId = nullptr);
 
         // Bind the buffer buffId and upload the data unbind after data upload
         inline static void uploadBufferData(uint32_t buffId, uint32_t buffsize, const void* buffer, uint32_t drawType = GL_DYNAMIC_DRAW, uint32_t bufferType = GL_ARRAY_BUFFER) {
@@ -128,22 +113,9 @@ namespace Plutus
          * @return GLuint glTextureID
          */
         static GLuint createTexture(int w, int h, unsigned char* buff, GLuint intFormat = GL_RGB,
-            GLuint format = GL_RGB, GLint type = GL_UNSIGNED_BYTE, GLint glFilter = GL_NEAREST, uint32_t glTexWrap = GL_CLAMP_TO_BORDER)
-        {
-            GLuint id = 0;
-            glGenTextures(1, &id);
-            //link the image to a texture in the gpu texture array
-            glBindTexture(GL_TEXTURE_2D, id);
-            //flag to render the image
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, glFilter);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, glFilter);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glTexWrap);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glTexWrap);
+            GLuint format = GL_RGB, GLint type = GL_UNSIGNED_BYTE, GLint glFilter = GL_NEAREST,
+            uint32_t glTexWrap = GL_CLAMP_TO_BORDER);
 
-            //Load the image to the memory of the gpu
-            glTexImage2D(GL_TEXTURE_2D, 0, intFormat, w, h, 0, format, type, buff);
-            return id;
-        }
         //Set glClearColor - default to WHITE Color
         inline static void setBackgoundColor(float r = 1, float g = 1, float b = 1, float a = 1)
         {
@@ -198,6 +170,8 @@ namespace Plutus
         inline static void drawArrays(uint32_t mode, GLsizei numVertices, uint32_t firstIndex = 0) {
             glDrawArrays(mode, firstIndex, numVertices);
         }
+
+        static void uploadIndices(uint32_t iboId, uint32_t count);
     };
 
     class VertexClass {
@@ -255,5 +229,6 @@ namespace Plutus
             glEnableVertexAttribArray(pos);
             glVertexAttribIPointer(pos, size, type, vertexSize, (void*)offset);
         }
+
     };
 } // namespace Plutus

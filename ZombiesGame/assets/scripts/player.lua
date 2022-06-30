@@ -1,4 +1,4 @@
-local SPEED = 40
+local SPEED = 1.0
 
 local rbody
 
@@ -19,8 +19,7 @@ local anim
 local frametime = 120
 
 function init()
-    local size = camera:getVPSize();
-    camera:setTarget(entity, Vec2f.new(-size.x / 2 + 32, -size.y / 2 + 32))
+    camera:setTarget(entity)
     anim = entity:getAnimate();
     initPlayer(anim);
 end
@@ -67,8 +66,8 @@ function update(dt)
         print("found:", #ents)
     elseif anim.loop == false then
         local trans = entity:getTransform()
-        trans.x = trans.x + vel.x * dt
-        trans.y = trans.y + vel.y * dt
+        trans.x = trans.x + vel.x
+        trans.y = trans.y + vel.y
         anim:play(state .. direction)
     end
 end

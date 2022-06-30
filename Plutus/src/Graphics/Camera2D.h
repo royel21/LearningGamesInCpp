@@ -52,9 +52,7 @@ namespace Plutus
 		//@param newPosition glm vec2 position
 		inline void setPosition(const Vec2f& pos) { mCamPos = pos; }
 
-		inline void setTarget(Entity entity, const Vec2f& offset = { 0 }) {
-			mEntity = entity; mOffset = offset;
-		}
+		inline void setTarget(Entity entity) { mEntity = entity; }
 		/*
 			change the camera to a new with and height
 			@param w Width of the camera in pixel

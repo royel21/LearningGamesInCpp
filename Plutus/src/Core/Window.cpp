@@ -21,10 +21,10 @@ extern "C"
 #pragma comment(lib, "winmm.lib")
 #endif
 
-// extern "C" {
-//     _declspec(dllexport) unsigned long NvOptimusEnablement = 1;
-//     _declspec(dllexport) unsigned long AmdPowerXpressRequestHighPerformance = 1;
-// }
+extern "C" {
+    // _declspec(dllexport) unsigned long NvOptimusEnablement = 1;
+    // _declspec(dllexport) unsigned long AmdPowerXpressRequestHighPerformance = 1;
+}
 
 #include <Input/Input.h>
 

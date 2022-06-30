@@ -37,11 +37,11 @@ namespace Plutus
             }
         }
 
-        Vec4f getRect() { return { x, y, w, h }; }
-        Vec2f getPosition() { return { x,y }; }
-        Vec2i getSize() { return { w, h }; }
-        Vec2i getOffset() { return { offsetX, offsetY }; }
-        Vec2f getCenter() { return { x + (w >> 1), y + (h >> 1) }; }
+        inline Vec4f getRect() { return { x, y, w, h }; }
+        inline Vec2f getPosition() { return { x,y }; }
+        inline Vec2i getSize() { return { w, h }; }
+        inline Vec2i getOffset() { return { offsetX, offsetY }; }
+        inline Vec2f getCenter() { return { x + (w >> 1), y + (h >> 1) }; }
         std::array<Vec2f, 4> getvertices() {
             return std::array<Vec2f, 4>{ { {x, y}, { x,y + h }, { x + w, y + h }, { x + w, y } }};
         }
