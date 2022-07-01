@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Core/Project.h>
-#include <Core/Window.h>
+#include <Core/Core.h>
 #include <Graphics/Shader.h>
 
 #include <vector>
@@ -18,42 +17,16 @@ namespace Plutus
 {
     class DebugRender;
 
-    struct Point {
-        float x;
-        float y;
-        float index;
-        int texIndex;
-        Point(float _x, float _y, float i, int tIndex) : x(_x), y(_y), index(i), texIndex(tIndex) {}
-    };
-
-    class AppGeo
+    class AppGeo : public Core
     {
     public:
-        void run();
+        AppGeo();
+        void Init() override;
+        void Update(float dt) override;
+        void Draw() override;
+        void Resize(int width, int height) override;
     private:
-        Window mWindow;
-        Project mProject;
-        Input* mInput;
         SystemManager mSysManager;
-        Camera2D mCamera;
-        Limiter mLimiter;
         CameraControl mCamControl;
-        DebugRender* mDebug;
-        // Shader mShader;
-        // uint32_t mVertexArray;
-        // uint32_t mBufferArray;
-
-        // int tileWidth;
-        // int tileHeight;
-        float speed = 1;
-
-        // glm::vec2 pos = { 0, 0 };
-        // glm::mat4 projection;
-
-        // std::vector<Point> points;
-
-        void init();
-        void update(float dt);
-        void draw();
     };
 } // namespace Plutus

@@ -137,7 +137,6 @@ namespace Plutus
             }
         }
 
-
         auto& light = mLights[0];
         light.trans.x = mpos.x - size * .5f;
         light.trans.y = mpos.y - size * .5f;

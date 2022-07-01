@@ -13,8 +13,8 @@ namespace Plutus
     public:
         ScriptSystem(Camera2D* camera);
 
-        void init();
-        void update(float dt);
+        void init() override;
+        void update(float dt) override;
 
         void registerGlobal(std::function<void(sol::state&)> func) { func(mGlobalLua); };
 

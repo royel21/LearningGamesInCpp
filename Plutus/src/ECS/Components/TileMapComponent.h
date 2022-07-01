@@ -83,7 +83,12 @@ namespace Plutus
         Vec4f getTexCoord(Tile& tile);
         Vec4f getTexCoord(int texId, int coordIndex);
 
-        void addTile(Tile& tile);
+        inline void addTile(Tile& tile) { mTiles.push_back(tile); }
+
+        inline void addTile(int x, int y, int texcoord, unsigned int texture, bool fx = false, bool fy = false, float rotate = 0) {
+            mTiles.emplace_back(x, y, texcoord, texture, fx, fy, rotate);
+        }
+
         Tile* getTile(const Vec2i& mCoords);
         int getIndex(const Vec2i& mCoords);
         bool removeTile(const Vec2i& mCoords);

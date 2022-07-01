@@ -7,7 +7,7 @@
 int main(int argc, char** argv)
 {
     Plutus::AppGeo app;
-    app.run();
+    app.Run();
 
     return 0;
 }

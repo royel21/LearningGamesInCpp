@@ -81,7 +81,7 @@ namespace Plutus
          * @param type GLenum TYPE def: GL_FLOAT
          * @param normalize if should be normalize to float def: GL_FALSE
          */
-        inline static void setFAttribute(int pos, int size, uint32_t vertexSize, size_t offset = NULL, GLenum type = GL_FLOAT, GLboolean normalize = GL_FALSE) {
+        inline static void setFAttribute(int pos, int size, uint32_t vertexSize, uint32_t offset = 0, GLenum type = GL_FLOAT, GLboolean normalize = GL_FALSE) {
             glEnableVertexAttribArray(pos);
             glVertexAttribPointer(pos, size, type, normalize, vertexSize, (void*)offset);
         }
@@ -94,7 +94,7 @@ namespace Plutus
         * @param offset use offsetof or calculate
         * @param type GLenum TYPE def: GL_INT
         */
-        inline static void setIAttribute(int pos, int size, uint32_t vertexSize, size_t offset = NULL, GLenum type = GL_INT) {
+        inline static void setIAttribute(int pos, int size, uint32_t vertexSize, uint32_t offset = 0, GLenum type = GL_INT) {
             glEnableVertexAttribArray(pos);
             glVertexAttribIPointer(pos, size, type, vertexSize, (void*)offset);
         }
@@ -114,7 +114,7 @@ namespace Plutus
          */
         static GLuint createTexture(int w, int h, unsigned char* buff, GLuint intFormat = GL_RGB,
             GLuint format = GL_RGB, GLint type = GL_UNSIGNED_BYTE, GLint glFilter = GL_NEAREST,
-            uint32_t glTexWrap = GL_CLAMP_TO_BORDER);
+            uint32_t glTexWrap = GL_CLAMP_TO_EDGE);
 
         //Set glClearColor - default to WHITE Color
         inline static void setBackgoundColor(float r = 1, float g = 1, float b = 1, float a = 1)
@@ -172,6 +172,8 @@ namespace Plutus
         }
 
         static void uploadIndices(uint32_t iboId, uint32_t count);
+
+        inline static void resizeViewport(int h, int w, int x = 0, int y = 0) { glViewport(x, y, w, h); }
     };
 
     class VertexClass {
@@ -212,7 +214,7 @@ namespace Plutus
          * @param type GLenum TYPE def: GL_FLOAT
          * @param normalize if should be normalize to float def: GL_FALSE
          */
-        inline void setFAttribute(int pos, int size, uint32_t vertexSize, size_t offset = NULL, GLenum type = GL_FLOAT, GLboolean normalize = GL_FALSE) {
+        inline void setFAttribute(int pos, int size, uint32_t vertexSize, uint32_t offset = 0, GLenum type = GL_FLOAT, GLboolean normalize = GL_FALSE) {
             glEnableVertexAttribArray(pos);
             glVertexAttribPointer(pos, size, type, normalize, vertexSize, (void*)offset);
         }
@@ -225,7 +227,7 @@ namespace Plutus
         * @param offset use offsetof or calculate
         * @param type GLenum TYPE def: GL_INT
         */
-        inline void setIAttribute(int pos, int size, uint32_t vertexSize, size_t offset = NULL, GLenum type = GL_INT) {
+        inline void setIAttribute(int pos, int size, uint32_t vertexSize, uint32_t offset = 0, GLenum type = GL_INT) {
             glEnableVertexAttribArray(pos);
             glVertexAttribIPointer(pos, size, type, vertexSize, (void*)offset);
         }

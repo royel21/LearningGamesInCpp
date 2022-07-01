@@ -97,7 +97,8 @@ namespace Plutus
                 bool flipX = FLIPX & d;
                 bool flipY = FLIPY & d;
                 float rotation = ROTATE & d ? 90.0f : 0;
-                tmap->addTile(Tile{ x, y, uvIndex, texId, 0, 0, 0 });
+
+                tmap->addTile(x, y, uvIndex, texId, flipX, flipY, rotation);
             }
         }
     }

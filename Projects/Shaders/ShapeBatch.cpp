@@ -125,7 +125,7 @@ namespace Plutus
 
     void ShapeBatch::init(Camera2D* camera) {
         mCamera = camera;
-        mShader.init(shapeVShader, shapeFShader, shapeGShader);
+        mShader.init(shapeVShader, shapeFShader);
 
         mVAO = Graphic::createVertexArray();
         mBufferId = Graphic::createBufferArray();

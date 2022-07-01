@@ -39,7 +39,7 @@ namespace Plutus
 			}
 		}
 
-		mCameraMatrix = mOrtho * glm::translate(glm::mat4(1.0f), { -mCamPos.x, -mCamPos.y, 0.0f });
+		mCameraMatrix = mOrtho * glm::translate(glm::mat4(1.0f), { -roundf(mCamPos.x), -roundf(mCamPos.y), 0.0f });
 	}
 
 	Vec4f Camera2D::getViewPortDim()

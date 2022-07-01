@@ -146,8 +146,10 @@ namespace Plutus
 
     void Window::setAlwaysOnTOp(bool isOnTop)
     {
+#ifdef _WIN32
         if (mWindow)
             glfwSetWindowAttrib(mWindow, GLFW_FLOATING, isOnTop);
+#endif
     }
 
     void Window::setVSYNC(int state)

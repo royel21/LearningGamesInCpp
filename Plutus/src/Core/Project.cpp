@@ -10,6 +10,8 @@
 #include <Serialize/SceneLoader.h>
 #include <Serialize/SceneSerializer.h>
 
+#include <Log/Logger.h>
+
 namespace Plutus
 {
     Project::Project()
@@ -44,12 +46,20 @@ namespace Plutus
 
     void Project::load(const std::string& path)
     {
+        std::string p = path;
+#ifdef __EMSCRIPTEN__
+        p = "assets/" + path;
+#endif
         rapidjson::Document doc;
-        if (loadJsonFromFile(path.c_str(), doc)) {
+
+        if (loadJsonFromFile(p.c_str(), doc)) {
+            Logger::info("load projected");
             isLoaded = true;
             clear();
 
+#ifndef __EMSCRIPTEN__
             Plutus::AssetManager::get()->setBaseDir(Utils::getDirectory(path));
+#endif
 
             JsonHelper jhelper;
             auto obj = doc.GetJsonObject();

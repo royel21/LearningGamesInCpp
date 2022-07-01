@@ -15,7 +15,7 @@ namespace Plutus
 		int offset = 0;
 		GLuint* indices = new GLuint[mCount];
 
-		for (size_t i = 0; i < mCount; i += 6)
+		for (uint32_t i = 0; i < mCount; i += 6)
 		{
 			indices[i + 0] = offset + 0;
 			indices[i + 1] = offset + 1;

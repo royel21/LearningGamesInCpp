@@ -33,9 +33,9 @@ namespace Plutus {
 
 		~PhysicSystem() { destroy(); };
 
-		void init();
-		void update(float dt);
-		void destroy();
+		void init() override;
+		void update(float dt) override;
+		void destroy() override;
 
 		void BeginContact(b2Contact* contact) override;
 		// Called when two fixtures cease to touch

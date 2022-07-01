@@ -24,7 +24,6 @@ void GameScreen::Init()
     mSystemManager.AddSystem<Plutus::ScriptSystem>(mCamera);
     mSystemManager.AddSystem<Plutus::PhysicSystem>();
     mSystemManager.AddSystem<Plutus::AnimationSystem>();
-    mSystemManager.AddSystem<Plutus::TileMapSystem>(mCamera);
     mSystemManager.AddSystem<Plutus::RenderSystem>(mCamera);
 }
 

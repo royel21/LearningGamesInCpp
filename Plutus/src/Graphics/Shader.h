@@ -29,7 +29,7 @@ namespace Plutus
 			@param verShader path to a vertex shader file or string with the data
 			@param fragShader path to a vertex fragment shaer file or string with the data
 		*/
-		bool init(const std::string& verShader = "", const std::string& fragShader = "", const std::string geoShader = "");
+		bool init(const std::string& verShader = "", const std::string& fragShader = "");
 		// Enable this shader program
 		bool enable();
 		// Disable this shader program

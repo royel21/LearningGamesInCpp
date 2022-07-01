@@ -36,11 +36,6 @@ namespace Plutus
         return  AssetManager::get()->getAsset<Texture>(mTextures[texId])->getUV(coordIndex);
     }
 
-    void TileMapComponent::addTile(Tile& tile)
-    {
-        mTiles.push_back(tile);
-    }
-
     Tile* TileMapComponent::getTile(const Vec2i& mCoords)
     {
         int index = getIndex(mCoords);
