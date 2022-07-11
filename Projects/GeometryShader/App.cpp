@@ -46,6 +46,7 @@ namespace Plutus
         mSysManager.AddSystem<RendererSystem>(&mCamera);
 
         mSysManager.init();
+        mWindow.setVSYNC(1);
     }
 
     void AppGeo::Update(float dt)

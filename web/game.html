@@ -127,6 +127,9 @@
               element.value += text + "\n";
               element.scrollTop = element.scrollHeight; // focus on bottom
             }
+            if (element.value.split("\n").length > 100) {
+              element.value = "";
+            }
           };
         })(),
         canvas: (function () {

@@ -107,8 +107,7 @@ namespace Plutus
             nShader->enable();
             nShader->setUniform4f("uColor", { 1, 1, 1, 1 });
             nShader->setUniformMat4("uCamera", mCamera->getCameraMatrix());
-            // nShader->setUniform1iv("uSampler", 16, texIndices);
-            nShader->setUniform1i("uSampler", 0);
+            nShader->setUniform1iv("uSampler", 16, texIndices);
 
             Graphic::enableBlend();
 
@@ -116,12 +115,11 @@ namespace Plutus
 
             Graphic::uploadBufferData(mBufferId, mtiles.size() * mVertexSize, mtiles.data(), GL_STATIC_DRAW);
 
-            // for (size_t i = 0; i < 16; i++) {
-            //     if (mTextures[i]) {
-            //         Graphic::bindTexture(mTextures[i]->mTexId, i);
-            //     }
-            // }
-            Graphic::bindTexture(mTextures[0]->mTexId);
+            for (size_t i = 0; i < 16; i++) {
+                if (mTextures[i]) {
+                    Graphic::bindTexture(mTextures[i]->mTexId, i);
+                }
+            }
 
             Graphic::drawElements(staticVert + animVert);
 
