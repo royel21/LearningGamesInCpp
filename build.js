@@ -7,6 +7,8 @@ const { buildLib, cleanLibs } = require("./scripts/build-plutus-libs");
 
 const liboutdir = path.join("web", "obj");
 
+const projectName = "GeometryShader";
+
 const buildAll = () => {
   //----------------------------------------------Build Plutus Libs--------------------------------------------
   const libs = buildLib({ outdir: liboutdir });
@@ -39,7 +41,6 @@ const buildAll = () => {
 
   const plutus = buildProject(config);
   //----------------------------------------------Project Game--------------------------------------------
-  const projectName = "GeometryShader";
   config.name = projectName;
   config.src = [path.join("Projects", projectName)];
 
@@ -54,7 +55,7 @@ const buildAll = () => {
 
     const OUTPUT_FLAG = `--shell-file web/game.html --preload-file ./web/assets@/assets -s WASM=1 -s ALLOW_MEMORY_GROWTH=1`;
 
-    const CFLAGS = `-s USE_WEBGL2=1 -s USE_GLFW=3 -lopenal -s WASM=1 -std=c++1z`;
+    const CFLAGS = ` -g -s USE_WEBGL2=1 -s USE_GLFW=3 -lopenal -s WASM=1 -std=c++1z`;
 
     const EXEC = path.join(outExecDir, "index.html");
 

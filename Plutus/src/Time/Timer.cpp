@@ -4,15 +4,14 @@
 
 #include <unordered_map>
 
+#define u64Time std::chrono::duration_cast<TimerClock::CMicros>(TimerClock::Clock::now().time_since_epoch())
 
 namespace Plutus
 {
     namespace TimerClock
     {
         using Clock = std::chrono::system_clock;
-        using Duration = std::chrono::duration<double>;
         using CMicros = std::chrono::microseconds;
-        using HIClock = std::chrono::high_resolution_clock;
 
         u64 start = 0;
         std::unordered_map<std::string, u64> timers;
@@ -22,13 +21,13 @@ namespace Plutus
 
     void Time::init()
     {
-        TimerClock::start = std::chrono::duration_cast<TimerClock::CMicros>(TimerClock::Clock::now().time_since_epoch()).count();
+        TimerClock::start = u64Time.count();
     }
 
     u64 Time::micros()
     {
         if (!TimerClock::start) Time::init();
-        return std::chrono::duration_cast<TimerClock::CMicros>(TimerClock::Clock::now().time_since_epoch()).count() - TimerClock::start;
+        return u64Time.count() - TimerClock::start;
     }
 
     u64 Time::millis()

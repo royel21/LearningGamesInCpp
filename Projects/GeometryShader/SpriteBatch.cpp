@@ -124,20 +124,20 @@ namespace Plutus {
             for (auto& batch : mBatches)
             {
                 if (batch.texId) {
-                    mShader->setUniform1i("uHasTex", 1);
+                    mShader->setUniform1b("uHasTex", 1);
                     mShader->setUniform1i("uSampler", batch.texUnit);
 
                     Graphic::bindTexture(batch.texId, batch.texUnit);
                 }
                 else {
-                    mShader->setUniform1i("uHasTex", 0);
+                    mShader->setUniform1b("uHasTex", 0);
                 }
                 Graphic::drawElements(batch.vertCount, batch.iboOffset);
             }
+            Graphic::unBind();
 
             nShader->disable();
 
-            Graphic::unBind();
 
         }
         sprites.clear();

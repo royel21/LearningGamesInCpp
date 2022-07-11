@@ -1,14 +1,19 @@
 #include "Limiter.h"
-#include <Graphics/GLheaders.h>
+
+#include <chrono>
+
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
-using Clock = std::chrono::system_clock;
-using Duration = std::chrono::duration<float>;
 
 namespace Plutus
 {
+    using Clock = std::chrono::system_clock;
+    using Duration = std::chrono::duration<float>;
+
+    std::chrono::system_clock::time_point mStartPoint;
+
     void Limiter::init(float fps)
     {
         mSpecFps = 1.0f / fps;

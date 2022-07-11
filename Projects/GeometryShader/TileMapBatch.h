@@ -42,7 +42,7 @@ namespace Plutus
         uint32_t mIndexCount = 0;
 
         Project* mProject;
-        Texture* textures[16];
+        Texture* mTextures[16];
         TileMapComponent* mTileMap;
         std::vector<TileVert> mtiles;
         const uint32_t mVertexSize = sizeof(TileVert);

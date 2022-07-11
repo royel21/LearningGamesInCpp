@@ -64,7 +64,7 @@ namespace Plutus
         int mMargin = 0;
         int mTexureUnit = 0;
         uint32_t mTexId = -1;
-        std::vector<Vec4f> uvs;
         TileSet mTileSet;
+        std::vector<Vec4f> uvs;
     };
 } // namespace Plutus

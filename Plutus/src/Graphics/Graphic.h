@@ -6,6 +6,12 @@
 #define glClearDepthf glClearDepth
 #endif
 
+#ifdef offsetof
+#undef offsetof
+#endif
+
+#define offsetof(m,n)  (unsigned int) &((((m*)0)->n))
+
 namespace Plutus
 {
     struct Graphic
@@ -173,7 +179,7 @@ namespace Plutus
 
         static void uploadIndices(uint32_t iboId, uint32_t count);
 
-        inline static void resizeViewport(int h, int w, int x = 0, int y = 0) { glViewport(x, y, w, h); }
+        inline static void resizeViewport(int w, int h, int x = 0, int y = 0) { glViewport(x, y, w, h); }
     };
 
     class VertexClass {

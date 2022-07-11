@@ -10,29 +10,29 @@
 #include <Graphics/Camera2D.h>
 #include <ECS/Components/TileMapComponent.h>
 
+#include <Log/Logger.h>
+
 namespace Plutus
 {
     void TileMapBatch::loadTiles(TileMapComponent* tilemap) {
         for (size_t i = 0; i < 16; i++) {
             texIndices[i] = i;
-            textures[i] = nullptr;
+            mTextures[i] = nullptr;
         }
 
         mLayer = tilemap->mLayer;
 
-        auto& tiles = tilemap->mTiles;
-
-        mtiles.reserve(tiles.size() * 4);
+        mtiles.reserve(tilemap->mTiles.size() * 4);
 
         for (size_t i = 0; i < 16; i++) {
-            textures[i] = tilemap->getTexture(i);
+            mTextures[i] = tilemap->getTexture(i);
         }
 
         uint32_t offset = 0;
-        for (auto t : tiles) {
-            if (textures[t.texture]) {
+        for (auto t : tilemap->mTiles) {
+            if (mTextures[t.texture]) {
                 auto vertices = mProject->scene->getRect(t).getvertices();
-                auto uv = textures[t.texture]->getUV(t.texcoord);
+                auto uv = mTextures[t.texture]->getUV(t.texcoord);
 
                 mtiles.emplace_back(vertices[0], uv.x, uv.w, t.texture);
                 mtiles.emplace_back(vertices[1], uv.x, uv.y, t.texture);
@@ -60,47 +60,45 @@ namespace Plutus
         //bind the Shader Color "is a vec4 packed in a int 4 byte" to the buffer object
         Graphic::setIAttribute(2, 1, mVertexSize, offsetof(TileVert, texIndex));
 
+        Graphic::uploadIndices(mIboId, tilemap->mTiles.size() + mTileMap->mAnimateTiles.size());
         Graphic::unBind();
 
         loadTiles(tilemap);
     }
 
     void TileMapBatch::update(float dt) {
-        mtiles.resize(mStaticTilesCount + mTileMap->mAnimateTiles.size() * 4);
+        uint32_t total = mStaticTilesCount + mTileMap->mAnimateTiles.size() * 4;
+        if (mtiles.size() < total) {
+            mtiles.resize(total);
+        }
         animVert = 0;
-        int indexCount = 0;
         int tileVers = 0;
 
         for (size_t i = 0; i < mTileMap->mAnimateTiles.size(); i++) {
             auto& animTile = mTileMap->mAnimateTiles[i];
             auto rect = mProject->scene->getRect(animTile);
 
-            if (mCamera->getViewPortDim().overlap(rect)) {
-                animTile.currentTime += dt;
+            // if (mCamera->getViewPortDim().overlap(rect)) {
+            animTile.currentTime += dt;
 
-                auto anim = animTile.anim;
+            auto anim = animTile.anim;
 
-                if (animTile.currentTime > anim->duration) {
-                    animTile.frame = ++animTile.frame % anim->frames.size();
-                    animTile.texcoord = anim->frames[animTile.frame];
-                    animTile.currentTime = 0;
-                }
-
-                auto vertices = rect.getvertices();
-                auto uv = mTileMap->getTexCoord(anim->texId, animTile.texcoord);
-
-                mtiles[mStaticTilesCount + tileVers + 0] = { vertices[0], uv.x, uv.w, anim->texId };
-                mtiles[mStaticTilesCount + tileVers + 1] = { vertices[1], uv.x, uv.y, anim->texId };
-                mtiles[mStaticTilesCount + tileVers + 2] = { vertices[2], uv.z, uv.y, anim->texId };
-                mtiles[mStaticTilesCount + tileVers + 3] = { vertices[3], uv.z, uv.w, anim->texId };
-                indexCount++;
-                animVert += 6;
-                tileVers += 4;
+            if (animTile.currentTime > anim->duration) {
+                animTile.frame = ++animTile.frame % anim->frames.size();
+                animTile.texcoord = anim->frames[animTile.frame];
+                animTile.currentTime = 0;
             }
-        }
 
-        Graphic::uploadIndices(mIboId, mIndexCount + indexCount);
-        Graphic::uploadBufferData(mBufferId, mtiles.size() * mVertexSize, mtiles.data(), GL_STATIC_DRAW);
+            auto vertices = rect.getvertices();
+            auto uv = mTileMap->getTexCoord(anim->texId, animTile.texcoord);
+
+            mtiles[mStaticTilesCount + tileVers++] = { vertices[0], uv.x, uv.w, anim->texId };
+            mtiles[mStaticTilesCount + tileVers++] = { vertices[1], uv.x, uv.y, anim->texId };
+            mtiles[mStaticTilesCount + tileVers++] = { vertices[2], uv.z, uv.y, anim->texId };
+            mtiles[mStaticTilesCount + tileVers++] = { vertices[3], uv.z, uv.w, anim->texId };
+            animVert += 6;
+            // }
+        }
     }
 
     void TileMapBatch::draw(Shader* shader) {
@@ -109,15 +107,21 @@ namespace Plutus
             nShader->enable();
             nShader->setUniform4f("uColor", { 1, 1, 1, 1 });
             nShader->setUniformMat4("uCamera", mCamera->getCameraMatrix());
-            nShader->setUniform1iv("uSampler", 16, texIndices);
+            // nShader->setUniform1iv("uSampler", 16, texIndices);
+            nShader->setUniform1i("uSampler", 0);
+
+            Graphic::enableBlend();
 
             Graphic::bind(mVAO, mIboId);
 
-            for (size_t i = 0; i < 16; i++) {
-                if (textures[i]) {
-                    Graphic::bindTexture(textures[i]->mTexId, i);
-                }
-            }
+            Graphic::uploadBufferData(mBufferId, mtiles.size() * mVertexSize, mtiles.data(), GL_STATIC_DRAW);
+
+            // for (size_t i = 0; i < 16; i++) {
+            //     if (mTextures[i]) {
+            //         Graphic::bindTexture(mTextures[i]->mTexId, i);
+            //     }
+            // }
+            Graphic::bindTexture(mTextures[0]->mTexId);
 
             Graphic::drawElements(staticVert + animVert);
 

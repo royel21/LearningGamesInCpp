@@ -25,7 +25,7 @@ namespace GLSLBatch
         in vec2 uv;
         in vec4 color;
 
-        uniform int uHasTex;
+        uniform bool uHasTex;
         uniform sampler2D uSampler;
 
         out vec4 fragColor;
@@ -34,7 +34,7 @@ namespace GLSLBatch
 
         vec4 tex = texture(uSampler, uv);
 
-        fragColor = uHasTex > 0 ? color * tex : color;
+        fragColor = uHasTex ? color * tex : color;
 
     })END";
 
@@ -62,79 +62,61 @@ namespace GLSLBatch
         flat in int texIndex;
 
         uniform vec4 uColor;
-        uniform sampler2D uSampler[16];
+        uniform sampler2D uSampler;
 
         out vec4 fragColor;
 
         void main(){
-            vec4 tex;
+            vec4 tex = texture(uSampler, uv);
 
-            switch(texIndex){
-                case 0:{
-                    tex = texture(uSampler[0], uv);
-                    break;
-                }
-                case 1:{
-                    tex = texture(uSampler[1], uv);
-                    break;
-                }
-                case 2:{
-                    tex = texture(uSampler[2], uv);
-                    break;
-                }
-                case 3:{
-                    tex = texture(uSampler[3], uv);
-                    break;
-                }
-                case 4:{
-                    tex = texture(uSampler[4], uv);
-                    break;
-                }
-                case 5:{
-                    tex = texture(uSampler[5], uv);
-                    break;
-                }
-                case 6:{
-                    tex = texture(uSampler[6], uv);
-                    break;
-                }
-                case 7:{
-                    tex = texture(uSampler[7], uv);
-                    break;
-                }
-                case 8:{
-                    tex = texture(uSampler[8], uv);
-                    break;
-                }
-                case 9:{
-                    tex = texture(uSampler[9], uv);
-                    break;
-                }
-                case 10:{
-                    tex = texture(uSampler[10], uv);
-                    break;
-                }
-                case 11:{
-                    tex = texture(uSampler[11], uv);
-                    break;
-                }
-                case 12:{
-                    tex = texture(uSampler[12], uv);
-                    break;
-                }
-                case 13:{
-                    tex = texture(uSampler[13], uv);
-                    break;
-                }
-                case 14:{
-                    tex = texture(uSampler[14], uv);
-                    break;
-                }
-                case 15:{
-                    tex = texture(uSampler[15], uv);
-                    break;
-                }
-            }
+            // if(texIndex == 0){
+            //     tex = texture(uSampler[0], uv);
+            // }else
+            // if(texIndex == 1){
+            //     tex = texture(uSampler[1], uv);
+            // }else
+            // if(texIndex == 2){
+            //     tex = texture(uSampler[2], uv);
+            // }else
+            // if(texIndex == 3){
+            //     tex = texture(uSampler[3], uv);
+            // }else
+            // if(texIndex == 4){
+            //     tex = texture(uSampler[4], uv);
+            // }else
+            // if(texIndex == 5){
+            //     tex = texture(uSampler[5], uv);
+            // }else
+            // if(texIndex == 6){
+            //     tex = texture(uSampler[6], uv);
+            // }else
+            // if(texIndex == 7){
+            //     tex = texture(uSampler[7], uv);
+            // }else
+            // if(texIndex == 8){
+            //     tex = texture(uSampler[8], uv);
+            // }else
+            // if(texIndex == 9){
+            //     tex = texture(uSampler[9], uv);
+            // }else
+            // if(texIndex == 10){
+            //     tex = texture(uSampler[10], uv);
+            // }else
+            // if(texIndex == 11){
+            //     tex = texture(uSampler[11], uv);
+            // }else
+            // if(texIndex == 12){
+            //     tex = texture(uSampler[12], uv);
+            // }else
+            // if(texIndex == 13){
+            //     tex = texture(uSampler[13], uv);
+            // }else
+            // if(texIndex == 14){
+            //     tex = texture(uSampler[14], uv);
+            // }else
+            // if(texIndex == 15){
+            //     tex = texture(uSampler[15], uv);
+            // }
             if(tex.a < 0.2) discard;
             fragColor = tex * uColor;
         }

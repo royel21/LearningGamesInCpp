@@ -1,7 +1,4 @@
 #pragma once
-#include <chrono>
-
-using TimePoint = std::chrono::system_clock::time_point;
 
 namespace Plutus
 {
@@ -13,7 +10,6 @@ namespace Plutus
         int mnFrameTime = 0;
         bool limitFPS = true;
         double mLastElapsed = 0;
-        TimePoint mStartPoint;
 
     public:
         Limiter() { init(60); };

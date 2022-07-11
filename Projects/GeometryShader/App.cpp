@@ -51,7 +51,8 @@ namespace Plutus
     void AppGeo::Update(float dt)
     {
         mSysManager.update(dt);
-        mWindow.setTitle("fps: %.04f\n", dt);
+
+        mWindow.setTitle("fps: %.02f - dt:%.04f", getFPS(), dt);
     }
 
     void AppGeo::Draw()
