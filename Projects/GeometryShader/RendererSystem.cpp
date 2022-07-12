@@ -105,6 +105,7 @@ namespace Plutus
             bath->addSprite(&r);
         }
 
+
         auto textview = mProject->scene->getRegistry()->view<TransformComponent, TextComponent>();
         bath = nullptr;
         for (auto [e, trans, textc] : textview.each()) {
