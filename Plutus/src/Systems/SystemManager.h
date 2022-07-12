@@ -18,6 +18,7 @@ namespace Plutus
 
         void init();
         void update(float dt);
+        void draw();
         void stop();
 
 

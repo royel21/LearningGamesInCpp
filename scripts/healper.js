@@ -122,7 +122,7 @@ const buildOjbFiles = ({ compiler, include, outdir, files, cflags, rebuild, sync
   for (let src of objects) {
     try {
       let cmd = `${compiler} -c ${src.filePath} -o ${src.objPath} ${includes} ${cflags}`;
-      console.log(cmd);
+      console.log(src.filePath);
       execSync(cmd);
       fileWriten = true;
     } catch (err) {

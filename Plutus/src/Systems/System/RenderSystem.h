@@ -12,9 +12,9 @@ namespace Plutus
     {
     public:
         RenderSystem(Camera2D* camera);
-        ~RenderSystem() { destroy(); }
         void init() override;
         void update(float dt) override;
+        void draw() override;
         void destroy() override;
         inline void setFrameBuffer(FrameBuffer* fbuffer) { mFrameBuff = fbuffer; }
         SpriteBatch2D* getSpritebath() { return &mRenderer; }

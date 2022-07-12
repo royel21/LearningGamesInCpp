@@ -13,6 +13,7 @@ namespace Plutus
     using Duration = std::chrono::duration<float>;
 
     std::chrono::system_clock::time_point mStartPoint;
+    std::chrono::system_clock::time_point mEndPoint;
 
     void Limiter::init(float fps)
     {
@@ -33,6 +34,12 @@ namespace Plutus
     float Limiter::start()
     {
         mStartPoint = Clock::now();
+
+#ifdef __EMSCRIPTEN__
+        Duration currentFrame = mStartPoint - mEndPoint;
+        mEndPoint = mStartPoint;
+        mLastElapsed = currentFrame.count();
+#endif
         return (float)mLastElapsed;
     }
 
@@ -47,9 +54,9 @@ namespace Plutus
                 Sleep(slpTime);
             }
         }
-#endif
         Duration currentFrame = Clock::now() - mStartPoint;
         mLastElapsed = currentFrame.count();
+#endif
 
         mFrameTime += mLastElapsed;
         mnFrameTime++;

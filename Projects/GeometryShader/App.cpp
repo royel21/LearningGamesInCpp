@@ -33,7 +33,7 @@ namespace Plutus
 
         auto ent = mProject.scene->getEntityByName("Player");
         if (ent) {
-            ent.addComponent<TextComponent>("arial.ttf", "Text Component LAND", 16.0f, 20.0f, ColorRGBA8{ 255, 255, 0, 255 });
+            ent.addComponent<TextComponent>("Aventurina.ttf", "Text Component LAND", 16.0f, 20.0f, ColorRGBA8{ 255, 255, 0, 255 });
         }
 
         mCamera.init(mProject.vpWidth, mProject.vpHeight);
@@ -58,6 +58,7 @@ namespace Plutus
 
     void AppGeo::Draw()
     {
+        mSysManager.draw();
     }
 
     void  AppGeo::Resize(int w, int h) {

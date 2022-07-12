@@ -28,6 +28,12 @@ namespace Plutus
             if (sys)sys->update(dt);
         }
     }
+    void SystemManager::draw()
+    {
+        for (auto& sys : mSystems) {
+            if (sys)sys->draw();
+        }
+    }
 
     void SystemManager::cleanup()
     {
@@ -37,6 +43,7 @@ namespace Plutus
                 mSystems[i]->destroy();
                 delete mSystems[i];
                 mSystems[i] = nullptr;
+                mSystems.clear();
             }
         }
     }

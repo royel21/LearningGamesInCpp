@@ -20,6 +20,7 @@ namespace Plutus
 
         virtual void init() = 0;
         virtual void update(float dt) = 0;
+        virtual void draw() {}
         virtual void destroy() {}
 
         virtual void setProject(Project* project) { mProject = project; }

@@ -31,8 +31,6 @@ namespace Plutus {
 	public:
 		RayCastCallBack mRayCallBack = nullptr;
 
-		~PhysicSystem() { destroy(); };
-
 		void init() override;
 		void update(float dt) override;
 		void destroy() override;

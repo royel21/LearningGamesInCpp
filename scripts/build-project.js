@@ -39,7 +39,7 @@ const buildProject = (config = conf) => {
   if (files.length || (objects.length && !fs.existsSync(outLib))) {
     try {
       let cmd = `${compiler} -r ${objects.join(" ")} -o ${outLib}`;
-      console.log(cmd);
+      console.log(outLib);
       execSync(cmd);
     } catch (err) {
       console.log(err);
