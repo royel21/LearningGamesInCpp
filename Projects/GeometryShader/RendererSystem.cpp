@@ -93,7 +93,16 @@ namespace Plutus
 
         // sort by layer, y position, texture
         std::sort(mRenderables.begin(), mRenderables.end());
+        for (auto& layer : mLayers) {
+            for (auto mbatch : layer.tileMapBatchs) {
+                if (mbatch) {
+                    mbatch->update(dt);
+                }
+            }
+        }
+    }
 
+    void RendererSystem::draw() {
         SpriteBatch* bath = nullptr;
 
         for (auto& r : mRenderables) {
@@ -104,7 +113,6 @@ namespace Plutus
             //Add sprite to this layer
             bath->addSprite(&r);
         }
-
 
         auto textview = mProject->scene->getRegistry()->view<TransformComponent, TextComponent>();
         bath = nullptr;
@@ -117,12 +125,9 @@ namespace Plutus
             bath->addText(textc.mFontId, pos.x, pos.y, textc.mText, textc.mColor, textc.mScale);
         }
 
-        glDisable(GL_DEPTH_TEST);
-
         for (auto& layer : mLayers) {
             for (auto mbatch : layer.tileMapBatchs) {
                 if (mbatch) {
-                    mbatch->update(dt);
                     mbatch->draw();
                 }
             }

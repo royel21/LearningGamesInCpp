@@ -49,9 +49,18 @@ namespace Plutus
         mWindow.setVSYNC(1);
     }
 
+    bool pause = true;
+
     void AppGeo::Update(float dt)
     {
-        mSysManager.update(dt);
+
+        if (mInput->onKeyPressed("Enter")) {
+            pause = !pause;
+        }
+
+        if (pause) {
+            mSysManager.update(dt);
+        }
 
         mWindow.setTitle("fps: %.02f - dt:%.04f", getFPS(), dt);
     }

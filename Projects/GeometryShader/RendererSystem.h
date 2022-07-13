@@ -30,6 +30,7 @@ namespace Plutus
 
         void init() override;
         void update(float dt) override;
+        void draw() override;
         void destroy() override;
 
     private:
