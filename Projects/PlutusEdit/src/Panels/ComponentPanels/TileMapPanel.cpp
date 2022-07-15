@@ -27,7 +27,7 @@ namespace Plutus
 
     TileMapPanel::TileMapPanel()
     {
-        Input::get()->addEventListener(this);
+        Input.addEventListener(this);
     }
 
     void TileMapPanel::draw(Config* config)
@@ -119,11 +119,11 @@ namespace Plutus
     void TileMapPanel::processMode() {
         if (mIsOpen && mConfig->isHover) {
             auto coord = getCoords(mConfig);
-            if (Input::get()->onKeyPressed("MouseLeft") && mMode == MODE_EDIT) {
+            if (Input.onKeyPressed("MouseLeft") && mMode == MODE_EDIT) {
                 mCurrentTile = mTileMap->getTile(coord);
             }
 
-            if (Input::get()->onKeyDown("MouseLeft")) {
+            if (Input.onKeyDown("MouseLeft")) {
                 switch (mMode)
                 {
                 case MODE_PLACE:

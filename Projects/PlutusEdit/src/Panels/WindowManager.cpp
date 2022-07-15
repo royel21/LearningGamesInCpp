@@ -78,15 +78,6 @@ namespace Plutus
         mConfig->mRender.update(dt);
     }
 
-    void WindowManager::draw() {
-        Begin();
-        for (auto& window : mWindows) {
-            window->draw();
-        }
-        End();
-        mConfig->mRender.draw();
-    }
-
     void WindowManager::Begin()
     {
         ImGui_ImplOpenGL3_NewFrame();
@@ -110,15 +101,15 @@ namespace Plutus
             glfwMakeContextCurrent(contextBackup);
         }
 
-        auto& projects = mConfig->mProjects;
         if (!mProjToRemove.empty())
         {
-            if (mConfig->mProjects.size() > 0) {
-                mConfig->mProjects.erase(mProjToRemove);
+            auto& projects = mConfig->mProjects;
+            if (projects.size()) {
+                projects.erase(mProjToRemove);
 
                 if (mProjToRemove.compare(mConfig->currentProject) == 0) {
-                    if (mConfig->mProjects.size()) {
-                        mConfig->LoadProject(mConfig->mProjects.begin()->first);
+                    if (projects.size()) {
+                        mConfig->LoadProject(projects.begin()->first);
                     }
                     else {
                         mConfig->currentProject = "";
@@ -127,6 +118,15 @@ namespace Plutus
             }
         }
         mProjToRemove = "";
+    }
+
+    void WindowManager::draw() {
+        Begin();
+        for (auto& window : mWindows) {
+            window->draw();
+        }
+        End();
+        mConfig->mRender.draw();
     }
 
     void WindowManager::DockingWindow() {
@@ -168,10 +168,6 @@ namespace Plutus
 
     void WindowManager::MenuGui(int flags) {
         bool noSplit = (flags & ImGuiDockNodeFlags_NoSplit) != 0;
-        static bool open = false;
-        static bool edit = false;
-        static std::string projName;
-        auto& projects = mConfig->mProjects;
         /**************************************** Draw Editor Menu *******************************************************/
         if (ImGui::BeginMenuBar())
         {
@@ -195,7 +191,7 @@ namespace Plutus
 
                 if (ImGui::BeginMenu(ICON_FA_LIST " Projects"))
                 {
-                    for (auto& recent : projects)
+                    for (auto& recent : mConfig->mProjects)
                     {
                         std::string btn = ICON_FA_TRASH_ALT + std::string("##") + recent.first;
                         if (ImGui::TransparentButton(btn.c_str())) {
@@ -204,8 +200,7 @@ namespace Plutus
                         ImGui::SameLine();
                         std::string btnEdit = ICON_FA_EDIT + std::string("##") + recent.first;
                         if (ImGui::TransparentButton(btnEdit.c_str())) {
-                            projName = toEdit = recent.first;
-                            edit = true;
+                            toEdit = recent.first;
                         }
                         ImGui::SameLine();
                         std::string item = ICON_FA_FILE_IMAGE + std::string(" ") + recent.second;

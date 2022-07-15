@@ -124,7 +124,7 @@ namespace Plutus
 
             for (auto& fix : physicBody->mFixtures) {
                 bool cp = false;
-                if (config->isHover && Input::get()->onKeyPressed("MouseLeft")) {
+                if (config->isHover && Input.onKeyPressed("MouseLeft")) {
                     Vec4f rect;
                     if (fix.type == 1) {
                         auto c = Circle2d((fix.offset + epos), fix.radius);
@@ -161,13 +161,13 @@ namespace Plutus
             physicBody->mFixtures.emplace_back(physicBody->mFixtures[copyId - 1]);
         }
 
-        if (mFixture != nullptr && !Input::get()->isCtrl) {
-            if (Input::get()->onKeyPressed("MouseLeft")) {
+        if (mFixture != nullptr && !Input.isCtrl) {
+            if (Input.onKeyPressed("MouseLeft")) {
                 startPos = config->mMouseCoords;
                 startOffset = mFixture->offset;
             }
 
-            if (Input::get()->onKeyDown("MouseLeft")) {
+            if (Input.onKeyDown("MouseLeft")) {
                 auto offset = (config->mMouseCoords - startPos) / config->mRender.mCamera->getScale();;
                 mFixture->offset = startOffset + offset;
             }

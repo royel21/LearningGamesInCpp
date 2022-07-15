@@ -70,29 +70,29 @@ namespace Plutus
             auto camera = mConfig->mRender.mCamera;
             auto scale = camera->getScale();
 
-            if (Input::get()->onKeyPressed("F2"))
+            if (Input.onKeyPressed("F2"))
                 camera->setPosition(0, 0);
 
-            if (Input::get()->onKeyPressed("F3")) {
+            if (Input.onKeyPressed("F3")) {
                 camera->setScale(1);
                 mConfig->mProject.zoomLevel = 1;
             }
 
-            if (Input::get()->onKeyPressed("MouseLeft"))
+            if (Input.onKeyPressed("MouseLeft"))
             {
                 mMouseLastCoords = pos;
                 mCamCoords = camera->getPosition();
             }
             // move the camera
-            if (Input::get()->isCtrl)
+            if (Input.isCtrl)
             {
-                if (Input::get()->onKeyDown("MouseLeft"))
+                if (Input.onKeyDown("MouseLeft"))
                 {
                     Vec2f result = (pos - mMouseLastCoords) / scale;
                     mConfig->mProject.vpPos = mCamCoords - result;
                 }
 
-                auto scroll = Input::get()->getMouseWheel();
+                auto scroll = Input.getMouseWheel();
                 if (scroll != 0)
                 {
                     auto scalePos = pos / scale;
@@ -116,8 +116,8 @@ namespace Plutus
     {
         auto& project = mConfig->mProject;
 
-        if (!Input::get()->isCtrl) {
-            if (Input::get()->onKeyPressed("MouseLeft"))
+        if (!Input.isCtrl) {
+            if (Input.onKeyPressed("MouseLeft"))
             {
                 auto id = mConfig->mRender.mFramePicker.getEntId({ x, y });
                 Entity ent = mConfig->mProject.scene->getEntity(id);
@@ -375,7 +375,7 @@ namespace Plutus
 
                     ImGui::PopItemWidth();
 
-                    if (Input::get()->isCtrl && Input::get()->onKeyPressed("S")) {
+                    if (Input.isCtrl && Input.onKeyPressed("S")) {
                         script->save(mTextEditor.GetText().c_str());
                         saveStart = Time::millis();
                     }

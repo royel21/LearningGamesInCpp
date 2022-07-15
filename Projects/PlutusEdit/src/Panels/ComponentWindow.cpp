@@ -112,12 +112,12 @@ namespace Plutus
             ImGui::Row("Sort Y");
             ImGui::Checkbox("##trans-sortY", &trans->sortY);
 
-            if (Input::get()->onKeyPressed("MouseLeft")) {
+            if (Input.onKeyPressed("MouseLeft")) {
                 lastMPos = mConfig->mMouseCoords;
                 lastEntPos = mEnt.getPosition();
             }
 
-            if (Input::get()->onKeyDown("MouseLeft") && !Input::get()->isCtrl) {
+            if (Input.onKeyDown("MouseLeft") && !Input.isCtrl) {
                 auto trans = mEnt.getComponent<TransformComponent>();
                 Vec2f result = mConfig->mMouseCoords - lastMPos;
                 result /= mConfig->mRender.mCamera->getScale();
