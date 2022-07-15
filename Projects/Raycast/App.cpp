@@ -12,8 +12,9 @@
 
 #include <Time/Timer.h>
 #include <Math/PMath.h>
-#include <Graphics/Graphic.h>
 #include <Log/Logger.h>
+#include <Input/Input.h>
+#include <Graphics/Graphic.h>
 
 namespace Plutus
 {
@@ -129,12 +130,12 @@ namespace Plutus
     void App::Draw()
     {
         if (true) {
-            auto pos = mInput->getMouseCoords();
+            auto pos = Input.getMouseCoords();
 
             Vec4f rect = { 0.0f, 0.f, (float)mWidth, (float)mHeight };
             float max = rect.z;
 
-            if (mInput->onKeyDown("MouseLeft")) {
+            if (Input.onKeyDown("MouseLeft")) {
                 auto start = Time::micros();
 
                 auto center = pos;
@@ -177,16 +178,16 @@ namespace Plutus
             // mDbebug->submitCircle(&Circle2d{ pos, 200.0f });
         }
         else {
-            if (mInput->onKeyDown("MouseLeft")) {
-                end = mInput->getMouseCoords();;
+            if (Input.onKeyDown("MouseLeft")) {
+                end = Input.getMouseCoords();;
                 if (start != end) {
                     castRay(start, end);
                     Logger::info("next");
                 }
             }
 
-            if (mInput->onKeyPressed("MouseRight")) {
-                start = mInput->getMouseCoords();
+            if (Input.onKeyPressed("MouseRight")) {
+                start = Input.getMouseCoords();
             }
             mDbebug->submitLine(start, end);
             mDbebug->submitLine(start, mPoint);

@@ -71,7 +71,7 @@ namespace Plutus
     }
 
     void ScriptSystem::registerGlobals() {
-        mGlobalLua.set("input", Input::get());
+        mGlobalLua.set("input", &Input);
         mGlobalLua.set("getMillis", &Time::millis);
         mGlobalLua.set("assetManager", AssetManager::get());
 
@@ -88,9 +88,9 @@ namespace Plutus
         mGlobalLua["SceneLoader"] = &SceneLoader::loadFromPath;
 
         /*****************************Register Input manager**********************************************/
-        auto input = mGlobalLua.new_usertype<Input>("Input");
-        input["onKeyDown"] = &Input::onKeyDown;
-        input["onKeyPressed"] = &Input::onKeyPressed;
+        auto input = mGlobalLua.new_usertype<InputManager>("Input");
+        input["onKeyDown"] = &InputManager::onKeyDown;
+        input["onKeyPressed"] = &InputManager::onKeyPressed;
 
         auto lua_vec2 = mGlobalLua.new_usertype<Vec2f>(
             "Vec2f", sol::constructors<Vec2f(),

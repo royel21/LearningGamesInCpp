@@ -77,12 +77,12 @@ namespace Plutus
             mLightShader.init(ver, lightFrag);
         }
 
-        if (Input::get()->onKeyPressed("Z")) {
+        if (Input.onKeyPressed("Z")) {
             isAlwaysOnTop = !isAlwaysOnTop;
             mWindow.setAlwaysOnTOp(isAlwaysOnTop);
         }
 
-        if (Input::get()->onKeyPressed("X")) {
+        if (Input.onKeyPressed("X")) {
             blink = true;
         }
     }
@@ -92,7 +92,7 @@ namespace Plutus
     void App::Draw()
     {
         Renderable ren1;
-        auto mpos = Input::get()->getMouseCoords();
+        auto mpos = Input.getMouseCoords();
 
         Graphic::setBackgoundColor(0, 0);
         if (mShader.enable()) {
@@ -123,10 +123,10 @@ namespace Plutus
 
         mLightShader.enable();
         mLightShader.setUniformMat4("uCamera", mCamera.getCameraMatrix());
-        mLightShader.setUniform2f("u_mouse", Input::get()->getMouseCoords());
+        mLightShader.setUniform2f("u_mouse", Input.getMouseCoords());
 
 
-        int w = Input::get()->getMouseWheel();
+        int w = Input.getMouseWheel();
 
         if (w != 0) {
             if (w > 0) {
@@ -141,11 +141,11 @@ namespace Plutus
         light.trans.x = mpos.x - size * .5f;
         light.trans.y = mpos.y - size * .5f;
         light.trans.z = size;
-        if (Input::get()->onKeyDown("X")) {
+        if (Input.onKeyDown("X")) {
             light.trans.w -= 4;
         }
 
-        if (Input::get()->onKeyDown("Scape")) {
+        if (Input.onKeyDown("Scape")) {
             close();
         }
 
@@ -174,5 +174,5 @@ namespace Plutus
         mWindow.setTitle(title);
     }
     // Logger::info("time %0.4f", Time::seconds());
-    // Math::Log(Input::get()->getMouseCoords());
+    // Math::Log(Input.getMouseCoords());
 }

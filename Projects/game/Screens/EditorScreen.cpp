@@ -1,4 +1,6 @@
 #include "EditorScreen.h"
+
+#include <Input/Input.h>
 #include <Physics/Shapes.h>
 
 
@@ -44,24 +46,24 @@ void EditorScreen::Enter() {
 void EditorScreen::Update(float dt)
 {
 
-    if (mInput->onKeyPressed("PageUp"))
+    if (Input.onKeyPressed("PageUp"))
     {
         mCore->setNextScreen("Game");
     }
 
-    if (mInput->onKeyDown("MouseLeft"))
+    if (Input.onKeyDown("MouseLeft"))
     {
         // int h = mEngine->getHeight();
-        // auto pos = mInput->getMouseCoords();
+        // auto pos = Input.getMouseCoords();
         // pos.y = h - pos.y;
         // auto mpos = mCamera.convertScreenToWold(pos);
-        auto mPos = mInput->getMouseCoords();
+        auto mPos = Input.getMouseCoords();
         mCamera.setPosition(mPos);
     }
 
-    if (mInput->onKeyDown("Ctrl"))
+    if (Input.onKeyDown("Ctrl"))
     {
-        auto scroll = mInput->getMouseWheel();
+        auto scroll = Input.getMouseWheel();
         if (scroll != 0)
         {
             auto newVal = mCamera.getScale() + (scroll > 0 ? 0.05f : -0.05f);

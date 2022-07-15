@@ -8,20 +8,20 @@ namespace Plutus
 {
     CameraControl::CameraControl()
     {
-        Input::get()->addEventListener(this);
+        Input.addEventListener(this);
     }
 
     void CameraControl::onKeyDown(const std::string& key)
     {
-        if (Input::get()->isCtrl && key == "MouseLeft") {
-            mMousePos = Input::get()->getMouseCoords();
+        if (Input.isCtrl && key == "MouseLeft") {
+            mMousePos = Input.getMouseCoords();
             mCamPos = mCamera->getPosition();
         }
     }
 
     void CameraControl::onMouseMove(float x, float y) {
-        if (Input::get()->isCtrl && Input::get()->onKeyDown("MouseLeft")) {
-            auto pos = Input::get()->getMouseCoords();
+        if (Input.isCtrl && Input.onKeyDown("MouseLeft")) {
+            auto pos = Input.getMouseCoords();
             Vec2f result = mCamPos - ((pos - mMousePos) / mCamera->getScale());
             mCamera->setPosition(result);
         }
@@ -29,9 +29,9 @@ namespace Plutus
 
     void CameraControl::onWheel(int scroll)
     {
-        if (Input::get()->isCtrl) {
+        if (Input.isCtrl) {
             auto scale = mCamera->getScale();
-            auto pos = Input::get()->getMouseCoords();
+            auto pos = Input.getMouseCoords();
 
             auto scalePos = pos / scale;
             auto newVal = scale + (scroll > 0 ? 0.1f : -0.1f);

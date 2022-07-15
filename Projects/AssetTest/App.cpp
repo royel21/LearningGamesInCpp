@@ -62,30 +62,28 @@ namespace Plutus
 
 
     void App::Update(float dt) {
-        auto mpos = Input::get()->getMouseCoords();
+        auto mpos = Input.getMouseCoords();
         auto particles = mProject.scene->getComponentFromName < ParticleComponent>("particleEmiter");
         auto cPos = mCamera.getPosition();
 
-        auto mInput = Input::get();
+        if (Input.isCtrl) {
 
-        if (mInput->isCtrl) {
-
-            if (mInput->onKeyDown("Right")) {
+            if (Input.onKeyDown("Right")) {
                 cPos.x += 5;
             }
-            if (mInput->onKeyDown("Left")) {
+            if (Input.onKeyDown("Left")) {
                 cPos.x -= 5;
             }
-            if (mInput->onKeyDown("Up")) {
+            if (Input.onKeyDown("Up")) {
                 cPos.y -= 5;
             }
-            if (mInput->onKeyDown("Down")) {
+            if (Input.onKeyDown("Down")) {
                 cPos.y -= 5;
             }
             mCamera.setPosition(cPos);
         }
 
-        if (Input::get()->onKeyDown("MouseLeft")) {
+        if (Input.onKeyDown("MouseLeft")) {
             // if (timer.IntervalMillis(0)) {
             for (int i = 0; i < 100; i++) {
                 auto x = Utils::getRandom(-100, 100);
@@ -95,30 +93,30 @@ namespace Plutus
             // }
         }
 
-        if (Input::get()->onKeyPressed("MouseLeft"))
+        if (Input.onKeyPressed("MouseLeft"))
         {
-            mouseLast = Input::get()->getMouseCoords();
+            mouseLast = Input.getMouseCoords();
             camOrg = mCamera.getPosition();
 
         }
         // move the camera
-        if (Input::get()->isCtrl)
+        if (Input.isCtrl)
         {
             Vec2f offset;
-            if (Input::get()->onKeyDown("MouseLeft"))
+            if (Input.onKeyDown("MouseLeft"))
             {
-                Vec2f result = Input::get()->getMouseCoords() - mouseLast;
+                Vec2f result = Input.getMouseCoords() - mouseLast;
                 result /= mCamera.getScale();
                 offset = camOrg - result;
                 mCamera.setPosition(offset);
             }
 
-            auto scroll = Input::get()->getMouseWheel();
+            auto scroll = Input.getMouseWheel();
             if (scroll != 0)
             {
                 auto newVal = mCamera.getScale() + (scroll > 0 ? 0.05f : -0.05f);
                 mCamera.setScale(CHECKLIMIT(newVal, 0.20f, 6));
-                auto newPos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
+                auto newPos = mCamera.convertScreenToWold(Input.getMouseCoords());
 
                 auto offset = newPos - mpos;
                 mCamera.setPosition(mCamera.getPosition() - offset);

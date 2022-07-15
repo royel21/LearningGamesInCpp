@@ -79,23 +79,23 @@ namespace Plutus
     void App::draw()
     {
         glClearColor(0.6f, 0.7f, 1.0f, 1.0f);
-        auto mpos = Input::get()->getMouseCoords() * (float)scale;
+        auto mpos = Input.getMouseCoords() * (float)scale;
 
 
-        if (Input::get()->onKeyPressed("Q")) {
+        if (Input.onKeyPressed("Q")) {
             LinearSearch = !LinearSearch;
         }
 
-        if (Input::get()->onKeyPressed("MouseLeft") && rect1.contains(mpos)) {
+        if (Input.onKeyPressed("MouseLeft") && rect1.contains(mpos)) {
             pos = mpos;
             pos2 = rect1.pos;
         }
 
-        if (Input::get()->onKeyDown("MouseLeft")) {
+        if (Input.onKeyDown("MouseLeft")) {
             auto newPos = mpos - pos;
             rect1.pos = pos2 + newPos;
         }
-        auto scroll = Input::get()->getMouseWheel();
+        auto scroll = Input.getMouseWheel();
         if (scroll != 0) {
             if (scroll > 0) {
                 rect1.size += 20;

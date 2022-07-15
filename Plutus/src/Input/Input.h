@@ -18,7 +18,7 @@ namespace Plutus
 		virtual void handler(uint32_t type, uint32_t key);
 	};
 
-	class Input
+	class InputManager
 	{
 	public:
 		bool isCtrl = false;
@@ -26,9 +26,7 @@ namespace Plutus
 		std::function<void(int, int)> onResize = nullptr;
 
 	public:
-		Input();
-		// Return a instance of Input Manager
-		static Input* get();
+		InputManager();
 
 		void update();
 
@@ -61,6 +59,8 @@ namespace Plutus
 		std::unordered_map<std::string, bool> mKeyMap;
 		std::unordered_map<std::string, bool> mPrevKeyMap;
 	};
+
+	extern InputManager Input;
 } // namespace Plutus
 
 #endif

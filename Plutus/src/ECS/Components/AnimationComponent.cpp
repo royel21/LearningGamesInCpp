@@ -49,12 +49,14 @@ namespace Plutus
 
     Sequence* AnimationComponent::getCurrentSeq()
     {
-        auto it = mSequences.find(currentSeq);
-        if (it != mSequences.end()) {
-            return &it->second;
-        }
-        else if (mSequences.size()) {
-            return &mSequences.begin()->second;
+        if (mSequences.size()) {
+            auto it = mSequences.find(currentSeq);
+            if (it != mSequences.end()) {
+                return &it->second;
+            }
+            else {
+                return &mSequences.begin()->second;
+            }
         }
         return nullptr;
     }

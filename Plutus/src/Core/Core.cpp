@@ -3,6 +3,7 @@
 #include "IScreen.h"
 
 #include <Time/Timer.h>
+#include <Input/Input.h>
 #include <Graphics/GLheaders.h>
 
 #ifdef __EMSCRIPTEN__
@@ -20,7 +21,6 @@ namespace Plutus
 #endif
     void Core::init() {
         Time::init();
-        mInput = Input::get();
 
         if (mProject) {
             mWidth = mProject.winWidth;
@@ -71,7 +71,7 @@ namespace Plutus
                 Update(dt);
                 Draw();
             }
-            mInput->update();
+            Input.update();
             mWindow.update();
             mLimiter.end();
             if (mScreenList.size()) swapScreen();

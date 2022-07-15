@@ -17,9 +17,7 @@ namespace Plutus
             auto [sprite, animation] = view.get(ent);
             auto seq = animation.getCurrentSeq();
 
-            if (!seq && animation.mSequences.size()) seq = &animation.mSequences.begin()->second;
-
-            if (seq && seq->mFrames.size() && !seq->mTexId.empty()) {
+            if (seq && seq->isValid()) {
                 sprite.mTextureId = seq->mTexId;
                 sprite.mUVCoord = AssetManager::get()->getAsset<Texture>(seq->mTexId)->getUV(seq->mFrames[0]);
             }
@@ -34,7 +32,7 @@ namespace Plutus
             auto [sprite, animation] = view.get(ent);
             auto seq = animation.getCurrentSeq();
 
-            if (seq && !seq->mTexId.empty() && seq->mFrames.size()) {
+            if (seq && seq->isValid()) {
                 auto framesCount = seq->mFrames.size();
 
                 animation.currentTime += dt;

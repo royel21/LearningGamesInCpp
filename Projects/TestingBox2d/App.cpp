@@ -164,16 +164,16 @@ namespace Plutus
 
     void App::Update(float dt)
     {
-        if (Input::get()->onKeyPressed("R")) {
+        if (Input.onKeyPressed("R")) {
             cscale = 1;
         }
         auto body = capsule.body;
         auto currentSpeed = body->GetLinearVelocity();
 
-        if (Input::get()->onKeyDown("Left")) {
+        if (Input.onKeyDown("Left")) {
             body->ApplyForceToCenter(b2Vec2(-force2, 0.0), true);
         }
-        else if (Input::get()->onKeyDown("Right")) {
+        else if (Input.onKeyDown("Right")) {
             body->ApplyForceToCenter(b2Vec2(force2, 0.0), true);
         }
         else {
@@ -188,7 +188,7 @@ namespace Plutus
             body->SetLinearVelocity(b2Vec2(MAX_SPEED, currentSpeed.y));
         }
 
-        if (Input::get()->onKeyPressed("A") || Input::get()->onKeyPressed("S")) {
+        if (Input.onKeyPressed("A") || Input.onKeyPressed("S")) {
             body->ApplyLinearImpulseToCenter({ 0, 4.0f }, true);
         }
 
@@ -200,27 +200,27 @@ namespace Plutus
 
         capsule.update();
 
-        if (Input::get()->isCtrl) {
-            if (Input::get()->onKeyDown("+")) {
+        if (Input.isCtrl) {
+            if (Input.onKeyDown("+")) {
                 cscale += 0.05f;
                 mCamera.setScale(cscale);
             }
-            if (Input::get()->onKeyDown("-")) {
+            if (Input.onKeyDown("-")) {
                 cscale -= 0.05f;
                 mCamera.setScale(cscale);
             }
 
             auto cPos = mCamera.getPosition();
-            if (Input::get()->onKeyDown("Right")) {
+            if (Input.onKeyDown("Right")) {
                 cPos.x += 5;
             }
-            if (Input::get()->onKeyDown("Left")) {
+            if (Input.onKeyDown("Left")) {
                 cPos.x -= 5;
             }
-            if (Input::get()->onKeyDown("Up")) {
+            if (Input.onKeyDown("Up")) {
                 cPos.y += 5;
             }
-            if (Input::get()->onKeyDown("Down")) {
+            if (Input.onKeyDown("Down")) {
                 cPos.y -= 5;
             }
             mCamera.setPosition(cPos);

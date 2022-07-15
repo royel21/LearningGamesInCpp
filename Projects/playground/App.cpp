@@ -30,7 +30,7 @@ namespace Plutus
         mWidth = width;
         mHeight = height;
 
-        Input::get()->addEventListener(this);
+        Input.addEventListener(this);
     }
 
     void App::Init()
@@ -88,11 +88,11 @@ namespace Plutus
     void App::Update(float dt)
     {
         float cscale = mCamera.getScale();
-        if (Input::get()->onKeyDown("+")) {
+        if (Input.onKeyDown("+")) {
             cscale += 0.05f;
             mCamera.setScale(cscale);
         }
-        if (Input::get()->onKeyDown("-")) {
+        if (Input.onKeyDown("-")) {
             cscale -= 0.05f;
             mCamera.setScale(cscale);
         }
@@ -100,18 +100,18 @@ namespace Plutus
 
         auto cpos = mCamera.getPosition();
 
-        if (Input::get()->isCtrl) {
-            if (Input::get()->onKeyDown("Up")) { cpos.y += speed; }
-            if (Input::get()->onKeyDown("Down")) { cpos.y -= speed; }
-            if (Input::get()->onKeyDown("Right")) { cpos.x += speed; }
-            if (Input::get()->onKeyDown("Left")) { cpos.x -= speed; }
+        if (Input.isCtrl) {
+            if (Input.onKeyDown("Up")) { cpos.y += speed; }
+            if (Input.onKeyDown("Down")) { cpos.y -= speed; }
+            if (Input.onKeyDown("Right")) { cpos.x += speed; }
+            if (Input.onKeyDown("Left")) { cpos.x -= speed; }
             mCamera.setPosition(cpos);
         }
         else {
-            if (Input::get()->onKeyDown("Up")) { shape->pos.y += speed; }
-            if (Input::get()->onKeyDown("Down")) { shape->pos.y -= speed; }
-            if (Input::get()->onKeyDown("Right")) { shape->pos.x += speed; }
-            if (Input::get()->onKeyDown("Left")) { shape->pos.x -= speed; }
+            if (Input.onKeyDown("Up")) { shape->pos.y += speed; }
+            if (Input.onKeyDown("Down")) { shape->pos.y -= speed; }
+            if (Input.onKeyDown("Right")) { shape->pos.x += speed; }
+            if (Input.onKeyDown("Left")) { shape->pos.x -= speed; }
         }
 
         // if (isMouseDownInBox) {
@@ -258,7 +258,7 @@ namespace Plutus
 
     void App::onKeyDown(const std::string& key)
     {
-        initPos = Input::get()->getMouseCoords();
+        initPos = Input.getMouseCoords();
 
         if (PUtils::PointInBox(initPos, (Box2d*)mShapes[1].ref)) {
             isMouseDownInBox = true;
@@ -278,6 +278,6 @@ namespace Plutus
 
     void App::onMouseMove(float x, float y)
     {
-        mpos = Input::get()->getMouseCoords();
+        mpos = Input.getMouseCoords();
     }
 }

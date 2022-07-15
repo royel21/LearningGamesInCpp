@@ -82,21 +82,21 @@ namespace Plutus
         glfwSetWindowUserPointer(mWindow, this);
         // Setup all callback
         glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            Input::get()->keyStateChange(getKey(key), action);
+            Input.keyStateChange(getKey(key), action);
             });
         // Mouse Button 
         glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods) {
-            Input::get()->keyStateChange(getKey(button), action > 0);
+            Input.keyStateChange(getKey(button), action > 0);
             });
         // Mouse Move
         glfwSetCursorPosCallback(mWindow, [](GLFWwindow* window, double xpos, double ypos) {
             int width, height;
             glfwGetWindowSize(window, &width, &height);
-            Input::get()->setMouseCoords(static_cast<float>(xpos), static_cast<float>(height - ypos));
+            Input.setMouseCoords(static_cast<float>(xpos), static_cast<float>(height - ypos));
             });
         // Mouse Wheel 
         glfwSetScrollCallback(mWindow, [](GLFWwindow* window, double xoffset, double yoffset) {
-            Input::get()->setMouseWheel(static_cast<int>(yoffset));
+            Input.setMouseWheel(static_cast<int>(yoffset));
             });
         //Item Dropped to the window
         glfwSetDropCallback(mWindow, [](GLFWwindow* window, int count, const char** paths) {
@@ -135,7 +135,7 @@ namespace Plutus
     void Window::update()
     {
         glfwSwapBuffers(mWindow);
-        Input::get()->update();
+        Input.update();
         glfwPollEvents();
     }
 

@@ -2,10 +2,7 @@
 
 #include <chrono>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
+#include "SleepImp.h"
 
 namespace Plutus
 {
@@ -18,17 +15,10 @@ namespace Plutus
     void Limiter::init(float fps)
     {
         mSpecFps = 1.0f / fps;
-#ifdef _WIN32
-        // if we are on window set the time precision to 1ms for sleep function
-        timeBeginPeriod(1);
-#endif
     }
 
     Limiter::~Limiter()
     {
-#ifdef _WIN32
-        timeEndPeriod(1);
-#endif
     }
 
     float Limiter::start()
@@ -50,8 +40,7 @@ namespace Plutus
             Duration drawTime = Clock::now() - mStartPoint;
             if (drawTime.count() < mSpecFps)
             {
-                auto slpTime = (uint32_t)floorf((mSpecFps - drawTime.count()) * 1000.0f);
-                Sleep(slpTime);
+                msSleep((uint32_t)floorf((mSpecFps - drawTime.count()) * 1000.0f));
             }
         }
         Duration currentFrame = Clock::now() - mStartPoint;

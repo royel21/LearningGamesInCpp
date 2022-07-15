@@ -1,12 +1,12 @@
 
 #include "GameScreen.h"
 
-#include <ECS/Components.h>
-
 #include <Log/Logger.h>
+#include <Input/Input.h>
+#include <ECS/Components.h>
 #include <Systems/Systems.h>
-#include <Serialize/SceneLoader.h>
 #include <Assets/AssetManager.h>
+#include <Serialize/SceneLoader.h>
 
 
 GameScreen::GameScreen()
@@ -37,38 +37,38 @@ float speed = 1;
 void GameScreen::Update(float dt)
 {
     auto pos = mCamera->getPosition();
-    if (mInput->onKeyPressed("PageDown"))
+    if (Input.onKeyPressed("PageDown"))
     {
         mCore->setNextScreen("Editor");
     }
 
-    if (mInput->onKeyDown("Right"))
+    if (Input.onKeyDown("Right"))
     {
         mCamera->setPosition({ pos.x + speed, pos.y });
     }
 
-    if (mInput->onKeyDown("Left"))
+    if (Input.onKeyDown("Left"))
     {
         mCamera->setPosition({ pos.x - speed, pos.y });
     }
 
-    if (mInput->onKeyDown("Up"))
+    if (Input.onKeyDown("Up"))
     {
         mCamera->setPosition({ pos.x, pos.y + speed });
     }
 
-    if (mInput->onKeyDown("Down"))
+    if (Input.onKeyDown("Down"))
     {
         mCamera->setPosition({ pos.x, pos.y - speed });
     }
 
     auto scale = mCamera->getScale();
-    if (mInput->onKeyDown("+"))
+    if (Input.onKeyDown("+"))
     {
         mCamera->setScale(scale > 0.2f ? scale - 0.1f : 0.01f);
     }
 
-    if (mInput->onKeyDown("-"))
+    if (Input.onKeyDown("-"))
     {
         mCamera->setScale(scale < 15.0f ? scale + 0.1f : 15.0f);
     }

@@ -17,6 +17,7 @@
 
 #include <Log/Logger.h>
 
+#include <Input/Input.h>
 
 #include <filesystem>
 
@@ -46,7 +47,7 @@ namespace Plutus
         mSysManager.AddSystem<RendererSystem>(&mCamera);
 
         mSysManager.init();
-        mWindow.setVSYNC(1);
+        // mWindow.setVSYNC(1);
     }
 
     bool pause = true;
@@ -54,13 +55,9 @@ namespace Plutus
     void AppGeo::Update(float dt)
     {
 
-        if (mInput->onKeyPressed("Enter")) {
-            pause = !pause;
-        }
+        if (Input.onKeyPressed("Enter")) pause = !pause;
 
-        if (pause) {
-            mSysManager.update(dt);
-        }
+        if (pause) mSysManager.update(dt);
 
         mWindow.setTitle("fps: %.02f - dt:%.04f", getFPS(), dt);
     }

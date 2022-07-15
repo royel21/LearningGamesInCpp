@@ -42,7 +42,6 @@ namespace Plutus
             if (mSystems[i]) {
                 mSystems[i]->destroy();
                 delete mSystems[i];
-                mSystems[i] = nullptr;
                 mSystems.clear();
             }
         }

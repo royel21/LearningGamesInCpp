@@ -21,6 +21,8 @@ namespace Plutus
 
         Sequence() = default;
         Sequence(const std::string& texId, Frames frames, int _seqTime = 100);
+
+        inline bool isValid() { return mFrames.size() && !mTexId.empty(); }
     };
 
     class AnimationComponent

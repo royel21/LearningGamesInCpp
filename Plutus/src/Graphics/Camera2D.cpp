@@ -28,7 +28,7 @@ namespace Plutus
 
 	void Camera2D::update()
 	{
-		if (mEntity && !Input::get()->isCtrl) {
+		if (mEntity && !Input.isCtrl) {
 			auto size = mEntity.getRect().getSize();
 			mCamPos = mEntity.getPosition() - (mScaleSize / 2.0f - size / 2.0f);
 			if (mHasBounds) {
