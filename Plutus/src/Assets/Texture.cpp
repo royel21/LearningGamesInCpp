@@ -78,27 +78,33 @@ namespace Plutus
 
     void Texture::loadTexture()
     {
-        int ch = Utils::getExtension(mPath).compare("png") == 0 ? 4 : 3;
+        auto fullPath = (baseDir + mPath);
+        if (FileIO::exists(fullPath)) {
+            int ch = Utils::getExtension(mPath).compare("png") == 0 ? 4 : 3;
 
-        int BPP;
-        uint8_t* out = stbi_load((baseDir + mPath).c_str(), &mWidth, &mHeight, &BPP, ch);
-        if (mWidth && mHeight) {
-            auto format = ch == 3 ? GL_RGB8 : GL_RGBA8;
-            auto gltype = ch == 3 ? GL_RGB : GL_RGBA;
-            glActiveTexture(GL_TEXTURE0 + mTexureUnit);
-            mTexId = Graphic::createTexture(mWidth, mHeight, out, format, gltype, GL_UNSIGNED_BYTE, mGlFilter);
-            //unlink the texture
-            glBindTexture(GL_TEXTURE_2D, 0);
-            //delete the image buffer from memory
-            if (out)
-            {
-                stbi_image_free(out);
+            int BPP;
+            uint8_t* out = stbi_load(fullPath.c_str(), &mWidth, &mHeight, &BPP, ch);
+            if (mWidth && mHeight) {
+                auto format = ch == 3 ? GL_RGB8 : GL_RGBA8;
+                auto gltype = ch == 3 ? GL_RGB : GL_RGBA;
+                glActiveTexture(GL_TEXTURE0 + mTexureUnit);
+                mTexId = Graphic::createTexture(mWidth, mHeight, out, format, gltype, GL_UNSIGNED_BYTE, mGlFilter);
+                //unlink the texture
+                glBindTexture(GL_TEXTURE_2D, 0);
+                //delete the image buffer from memory
+                if (out)
+                {
+                    stbi_image_free(out);
+                }
+                else
+                {
+                    Logger::info("stbi fail: %s - %s", stbi_failure_reason(), mPath.c_str());
+                }
+                glActiveTexture(GL_TEXTURE0);
             }
-            else
-            {
-                Logger::info("stbi fail: %s - %s\n", stbi_failure_reason(), mPath.c_str());
-            }
-            glActiveTexture(GL_TEXTURE0);
+        }
+        else {
+            Logger::info("Texture Not Found: %s", fullPath.c_str());
         }
     }
 }

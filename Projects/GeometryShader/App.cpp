@@ -47,7 +47,7 @@ namespace Plutus
         mSysManager.AddSystem<RendererSystem>(&mCamera);
 
         mSysManager.init();
-        // mWindow.setVSYNC(1);
+        mWindow.setVSYNC(1);
     }
 
     bool pause = true;

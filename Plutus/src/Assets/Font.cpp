@@ -16,6 +16,11 @@ namespace Plutus
     {
         mPath = path;
         mSize = fontSize;
+        auto fullPath = (baseDir + mPath);
+        if (!FileIO::exists(fullPath)) {
+            Logger::error("Font Not Found:%s", fullPath.c_str());
+            return;
+        }
 
         FT_Library ft;
         // All functions return a value different than 0 whenever an error occurred
@@ -24,7 +29,7 @@ namespace Plutus
             return;
         }
 
-        auto buffer = FileIO::readFile((baseDir + mPath).c_str());
+        auto buffer = FileIO::readFile(fullPath.c_str());
         // Load font as face
         FT_Face face;
         if (FT_New_Memory_Face(ft, buffer.data(), (long)buffer.size(), 0, &face)) {
