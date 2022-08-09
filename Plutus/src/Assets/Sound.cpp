@@ -43,7 +43,7 @@ namespace Plutus
             }
         }
         else {
-            Logger::error("sound not found: %s", fullPath);
+            Logger::error("sound not found: %s", fullPath.c_str());
         }
     }
 

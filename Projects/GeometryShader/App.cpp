@@ -20,12 +20,14 @@
 #include <Input/Input.h>
 
 #include <filesystem>
+#include <Utils/FileIO.h>
 
 
 namespace Plutus
 {
     AppGeo::AppGeo() {
-        mProject.load("ZombiesGame/ZombiesGame.json");
+        Logger::warn("Found: %i", FileIO::exists("ZombiesGame.json"));
+        mProject.load("ZombiesGame.json");
     }
 
     void AppGeo::Init()
