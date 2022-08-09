@@ -26,8 +26,8 @@
 namespace Plutus
 {
     AppGeo::AppGeo() {
-        Logger::warn("Found: %i", FileIO::exists("ZombiesGame.json"));
-        mProject.load("ZombiesGame.json");
+        Logger::warn("Found: %i", FileIO::exists("ZombiesGame/ZombiesGame.json"));
+        mProject.load("ZombiesGame/ZombiesGame.json");
     }
 
     void AppGeo::Init()
