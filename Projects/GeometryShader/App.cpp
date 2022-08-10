@@ -39,8 +39,6 @@ namespace Plutus
             ent.addComponent<TextComponent>("Aventurina.ttf", "Text Component LAND", 16.0f, 20.0f, ColorRGBA8{ 255, 255, 0, 255 });
         }
 
-        mCamera.init(mProject.vpWidth, mProject.vpHeight);
-        mCamera.setScale(mProject.zoomLevel);
         mSysManager.setProject(&mProject);
 
         mSysManager.AddSystem<ScriptSystem>(&mCamera);
