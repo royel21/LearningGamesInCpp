@@ -8,7 +8,6 @@
 #include <Assets/AssetManager.h>
 #include <Serialize/SceneLoader.h>
 
-
 GameScreen::GameScreen()
 {
 }
@@ -37,38 +36,38 @@ float speed = 1;
 void GameScreen::Update(float dt)
 {
     auto pos = mCamera->getPosition();
-    if (Input.onKeyPressed("PageDown"))
+    if (Plutus::Input.onKeyPressed("PageDown"))
     {
         mCore->setNextScreen("Editor");
     }
 
-    if (Input.onKeyDown("Right"))
+    if (Plutus::Input.onKeyDown("Right"))
     {
         mCamera->setPosition({ pos.x + speed, pos.y });
     }
 
-    if (Input.onKeyDown("Left"))
+    if (Plutus::Input.onKeyDown("Left"))
     {
         mCamera->setPosition({ pos.x - speed, pos.y });
     }
 
-    if (Input.onKeyDown("Up"))
+    if (Plutus::Input.onKeyDown("Up"))
     {
         mCamera->setPosition({ pos.x, pos.y + speed });
     }
 
-    if (Input.onKeyDown("Down"))
+    if (Plutus::Input.onKeyDown("Down"))
     {
         mCamera->setPosition({ pos.x, pos.y - speed });
     }
 
     auto scale = mCamera->getScale();
-    if (Input.onKeyDown("+"))
+    if (Plutus::Input.onKeyDown("+"))
     {
         mCamera->setScale(scale > 0.2f ? scale - 0.1f : 0.01f);
     }
 
-    if (Input.onKeyDown("-"))
+    if (Plutus::Input.onKeyDown("-"))
     {
         mCamera->setScale(scale < 15.0f ? scale + 0.1f : 15.0f);
     }

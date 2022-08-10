@@ -46,24 +46,24 @@ void EditorScreen::Enter() {
 void EditorScreen::Update(float dt)
 {
 
-    if (Input.onKeyPressed("PageUp"))
+    if (Plutus::Input.onKeyPressed("PageUp"))
     {
         mCore->setNextScreen("Game");
     }
 
-    if (Input.onKeyDown("MouseLeft"))
+    if (Plutus::Input.onKeyDown("MouseLeft"))
     {
         // int h = mEngine->getHeight();
-        // auto pos = Input.getMouseCoords();
+        // auto pos = Plutus::Input.getMouseCoords();
         // pos.y = h - pos.y;
         // auto mpos = mCamera.convertScreenToWold(pos);
-        auto mPos = Input.getMouseCoords();
+        auto mPos = Plutus::Input.getMouseCoords();
         mCamera.setPosition(mPos);
     }
 
-    if (Input.onKeyDown("Ctrl"))
+    if (Plutus::Input.onKeyDown("Ctrl"))
     {
-        auto scroll = Input.getMouseWheel();
+        auto scroll = Plutus::Input.getMouseWheel();
         if (scroll != 0)
         {
             auto newVal = mCamera.getScale() + (scroll > 0 ? 0.05f : -0.05f);
