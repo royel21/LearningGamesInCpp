@@ -12,5 +12,8 @@
     "all": "node build clean",
     "minify scenes": "node scripts/minify.js",
     "copy-assets": "node scripts/copy-assets.js Physics.json"
+  },
+  "dependencies": {
+    "fs-extra": "^11.1.0"
   }
 }

@@ -2,7 +2,7 @@ const fs = require("fs-extra");
 const path = require("path");
 const { execSync } = require("child_process");
 
-const { listFiles, buildOjbFiles, getChanges, checkHeaders, db } = require("./healper");
+const { listFiles, buildOjbFiles, getChanges, checkHeaders, db } = require("./helper");
 
 const conf = {
   name: "",

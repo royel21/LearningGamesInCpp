@@ -166,6 +166,11 @@ namespace Plutus
 		mIndexCount = 0;
 	}
 
+	void SpriteBatch2D::enableBlend(bool adictive)
+	{
+		Graphic::enableBlend(adictive);
+	}
+
 
 	inline void SpriteBatch2D::createBatch(uint32_t texture)
 	{

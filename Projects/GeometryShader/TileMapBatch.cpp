@@ -113,7 +113,7 @@ namespace Plutus
 
             Graphic::bind(mVAO, mIboId);
 
-            Graphic::uploadBufferData(mBufferId, mtiles.size() * mVertexSize, mtiles.data(), GL_STATIC_DRAW);
+            Graphic::uploadBufferData(mBufferId, mtiles.size() * mVertexSize, mtiles.data(), GL_DYNAMIC_DRAW);
 
             for (size_t i = 0; i < 16; i++) {
                 if (mTextures[i]) {

@@ -29,7 +29,7 @@ namespace Plutus
 	{
 	public:
 		RenderBatch2D() = default;
-		RenderBatch2D(uint32_t Offset, uint32_t NumVertices, uint32_t Texture) : offset(Offset), numVertices(NumVertices), texture(Texture)
+		RenderBatch2D(uint32_t Offset, uint32_t NumVertices, uint32_t Texture): offset(Offset), numVertices(NumVertices), texture(Texture)
 		{
 		}
 		uint32_t offset = 0;
@@ -91,10 +91,12 @@ namespace Plutus
 		void unBind();
 		//Flush the Vertex buffer to the screen
 		void end();
+		void enableBlend(bool adictive = false);
 
 		//draw to the screen
-		inline void finish(BatchType type = BATCH_NONE) {
+		inline void finish(BatchType type = BATCH_NONE, bool blend = true) {
 			begin();
+			if (blend) enableBlend();
 			draw(type);
 			end();
 		}
