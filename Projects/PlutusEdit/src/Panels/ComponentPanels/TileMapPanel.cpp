@@ -27,23 +27,27 @@ namespace Plutus
 
     TileMapPanel::TileMapPanel()
     {
-        Input::get()->addEventListener(this);
+        Input.addEventListener(this);
     }
 
     void TileMapPanel::draw(Config* config)
     {
         mConfig = config;
+        static bool loadTex = true;
+
         if (CollapseComponent<TileMapComponent>("TileMap##tilemap-comp", 4, mConfig))
         {
             static bool addTexture = false;
             mIsOpen = true;
             mTileMap = mConfig->mProject.mEnt.getComponent<TileMapComponent>();
-
-            for (int i = 0; i < 16; i++) {
-                if (!mTileMap->mTextures[i].empty()) {
-                    mCurrentTexture = i;
-                    break;
+            if (loadTex) {
+                for (int i = 0; i < 16; i++) {
+                    if (!mTileMap->mTextures[i].empty()) {
+                        mCurrentTexture = i;
+                        break;
+                    }
                 }
+                loadTex = false;
             }
 
             float textWidth = ImGui::GetContentRegionAvailWidth() * 0.35f;
@@ -51,10 +55,6 @@ namespace Plutus
             ImGui::InputInt("##tm-w", &mTileMap->mWidth);
             ImGui::Row("Height", textWidth);
             ImGui::InputInt("##tm-h", &mTileMap->mHeight);
-            ImGui::Row("Tile Width", textWidth);
-            ImGui::InputInt("##tm-tw", &mTileMap->mTileWidth);
-            ImGui::Row("Tile Heigth", textWidth);
-            ImGui::InputInt("##tm-th", &mTileMap->mTileHeight);
             ImGui::Row("Layer", textWidth);
             ImGui::InputInt("##tm-l", &mTileMap->mLayer);
 
@@ -95,67 +95,23 @@ namespace Plutus
                 ImGui::SameLine();
                 ImGui::RadioButton("Remove", &mMode, MODE_REMOVE);
                 ImGui::Separator();
-                if (mMode == MODE_PLACE)
-                {
-
-                    static float scale = 1.0f;
-                    ImGui::Row("Rotation", textWidth);
-                    if (ImGui::InputFloat("##tm-r", &mRotation, 45.0f, 90.0f, "%0.0f")) {
-                        mRotation = LIMIT(mRotation, 0.0f, 360.0f);
-                    }
-
-                    ImGui::Row("Scale", textWidth);
-                    ImGui::DragFloat("##sc-tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
-                    ImGui::DrawTexture(mTileMap->getTexture(mCurrentTexture), 0, 0, scale, &mTempTiles);
-                }
             }
 
-            if (mCurrentTile != nullptr && mMode == MODE_EDIT)
+            switch (mMode) {
+            case MODE_PLACE:
             {
-                ImGui::Text("Tile Props");
-                ImGui::Separator();
-                {
-                    ImGui::Row("X", textWidth);
-                    ImGui::InputInt("##ctile-x", &mCurrentTile->x, 1);
-
-                    ImGui::Row("Y", textWidth);
-                    ImGui::InputInt("##ctile-y", &mCurrentTile->y, 1);
-
-                    ImGui::Row("Rotation", textWidth);
-                    float rotation = mCurrentTile->rotate;
-                    if (ImGui::InputFloat("##ctile-r", &rotation, 45.0f, 90.0f, "%0.0f"))
-                    {
-                        mCurrentTile->rotate = LIMIT(rotation, 0.0f, 360.0f);
-                    }
-
-                    ImGui::Row("Flip X", textWidth);
-                    ImGui::Checkbox("##cTile-flix", &mCurrentTile->flipX);
-
-                    ImGui::Row("Flip Y", textWidth);
-                    ImGui::Checkbox("##cTile-lipy", &mCurrentTile->flipY);
-
-                    ImGui::Row("Texture", textWidth);
-                    int texcoord = mCurrentTile->texcoord;
-                    if (ImGui::InputInt("##ctile-texture", &texcoord, 1))
-                    {
-                        auto size = mTileMap->getTexture(mCurrentTile->texture)->uvs.size();
-                        mCurrentTile->texcoord = LIMIT(texcoord, 0, (int)size - 1);
-                    }
-                    ImGui::Row("Textures", textWidth);
-                    if (ImGui::ComboBox("##mttexture", mTileMap->mTextures, mCurrentTile->texture)) {
-                        mCurrentTile->texcoord = 0;
-                    }
-                }
+                placeMode(textWidth);
+                break;
             }
-            if (mMode == MODE_PLACE && mConfig->isHover) {
-                renderTemp();
+            case MODE_EDIT: {
+                editMode(textWidth);
+                break;
             }
-            else {
-                mConfig->mRender->mTotalTemp = 0;
             }
         }
         else {
             mIsOpen = false;
+            loadTex = true;
         }
 
     }
@@ -163,11 +119,11 @@ namespace Plutus
     void TileMapPanel::processMode() {
         if (mIsOpen && mConfig->isHover) {
             auto coord = getCoords(mConfig);
-            if (Input::get()->onKeyPressed("MouseLeft") && mMode == MODE_EDIT) {
+            if (Input.onKeyPressed("MouseLeft") && mMode == MODE_EDIT) {
                 mCurrentTile = mTileMap->getTile(coord);
             }
 
-            if (Input::get()->onKeyDown("MouseLeft")) {
+            if (Input.onKeyDown("MouseLeft")) {
                 switch (mMode)
                 {
                 case MODE_PLACE:
@@ -211,7 +167,6 @@ namespace Plutus
             if (index == -1)
             {
                 tiles.push_back(Tile(x, y, tile.z, mCurrentTexture, mRotation));
-                tiles.back().setParent(mTileMap);
             }
             else
             {
@@ -224,16 +179,16 @@ namespace Plutus
     void TileMapPanel::renderTemp()
     {
         auto gridCoords = getCoords(mConfig);
-        int w = mTileMap->mTileWidth;
-        int h = mTileMap->mTileHeight;
+        int w = mConfig->mProject.scene->mTileWidth;
+        int h = mConfig->mProject.scene->mTileHeight;
 
         auto tex = mTileMap->getTexture(mCurrentTexture);
 
-        std::vector<Renderable>& renderables = mConfig->mRender->mRenderables;
+        std::vector<Renderable>& renderables = mConfig->mRender.mRenderables;
         if (renderables.size() < mTempTiles.size()) {
             renderables.resize(mTempTiles.size());
         }
-        mConfig->mRender->mTotalTemp = (int)mTempTiles.size();
+        mConfig->mRender.mTotalTemp = (int)mTempTiles.size();
 
         int i = 0;
         for (auto tile : mTempTiles)
@@ -241,7 +196,7 @@ namespace Plutus
             int x = ((int)gridCoords.x * w) + (tile.x * w);
             int y = ((int)gridCoords.y * h) - (tile.y * h);
             if (tex)
-                renderables[i++] = { tex->mTexId, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation, false, false, -1, 99, false };
+                renderables[i++] = { tex, { x, y, w, h }, tex->getUV(tile.z), {}, mRotation, false, false, -1, 99, false };
         }
     }
 
@@ -269,6 +224,66 @@ namespace Plutus
                     show = false;
                 }
                 });
+        }
+    }
+
+    void TileMapPanel::editMode(float width)
+    {
+        if (!mCurrentTile) return;
+
+        ImGui::Text("Tile Props");
+        ImGui::Separator();
+        {
+            ImGui::Row("X", width);
+            ImGui::InputInt("##ctile-x", &mCurrentTile->x, 1);
+
+            ImGui::Row("Y", width);
+            ImGui::InputInt("##ctile-y", &mCurrentTile->y, 1);
+
+            ImGui::Row("Rotation", width);
+            float rotation = mCurrentTile->rotate;
+            if (ImGui::InputFloat("##ctile-r", &rotation, 45.0f, 90.0f, "%0.0f"))
+            {
+                mCurrentTile->rotate = LIMIT(rotation, 0.0f, 360.0f);
+            }
+
+            ImGui::Row("Flip X", width);
+            ImGui::Checkbox("##cTile-flix", &mCurrentTile->flipX);
+
+            ImGui::Row("Flip Y", width);
+            ImGui::Checkbox("##cTile-lipy", &mCurrentTile->flipY);
+
+            ImGui::Row("Texture", width);
+            int texcoord = mCurrentTile->texcoord;
+            if (ImGui::InputInt("##ctile-texture", &texcoord, 1))
+            {
+                auto size = mTileMap->getTexture(mCurrentTile->texture)->uvs.size();
+                mCurrentTile->texcoord = LIMIT(texcoord, 0, (int)size - 1);
+            }
+            ImGui::Row("Textures", width);
+            if (ImGui::ComboBox("##mtile-texture", mTileMap->mTextures, mCurrentTile->texture)) {
+                mCurrentTile->texcoord = 0;
+            }
+        }
+    }
+
+    void TileMapPanel::placeMode(float width)
+    {
+        static float scale = 1.0f;
+        ImGui::Row("Rotation", width);
+        if (ImGui::InputFloat("##tm-r", &mRotation, 45.0f, 90.0f, "%0.0f")) {
+            mRotation = LIMIT(mRotation, 0.0f, 360.0f);
+        }
+
+        ImGui::Row("Scale", width);
+        ImGui::DragFloat("##sc-tex", &scale, 0.05f, 0.2f, 6.0f, "%.2f");
+        ImGui::DrawTexture(mTileMap->getTexture(mCurrentTexture), 0, 0, scale, &mTempTiles);
+
+        if (mConfig->isHover) {
+            renderTemp();
+        }
+        else {
+            mConfig->mRender.mTotalTemp = 0;
         }
     }
 }

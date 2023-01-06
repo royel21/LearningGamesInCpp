@@ -15,49 +15,62 @@
 
 #include <Math/PMath.h>
 #include <Time/Timer.h>
+#include <Utils/Utils.h>
 
 namespace Plutus
 {
+    template<typename T>
+    T* castShape(Shape* shape) {
+        return static_cast<T*>(shape);
+    }
+
     App::App(const char* name, int width, int height)
     {
         mName = name;
         mWidth = width;
         mHeight = height;
 
-        Input::get()->addEventListener(this);
+        Input.addEventListener(this);
     }
 
     void App::Init()
     {
-        // srand(time(NULL));   // Initialization, should only be called once.
+        mShapes.resize({ 0, 0, (float)mWidth, (float)mHeight });
+        // setAlwaysOnTop(true);
         mDebug = DebugRender::get();
         mDebug->init(&mCamera);
+
+        mShapes.insert<Circle2d>(70.0f, 100.0f, 30.0f);
+        mShapes.insert<Circle2d>(640.0f, 150.0f, 30.0f);
+        mShapes.insert<Circle2d>(640.0f, 100.0f, 30.0f);
+        mShapes.back().ref->isStatic = true;
+        mShapes.insert<Box2d>(360.0f, 90.0f, 100.0f, 100.0f);
+        mShapes.back().ref->isStatic = true;
+
+        float x = 40;
+        float y = 40;
+        for (size_t i = 0; i < 300; i++) {
+            float x = (float)Utils::getRandom(30, 1100);
+            float y = (float)Utils::getRandom(30, 700);
+            float size = (float)Utils::getRandom(20, 25);
+            mShapes.insert<Circle2d>(x, y, size);
+        }
+
         auto size = mCamera.getScaleScreen() - 5;
-        size = Vec2f(size.x, size.y);
-        shapes.push_back(new Circle2d{ 70, 100, 30 });
-        shapes.push_back(new Circle2d{ 640, 150, 30 });
-        // shapes.push_back(new Circle2d{ 70, 200, 30 });
-        // shapes.push_back(new Circle2d{ 70, 250, 30 });
-        // shapes.push_back(new Circle2d{ 70, 300, 30 });
-        // shapes.push_back(new Box2d{ 200, 100, 100, 100, 45 });
-        shapes.push_back(new Box2d{ 360, 90, 100, 100 });
-        // shapes.push_back(new Circle2d{ 100, 50, 50 });
-        // shapes.push_back(new Circle2d{ 160, 170, 50 });
-        // shapes.push_back(new Circle2d{ 250, 100, 50 });
-        // shapes.push_back(new Circle2d{ 40, 80, 50 });
-        // float x = 40;
-        // float y = 40;
-        // for (size_t i = 0; i < 5; i++) {
-        //     shapes.push_back(new Circle2d{ 50, 30 + float(int(y * i) % 650), 20 });
-        // }
-        shapes.push_back(new Line2d{ 5, 5, 5, size.y }); // Left
-        shapes.push_back(new Line2d{ 5, size.y, size.x, size.y }); // Top
-        shapes.push_back(new Line2d{ size.x, size.y, size.x, 5 }); // Right
-        shapes.push_back(new Line2d{ 5, 5, size.x, 5 }); // Bottom
+        mShapes.insert<Line2d>(5.0f, 5.0f, 5.0f, size.y);
+        mShapes.back().ref->isStatic = true;
 
+        mShapes.insert<Line2d>(5.0f, size.y, size.x, size.y);
+        mShapes.back().ref->isStatic = true;
 
-        shapes.push_back(new Line2d{ 80, 62, 600, 600 });
+        mShapes.insert<Line2d>(size.x, size.y, size.x, 5.0f);
+        mShapes.back().ref->isStatic = true;
 
+        mShapes.insert<Line2d>(5.0f, 5.0f, size.x, 5.0f);
+        mShapes.back().ref->isStatic = true;
+
+        mShapes.insert<Line2d>(80.0f, 62.0f, 600.0f, 600.0f);
+        mShapes.back().ref->isStatic = true;
     }
     bool isMouseDown = false;
     bool isMouseDownInCircle = false;
@@ -68,124 +81,171 @@ namespace Plutus
     Vec2f mpos;
 
 
-    float speed = 5;
+    float speed = 10;
 
     int controller = 0;
 
     void App::Update(float dt)
     {
         float cscale = mCamera.getScale();
-        if (Input::get()->onKeyDown("+")) {
+        if (Input.onKeyDown("+")) {
             cscale += 0.05f;
             mCamera.setScale(cscale);
         }
-        if (Input::get()->onKeyDown("-")) {
+        if (Input.onKeyDown("-")) {
             cscale -= 0.05f;
             mCamera.setScale(cscale);
         }
+        auto shape = mShapes[controller].ref;
+
         auto cpos = mCamera.getPosition();
-        if (Input::get()->isCtrl) {
-            if (Input::get()->onKeyDown("Up")) { cpos.y += speed; }
-            if (Input::get()->onKeyDown("Down")) { cpos.y -= speed; }
-            if (Input::get()->onKeyDown("Right")) { cpos.x += speed; }
-            if (Input::get()->onKeyDown("Left")) { cpos.x -= speed; }
+
+        if (Input.isCtrl) {
+            if (Input.onKeyDown("Up")) { cpos.y += speed; }
+            if (Input.onKeyDown("Down")) { cpos.y -= speed; }
+            if (Input.onKeyDown("Right")) { cpos.x += speed; }
+            if (Input.onKeyDown("Left")) { cpos.x -= speed; }
             mCamera.setPosition(cpos);
         }
         else {
-            if (Input::get()->onKeyDown("Up")) { shapes[controller]->pos.y += speed; }
-            if (Input::get()->onKeyDown("Down")) { shapes[controller]->pos.y -= speed; }
-            if (Input::get()->onKeyDown("Right")) { shapes[controller]->pos.x += speed; }
-            if (Input::get()->onKeyDown("Left")) { shapes[controller]->pos.x -= speed; }
+            if (Input.onKeyDown("Up")) { shape->pos.y += speed; }
+            if (Input.onKeyDown("Down")) { shape->pos.y -= speed; }
+            if (Input.onKeyDown("Right")) { shape->pos.x += speed; }
+            if (Input.onKeyDown("Left")) { shape->pos.x -= speed; }
         }
 
-        if (isMouseDownInBox) {
-            auto dis = initPos - mpos;
-            shapes[1]->pos = pos - dis;
-        }
+        // if (isMouseDownInBox) {
+        //     auto dis = initPos - mpos;
+        //     mShapes[1]->pos = pos - dis;
+        // }
 
         if (isMouseDownInCircle) {
             auto dis = initPos - mpos;
         }
 
-        for (size_t i = 0; i < shapes.size(); i++) {
-            auto shapeA = shapes[i];
-            if (shapeA->type & CircleShape) {
-                shapeA->pos.y -= 5;
+        for (auto& item : mShapes) {
+            auto shape = item.ref;
+
+            if (!shape->isStatic) {
+                // shape->pos.y -= 2;
+                auto qRef = mShapes.getQuadItemListRef(shape->getRect());
+                if (qRef != item.qRef) {
+                    // printf("dif \n", item.qIndex, item.index);
+
+                    qRef->mItems.push_back(item.qRef->mItems[item.qIndex]);
+
+                    if (item.qRef->size()) {
+                        item.qRef->mItems[item.qIndex] = item.qRef->mItems.back();
+                        mShapes[item.qRef->mItems[item.qIndex].second].qIndex = item.qIndex;
+                    }
+
+                    item.qRef->mItems.pop_back();
+
+                    item.qRef = qRef;
+                    item.qIndex = qRef->mItems.size() - 1;
+                }
             }
         }
 
-        for (size_t i = 0; i < shapes.size(); i++) {
-            MTV mtvA;
-            auto shapeA = shapes[i];
+        auto start = Time::micros();
+        for (size_t i = 0; i < mShapes.size(); i++) {
+            auto shapeA = mShapes[i].ref;
+            if (shapeA->isStatic) continue;
             bool isCircleA = shapeA->type & CircleShape;
             bool isBoxA = shapeA->type == BoxShape;
             bool isLineA = shapeA->type == EdgeShape;
 
-            for (size_t x = i + 1; x < shapes.size(); x++) {
-                auto shapeB = shapes[x];
+            auto items = mShapes.query(shapeA->getRect());
+
+            for (auto& item : items) {
+                if (i == item->index) continue;
+                auto shapeB = mShapes[item->index].ref;
+                // for (size_t x = 0; x < mShapes.size(); x++) {
+                //     auto shapeB = mShapes[x].ref;
                 bool isCircleB = shapeB->type == CircleShape;
                 bool isBoxB = shapeB->type == BoxShape;
                 bool isLineB = shapeB->type == EdgeShape;
-                MTV mtv;
+                bool collided = false;
 
+                MTV mtv;
                 if (isCircleA && isLineB) {
-                    Collider::isColliding((Circle2d*)shapeA, (Line2d*)shapeB, &mtv);
+                    collided = Collider::isColliding((Circle2d*)shapeA, (Line2d*)shapeB, &mtv);
                 }
 
                 if (isCircleA && isCircleB) {
-                    Collider::isColliding((Circle2d*)shapeA, (Circle2d*)shapeB, &mtv);
+                    collided = Collider::isColliding((Circle2d*)shapeA, (Circle2d*)shapeB, &mtv);
                 }
 
                 if (isCircleA && isBoxB) {
-                    Collider::isColliding((Circle2d*)shapeA, (Box2d*)shapeB, &mtv);
+                    collided = Collider::isColliding((Circle2d*)shapeA, (Box2d*)shapeB, &mtv);
                 }
 
                 if (isBoxA && isBoxB) {
-                    Collider::isColliding((Box2d*)shapeA, (Box2d*)shapeB, &mtv);
+                    collided = Collider::isColliding((Box2d*)shapeA, (Box2d*)shapeB, &mtv);
                 }
 
                 if (isBoxA && isCircleB) {
-                    Collider::isColliding((Box2d*)shapeA, (Circle2d*)shapeB, &mtv);
+                    collided = Collider::isColliding((Box2d*)shapeA, (Circle2d*)shapeB, &mtv);
                 }
 
                 if (isBoxA && isLineB) {
-                    Collider::isColliding((Box2d*)shapeA, (Line2d*)shapeB, &mtv);
+                    collided = Collider::isColliding((Box2d*)shapeA, (Line2d*)shapeB, &mtv);
                 }
-
-                if (isCircleB) {
-                    auto half = mtv.axis * 0.5;
-                    shapeA->pos += half;
-                    shapeB->pos -= half;
-
+                if (collided) {
+                    if (shapeA->pos.y < 29.5f) {
+                        shapeA->pos.y = 30.0f;
+                    }
+                    if (!shapeB->isStatic) {
+                        auto half = mtv.axis * 0.5;
+                        shapeA->pos += half;
+                        shapeB->pos -= half;
+                    }
+                    else {
+                        shapeA->pos += mtv.axis;
+                    }
                 }
-                else {
-                    shapeA->pos += mtv.axis;
-                }
-            }
-            if (isCircleA) {
-                DebugRender::get()->drawCircle(shapeA->pos, 5);
             }
         }
+        Logger::info("collider: %llu", Time::micros() - start);
+    }
+
+    void App::drawQuadrant(QuadTree* qt) {
+
+        for (auto& ch : qt->mChilds) {
+            if (ch) drawQuadrant(ch.get());
+        }
+
+        auto box = Box2d{ qt->mRect.pos, qt->mRect.size };
+        mDebug->submitBox(&box);
     }
 
     void App::Draw()
     {
-        for (auto shape : shapes) {
+        for (auto& item : mShapes) {
+            auto shape = item.ref;
             switch (shape->type) {
             case BoxShape: {
-                mDebug->drawBox(*(Box2d*)shape);
+                mDebug->submitBox((Box2d*)shape);
                 break;
             }
             case EdgeShape: {
-                mDebug->drawLine(*(Line2d*)shape);
+                mDebug->submitLine((Line2d*)shape);
                 break;
             }
             case CircleShape: {
-                mDebug->drawCircle(*(Circle2d*)shape);
+                DebugRender::get()->submitCircle(shape->pos, 5);
+                mDebug->submitCircle((Circle2d*)shape);
                 break;
             }
             }
+            // if (shape->type == CircleShape) {
+            //     auto rect = shape->getRect();
+            //     auto box = Box2d{ rect.pos, rect.size };
+            //     mDebug->submitBox(&box);
+            // }
         }
+
+        drawQuadrant(&mShapes.root);
 
         mDebug->render();
         mDebug->end();
@@ -193,18 +253,16 @@ namespace Plutus
 
     void App::Exit()
     {
-        for (auto shape : shapes) {
-            delete shape;
-        }
+        mShapes.clear();
     }
 
     void App::onKeyDown(const std::string& key)
     {
-        initPos = Input::get()->getMouseCoords();
+        initPos = Input.getMouseCoords();
 
-        if (PUtils::PointInBox(initPos, (Box2d*)shapes[1])) {
+        if (PUtils::PointInBox(initPos, (Box2d*)mShapes[1].ref)) {
             isMouseDownInBox = true;
-            pos = shapes[1]->pos;
+            pos = mShapes[1].ref->pos;
         }
 
         // if (PUtils::PointInCircle(initPos, &c1)) {
@@ -220,6 +278,6 @@ namespace Plutus
 
     void App::onMouseMove(float x, float y)
     {
-        mpos = Input::get()->getMouseCoords();
+        mpos = Input.getMouseCoords();
     }
 }

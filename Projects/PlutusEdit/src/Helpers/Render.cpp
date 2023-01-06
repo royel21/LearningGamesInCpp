@@ -3,16 +3,15 @@
 
 #include <Graphics/GLSL.h>
 #include <ECS/Components.h>
+#include <Graphics/Camera2D.h>
 #include <Graphics/DebugRenderer.h>
 
 #include <Assets/Assets.h>
-
-#include <Time/Timer.h>
+#include <Graphics/Graphic.h>
 
 namespace Plutus
 {
     Render::~Render() {
-        mShader.destroy();
     }
 
     void Render::init(Config* config)
@@ -21,10 +20,9 @@ namespace Plutus
         reload(config);
 
         if (!isLoaded) {
-            mShader.init(GLSL::vertexShader, GLSL::fragShader);
             mDebugRender = Plutus::DebugRender::get();
-            mDebugRender->init(&mCamera);
-            mDebugRender->setCellSize({ mConfig->tileWidth, mConfig->tileHeight });
+            mDebugRender->init(mCamera);
+            mDebugRender->setCellSize(mConfig->mProject.scene->getTileSize());
             isLoaded = true;
         }
     }
@@ -34,13 +32,12 @@ namespace Plutus
         int w = config->mProject.vpWidth;
         int h = config->mProject.vpHeight;
 
-        mCamera.init(w, h);
-        mCamera.setPosition(config->mProject.vpPos);
-        mCamera.setScale(config->mProject.zoomLevel);
+        mCamera->init(w, h);
+        mCamera->setPosition(config->mProject.vpPos);
+        mCamera->setScale(config->mProject.zoomLevel);
 
         mSpriteBatch.init();
-        mSpriteBatch.setShader(&mShader);
-        mSpriteBatch.setCamera(&mCamera);
+        mSpriteBatch.setCamera(mCamera);
 
         mFramePicker.init(w, h, true);
         mFrameBuffer.init(w, h);
@@ -52,11 +49,36 @@ namespace Plutus
         mFramePicker.resize(size);
     }
 
+    void Render::update(float dt) {
+        auto viewMap = mScene->getRegistry()->view<TagComponent, TileMapComponent>();
+        for (auto [ent, tag, tilemap] : viewMap.each()) {
+            if (tag.Visible) {
+                for (auto& tile : tilemap.mAnimateTiles)
+                {
+                    auto rect = mScene->getRect(tile);
+
+                    if (mCamera->getViewPortDim().overlap(rect))
+                    {
+                        tile.currentTime += dt;
+
+                        auto anim = tile.anim;
+
+                        if (tile.currentTime > anim->duration) {
+                            tile.frame = ++tile.frame % anim->frames.size();
+                            tile.texcoord = anim->frames[tile.frame];
+                            tile.currentTime = 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     void Render::draw()
     {
-        mCamera.update();
+        Graphic::enableBlend();
         if (mScene && mConfig) {
-            // auto start = Timer::millis();
+            // auto start = Time::millis();
             mFrameBuffer.setColor(mScene->mBGColor);
             prepare();
             mSpriteBatch.begin();
@@ -74,7 +96,9 @@ namespace Plutus
             drawPhysicBodies();
 
             mFrameBuffer.unBind();
+            mScene->remove();
         }
+        Graphic::disableBlend();
     }
 
     void Render::drawFixtures(PhysicBodyComponent* pbody, TransformComponent* trans) {
@@ -88,21 +112,21 @@ namespace Plutus
             switch (fixture.type) {
             case BoxShape: {
                 Vec4f rect = { pos + fixture.offset, fixture.size.x, fixture.size.y };
-                if (mCamera.isBoxInView(rect, 200))
+                if (mCamera->getViewPortDim().overlap(rect))
                 {
-                    mDebugRender->drawBox(rect);
+                    mDebugRender->submitBox(rect);
                 }
                 break;
             }
             case EdgeShape: {
-                mDebugRender->drawLine(pos + fixture.offset, fixture.size + fixture.offset);
+                mDebugRender->submitLine(pos + fixture.offset, fixture.size + fixture.offset);
                 break;
             }
             case CircleShape: {
                 Vec4f rect = { pos.x, pos.y, fixture.radius, fixture.radius };
-                if (mCamera.isBoxInView(rect, 200))
+                if (mCamera->getViewPortDim().overlap(rect))
                 {
-                    mDebugRender->drawCircle(pos + fixture.offset, fixture.radius);
+                    mDebugRender->submitCircle(pos + fixture.offset, fixture.radius);
                 }
                 break;
             }
@@ -112,20 +136,25 @@ namespace Plutus
 
     void Render::drawPhysicBodies()
     {
-        auto view = mScene->getRegistry()->view<TransformComponent, RigidBodyComponent>();
-        for (auto [e, trans, rbody] : view.each()) {
-            drawFixtures(&rbody, &trans);
+        auto view = mScene->getRegistry()->view<TagComponent, TransformComponent, RigidBodyComponent>();
+
+        for (auto [e, tag, trans, rbody] : view.each()) {
+            if (tag.Visible) {
+                drawFixtures(&rbody, &trans);
+            }
         }
 
-        auto view2 = mScene->getRegistry()->view<PhysicBodyComponent>();
-        for (auto [e, pbody] : view2.each()) {
-            Entity ent = { ent, mConfig->mProject.scene.get() };
-            auto trans = ent.getComponent<TransformComponent>();
+        auto view2 = mScene->getRegistry()->view<TagComponent, PhysicBodyComponent>();
+        for (auto [e, tag, pbody] : view2.each()) {
+            if (tag.Visible) {
+                Entity ent = { e, mConfig->mProject.scene.get() };
+                auto trans = ent.getComponent<TransformComponent>();
 
-            drawFixtures(&pbody, trans);
+                drawFixtures(&pbody, trans);
+            }
         }
 
-        if (view.size_hint()) {
+        if (view.size_hint() || view2.size_hint()) {
             mDebugRender->end();
             mDebugRender->render();
         }
@@ -133,14 +162,14 @@ namespace Plutus
 
     void Render::prepare()
     {
-        auto viewMap = mScene->getRegistry()->view<TileMapComponent>();
-        auto view = mScene->getRegistry()->view<TransformComponent, SpriteComponent>();
+        auto viewMap = mScene->getRegistry()->view<TagComponent, TileMapComponent>();
+        auto view = mScene->getRegistry()->view<TagComponent, TransformComponent, SpriteComponent>();
 
         /******************Resize temp buffer************************/
         auto size = view.size_hint();
 
-        for (auto [ent, map] : viewMap.each()) {
-            size += map.mTiles.size();
+        for (auto [ent, tag, map] : viewMap.each()) {
+            size += map.mTiles.size() + map.mAnimateTiles.size();
         }
 
         if (mRenderables.size() != size + mTotalTemp) {
@@ -150,48 +179,74 @@ namespace Plutus
         /******************************************/
 
         int i = mTotalTemp;
-        for (auto ent : viewMap)
+        for (auto [ent, tag, tilemap] : viewMap.each())
         {
-            auto [tilemap] = viewMap.get(ent);
-            if (tilemap.mTiles.size())
+            auto texIndex = -1;
+            Texture* tex = nullptr;
+
+            if (tag.Visible && tilemap.mTiles.size())
             {
-                const int w = tilemap.mTileWidth;
-                const int h = tilemap.mTileHeight;
+                const int w = mScene->mTileWidth;
+                const int h = mScene->mTileHeight;
 
                 for (auto& tile : tilemap.mTiles)
                 {
-                    auto rect = tile.getRect();
-                    if (mCamera.isBoxInView(rect, 200))
+                    auto rect = mScene->getRect(tile);
+                    if (mCamera->getViewPortDim().overlap(rect))
                     {
-                        auto texIndex = -1;
-                        Texture* tex = nullptr;
-                        uint32_t texId;
-
                         if (texIndex != tile.texture) {
                             tex = tilemap.getTexture(tile.texture);
-                            texId = tex ? tex->mTexId : -1;
+                            texIndex = tile.texture;
                         }
 
                         if (tex) {
-                            mRenderables[i++] = { texId, rect, tex->getUV(tile.texcoord), {}, tile.rotate, tile.flipX, tile.flipY, (int)entt::to_integral(ent), tilemap.mLayer, false };
+                            mRenderables[i++] = {
+                                tex, rect, tex->getUV(tile.texcoord), {},
+                                tile.rotate, tile.flipX, tile.flipY, (int)entt::to_integral(ent),
+                                tilemap.mLayer, false
+                            };
+                        }
+                    }
+                }
+
+                for (auto& tile : tilemap.mAnimateTiles)
+                {
+                    auto rect = mScene->getRect(tile);
+
+                    if (mCamera->getViewPortDim().overlap(rect))
+                    {
+                        auto texIndex = tile.anim->texId;
+
+                        if (texIndex != texIndex) {
+                            tex = tilemap.getTexture(texIndex);
+                            texIndex = texIndex;
+                        }
+                        if (tex) {
+                            mRenderables[i++] = {
+                                tex, rect, tex->getUV(tile.texcoord), {},
+                                0, false, false, (int)entt::to_integral(ent),
+                                tilemap.mLayer, false
+                            };
                         }
                     }
                 }
             }
         }
 
-        for (auto ent : view)
+        for (auto [ent, tag, trans, sprite] : view.each())
         {
-            auto [trans, sprite] = view.get(ent);
+            if (!tag.Visible) continue;
+
             auto rect = trans.getRect();
-            if (mCamera.isBoxInView(rect, 200))
+            if (mCamera->getViewPortDim().overlap(rect))
             {
                 auto tex = AssetManager::get()->getAsset<Texture>(sprite.mTextureId);
 
-                auto texId = tex ? tex->mTexId : -1;
-
-                mRenderables[i++] = { texId, rect, sprite.mUVCoord, sprite.mColor,
-                    trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent), trans.layer, trans.sortY };
+                mRenderables[i++] = {
+                    tex, rect, sprite.mUVCoord, sprite.mColor,
+                    trans.r, sprite.mFlipX, sprite.mFlipY, (int)entt::to_integral(ent),
+                    trans.layer, trans.sortY
+                };
             }
 
         }

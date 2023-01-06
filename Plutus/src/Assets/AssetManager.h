@@ -27,22 +27,27 @@ namespace Plutus
         template <typename T, typename... TArgs>
         T* addAsset(const std::string& id, TArgs &&... args)
         {
-            T* asset = new T();
             auto listId = getListId<T>();
-            if (!hasAsset<T>()) mAssets.resize(listId + 1);
+
+            if (!hasAssetList<T>()) mAssets.resize(listId + 1);
 
             auto& repo = mAssets[listId];
 
-            repo[id] = asset;
-            asset->setDir(baseDir);
-            asset->init(std::forward<TArgs>(args)...);
-            return asset;
+            if (!hasAsset<T>(id)) {
+                T* asset = new T();
+                repo[id] = asset;
+                asset->setDir(baseDir);
+                asset->init(std::forward<TArgs>(args)...);
+                return asset;
+            }
+
+            return static_cast<T*>(repo[id]);
         }
 
         template<typename T>
         T* getAsset(const std::string& id) {
 
-            if (hasAsset<T>()) {
+            if (hasAssetList<T>()) {
                 auto listId = getListId<T>();
                 auto found = mAssets[listId].find(id);
                 if (found != mAssets[listId].end()) {
@@ -53,13 +58,23 @@ namespace Plutus
         }
 
         template<typename T>
-        inline bool hasAsset() {
+        inline bool hasAsset(const std::string& id) {
+            if (hasAssetList<T>()) {
+                auto& list = mAssets[getListId<T>()];
+                return list.find(id) != list.end();
+            }
+
+            return false;
+        }
+
+        template<typename T>
+        inline bool hasAssetList() {
             return getListId<T>() < mAssets.size();
         }
 
         template<typename T>
         void removeAsset(const std::string& id) {
-            if (hasAsset<T>()) {
+            if (hasAssetList<T>()) {
                 auto& repo = mAssets[getListId<T>()];
                 auto it = repo.find(id);
                 if (it != repo.end()) {
@@ -74,7 +89,7 @@ namespace Plutus
         template<typename T>
         umap<std::string, Asset*>& getAssets() {
             auto listId = getListId<T>();
-            if (!hasAsset<T>()) mAssets.resize(listId + 1);
+            if (!hasAssetList<T>()) mAssets.resize(listId + 1);
             return mAssets[listId];
         }
 

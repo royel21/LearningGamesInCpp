@@ -4,18 +4,12 @@
 namespace Plutus
 {
 
-	Input::Input() : mMouseCoords(0, 0), mKeyMap(0)
+	InputManager::InputManager() : mMouseCoords(0, 0), mKeyMap(0)
 	{
-	}
-
-	Input* Input::get()
-	{
-		static Input instance;
-		return &instance;
 	}
 
 	// save the key state before register new key event
-	void Input::update()
+	void InputManager::update()
 	{
 		mMouseWheel = 0;
 		mMouseMove = false;
@@ -26,7 +20,7 @@ namespace Plutus
 		}
 	}
 	//Register key state
-	void Input::keyStateChange(const std::string& keyId, int state)
+	void InputManager::keyStateChange(const std::string& keyId, int state)
 	{
 		mKeyMap[keyId] = state > 0;
 
@@ -40,7 +34,7 @@ namespace Plutus
 		}
 	}
 	//Set the mouse X,Y position on Screen
-	void Input::setMouseCoords(float x, float y)
+	void InputManager::setMouseCoords(float x, float y)
 	{
 		mMouseCoords.x = x;
 		mMouseCoords.y = y;
@@ -50,7 +44,7 @@ namespace Plutus
 	}
 
 	//return the state of the key on last frame
-	bool Input::wasKeyDown(const std::string& keyId)
+	bool InputManager::wasKeyDown(const std::string& keyId)
 	{
 		auto it = mPrevKeyMap.find(keyId);
 		//Check if key was found and return it state else return false
@@ -58,29 +52,39 @@ namespace Plutus
 	}
 
 	// return true if key is being hold down
-	bool Input::onKeyDown(std::string keyId)
+	bool InputManager::onKeyDown(std::string keyId)
 	{
 		auto it = mKeyMap.find(keyId);
 		return it == mKeyMap.end() ? false : it->second;
 	}
 
 	//return single key press
-	bool Input::onKeyPressed(std::string keyId)
+	bool InputManager::onKeyPressed(std::string keyId)
 	{
 		//return true if key was not down last frame
 		return onKeyDown(keyId) && !wasKeyDown(keyId);
 	}
 
-	void Input::addEventListener(InputListener* listener)
+	void InputManager::setMouseWheel(int dir)
+	{
+		mMouseWheel = dir;
+		for (auto listener : mEventListeners) {
+			listener->onWheel(dir);
+		}
+	}
+
+	void InputManager::addEventListener(InputListener* listener)
 	{
 		mEventListeners.push_back(listener);
 	}
 
-	void Input::addRemoveListener(InputListener* listener)
+	void InputManager::addRemoveListener(InputListener* listener)
 	{
 		auto found = std::remove_if(mEventListeners.begin(), mEventListeners.end(), [&](auto t1) { return t1 == listener; });
 		if (found != mEventListeners.end()) {
 			mEventListeners.erase(found, mEventListeners.end());
 		}
 	}
+
+	InputManager Input = InputManager();
 } // namespace Plutus

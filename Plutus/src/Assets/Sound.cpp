@@ -1,5 +1,6 @@
 #include "Sound.h"
 #include "AssetManager.h"
+#include <Utils/FileIO.h>
 
 #include <miniaudio.h>
 #include <Log/Logger.h>
@@ -8,33 +9,41 @@ namespace Plutus
 {
     void Sound::init(const std::string& path, int type)
     {
-        if (AssetManager::get()->mAudioEngine == nullptr) {
-            Logger::error("Audio engine is not initialized");
-            return;
+        auto fullPath = (baseDir + path);
+
+        if (FileIO::exists(fullPath.c_str())) {
+
+            if (AssetManager::get()->mAudioEngine == nullptr) {
+                Logger::error("Audio engine is not initialized");
+                return;
+            }
+
+            mPath = path;
+            mType = type;
+
+            if (mSound != nullptr) {
+                delete mSound;
+            }
+
+            mSound = new ma_sound;
+
+            ma_uint32 flags = 0;
+
+            if (type) {
+                flags = MA_SOUND_FLAG_STREAM;
+            }
+
+            ma_result result = ma_sound_init_from_file(AssetManager::get()->mAudioEngine, fullPath.c_str(), flags, NULL, NULL, mSound);
+
+            if (result != MA_SUCCESS) {
+                delete mSound;
+                mSound = nullptr;
+                Logger::error("Failed load sound path: %s", fullPath.c_str());
+                return;
+            }
         }
-
-        mPath = path;
-        mType = type;
-
-        if (mSound != nullptr) {
-            delete mSound;
-        }
-
-        mSound = new ma_sound;
-
-        ma_uint32 flags = 0;
-
-        if (type) {
-            flags = MA_SOUND_FLAG_STREAM;
-        }
-
-        ma_result result = ma_sound_init_from_file(AssetManager::get()->mAudioEngine, (baseDir + mPath).c_str(), flags, NULL, NULL, mSound);
-
-        if (result != MA_SUCCESS) {
-            delete mSound;
-            mSound = nullptr;
-            Logger::error("Failed load sound path: %s", (baseDir + mPath).c_str());
-            return;
+        else {
+            Logger::error("sound not found: %s", fullPath.c_str());
         }
     }
 

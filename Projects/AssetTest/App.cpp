@@ -2,18 +2,21 @@
 #include <unordered_map>
 
 #include <Log/Logger.h>
-// #include "Logger.h"
-
 #include <Time/Timer.h>
 #include <Input/Input.h>
 #include <Utils/FileIO.h>
+#include <Utils/Utils.h>
 #include <Assets/Assets.h>
 #include <ECS/Components.h>
 #include <Systems/Systems.h>
-#include <Graphics/DebugRenderer.h>
-#include <Serialize/SceneSerializer.h>
+
+#include "ParticleComponent.h"
+#include "ParticleSystem.h"
+
 
 #define CHECKLIMIT(val, min, max) val<min ? min : val> max ? max : val
+
+#define NUM_PARTICLES 30000
 
 namespace Plutus
 {
@@ -24,196 +27,122 @@ namespace Plutus
     }
 
     void App::Init() {
-        mCamera.setScale(1.0f);
-        // mCamera.setPosition(-640.00f, -340.00f);
-
-        // mCamera.setViewPosition({ 0, 0 });
-
-        mScene = mProject.scene.get();
-
-        mFBuffer.init(mWidth, mHeight, true);
-
+        printGLVersion();
         mSystemManager.setProject(&mProject);
-        auto render = mSystemManager.AddSystem<RenderSystem>(&mCamera);
-        // render->setFrameBuffer(&mFBuffer);
-        // mBatch = render->getSpritebath();
+        mWindow.setVSYNC(0);
 
-        mSystemManager.AddSystem<PhysicSystem>();
-        mSystemManager.AddSystem<ScriptSystem>(&mCamera);
+        // AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle.png");
+        AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle-textures/fire.png", 64, 64, GL_LINEAR);
+        // AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle-textures/cosmic.png", 64, 64, GL_LINEAR);
 
-        mPlayer = mScene->createEntity("player");
-        if (mPlayer) {
-            AssetManager::get()->addAsset<Script>("player.lua", "assets/script/player.lua");
-            // mCamera.setTarget(mPlayer);
-            mPlayer.addComponent<TransformComponent>(10.0f, 50.0f, 32, 32);
-            mPlayer.addComponent<SpriteComponent>("", ColorRGBA8{ 255,0,0,255 });
-            mPlayer.addComponent<ScriptComponent>("player.lua");
+        auto ent = mProject.scene->createEntity("particleEmiter");
 
-            auto pbody = mPlayer.addComponent<RigidBodyComponent>();
-            // pbody->mLinearDamping = 1;
-            // pbody->mGravityScale = 0;
+        ent.addComponent<TransformComponent>(0.0f, 0.0f, 10, 10);
+        auto particles = ent.addComponent<ParticleComponent>(NUM_PARTICLES);
+        particles->color.setColor(255, 200, 200, 255);
+        particles->addTexture("particles.png");
+        particles->offset = { 0, -50 };
 
-            pbody->addBox({ 0, 2 }, { 20, 20 }, 0.3f);
-            pbody->setMaxVel(4);
-            // pbody->addCircle({ 32, 24 }, 5, 1);
-        }
-
-        auto ground = mScene->createEntity("ground");
-
-        if (ground) {
-            ground.addComponent<TransformComponent>(5.0f, 10.0f, 1280, 10);
-            ground.addComponent<SpriteComponent>("", ColorRGBA8{ 0,0,255,255 });
-
-            auto body = ground.addComponent<Plutus::PhysicBodyComponent>();
-            body->addBox({ 0, 0 }, { 1280, 10 }, 0.3f);
-        }
-
-        auto ground2 = mScene->createEntity("ground");
-
-        if (ground2) {
-            ground2.addComponent<TransformComponent>(100.0f, 25.0f, 200, 10);
-            ground2.addComponent<SpriteComponent>("");
-
-            auto body = ground2.addComponent<Plutus::PhysicBodyComponent>();
-            body->addBox({ 0, 0 }, { 200, 10 });
-        }
-
-        auto ground3 = mScene->createEntity("ground3");
-
-        if (ground3) {
-            ground3.addComponent<TransformComponent>(200.0f, 60.0f, 200, 10);
-            ground3.addComponent<SpriteComponent>("");
-
-            auto body = ground3.addComponent<Plutus::PhysicBodyComponent>();
-            body->addBox({ 0, 0 }, { 200, 10 });
-        }
-
+        auto sys = mSystemManager.AddSystem<ParticleSystem>(&mCamera);
+        // sys->setBlend(false);
         mSystemManager.init();
 
-        auto data = SceneSerializer(mScene);
-
-        auto chunky = AssetManager::get()->addAsset<Sound>("Chunky", "assets/sounds/XYZ2.ogg", MUSIC);
-
-        chunky->play();
-
+        // for (int i = 0; i < NUM_PARTICLES; i++) {
+        //     auto x = Utils::getRandom(-5, 5);
+        //     auto y = Utils::getRandom(5, 20);
+        //     particles->addParticle({ 640, 0 }, 100, { x, y }, 60.0f);
+        // }
+        // mLimiter.setFPS(120);
     }
 
     float force = 0.2f;
     float force2 = 10.0f;
     Vec2f mouseLast;
     Vec2f camOrg;
+
+
     void App::Update(float dt) {
+        auto mpos = Input.getMouseCoords();
+        auto particles = mProject.scene->getComponentFromName < ParticleComponent>("particleEmiter");
         auto cPos = mCamera.getPosition();
 
-        auto mInput = Input::get();
+        if (Input.isCtrl) {
 
-        if (mInput->isCtrl) {
-
-            if (mInput->onKeyDown("Right")) {
+            if (Input.onKeyDown("Right")) {
                 cPos.x += 5;
             }
-            if (mInput->onKeyDown("Left")) {
+            if (Input.onKeyDown("Left")) {
                 cPos.x -= 5;
             }
-            if (mInput->onKeyDown("Up")) {
-                cPos.y += 5;
+            if (Input.onKeyDown("Up")) {
+                cPos.y -= 5;
             }
-            if (mInput->onKeyDown("Down")) {
+            if (Input.onKeyDown("Down")) {
                 cPos.y -= 5;
             }
             mCamera.setPosition(cPos);
         }
-        else {
-            auto trans = mPlayer.getComponent<TransformComponent>();
-            // if (trans) {
-            //     auto size = mCamera.getScaleScreen();
-            // // // auto vec = mCamera.convertScreenToWold(pos);
 
-            // auto pos = trans->getPosition();
-            // mCamera.setPosition({ pos.x - 100, pos.y - 30 });
-            // pos = mCamera.getPosition();
-            // Logger::info("camera Pos: %.2f %.2f", pos.x, pos.y);
+        if (Input.onKeyDown("MouseLeft")) {
+            // if (timer.IntervalMillis(0)) {
+            for (int i = 0; i < 100; i++) {
+                auto x = Utils::getRandom(-100, 100);
+                auto y = Utils::getRandom(20, 100);
+                particles->addParticle(mpos, 100, { x, y }, 2.0f);
+            }
             // }
         }
-        // auto pos = mCamera.getPosition();
-        // auto woldOrg = mCamera.convertScreenToWold({ 0,0 });
-        // Logger::info("camera Pos: %.2f %.2f world: %.2f %.2f", pos.x, pos.y, woldOrg.x, woldOrg.y);
-        // mCamera.setPosition(-woldOrg);
-        if (Input::get()->onKeyPressed("MouseLeft")) {
-            // auto pos = Input::get()->getMouseCoords();
-            // auto worldPos = mCamera.convertScreenToWold(pos);
-            // Logger::info("camera Pos: %.2f %.2f world: %.2f %.2f", pos.x, pos.y, worldPos.x, worldPos.y);
-            mouseLast = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
-            Logger::info("camera Pos: %.2f %.2f", mouseLast.x, mouseLast.y);
-        }
 
-        if (Input::get()->onKeyPressed("MouseLeft"))
+        if (Input.onKeyPressed("MouseLeft"))
         {
-            mouseLast = Input::get()->getMouseCoords();
+            mouseLast = Input.getMouseCoords();
             camOrg = mCamera.getPosition();
+
         }
         // move the camera
-        if (Input::get()->isCtrl)
+        if (Input.isCtrl)
         {
             Vec2f offset;
-            if (Input::get()->onKeyDown("MouseLeft"))
+            if (Input.onKeyDown("MouseLeft"))
             {
-                Vec2f result = Input::get()->getMouseCoords() - mouseLast;
+                Vec2f result = Input.getMouseCoords() - mouseLast;
                 result /= mCamera.getScale();
                 offset = camOrg - result;
-                Logger::info("camera Pos: %.2f %.2f", result.x, result.y);
                 mCamera.setPosition(offset);
             }
 
-            auto scroll = Input::get()->getMouseWheel();
+            auto scroll = Input.getMouseWheel();
             if (scroll != 0)
             {
-                auto mpos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
-
                 auto newVal = mCamera.getScale() + (scroll > 0 ? 0.05f : -0.05f);
                 mCamera.setScale(CHECKLIMIT(newVal, 0.20f, 6));
-                auto newPos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
+                auto newPos = mCamera.convertScreenToWold(Input.getMouseCoords());
 
                 auto offset = newPos - mpos;
                 mCamera.setPosition(mCamera.getPosition() - offset);
-                Logger::info("offset: %.2f %.2f", offset.x, offset.y);
 
             }
         }
+        setBackgoundColor(0.0f, 0.5f, 0.8f);
 
-
-
+        auto start = Time::micros();
         mSystemManager.update(dt);
+        // char title[128];
+        // std::snprintf(title, 128, "FPS: %.2f elapse: %03.03f", mLimiter.getFPS(), (Time::micros() - start) / 1000.0f);
+        // mWindow.setTitle(title);
 
+
+        // auto start = Time::millis();
+        Logger::info("count: %i - elapse: %llu", particles->count, 1000 / (Time::micros() - start));
+
+
+        char title[128];
+        std::snprintf(title, 128, "FPS: %.2f", mLimiter.getFPS());
+        mWindow.setTitle(title);
     }
 
     void App::Draw() {
-        // if (Input::get()->onKeyDown("MouseLeft")) {
-        //     auto pos = mCamera.convertScreenToWold(Input::get()->getMouseCoords());
-
-        //     auto ent = mScene->getEntity(mFBuffer.getEntId(pos));
-        //     if (ent) {
-        //         Logger::info("camera Pos: %s", ent.getName().c_str());
-        //     }
-        // }
-        // mBatch->submit(mFBuffer.getTextureId(), Vec4f{ 0,0, mWidth, mHeight }, { 0, 0,1 ,1 }, {}, 0, false, true);
-        // mBatch->finish();
-        // mRenderer.submit(tex->mTexId, rect1, tex->getUV(0));
-        // mRenderer.submit(tex->mTexId, rect2, tex->getUV(0));
-        // mRenderer.finish();
-
-        // mRenderer.submit("Zoika", "Testing Font", 0, 256.0f);
-        // mRenderer.submit("Arial", "Testing Font", 0, 192.0f);
-        // mRenderer.finish(BATCH_TEXT);
-
-
-        // mDebug->drawGrid();
-        // mDebug->drawBox(rect1);
-        // mDebug->drawBox(rect2);
-
-        // mDebug->drawCircle({ Circle2d{100, 150, 50} });
-        // mDebug->end();
-        // mDebug->render(2);
+        setBackgoundColor(0.0f, 0.35f, 0.75f);
     }
 
     void App::Resize(int w, int h) {

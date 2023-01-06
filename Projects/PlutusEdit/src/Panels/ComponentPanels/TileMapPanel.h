@@ -26,16 +26,19 @@ namespace Plutus
         void processMode();
         void AddTexureDialog(bool& show);
 
+        void editMode(float width);
+        void placeMode(float width);
+
     private:
-        Config* mConfig;
+        Config* mConfig = nullptr;
 
         int mMode = 0;
         float mRotation = 0;
         bool mIsOpen = false;
         int mCurrentTexture = 0;
         bool mShowAddModal = false;
-        TileMapComponent* mTileMap = nullptr;
         Tile* mCurrentTile = nullptr;
         std::vector<Vec3i> mTempTiles;
+        TileMapComponent* mTileMap = nullptr;
     };
 } // namespace Plutus

@@ -31,7 +31,7 @@ namespace Plutus
 
         Vec2f getSize() { return { mSize.x, mSize.y }; }
 
-        float getAspectRatio() { return 1.77777778f; }
+        float getAspectRatio() { return 1.6666666f; }
 
         void setDirty() { isDirty = true; };
 

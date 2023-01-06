@@ -7,10 +7,10 @@
 #include <Math/Vectors.h>
 #include <Utils/Pointer.h>
 #include <Core/Project.h>
+#include "Helpers/Render.h"
 
 namespace Plutus
 {
-    class Render;
     class Camera2D;
 
     enum State {
@@ -30,6 +30,7 @@ namespace Plutus
 
         std::string getDir(const std::string& part);
 
+        void loadSceneFromFile(const std::string& path);
         bool CreateScene(const std::string& name);
         void RenameScene(const std::string& oldName, const std::string& newName);
         void removeScene(std::string id);
@@ -50,9 +51,6 @@ namespace Plutus
         // Window height
         int winHeight = 768;
 
-        int tileWidth = 32;
-        int tileHeight = 32;
-
         Camera2D* mCamera = nullptr;
 
         EditorProject mProject;
@@ -66,10 +64,10 @@ namespace Plutus
         bool isLoaded = false;
 
         State state = Editing;
-        Render* mRender;
+        Render mRender;
 
         Config() { load(); }
-        void init(Render* render);
+        void init(Camera2D* camera);
 
         ~Config();
 

@@ -15,6 +15,7 @@
 namespace Plutus
 {
     void BottomWindow::draw() {
+        if (mConfig->state != Editing) return;
         ImGuiWindowClass window_class;
         window_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
         ImGui::SetNextWindowClass(&window_class);
@@ -27,7 +28,7 @@ namespace Plutus
                         ImGui::TableNextColumn();
                         {
                             auto width = ImGui::GetContentRegionAvailWidth() * 0.3f;
-                            auto& camera = mRender->mCamera;
+                            auto camera = mConfig->mRender.mCamera;
                             auto& zoom = mConfig->mProject.zoomLevel;
                             ImGui::Row("Zoom", width);
 
@@ -37,11 +38,11 @@ namespace Plutus
                             if (ImGui::InputFloat("##seq-time", &zoom, 0.05f))
                             {
                                 mConfig->mProject.zoomLevel = CHECKLIMIT(zoom, 0.20f, 10.0f);
-                                camera.setScale(mConfig->mProject.zoomLevel);
+                                camera->setScale(mConfig->mProject.zoomLevel);
                             }
                             ImGui::SameLine();
                             if (ImGui::Button("RS", { 24, 0 })) {
-                                camera.setScale(1.0f);
+                                camera->setScale(1.0f);
                                 mConfig->mProject.zoomLevel = 1.0f;
                             }
                             ImGui::PopStyleVar();
@@ -50,7 +51,7 @@ namespace Plutus
 
                             ImGui::Row("Position", width);
                             if (ImGui::Draw2Float("##cpos", mConfig->mProject.vpPos))
-                                camera.setPosition(mConfig->mProject.vpPos);
+                                camera->setPosition(mConfig->mProject.vpPos);
 
                             ImGui::Row("BG Color", width);
                             Vec4f color = mConfig->mProject.scene->mBGColor;
@@ -75,8 +76,8 @@ namespace Plutus
                             ImGui::Row("Cell Size", width);
                             if (ImGui::DragInt2("##Cell-Size", &cellSize.x)) {
                                 mDebugRender->setCellSize(cellSize);
-                                mConfig->tileWidth = cellSize.x;
-                                mConfig->tileHeight = cellSize.y;
+                                mConfig->mProject.scene->mTileWidth = cellSize.x;
+                                mConfig->mProject.scene->mTileHeight = cellSize.y;
                             }
 
                             static Vec4f color = mDebugRender->getGridLineColor();
@@ -84,7 +85,7 @@ namespace Plutus
                             if (ImGui::ColorEdit3("##Grid-Color", &color.x))
                             {
                                 color.w = 1;
-                                mDebugRender->setColor({ color });
+                                mDebugRender->setColor(color);
                             }
                         }
                         ImGui::EndTable();

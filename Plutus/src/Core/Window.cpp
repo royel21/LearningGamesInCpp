@@ -21,20 +21,25 @@ extern "C"
 #pragma comment(lib, "winmm.lib")
 #endif
 
-
+extern "C" {
+    // _declspec(dllexport) unsigned long NvOptimusEnablement = 1;
+    // _declspec(dllexport) unsigned long AmdPowerXpressRequestHighPerformance = 1;
+}
 
 #include <Input/Input.h>
 
-#include <unordered_map>
+#include <array>
 
+#include <Log/Logger.h>
+#include <Time/Timer.h>
 
 namespace Plutus
 {
-    std::unordered_map<int, const char*> unkeys;
+    std::array<const char*, 1024> unkeys;
     void initKeys();
 
     const char* getKey(int key) {
-        return unkeys.find(key) != unkeys.end() ? unkeys[key] : "Unkown";
+        return unkeys[key] ? unkeys[key] : "Unkown";
     }
 
     Window::Window(const char* name, int width, int height, GLFWwindow* parent)
@@ -77,21 +82,21 @@ namespace Plutus
         glfwSetWindowUserPointer(mWindow, this);
         // Setup all callback
         glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-            Input::get()->keyStateChange(getKey(key), action);
+            Input.keyStateChange(getKey(key), action);
             });
         // Mouse Button 
         glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods) {
-            Input::get()->keyStateChange(getKey(button), action > 0);
+            Input.keyStateChange(getKey(button), action > 0);
             });
         // Mouse Move
         glfwSetCursorPosCallback(mWindow, [](GLFWwindow* window, double xpos, double ypos) {
             int width, height;
             glfwGetWindowSize(window, &width, &height);
-            Input::get()->setMouseCoords(static_cast<float>(xpos), static_cast<float>(height - ypos));
+            Input.setMouseCoords(static_cast<float>(xpos), static_cast<float>(height - ypos));
             });
         // Mouse Wheel 
         glfwSetScrollCallback(mWindow, [](GLFWwindow* window, double xoffset, double yoffset) {
-            Input::get()->setMouseWheel(static_cast<int>(yoffset));
+            Input.setMouseWheel(static_cast<int>(yoffset));
             });
         //Item Dropped to the window
         glfwSetDropCallback(mWindow, [](GLFWwindow* window, int count, const char** paths) {
@@ -108,19 +113,11 @@ namespace Plutus
                 win->onResize(width, height);
             }
             });
-        //Enable alpha blend
-        enableBlendMode();
-#ifdef _WIN32
-        // if we are on window set the time precision to 1ms for sleep function
-        timeBeginPeriod(1);
-#endif
+
         return true;
     }
     Window::~Window()
     {
-#ifdef _WIN32
-        timeEndPeriod(1);
-#endif
         if (mWindow != nullptr)
         {
             glfwDestroyWindow(mWindow);
@@ -131,12 +128,14 @@ namespace Plutus
 
     bool Window::isFinish()
     {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         return !glfwWindowShouldClose(mWindow);
     }
 
     void Window::update()
     {
         glfwSwapBuffers(mWindow);
+        Input.update();
         glfwPollEvents();
     }
 
@@ -147,105 +146,121 @@ namespace Plutus
 
     void Window::setAlwaysOnTOp(bool isOnTop)
     {
-        glfwSetWindowAttrib(mWindow, GLFW_FLOATING, isOnTop);
+#ifdef _WIN32
+        if (mWindow)
+            glfwSetWindowAttrib(mWindow, GLFW_FLOATING, isOnTop);
+#endif
+    }
+
+    void Window::setVSYNC(int state)
+    {
+        glfwSwapInterval(state);
+    }
+
+    void Window::setTitle(const char* title)
+    {
+        glfwSetWindowTitle(mWindow, title);
     }
 
     void initKeys()
     {
-        unkeys = {
-            {0, "MouseLeft"},
-            {1, "MouseRight"},
-            {2, "MouseMidle"},
-            {3, "MouseEx1"},
-            {4, "MouseEx2"},
-            {32, "Space"},
-            {39, "'"},
-            {44, ","},
-            {45, "-"},
-            {46, "."},
-            {47, "/"},
-            {48, "0"},
-            {49, "1"},
-            {50, "2"},
-            {51, "3"},
-            {52, "4"},
-            {53, "5"},
-            {54, "6"},
-            {55, "7"},
-            {56, "8"},
-            {57, "9"},
-            {61, "+"},
-            {65, "A"},
-            {66, "B"},
-            {67, "C"},
-            {68, "D"},
-            {69, "E"},
-            {70, "F"},
-            {71, "G"},
-            {72, "H"},
-            {73, "I"},
-            {74, "J"},
-            {75, "K"},
-            {76, "L"},
-            {77, "M"},
-            {78, "N"},
-            {79, "O"},
-            {80, "P"},
-            {81, "Q"},
-            {82, "R"},
-            {83, "S"},
-            {84, "T"},
-            {85, "U"},
-            {86, "V"},
-            {87, "W"},
-            {88, "X"},
-            {89, "Y"},
-            {90, "Z"},
-            {91, "["},
-            {92, "\\"},
-            {93, "]"},
-            {94, "`"},
-            {256, "Scape"},
-            {258, "Tab"},
-            {260, "Back"},
-            {260, "Ins"},
-            {261, "Del"},
-            {262, "Right"},
-            {263, "Left"},
-            {264, "Down"},
-            {265, "Up"},
-            {266, "PageUp"},
-            {267, "PageDown"},
-            {290, "F1"},
-            {291, "F2"},
-            {292, "F3"},
-            {293, "F4"},
-            {294, "F5"},
-            {295, "F6"},
-            {296, "F7"},
-            {297, "F8"},
-            {298, "F9"},
-            {299, "F10"},
-            {300, "F11"},
-            {301, "F12"},
-            {320, "NUMPAD0"},
-            {321, "NUMPAD1"},
-            {322, "NUMPAD2"},
-            {323, "NUMPAD3"},
-            {324, "NUMPAD4"},
-            {325, "NUMPAD5"},
-            {326, "NUMPAD6"},
-            {327, "NUMPAD7"},
-            {328, "NUMPAD8"},
-            {329, "NUMPAD9"},
-            {331, "NUMPAD/"},
-            {332, "NUMPAD*"},
-            {333, "NUMPAD-"},
-            {334, "NUMPAD+"},
-            {335, "NUMPAD."},
-            {340, "Shift"},
-            {341, "Ctrl"},
-            {342, "Alt"},
-        };
+        unkeys[0] = "MouseLeft";
+        unkeys[1] = "MouseRight";
+        unkeys[2] = "MouseMidle";
+        unkeys[3] = "MouseEx1";
+        unkeys[4] = "MouseEx2";
+        unkeys[32] = "Space";
+        unkeys[39] = "'";
+        unkeys[44] = ",";
+        unkeys[45] = "-";
+        unkeys[46] = ".";
+        unkeys[47] = "/";
+        unkeys[48] = "0";
+        unkeys[49] = "1";
+        unkeys[50] = "2";
+        unkeys[51] = "3";
+        unkeys[52] = "4";
+        unkeys[53] = "5";
+        unkeys[54] = "6";
+        unkeys[55] = "7";
+        unkeys[56] = "8";
+        unkeys[57] = "9";
+        unkeys[61] = "+";
+        unkeys[65] = "A";
+        unkeys[66] = "B";
+        unkeys[67] = "C";
+        unkeys[68] = "D";
+        unkeys[69] = "E";
+        unkeys[70] = "F";
+        unkeys[71] = "G";
+        unkeys[72] = "H";
+        unkeys[73] = "I";
+        unkeys[74] = "J";
+        unkeys[75] = "K";
+        unkeys[76] = "L";
+        unkeys[77] = "M";
+        unkeys[78] = "N";
+        unkeys[79] = "O";
+        unkeys[80] = "P";
+        unkeys[81] = "Q";
+        unkeys[82] = "R";
+        unkeys[83] = "S";
+        unkeys[84] = "T";
+        unkeys[85] = "U";
+        unkeys[86] = "V";
+        unkeys[87] = "W";
+        unkeys[88] = "X";
+        unkeys[89] = "Y";
+        unkeys[90] = "Z";
+        unkeys[91] = "[";
+        unkeys[92] = "\\";
+        unkeys[93] = "]";
+        unkeys[94] = "`";
+        unkeys[256] = "Scape";
+        unkeys[257] = "Enter";
+        unkeys[258] = "Tab";
+        unkeys[260] = "Back";
+        unkeys[260] = "Ins";
+        unkeys[261] = "Del";
+        unkeys[262] = "Right";
+        unkeys[263] = "Left";
+        unkeys[264] = "Down";
+        unkeys[265] = "Up";
+        unkeys[266] = "PageUp";
+        unkeys[267] = "PageDown";
+        unkeys[290] = "F1";
+        unkeys[291] = "F2";
+        unkeys[292] = "F3";
+        unkeys[293] = "F4";
+        unkeys[294] = "F5";
+        unkeys[295] = "F6";
+        unkeys[296] = "F7";
+        unkeys[297] = "F8";
+        unkeys[298] = "F9";
+        unkeys[299] = "F10";
+        unkeys[300] = "F11";
+        unkeys[301] = "F12";
+        unkeys[320] = "NUMPAD0";
+        unkeys[321] = "NUMPAD1";
+        unkeys[322] = "NUMPAD2";
+        unkeys[323] = "NUMPAD3";
+        unkeys[324] = "NUMPAD4";
+        unkeys[325] = "NUMPAD5";
+        unkeys[326] = "NUMPAD6";
+        unkeys[327] = "NUMPAD7";
+        unkeys[328] = "NUMPAD8";
+        unkeys[329] = "NUMPAD9";
+        unkeys[330] = ".";
+        unkeys[331] = "/";
+        unkeys[332] = "*";
+        unkeys[333] = "-";
+        unkeys[334] = "+";
+        unkeys[335] = "Enter";
+        unkeys[340] = "Shift";
+        unkeys[341] = "Ctrl";
+        unkeys[342] = "Alt";
+        unkeys[344] = "Shift";
+        unkeys[345] = "Ctrl";
+        unkeys[346] = "AltRight";
     }
 }

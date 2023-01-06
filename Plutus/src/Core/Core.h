@@ -13,6 +13,7 @@
 namespace Plutus
 {
     class IScreen;
+    class Input;
     /**
      * Base Class for create an app
      * @param mWidth
@@ -27,13 +28,12 @@ namespace Plutus
      */
     class Core
     {
-    private:
+    protected:
         Window mWindow;
         Limiter mLimiter;
 
         bool mUseConfig = false;
 
-    protected:
         //Width of the Window
         int mWidth = 1280;
         //Height of the Window
@@ -48,6 +48,7 @@ namespace Plutus
         std::string mNextScreen;
         IScreen* mCurrentScreen = nullptr;
         std::unordered_map<std::string, IScreen*> mScreenList;
+
 
     public:
         Project mProject;
@@ -79,6 +80,12 @@ namespace Plutus
         void setNextScreen(const std::string& screenId);
 
         inline void setAlwaysOnTop(bool isTop = true) { mWindow.setAlwaysOnTOp(isTop); }
+
+        void printGLVersion();
+
+        void setBackgoundColor(float r = 1, float g = 1, float b = 1, float a = 1);
+        //Terminate app Process
+        void close() { mExit = true; }
 
     private:
         void init();

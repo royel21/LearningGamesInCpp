@@ -12,11 +12,11 @@ namespace Plutus
 
     float Vec2f::length()
     {
-        return 1 / invSqrt(x * x + y * y);
+        return 1 / PMath::invSqrt(x * x + y * y);
     }
 
     float Vec2f::invLength() {
-        return invSqrt(x * x + y * y);
+        return PMath::invSqrt(x * x + y * y);
     }
 
     Vec2f Vec2f::unit()
@@ -53,6 +53,11 @@ namespace Plutus
     Vec2f Vec2f::operator-(const Vec2f& v) const
     {
         return { x - v.x, y - v.y };
+    }
+
+    Vec2f Vec2f::operator*(const Vec2f& v) const
+    {
+        return { x * v.x, y * v.y };
     }
 
     Vec2f Vec2f::operator+(float val) const {
@@ -109,7 +114,7 @@ namespace Plutus
 
     bool Vec2f::operator==(const Vec2f& v) const
     {
-        return compareF(x, v.x, 0.00001f) && compareF(y, v.y, 0.00001f);
+        return PMath::compareF(x, v.x, 0.00001f) && PMath::compareF(y, v.y, 0.00001f);
     }
 
     bool Vec2f::operator!=(const Vec2f& v) const
@@ -128,5 +133,9 @@ namespace Plutus
     }
     bool Vec2f::operator>= (const Vec2f& v) const {
         return x >= v.x && y >= v.y;
+    }
+
+    Vec2f Vec2f::getDirection(const Vec2f& v) {
+        return (*this - v).unit();
     }
 } // namespace Plutus

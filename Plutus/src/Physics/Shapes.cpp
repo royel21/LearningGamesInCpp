@@ -7,11 +7,27 @@
 namespace Plutus
 {
     void Shape::update() {
-        if (type != EdgeShape)
-            pos = fromWorld(body->GetPosition());
+        // if (type != EdgeShape)
+        //     pos = fromWorld(body->GetPosition());
     }
 
-    Line2d::Line2d(float x1, float y1, float x2, float y2, float r) : end(x2, y2) {
+    Rect Shape::getRect() {
+        switch (type) {
+        case CircleShape: {
+            return { pos - radius, {radius * 2, radius * 2} };
+        }
+        case EdgeShape: {
+            return { pos, size };
+        }
+        case BoxShape: {
+            return { pos, size };
+        }
+        }
+        return {};
+    }
+
+    Line2d::Line2d(float x1, float y1, float x2, float y2, float r) {
+        size = { x2, y2 };
         rotation = r;
         pos = { x1, y1 };
         type = EdgeShape;
@@ -21,18 +37,18 @@ namespace Plutus
         rotation = r;
         type = EdgeShape;
         pos = _start;
-        end = _end;
+        size = _end;
     }
 
     Vec2f Line2d::getCenter() {
-        return (pos + end) * 0.5;
+        return (pos + size) * 0.5;
     }
 
     Points Line2d::getVertices() {
-        Points vertices{ pos, end };
+        Points vertices{ pos, size };
         if (rotation != 0.0f) {
             for (auto& vert : vertices) {
-                rotate(vert, getCenter(), rotation);
+                PMath::rotate(vert, getCenter(), rotation);
             }
         }
 
@@ -44,8 +60,9 @@ namespace Plutus
         return vertices;
     }
 
-    Box2d::Box2d(float x, float y, float w, float h, float r) : Shape(x, y), size(w, h)
+    Box2d::Box2d(float x, float y, float w, float h, float r) : Shape(x, y)
     {
+        size = { w,h };
         type = BoxShape;
         rotation = r;
         half = { w * 0.5f, h * 0.5f };
@@ -53,8 +70,9 @@ namespace Plutus
         getVertices();
     }
 
-    Box2d::Box2d(const Vec2f& pos, const Vec2f& _size, float r) : Shape(pos), size(_size)
+    Box2d::Box2d(const Vec2f& pos, const Vec2f& _size, float r) : Shape(pos)
     {
+        size = _size;
         type = BoxShape;
         rotation = r;
         half = size * 0.5f;
@@ -68,7 +86,7 @@ namespace Plutus
         Points vertices{ {min}, {max.x, min.y}, {max}, {min.x, max.y} };
         if (rotation) {
             for (auto& vert : vertices) {
-                rotate(vert, getCenter(), rotation);
+                PMath::rotate(vert, getCenter(), rotation);
             }
         }
 

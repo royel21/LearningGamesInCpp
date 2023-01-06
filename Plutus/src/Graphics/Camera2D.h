@@ -18,13 +18,17 @@ namespace Plutus
 		int mWindowHeight = 0;
 
 		bool mNeedsMatrixUpdate = true;
+		bool mHasBounds = false;
+
 		float mScale = 1.0f;
 		Entity mEntity;
 		Vec2f mOffset = { 0, 0 };
 		Vec2f mCamPos = { 0, 0 };
 		Vec4f mBounds = { 0, 0 };
+		Vec2f mVPSize = { 0, 0 };
 		glm::mat4 mOrtho = glm::mat4(0);
 		glm::mat4 mCameraMatrix = glm::mat4(0);
+		Vec2f mScaleSize;
 
 	public:
 		/*
@@ -40,17 +44,15 @@ namespace Plutus
 		//set camera position and shedule a update
 		//@param x position x
 		//@param y position y
-		inline void setPosition(float x, float y) { mCamPos.x = x; mCamPos.y = y; }
+		inline void setPosition(float x, float y) { setPosition({ x,y }); }
 
-		inline void setBounds(const Vec4f& bounds) { mBounds = bounds; }
+		inline void setBounds(const Vec4f& bounds) { mBounds = bounds; mHasBounds = true; }
 
 		//set camera position and shedule a update
 		//@param newPosition glm vec2 position
 		inline void setPosition(const Vec2f& pos) { mCamPos = pos; }
 
-		inline void setTarget(Entity entity, const Vec2f& offset = { 0 }) {
-			mEntity = entity; mOffset = offset;
-		}
+		inline void setTarget(Entity entity) { mEntity = entity; }
 		/*
 			change the camera to a new with and height
 			@param w Width of the camera in pixel
@@ -65,13 +67,15 @@ namespace Plutus
 		// return the current scale value
 		inline float getScale() { return mScale; }
 		// zoom the view port
-		inline void setScale(float scale) { mScale = scale > 0 ? scale : 1.0f; init(mScreenWidth, mScreenHeight); }
+		void setScale(float scale);
 
 		Vec4f getViewPortDim();
 		// return the view port size in pixels
 		Vec2f getViewPortSize() { return Vec2f(mScreenWidth, mScreenHeight); }
 		//Getters
 		inline Vec2f getPosition() { return mCamPos; }
+
+		void setVPSize(const Vec2f& size) { mVPSize = size; }
 
 		// return the 4x4 camera matrix
 		inline glm::mat4 getCameraMatrix() { return mCameraMatrix; }
@@ -80,9 +84,7 @@ namespace Plutus
 		//Convert screen coordination to camera coordination and return it
 		Vec2f convertScreenToWold(Vec2f screenCoords, bool invertY = false);
 
-		const Vec2f getScaleScreen() { return Vec2f(mScreenWidth, mScreenHeight) / mScale; }
-
-		bool isBoxInView(const Vec4f& box, int offset = 0);
+		const Vec2f getScaleScreen() { return mScaleSize; }
 	};
 } // namespace Plutus
 

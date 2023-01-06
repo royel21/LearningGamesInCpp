@@ -22,23 +22,48 @@ namespace Plutus
 
             auto result = lua.script(script->mBuffer, mEnv);
             if (result.valid()) {
-                mEnv[ent.getName()] = Entity{ ent.mId, ent.mScene };
+                mEnv["entity"] = Entity{ ent.mId, ent.mScene };
+
                 if (mEnv["init"] != sol::nil) {
                     mEnv["init"]();
-                    isLoaded = true;
                 }
+                isLoaded = true;
             }
         }
     }
 
+    void ScriptComponent::animationEnd(const std::string id) {
+        if (isLoaded && mEnv["animationEnd"] != sol::nil) {
+            mEnv["animationEnd"](id);
+        }
+    }
+
     void ScriptComponent::update(float dt) {
-        if (isLoaded) {
+        if (isLoaded && mEnv["update"] != sol::nil) {
             mEnv["update"](dt);
         }
     }
 
+    void ScriptComponent::CollisionStart(uint32_t entId, bool isSensor) {
+        if (isLoaded && mEnv["collisionStart"] != sol::nil) {
+            mEnv["collisionStart"](entId, isSensor);
+        }
+    }
+    void ScriptComponent::CollisionEnd(uint32_t entId, bool isSensor) {
+        if (isLoaded && mEnv["collisionEnd"] != sol::nil) {
+            mEnv["collisionEnd"](entId, isSensor);
+        }
+    }
+
+    float ScriptComponent::report(uint32_t id, float frac) {
+        if (isLoaded && mEnv["reportRay"] != sol::nil) {
+            return mEnv["reportRay"](id, frac);
+        }
+        return 0;
+    }
+
     void ScriptComponent::destroy() {
-        if (isLoaded) {
+        if (isLoaded && mEnv["destroy"] != sol::nil) {
             mEnv["destroy"]();
         }
         mEnv = sol::environment();

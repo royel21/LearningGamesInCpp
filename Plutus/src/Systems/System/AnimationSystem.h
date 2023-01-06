@@ -6,7 +6,7 @@ namespace Plutus
     class AnimationSystem : public ISystem
     {
     public:
-        void init(Project* project);
+        void init();
         void update(float dt);
     };
 } // namespace Plutus

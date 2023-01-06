@@ -2,8 +2,8 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 #include <cmath>
-
-#include <ECS/Components/TransformComponent.h>
+#include <algorithm>
+#include <Input/Input.h>
 
 namespace Plutus
 {
@@ -12,49 +12,44 @@ namespace Plutus
 		mScreenWidth = screenWidth;
 		mScreenHeight = screenHeight;
 		if (isViewPortWindowSize) {
-			mWindowWidth = screenWidth; mWindowHeight = screenHeight;
+			mWindowWidth = screenWidth;
+			mWindowHeight = screenHeight;
 		}
 
-		mOrtho = glm::ortho(0.0f, (float)mScreenWidth / mScale, 0.0f, (float)mScreenHeight / mScale, 0.0f, 100.0f);
-
+		setScale(mScale);
 		update();
+	}
+
+	void Camera2D::setScale(float scale) {
+		mScale = std::clamp(scale, 0.1f, 20.0f);
+		mScaleSize = { mScreenWidth / mScale, mScreenHeight / mScale };
+		mOrtho = glm::ortho(0.0f, mScaleSize.x, 0.0f, mScaleSize.y, 0.0f, 100.0f);
 	}
 
 	void Camera2D::update()
 	{
-		if (mEntity) {
-			mCamPos = mEntity.getPosition() + (mOffset * mScale);
-			if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
-			if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
-			if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
-			if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
+		if (mEntity && !Input.isCtrl) {
+			auto size = mEntity.getRect().getSize();
+			mCamPos = mEntity.getPosition() - (mScaleSize / 2.0f - size / 2.0f);
+			if (mHasBounds) {
+				if (mCamPos.x < mBounds.x) mCamPos.x = mBounds.x;
+				if (mCamPos.x > mBounds.z) mCamPos.x = mBounds.z;
+				if (mCamPos.y < mBounds.y) mCamPos.y = mBounds.y;
+				if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
+			}
 		}
-		mCamPos = { roundf(mCamPos.x), roundf(mCamPos.y) };
-		auto view = glm::lookAt(glm::vec3{ mCamPos.x, mCamPos.y, 20.0f }, { mCamPos.x, mCamPos.y, -1 }, { 0,1,0 });
-		mCameraMatrix = mOrtho * view;
+
+		mCameraMatrix = mOrtho * glm::translate(glm::mat4(1.0f), { -roundf(mCamPos.x), -roundf(mCamPos.y), 0.0f });
 	}
 
 	Vec4f Camera2D::getViewPortDim()
 	{
-		return  Vec4f{ mCamPos.x, mCamPos.y, mScreenWidth / mScale, mScreenHeight / mScale };
+		return  Vec4f{ mCamPos.x, mCamPos.y, mScaleSize.x, mScaleSize.y };
 	}
 
 	Vec2f Camera2D::convertScreenToWold(Vec2f coords, bool invertY)
 	{
 		auto coordsTrans = Vec2f{ coords.x / mWindowWidth, coords.y / mWindowHeight };
-
-		return mCamPos + Vec2f{ mScreenWidth / mScale * coordsTrans.x, mScreenHeight / mScale * coordsTrans.y };
-	}
-
-	bool Camera2D::isBoxInView(const Vec4f& box, int offset)
-	{
-		float offs = offset / mScale;
-
-		auto viewport = getViewPortDim() + Vec4f(-offs, -offs, offs, offs);
-
-		return (box.x < viewport.x + viewport.z &&
-			box.x + box.z > viewport.x &&
-			box.y < viewport.y + viewport.w &&
-			box.y + box.w > viewport.y);
+		return mCamPos + Vec2f{ mScaleSize.x * coordsTrans.x, mScaleSize.y * coordsTrans.y };
 	}
 } // namespace Plutus

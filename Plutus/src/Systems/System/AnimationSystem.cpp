@@ -2,6 +2,7 @@
 
 #include <ECS/Scene.h>
 #include <ECS/Components/SpriteComponent.h> 
+#include <ECS/Components/ScriptComponent.h>
 #include <ECS/Components/AnimationComponent.h>
 
 #include <Assets/Assets.h>
@@ -9,16 +10,14 @@
 
 namespace Plutus
 {
-    void AnimationSystem::init(Project* project) {
-        mProject = project;
+    void AnimationSystem::init() {
         auto view = mProject->scene->getRegistry()->view<SpriteComponent, AnimationComponent>();
         for (auto ent : view)
         {
             auto [sprite, animation] = view.get(ent);
             auto seq = animation.getCurrentSeq();
-            if (!seq && animation.mSequences.size()) seq = &animation.mSequences.begin()->second;
 
-            if (seq && seq->mFrames.size()) {
+            if (seq && seq->isValid()) {
                 sprite.mTextureId = seq->mTexId;
                 sprite.mUVCoord = AssetManager::get()->getAsset<Texture>(seq->mTexId)->getUV(seq->mFrames[0]);
             }
@@ -32,19 +31,28 @@ namespace Plutus
         {
             auto [sprite, animation] = view.get(ent);
             auto seq = animation.getCurrentSeq();
-            if (seq && seq->mFrames.size()) {
+
+            if (seq && seq->isValid()) {
+                auto framesCount = seq->mFrames.size();
+
                 animation.currentTime += dt;
-                auto& frames = seq->mFrames;
 
                 if (animation.currentTime > seq->mSeqTime)
                 {
-                    seq->mFrame = ++seq->mFrame % frames.size();
-                    animation.currentTime = 0;
-                    if (seq->mFrame + 1 == frames.size() && animation.loop) {
-                        animation.loop = false;
-                        seq->mFrame = 0;
-                        animation.currentTime = 0;
+                    seq->mFrame = ++seq->mFrame % framesCount;
+                    if (framesCount > 1 && seq->mFrame + 1 == framesCount) {
+
+                        if (animation.loop) {
+                            animation.loop = false;
+                            seq->mFrame = 0;
+                        }
+
+                        auto script = mProject->scene->getComponent<ScriptComponent>(ent);
+                        if (script) {
+                            script->animationEnd(animation.currentSeq);
+                        }
                     }
+                    animation.currentTime = 0;
                 }
 
                 sprite.mTextureId = seq->mTexId;

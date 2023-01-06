@@ -4,43 +4,45 @@
 
 namespace Plutus
 {
-
-    SystemManager::SystemManager() {
-        mSystems[&typeid(ScriptSystem)] = nullptr;
-        mSystems[&typeid(PhysicSystem)] = nullptr;
-        mSystems[&typeid(AnimationSystem)] = nullptr;
-        mSystems[&typeid(RenderSystem)] = nullptr;
-        mSystems[&typeid(DebugSystem)] = nullptr;
-    }
-
     void SystemManager::init()
     {
         for (auto& sys : mSystems) {
-            if (sys.second)sys.second->init(mProject);
+            if (sys) {
+                sys->setManager(this);
+                sys->setProject(mProject);
+                sys->init();
+            }
         }
     }
 
     void SystemManager::stop()
     {
         for (auto& sys : mSystems) {
-            if (sys.second) sys.second->destroy();
+            if (sys)sys->destroy();
         }
     }
 
     void SystemManager::update(float dt)
     {
         for (auto& sys : mSystems) {
-            if (sys.second)sys.second->update(dt);
+            if (sys)sys->update(dt);
+        }
+    }
+    void SystemManager::draw()
+    {
+        for (auto& sys : mSystems) {
+            if (sys)sys->draw();
         }
     }
 
     void SystemManager::cleanup()
     {
-        for (auto& sys : mSystems) {
-            if (sys.second) {
-                sys.second->destroy();
-                delete sys.second;
-                sys.second = nullptr;
+        for (size_t i = 0; i < mSystems.size(); i++)
+        {
+            if (mSystems[i]) {
+                mSystems[i]->destroy();
+                delete mSystems[i];
+                mSystems.clear();
             }
         }
     }

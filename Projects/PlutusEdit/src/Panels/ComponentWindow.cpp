@@ -28,11 +28,13 @@ namespace Plutus
 
     void ComponentWindow::draw()
     {
+        if (mConfig->state != Editing) return;
+
         if (ImGui::Begin("##ComPanel")) {
             mEnt = mConfig->mProject.mEnt;
             if (mConfig->mProject.scene->isValid(mEnt)) {
                 ImGui::Row("Name");
-                ImGui::InputString("##c-tag", mEnt.getComponent<Tag>()->Name);
+                ImGui::InputString("##c-tag", mEnt.getComponent<TagComponent>()->Name);
 
                 if (ImGui::TransparentButton(ICON_FA_PLUS_CIRCLE " Add Component##cp")) {
                     ImGui::OpenPopup("AddComponent");
@@ -52,9 +54,8 @@ namespace Plutus
                         if (!mConfig->mProject.mEnt.hasComponent<PhysicBodyComponent>())
                             ComponentMenuItem<RigidBodyComponent>(mConfig, "Rigid Body");
                     }
-                    else {
-                        ComponentMenuItem<TileMapComponent>(mConfig, "TileMap");
-                    }
+
+                    ComponentMenuItem<TileMapComponent>(mConfig, "TileMap");
 
                     if (!mConfig->mProject.mEnt.hasComponent<RigidBodyComponent>())
                         ComponentMenuItem<PhysicBodyComponent>(mConfig, "Static Body");
@@ -63,6 +64,7 @@ namespace Plutus
 
                     ImGui::EndPopup();
                 }
+
                 if (mEnt.hasComponent<TransformComponent>()) DrawTransform();
                 if (mEnt.hasComponent<SpriteComponent>()) DrawSprite();
                 if (mEnt.hasComponent<AnimationComponent>()) mAnimation.draw(mConfig);
@@ -74,7 +76,7 @@ namespace Plutus
         }
         ImGui::End();
     }
-
+    Vec2f lastEntPos, lastMPos;
     /***********************************Transform Comopnent********************************************************/
     void ComponentWindow::DrawTransform() {
         if (CollapseComponent<TransformComponent>("Transform##comp-comp", 1, mConfig))
@@ -84,10 +86,16 @@ namespace Plutus
 
             float textWidth = ImGui::GetContentRegionAvailWidth() * mTextColumnWidth;
             ImGui::Row("Position", textWidth);
-            Vec2f pos = { trans->x, trans->y };
+            Vec2f pos = trans->getPosition();
             if (ImGui::Draw2Float("Position##ent-pos", pos)) {
                 trans->x = pos.x;
                 trans->y = pos.y;
+            }
+            ImGui::Row("Offset", textWidth);
+            Vec2f offset = trans->getOffset();
+            if (ImGui::Draw2Float("offset##ent-offset", offset)) {
+                trans->offsetX = offset.x;
+                trans->offsetY = offset.y;
             }
             ImGui::Row("Size");
             Vec2f size = { trans->w, trans->h };
@@ -103,6 +111,20 @@ namespace Plutus
 
             ImGui::Row("Sort Y");
             ImGui::Checkbox("##trans-sortY", &trans->sortY);
+
+            if (Input.onKeyPressed("MouseLeft")) {
+                lastMPos = mConfig->mMouseCoords;
+                lastEntPos = mEnt.getPosition();
+            }
+
+            if (Input.onKeyDown("MouseLeft") && !Input.isCtrl) {
+                auto trans = mEnt.getComponent<TransformComponent>();
+                Vec2f result = mConfig->mMouseCoords - lastMPos;
+                result /= mConfig->mRender.mCamera->getScale();
+
+                trans->x = lastEntPos.x + result.x;
+                trans->y = lastEntPos.y + result.y;
+            }
         }
     }
     /***********************************Sprite Comopnent********************************************************/
@@ -114,14 +136,14 @@ namespace Plutus
             auto sprite = mEnt.getComponent<SpriteComponent>();
             auto& textures = AssetManager::get()->getAssets<Texture>();
 
-            uint32_t color = sprite->mColor;
+            Vec4f color = sprite->mColor;
             std::string selected = sprite->mTextureId;
             ImGui::Row("TileSheet", textWidth);
             if (ImGui::ComboBox("##TileSheet", textures, selected)) {
                 sprite->mTextureId = selected;
             }
             ImGui::Row("Color", textWidth);
-            if (ImGui::ColorInt("##spr-Color", color))
+            if (ImGui::ColorEdit4("##spr-Color", &color.x))
             {
                 sprite->mColor = color;
             }
@@ -224,7 +246,7 @@ namespace Plutus
                 mRigidBody->mBodyType = rigidBodyTypes[current];
             }
 
-            drawFixtures(mRigidBody);
+            drawFixtures(mRigidBody, mConfig);
         }
     }
 
@@ -232,7 +254,7 @@ namespace Plutus
     {
         auto  physicBody = mEnt.getComponent<PhysicBodyComponent>();
         if (CollapseComponent<PhysicBodyComponent>("Phyics Body##tilemap-comp", 7, mConfig)) {
-            drawFixtures(physicBody);
+            drawFixtures(physicBody, mConfig);
         }
     }
 }

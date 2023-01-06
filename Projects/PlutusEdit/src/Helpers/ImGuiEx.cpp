@@ -7,6 +7,7 @@
 #include <ECS/Components.h>
 
 namespace ImGui {
+    using namespace Plutus;
 
     const uint32_t color1 = IM_COL32(50, 50, 50, 255);
     const uint32_t color2 = IM_COL32(50, 50, 60, 255);
@@ -23,12 +24,13 @@ namespace ImGui {
         bool isActive = false;
         ImGui::PushStyleColor(ImGuiCol_Text, color);
         ImGui::PushStyleColor(ImGuiCol_Button, { 0,0,0,0 });
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0,0,0,0 });
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0,0,0,6 });
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0,0,0,0 });
 
         if (ImGui::Button(label, buttonSize)) {
             isActive = true;
         }
-        ImGui::PopStyleColor(3);
+        ImGui::PopStyleColor(4);
         if (isIcon) {
             ImGui::PopStyleVar();
             if (sameline)
@@ -147,7 +149,6 @@ namespace ImGui {
         ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
         if (ImGui::BeginChild("##texture-map", { 0,0 }, true, ImGuiWindowFlags_HorizontalScrollbar)) {
 
-            auto mInput = Plutus::Input::get();
             ImDrawList* drawList = ImGui::GetWindowDrawList();
             auto size = ImGui::GetContentRegionAvail();
 
@@ -202,7 +203,7 @@ namespace ImGui {
 
                         drawList->AddRect(start, end, IM_COL32(255, 0, 0, 255));
 
-                        if (mInput->onKeyPressed("MouseLeft"))
+                        if (Input.onKeyPressed("MouseLeft"))
                         {
                             mDown = true;
                             sels.clear();
@@ -210,7 +211,7 @@ namespace ImGui {
                             drawSelect.clear();
                         }
 
-                        if (!mInput->onKeyDown("MouseLeft"))
+                        if (!Input.onKeyDown("MouseLeft"))
                         {
                             mDown = false;
                         }
@@ -244,7 +245,7 @@ namespace ImGui {
                             }
                         }
 
-                        if (mInput->onKeyDown("MouseRight"))
+                        if (Input.onKeyDown("MouseRight"))
                         {
                             drawSelect.clear();
                             selected.clear();
@@ -344,7 +345,7 @@ namespace ImGui {
         return clicked;
     }
 
-    bool Draw2Float(char* label, Plutus::Vec2f& value, float step, const char* btntag1, const char* btntag2) {
+    bool Draw2Float(const char* label, Plutus::Vec2f& value, float step, const char* btntag1, const char* btntag2) {
         bool changed = false;
 
         ImGui::BeginGroup();
@@ -400,7 +401,6 @@ namespace ImGui {
     }
 
     void DrawTexCoords(const Plutus::Texture* tileset, Plutus::Vec4f& coords) {
-        auto mInput = Plutus::Input::get();
         const int w = tileset->mWidth;
         const int h = tileset->mHeight;
         uint32_t id = tileset->mTexId;
@@ -440,18 +440,14 @@ namespace ImGui {
 
                 static bool mDown;
                 drawList->AddRectFilledMultiColor(cvPos, cvDestEnd, color1, color2, color3, color2);
-
-                if (id)
-                {
-                    drawList->AddImage((void*)id, cvPos, cvDestEnd);
-                    drawList->AddRect(cvPos, cvDestEnd, IM_COL32(255, 255, 255, 100));
-                }
+                drawList->AddImage((void*)id, cvPos, cvDestEnd);
+                drawList->AddRect(cvPos, cvDestEnd, IM_COL32(255, 255, 255, 100));
 
                 if (ImGui::IsItemHovered())
                 {
                     ImVec2 mpos_in_canvas = ImVec2(ImGui::GetIO().MousePos.x - cvPos.x, ImGui::GetIO().MousePos.y - cvPos.y);
 
-                    if (mInput->onKeyDown("MouseLeft"))
+                    if (Input.onKeyDown("MouseLeft"))
                     {
                         if (!mDown)
                         {
@@ -465,7 +461,7 @@ namespace ImGui {
                         }
                     }
 
-                    if (!mInput->onKeyDown("MouseLeft"))
+                    if (!Input.onKeyDown("MouseLeft"))
                     {
                         if (mDown)
                         {
@@ -476,7 +472,7 @@ namespace ImGui {
                         }
                     }
 
-                    if (mInput->onKeyPressed("MouseRight"))
+                    if (Input.onKeyPressed("MouseRight"))
                     {
                         if (points.size())
                         {
@@ -515,7 +511,6 @@ namespace ImGui {
     {
         if (texture != nullptr) {
             if (ImGui::BeginChild("##texture-map", { (float)0, (float)winHeight }, false, ImGuiWindowFlags_HorizontalScrollbar)) {
-                auto mInput = Plutus::Input::get();
                 ImDrawList* drawList = ImGui::GetWindowDrawList();
                 auto size = ImGui::GetContentRegionAvail();
 
@@ -572,7 +567,7 @@ namespace ImGui {
 
                                     drawList->AddRect(start, end, IM_COL32(255, 0, 0, 255));
 
-                                    if (mInput->onKeyPressed("MouseLeft"))
+                                    if (Input.onKeyPressed("MouseLeft"))
                                     {
                                         mDown = true;
                                         sels.clear();
@@ -580,7 +575,7 @@ namespace ImGui {
                                         drawSelect.clear();
                                     }
 
-                                    if (!mInput->onKeyDown("MouseLeft"))
+                                    if (!Input.onKeyDown("MouseLeft"))
                                     {
                                         mDown = false;
                                     }
@@ -613,7 +608,7 @@ namespace ImGui {
                                         }
                                     }
 
-                                    if (mInput->onKeyDown("MouseRight"))
+                                    if (Input.onKeyDown("MouseRight"))
                                     {
                                         drawSelect.clear();
                                         selected->clear();

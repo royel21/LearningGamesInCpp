@@ -1,4 +1,6 @@
 #include "EditorScreen.h"
+
+#include <Input/Input.h>
 #include <Physics/Shapes.h>
 
 
@@ -44,24 +46,24 @@ void EditorScreen::Enter() {
 void EditorScreen::Update(float dt)
 {
 
-    if (mInput->onKeyPressed("PageUp"))
+    if (Plutus::Input.onKeyPressed("PageUp"))
     {
         mCore->setNextScreen("Game");
     }
 
-    if (mInput->onKeyDown("MouseLeft"))
+    if (Plutus::Input.onKeyDown("MouseLeft"))
     {
         // int h = mEngine->getHeight();
-        // auto pos = mInput->getMouseCoords();
+        // auto pos = Plutus::Input.getMouseCoords();
         // pos.y = h - pos.y;
         // auto mpos = mCamera.convertScreenToWold(pos);
-        auto mPos = mInput->getMouseCoords();
+        auto mPos = Plutus::Input.getMouseCoords();
         mCamera.setPosition(mPos);
     }
 
-    if (mInput->onKeyDown("Ctrl"))
+    if (Plutus::Input.onKeyDown("Ctrl"))
     {
-        auto scroll = mInput->getMouseWheel();
+        auto scroll = Plutus::Input.getMouseWheel();
         if (scroll != 0)
         {
             auto newVal = mCamera.getScale() + (scroll > 0 ? 0.05f : -0.05f);
@@ -103,8 +105,8 @@ void EditorScreen::Draw()
     // // mRender.draw();
     // // mRender.end();
     // auto box = Plutus::Box2d(10, h - 160.0f, 150, 150);
-    // mDebug->drawBox(box);
-    // mDebug->drawCircle({ 85.0f, h - 85.0f }, 70.0f);
+    // mDebug->submitBox(box);
+    // mDebug->submitCircle({ 85.0f, h - 85.0f }, 70.0f);
     // mDebug->end();
     // mDebug->render(2);
     // mDebug->setColor({ 255,255,255,25 });

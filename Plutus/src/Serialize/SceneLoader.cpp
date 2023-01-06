@@ -38,20 +38,50 @@ namespace Plutus
         }
     }
 
-    void loadTileMap(Entity& ent, const rapidjson::Value::Object& value)
+    void loadTileMap(Entity& ent, const rapidjson::Value::Object& value, JsonHelper& jhelper)
     {
         int w = value["width"].GetInt();
         int h = value["height"].GetInt();
-        int tw = value["tileWidth"].GetInt();
-        int th = value["tileHeight"].GetInt();
         int layer = value["layer"].GetInt();
-        auto tmap = ent.addComponent<TileMapComponent>(tw, th, layer);
+        auto tmap = ent.addComponent<TileMapComponent>(layer);
         tmap->mWidth = w;
         tmap->mHeight = h;
 
         for (auto& obj : value["textures"].GetArray())
         {
             tmap->addTexture(obj["id"].GetInt(), obj["name"].GetString());
+        }
+
+        if (value.HasMember("animations")) {
+            for (auto& obj : value["animations"].GetArray())
+            {
+                tmap->mTileAnims.push_back({});
+                auto& anim = tmap->mTileAnims.back();
+
+                anim.texId = obj["texId"].GetInt();
+                anim.duration = obj["duration"].GetFloat();
+                for (auto& f : obj["frames"].GetArray())
+                {
+                    anim.frames.push_back(f.GetInt());
+                }
+            }
+        }
+
+        if (value.HasMember("animateTiles")) {
+            for (auto& atile : value["animateTiles"].GetArray())
+            {
+                tmap->mAnimateTiles.push_back({});
+                auto& tanim = tmap->mAnimateTiles.back();
+
+                auto i = atile.GetInt();
+
+                tanim.x = ((i >> 12) % tmap->mWidth);
+                tanim.y = (i >> 12) / tmap->mWidth;
+
+                tanim.texture = 0xfff & i;
+                tanim.anim = &tmap->mTileAnims[tanim.texture];
+                tanim.texcoord = tanim.anim->frames[0];
+            }
         }
 
         auto tiles = value["tiles"].GetArray();
@@ -67,7 +97,8 @@ namespace Plutus
                 bool flipX = FLIPX & d;
                 bool flipY = FLIPY & d;
                 float rotation = ROTATE & d ? 90.0f : 0;
-                tmap->addTile(Tile{ x, y, uvIndex, texId, 0, 0, 0 });
+
+                tmap->addTile(x, y, uvIndex, texId, flipX, flipY, rotation);
             }
         }
     }
@@ -95,11 +126,14 @@ namespace Plutus
 
             fix.offset = jhelper.getFloat2("offset");
             fix.size = jhelper.getFloat2("size", { {1,1} });
-            fix.radius = jhelper.getFloat("radius", 0);
+            fix.radius = jhelper.getFloat("radius");
             fix.friction = jhelper.getFloat("frict", 0.3f);
             fix.density = jhelper.getFloat("dens", 1);
-            fix.restitution = jhelper.getFloat("restit", 0);
+            fix.restitution = jhelper.getFloat("restit");
             fix.isSensor = jhelper.getInt("sensor", false);
+            fix.mask = jhelper.getInt("mask", 0xffff);
+            fix.group = jhelper.getInt("group");
+            fix.category = jhelper.getInt("category", 1);
         }
     }
 
@@ -114,7 +148,9 @@ namespace Plutus
             auto docObj = doc.GetJsonObject();
             jhelper.value = &docObj;
 
-            scene->mBGColor = jhelper.getInt("bg-color");
+            scene->mBGColor = jhelper.getFloat4("bg-color", { 0,0,0,1 });
+            scene->mTileWidth = jhelper.getInt("tile-width", 32);
+            scene->mTileHeight = jhelper.getInt("tile-height", 32);
 
             if (doc.HasMember("fonts") && doc["fonts"].IsArray())
             {
@@ -165,9 +201,10 @@ namespace Plutus
                     int tileheight = jhelper.getInt("tileHeight");
                     int spacing = jhelper.getInt("spacing");
                     int margin = jhelper.getInt("margin");
-                    int minFilter = jhelper.getInt("min-filter", GL_NEAREST);
-                    int magFilter = jhelper.getInt("mag-filter", GL_NEAREST);
-                    auto texture = AssetManager::get()->addAsset<Texture>(id, path, tilewidth, tileheight, minFilter, magFilter);
+                    int glFilter = jhelper.getInt("gl-filter", GL_NEAREST);
+                    int texUnit = jhelper.getInt("tex-unit", 0);
+                    auto texture = AssetManager::get()->addAsset<Texture>(id, path, tilewidth, tileheight, glFilter, texUnit);
+
                     texture->mSpacing = spacing;
                     texture->mMargin = margin;
                     texture->calculateUV();
@@ -183,33 +220,42 @@ namespace Plutus
                     auto entObj = entities[i].GetJsonObject();
 
                     auto name = entObj["name"].GetString();
-                    Entity entity = scene->createEntity(name);
+                    bool visible = true;
+                    if (entObj.HasMember("visible")) {
+                        visible = entObj["visible"].GetInt();
+                    }
+
+                    Entity entity = scene->createEntity(name, visible);
 
                     auto components = entObj["components"].GetArray();
                     for (uint32_t i = 0; i < components.Size(); i++)
                     {
                         auto component = components[i].GetJsonObject();
+                        jhelper.value = &component;
+
                         std::string compType = component["name"].GetString();
                         if (compType == "Transform")
                         {
-                            float x = component["x"].GetFloat();
-                            float y = component["y"].GetFloat();
-                            int w = component["w"].GetInt();
-                            int h = component["h"].GetInt();
-                            float r = component["r"].GetFloat();
-                            int layer = component["l"].GetInt();
-                            bool sortY = component["sy"].GetBool();
-                            entity.addComponent<TransformComponent>(x, y, w, h, r, layer, sortY);
+                            auto trans = entity.addComponent<TransformComponent>();
+                            trans->x = jhelper.getFloat("x");
+                            trans->y = jhelper.getFloat("y");
+                            trans->offsetX = jhelper.getFloat("offset-x");
+                            trans->offsetY = jhelper.getFloat("offset-y");
+                            trans->w = jhelper.getInt("w");
+                            trans->h = jhelper.getInt("h");
+                            trans->r = jhelper.getFloat("r");
+                            trans->layer = jhelper.getInt("l");
+                            trans->sortY = jhelper.getBool("sy");
                             continue;
                         }
+
                         if (compType == "Sprite")
                         {
                             auto spr = entity.addComponent<SpriteComponent>(component["tex"].GetString());
-                            spr->mFlipX = component["fx"].GetInt();
-                            spr->mFlipY = component["fy"].GetInt();
-                            spr->mColor = component["c"].GetInt();
-                            auto uvs = component["uvc"].GetArray();
-                            spr->mUVCoord = { uvs[0].GetFloat(),uvs[1].GetFloat(),uvs[2].GetFloat(),uvs[3].GetFloat() };
+                            spr->mFlipX = jhelper.getInt("fx");
+                            spr->mFlipY = jhelper.getInt("fy");
+                            spr->mColor = jhelper.getInt("c");
+                            spr->mUVCoord = jhelper.getFloat4("uvc");
                             continue;
                         }
                         if (compType == "Animation")
@@ -219,7 +265,7 @@ namespace Plutus
                         }
                         if (compType == "TileMap")
                         {
-                            loadTileMap(entity, components[i].GetJsonObject());
+                            loadTileMap(entity, components[i].GetJsonObject(), jhelper);
                             continue;
                         }
                         if (compType == "Script")
@@ -227,7 +273,6 @@ namespace Plutus
                             auto script = entity.addComponent<ScriptComponent>(component["script"].GetString());
                         }
                         if (compType == "RigidBody") {
-                            jhelper.value = &component;
                             auto rbody = entity.addComponent<RigidBodyComponent>((BodyType)jhelper.getInt("type"));
 
                             rbody->mBullet = jhelper.getInt("isbullet");

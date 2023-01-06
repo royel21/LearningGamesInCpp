@@ -3,9 +3,10 @@
 
 namespace Plutus
 {
-    struct Tag
+    struct TagComponent
     {
         std::string Name;
-        Tag(const std::string name) : Name(name) {}
+        bool Visible = true;
+        TagComponent(const std::string name) : Name(name) {}
     };
 } // namespace Plutus

@@ -9,7 +9,6 @@ namespace Plutus
     bool windowDialog(int mode, std::string& path, const std::string& title)
     {
         OPENFILENAME ofn;
-        char* FilterSpec = "Projects (*.json*)\0";
         char szFileName[MAX_PATH];
         char szFileTitle[MAX_PATH];
 
@@ -19,7 +18,7 @@ namespace Plutus
         /* fill in non-variant fields of OPENFILENAME struct. */
         ofn.lStructSize = sizeof(OPENFILENAME);
         ofn.hwndOwner = GetActiveWindow();
-        ofn.lpstrFilter = FilterSpec;
+        ofn.lpstrFilter = "Projects (*.json*)\0";
         ofn.lpstrCustomFilter = NULL;
         ofn.nMaxCustFilter = 0;
         ofn.nFilterIndex = 0;

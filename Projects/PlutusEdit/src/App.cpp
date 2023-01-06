@@ -8,6 +8,15 @@
 #include <Serialize/Serialize.h>
 #include <Systems/Systems.h>
 
+// #include "./Panels/MianWindow.h"
+#include "./Panels/AssetsWindow.h"
+#include "./Panels/BottomWindow.h"
+#include "./Panels/CenterWindow.h"
+#include "./Panels/ComponentWindow.h"
+#include "./Panels/SceneWindow.h"
+
+#include <Graphics/DebugRenderer.h>
+
 namespace Plutus
 {
     App::App(const char* name, int width, int height) {
@@ -21,66 +30,37 @@ namespace Plutus
         }
     };
 
-    App::~App() {
-
-    }
-
-    void App::initialize()
-    {
-        if (!mConfig.currentProject.empty() && !isInitialize) {
-            mConfig.init(&mRender);
-            mAssetsWin.init(&mConfig);
-            mCenterWin.init(&mConfig);
-            mCompWin.init(&mConfig);
-            mConfigWin.init(&mConfig, &mRender);
-            mSceneWindow.init(&mConfig, &mRender);
-            isInitialize = true;
-        }
-
-        isInitialize = !mConfig.currentProject.empty();
-    }
+    App::~App() {}
 
     void App::Init() {
-        mMainWin.init(&mConfig, this);
+
+        mConfig.init(&mCamera);
+
+        mWinManager.addWindow<AssetsWindow>();
+        mWinManager.addWindow<BottomWindow>();
+        mWinManager.addWindow<CenterWindow>();
+        mWinManager.addWindow<ComponentWindow>();
+        mWinManager.addWindow<SceneWindow>();
+
+        mWinManager.init(&mConfig, this);
     }
 
     void App::Update(float dt) {
-        initialize();
-
-        mExit = mMainWin.mExit;
-        if (isInitialize) {
-            mCenterWin.update(dt);
-        }
+        mWindow.setTitle(("Plutus Edit - " + mConfig.currentProject).c_str());
+        mExit = mWinManager.mExit;
+        mWinManager.update(dt);
     }
 
     void App::Dropfile(const char* file)
     {
-        if (isInitialize) {
-            mAssetsWin.fileDrop(file);
-        }
+        auto assetWin = mWinManager.getWindow<AssetsWindow>();
+        if (assetWin) assetWin->fileDrop(file);
     }
 
     void App::Draw() {
-
-        mMainWin.Begin();
-        {
-            if (isInitialize) {
-                mCenterWin.draw();
-                if (mConfig.state != Running) {
-                    mAssetsWin.draw();
-                    mSceneWindow.draw();
-                    mCompWin.draw();
-                    mConfigWin.draw();
-                }
-            }
-        }
-
-        mMainWin.End();
-        if (isInitialize) {
-            mRender.draw();
-        }
+        mWinManager.draw();
     }
-    void App::Exit() {
 
+    void App::Exit() {
     }
 } // namespace Plutus

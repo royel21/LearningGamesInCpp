@@ -1,8 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <typeinfo>
-#include <unordered_map>
 
 namespace Plutus
 {
@@ -13,42 +11,58 @@ namespace Plutus
     {
 
     public:
-        SystemManager();
+        SystemManager() = default;
         ~SystemManager() { cleanup(); };
 
         void setProject(Project* project) { mProject = project; }
 
         void init();
-        void stop();
-
         void update(float dt);
         void draw();
+        void stop();
+
 
         template <typename T, typename... TArgs>
         T* AddSystem(TArgs &&... args)
         {
+            auto id = getId<T>();
+            if (id == mSystems.size()) {
+                T* newSystem = new T(std::forward<TArgs>(args)...);
+                mSystems.push_back(newSystem);
+                return newSystem;
+            }
 
-            T* newSystem = new T(std::forward<TArgs>(args)...);
-            mSystems[&typeid(T)] = newSystem;
-            return newSystem;
+            return getSystem<T>();
         }
 
         template <typename T>
         T* getSystem()
         {
-            return hasSystem<T>() ? static_cast<T*>(it->second) : nullptr;
+            return hasSystem<T>() ? static_cast<T*>(mSystems[getId<T>()]) : nullptr;
         }
 
         template <typename T>
         bool hasSystem()
         {
-            return mSystems[&typeid(T)] != nullptr;
+            return getId<T>() < mSystems.size();
         }
 
         void cleanup();
 
     private:
         Project* mProject;
-        std::unordered_map<const std::type_info*, ISystem*> mSystems;
+        std::vector<ISystem*> mSystems;
+
+        inline uint32_t genId() {
+            static int id = 0;
+            return id++;
+        }
+
+        template<typename T>
+        inline uint32_t getId()
+        {
+            static int id = genId();
+            return id;
+        }
     };
 } // namespace Plutus

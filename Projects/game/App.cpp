@@ -6,7 +6,7 @@
 
 App::App(const char* name, int width, int height)
 {
-    mProject.load("C:\\vscode-workspace\\Desktop\\ZombiesGame\\ZombiesGame.json");
+    mProject.load("ZombiesGame/ZombiesGame.json");
     mName = name;
 }
 

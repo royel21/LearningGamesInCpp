@@ -10,6 +10,8 @@
 #include <Serialize/SceneLoader.h>
 #include <Serialize/SceneSerializer.h>
 
+#include <Log/Logger.h>
+
 namespace Plutus
 {
     Project::Project()
@@ -36,20 +38,28 @@ namespace Plutus
             autoClearForce = true;
 
             scene->clear();
+            scenes.clear();
             currentScene = "";
             currentScenePath = "";
-            AssetManager::get()->destroy();
         }
     }
 
     void Project::load(const std::string& path)
     {
+        std::string p = path;
+#ifdef __EMSCRIPTEN__
+        p = "assets/" + path;
+#endif
         rapidjson::Document doc;
-        bool isLoaded = loadJsonFromFile(path.c_str(), doc);
-        if (isLoaded) {
-            Plutus::AssetManager::get()->setBaseDir(Utils::getDirectory(path));
 
-            scene->clear();
+        if (loadJsonFromFile(p.c_str(), doc)) {
+            Logger::info("load projected");
+            isLoaded = true;
+            clear();
+
+#ifndef __EMSCRIPTEN__
+            Plutus::AssetManager::get()->setBaseDir(Utils::getDirectory(path));
+#endif
 
             JsonHelper jhelper;
             auto obj = doc.GetJsonObject();
@@ -62,6 +72,7 @@ namespace Plutus
 
             vpWidth = jhelper.getInt("vp-width");
             vpHeight = jhelper.getInt("vp-height");
+
             vpPos = jhelper.getFloat2("vp-pos");
 
             zoomLevel = jhelper.getFloat("zoom-level");
@@ -127,12 +138,16 @@ namespace Plutus
 
     void Project::loadScene(const std::string& name)
     {
-        auto tscene = scenes.find(name);
-        if (tscene != scenes.end()) {
-            scene->clear();
-            AssetManager::get()->destroy();
-            currentScenePath = AssetManager::get()->getBaseDir() + tscene->second;
-            SceneLoader::loadFromPath(tscene->second.c_str(), scene.get());
+        if (name == "") {
+            scene = CreateRef<Scene>();
+        }
+        else {
+            auto tscene = scenes.find(name);
+            if (tscene != scenes.end()) {
+                scene->clear();
+                currentScenePath = AssetManager::get()->getBaseDir() + tscene->second;
+                SceneLoader::loadFromPath(tscene->second.c_str(), scene.get());
+            }
         }
     }
 
@@ -140,7 +155,6 @@ namespace Plutus
         scene->clear();
         currentScene = "";
         currentScenePath = "";
-        AssetManager::get()->destroy();
     }
 
     void Project::saveScene()

@@ -10,19 +10,10 @@
 #include <Time/Timer.h>
 #include <Graphics/GLSL.h>
 #include <Assets/Assets.h>
+#include <ECS/Components/PhysicBodyComponent.h>
 
 namespace Plutus
 {
-    /*
-
-    b2_staticBody = 0,
-    b2_kinematicBody,
-    b2_dynamicBody
-    */
-    constexpr int StaticBody = 0;
-    constexpr int KinematicBody = 1;
-    constexpr int DynamicBody = 2;
-
     App::App(const char* name, int width, int height)
     {
         mName = name;
@@ -126,7 +117,7 @@ namespace Plutus
         line->body = mWorld->CreateBody(&bd);
 
         b2EdgeShape shape;
-        shape.SetTwoSided(toWorld(line->pos), toWorld(line->end));
+        shape.SetTwoSided(toWorld(line->pos), toWorld(line->size));
 
         line->body->CreateFixture(&shape, 0.0f);
 
@@ -138,7 +129,6 @@ namespace Plutus
         mShader.init(GLSL::vertexShader, GLSL::fragShader);
         mBatch.init();
         mBatch.setCamera(&mCamera);
-        mBatch.setShader(&mShader);
         texture = AssetManager::get()->addAsset<Texture>("player", "assets/textures/Player.png", 60, 64, 64);
 
         mDebug = DebugRender::get();
@@ -174,16 +164,16 @@ namespace Plutus
 
     void App::Update(float dt)
     {
-        if (Input::get()->onKeyPressed("R")) {
+        if (Input.onKeyPressed("R")) {
             cscale = 1;
         }
         auto body = capsule.body;
         auto currentSpeed = body->GetLinearVelocity();
 
-        if (Input::get()->onKeyDown("Left")) {
+        if (Input.onKeyDown("Left")) {
             body->ApplyForceToCenter(b2Vec2(-force2, 0.0), true);
         }
-        else if (Input::get()->onKeyDown("Right")) {
+        else if (Input.onKeyDown("Right")) {
             body->ApplyForceToCenter(b2Vec2(force2, 0.0), true);
         }
         else {
@@ -198,7 +188,7 @@ namespace Plutus
             body->SetLinearVelocity(b2Vec2(MAX_SPEED, currentSpeed.y));
         }
 
-        if (Input::get()->onKeyPressed("A") || Input::get()->onKeyPressed("S")) {
+        if (Input.onKeyPressed("A") || Input.onKeyPressed("S")) {
             body->ApplyLinearImpulseToCenter({ 0, 4.0f }, true);
         }
 
@@ -210,27 +200,27 @@ namespace Plutus
 
         capsule.update();
 
-        if (Input::get()->isCtrl) {
-            if (Input::get()->onKeyDown("+")) {
+        if (Input.isCtrl) {
+            if (Input.onKeyDown("+")) {
                 cscale += 0.05f;
                 mCamera.setScale(cscale);
             }
-            if (Input::get()->onKeyDown("-")) {
+            if (Input.onKeyDown("-")) {
                 cscale -= 0.05f;
                 mCamera.setScale(cscale);
             }
 
             auto cPos = mCamera.getPosition();
-            if (Input::get()->onKeyDown("Right")) {
+            if (Input.onKeyDown("Right")) {
                 cPos.x += 5;
             }
-            if (Input::get()->onKeyDown("Left")) {
+            if (Input.onKeyDown("Left")) {
                 cPos.x -= 5;
             }
-            if (Input::get()->onKeyDown("Up")) {
+            if (Input.onKeyDown("Up")) {
                 cPos.y += 5;
             }
-            if (Input::get()->onKeyDown("Down")) {
+            if (Input.onKeyDown("Down")) {
                 cPos.y -= 5;
             }
             mCamera.setPosition(cPos);
@@ -244,36 +234,34 @@ namespace Plutus
 
     void App::Draw()
     {
-        setBackgoundColor(0, 0, 0, 1);
-
         for (auto& shape : mShapes) {
             switch (shape->type) {
             case BoxShape: {
-                mDebug->drawBox(*(Box2d*)shape);
+                mDebug->submitBox((Box2d*)shape);
                 break;
             }
             case EdgeShape: {
-                mDebug->drawLine(*(Line2d*)shape);
+                mDebug->submitLine((Line2d*)shape);
                 break;
             }
             case CircleShape: {
-                mDebug->drawCircle(*(Circle2d*)shape);
+                mDebug->submitCircle((Circle2d*)shape);
                 break;
             }
             }
         }
 
-        // mDebug->drawBox(Box2d(capsule.x, capsule.y, capsule.w, capsule.h));
+        // mDebug->submitBox(Box2d(capsule.x, capsule.y, capsule.w, capsule.h));
         Vec4f rect = { capsule.position, capsule.size };
         mBatch.submit(texture->mTexId, rect, texture->getUV(0));
         mBatch.begin();
         mBatch.draw();
         mBatch.end();
-
-        mDebug->drawBox(capsule.getBox(), { 0xff0000ff });
-        mDebug->drawBox(rect);
-        mDebug->drawCircle(capsule.getBCircle());
-        mDebug->drawCircle(capsule.getTCircle());
+        auto box = capsule.getBox();
+        // mDebug->submitBox(&box, { 255,0,255,255 });
+        // mDebug->submitBox(rect);
+        // mDebug->submitCircle(capsule.getBCircle());
+        // mDebug->submitCircle(capsule.getTCircle());
 
         mDebug->end();
         mDebug->render();

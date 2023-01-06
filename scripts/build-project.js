@@ -2,7 +2,7 @@ const fs = require("fs-extra");
 const path = require("path");
 const { execSync } = require("child_process");
 
-const { listFiles, buildOjbFiles, getChanges, checkHeaders, db } = require("./healper");
+const { listFiles, buildOjbFiles, getChanges, checkHeaders, db } = require("./helper");
 
 const conf = {
   name: "",
@@ -39,7 +39,7 @@ const buildProject = (config = conf) => {
   if (files.length || (objects.length && !fs.existsSync(outLib))) {
     try {
       let cmd = `${compiler} -r ${objects.join(" ")} -o ${outLib}`;
-      console.log(cmd);
+      console.log(outLib);
       execSync(cmd);
     } catch (err) {
       console.log(err);

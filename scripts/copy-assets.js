@@ -3,8 +3,10 @@ const path = require("path");
 
 const cmd = process.argv[2];
 
+path.join("ZombiesGame", "ZombiesGame.json");
+
 if (cmd) {
-  const project = fs.readJSONSync(path.join("assets", "scenes", cmd));
+  const project = fs.readJSONSync(path.join("ZombiesGame", "assets", "scenes", cmd));
 
   const copyFile = (file) => {
     try {

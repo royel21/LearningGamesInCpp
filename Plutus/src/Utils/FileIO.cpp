@@ -81,7 +81,11 @@ namespace Plutus
 
             if (src.compare(dst) == 0) return true;
 
-            return std::filesystem::copy_file(src, dst, std::filesystem::copy_options::overwrite_existing);
+            if (exists(dst)) {
+                std::filesystem::remove(dst);
+            }
+
+            return std::filesystem::copy_file(src, dst);
         }
 
         void openDir(const std::string& dir)

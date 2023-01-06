@@ -3,12 +3,32 @@
 #include <vector>
 
 #include <Math/Vectors.h>
+#include <box2d/b2_math.h>
+#include <box2d/b2_fixture.h>
 
+constexpr float PIXEL_SIZE = 32.0f;
+//Pixel Per Meter
+constexpr float PPM = 1 / PIXEL_SIZE;
+//Meter Per Pixel
+constexpr float MPP = PIXEL_SIZE;
+//Half Meter Per Pixel
+constexpr float HMPP = PPM / 2.0f;
 
 class b2Body;
 
 namespace Plutus
 {
+    inline b2Vec2 toWorld(const Vec2f& value) {
+        return { value.x * PPM, value.y * PPM };
+    }
+
+    inline Vec2f fromWorld(b2Vec2 value) {
+        return { value.x * MPP, value.y * MPP };
+    }
+
+    inline b2Vec2 tobVec2(const Vec2f& vec) { return { vec.x, vec.y }; }
+    inline Vec2f toVec2f(const b2Vec2& vec) { return { vec.x, vec.y }; }
+
     constexpr int P_Edge = 0;
     constexpr int P_Circle = 1;
     constexpr int P_Box = 2;
@@ -29,6 +49,15 @@ namespace Plutus
         float restitution = 0;
         // default = false
         bool isSensor = false;
+        //collision mask default: 0xFFFF;
+        uint16_t mask = 0xFFFF;
+        //collision group default: 0x0000;
+        uint16_t group = 0;
+        //collision category default: 0x0001;
+        uint16_t category = 0x0001;
+
+        b2Fixture* b2fixture;
+
         Fixture(int _type) : type(_type) {};
         /**
          * @brief Construct a new Box Or Edge Fixture
@@ -79,14 +108,17 @@ namespace Plutus
             return mFixtures.back();
         };
 
-        inline void addEdge(Vec2f offset, Vec2f size, float friction = 0.3f, float density = 1.0f, float restitution = 0, bool isSensor = false) {
+        inline Fixture* addEdge(Vec2f offset, Vec2f size, float friction = 0.3f, float density = 1.0f, float restitution = 0, bool isSensor = false) {
             mFixtures.push_back({ P_Edge, offset, size, friction, density, restitution, isSensor, });
+            return &mFixtures.back();
         }
-        inline void addCircle(Vec2f offset, float radius, float friction = 0.3f, float density = 1.0f, float restitution = 0, bool isSensor = false) {
+        inline Fixture* addCircle(Vec2f offset, float radius, float friction = 0.3f, float density = 1.0f, float restitution = 0, bool isSensor = false) {
             mFixtures.push_back({ P_Circle, offset, radius, friction, density, restitution, isSensor, });
+            return &mFixtures.back();
         }
-        inline void addBox(Vec2f offset, Vec2f size, float friction = 0.3f, float density = 1.0f, float restitution = 0, bool isSensor = false) {
+        inline Fixture* addBox(Vec2f offset, Vec2f size, float friction = 0.3f, float density = 1.0f, float restitution = 0, bool isSensor = false) {
             mFixtures.push_back({ P_Box, offset, size, friction, density, restitution, isSensor, });
+            return &mFixtures.back();
         }
 
     };

@@ -1,13 +1,12 @@
 
 #include "GameScreen.h"
 
-#include <ECS/Components.h>
-
 #include <Log/Logger.h>
+#include <Input/Input.h>
+#include <ECS/Components.h>
 #include <Systems/Systems.h>
-#include <Serialize/SceneLoader.h>
 #include <Assets/AssetManager.h>
-
+#include <Serialize/SceneLoader.h>
 
 GameScreen::GameScreen()
 {
@@ -25,50 +24,50 @@ void GameScreen::Init()
     mSystemManager.AddSystem<Plutus::PhysicSystem>();
     mSystemManager.AddSystem<Plutus::AnimationSystem>();
     mSystemManager.AddSystem<Plutus::RenderSystem>(mCamera);
-
-    auto debugSys = mSystemManager.AddSystem<Plutus::DebugSystem>(mCamera);
-    debugSys->drawGrid(true, 64, 64);
 }
 
 void GameScreen::Enter()
 {
-    // Plutus::SceneLoader::loadFromPath("assets/scenes/testing.json", mCore->mProject.scene.get());
     mSystemManager.init();
 }
+
+float speed = 1;
 
 void GameScreen::Update(float dt)
 {
     auto pos = mCamera->getPosition();
-    if (mInput->onKeyPressed("PageDown"))
+    if (Plutus::Input.onKeyPressed("PageDown"))
     {
         mCore->setNextScreen("Editor");
     }
-    if (mInput->onKeyDown("Right"))
+
+    if (Plutus::Input.onKeyDown("Right"))
     {
-        mCamera->setPosition({ pos.x - 5, pos.y });
+        mCamera->setPosition({ pos.x + speed, pos.y });
     }
 
-    if (mInput->onKeyDown("Left"))
+    if (Plutus::Input.onKeyDown("Left"))
     {
-        mCamera->setPosition({ pos.x + 5, pos.y });
-    }
-    if (mInput->onKeyDown("Up"))
-    {
-        mCamera->setPosition({ pos.x, pos.y - 5 });
+        mCamera->setPosition({ pos.x - speed, pos.y });
     }
 
-    if (mInput->onKeyDown("Down"))
+    if (Plutus::Input.onKeyDown("Up"))
     {
-        mCamera->setPosition({ pos.x, pos.y + 5 });
+        mCamera->setPosition({ pos.x, pos.y + speed });
+    }
+
+    if (Plutus::Input.onKeyDown("Down"))
+    {
+        mCamera->setPosition({ pos.x, pos.y - speed });
     }
 
     auto scale = mCamera->getScale();
-    if (mInput->onKeyDown("+"))
+    if (Plutus::Input.onKeyDown("+"))
     {
         mCamera->setScale(scale > 0.2f ? scale - 0.1f : 0.01f);
     }
 
-    if (mInput->onKeyDown("-"))
+    if (Plutus::Input.onKeyDown("-"))
     {
         mCamera->setScale(scale < 15.0f ? scale + 0.1f : 15.0f);
     }
@@ -78,7 +77,7 @@ void GameScreen::Update(float dt)
 
 void GameScreen::Draw()
 {
-    setBackgoundColor(0.33f, 0.33f, 0.33f, 1);
+    mSystemManager.draw();
 }
 
 

@@ -1,20 +1,21 @@
 #pragma once
 #include <Math/Vectors.h>
+#include <array>
 
 namespace Plutus
 {
-    class TransformComponent
+    struct TransformComponent
     {
-    public:
         float x;
         float y;
+        float offsetX = 0;
+        float offsetY = 0;
         int w;
         int h;
         float r;
         int layer = 0;
         bool sortY = false;
 
-    public:
         TransformComponent() = default;
         /*
             Transform Component
@@ -36,9 +37,14 @@ namespace Plutus
             }
         }
 
-        Vec4f getRect() { return { x, y, w, h }; }
-        Vec2f getPosition() { return { x,y }; }
-        Vec2i getSize() { return { w, h }; }
+        inline Vec4f getRect() { return { x, y, w, h }; }
+        inline Vec2f getPosition() { return { x,y }; }
+        inline Vec2i getSize() { return { w, h }; }
+        inline Vec2i getOffset() { return { offsetX, offsetY }; }
+        inline Vec2f getCenter() { return { x + (w >> 1), y + (h >> 1) }; }
+        std::array<Vec2f, 4> getvertices() {
+            return std::array<Vec2f, 4>{ { {x, y}, { x,y + h }, { x + w, y + h }, { x + w, y } }};
+        }
     };
 
 } // namespace Plutus

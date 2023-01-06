@@ -2,7 +2,7 @@ const path = require("path");
 const fs = require("fs");
 
 const { execSync } = require("child_process");
-const { listFiles, buildOjbFiles } = require("./healper");
+const { listFiles, buildOjbFiles } = require("./helper");
 
 const buildLib = ({ outdir = "build/obj", rebuild = false }) => {
   const outLib = path.join(outdir, "libs.o");

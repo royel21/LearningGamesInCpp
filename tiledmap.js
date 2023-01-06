@@ -50,10 +50,14 @@ var customMapFormat = {
           tileHeight: map.tileHeight,
           layer: i,
           textures: [],
+          animateTiles: [],
+          animations: [],
           tiles: [],
         };
 
         let h = layer.height - 1;
+        let index = 0;
+        let animIndex = 0;
         for (y = h; y > -1; y--) {
           for (x = 0; x < layer.width; x++) {
             let tile = layer.tileAt(x, y);
@@ -64,15 +68,37 @@ var customMapFormat = {
               if (!tilemap.textures.find((t) => t.id == tex.id)) {
                 tilemap.textures.push(tex);
               }
-              let item = tex.id + 1;
-              item |= tile.id << 4;
-              item |= cell.flippedHorizontally << 25;
-              item |= cell.FlippedVertically << 26;
-              item |= cell.flippedAntiDiagonally << 27;
-              tilemap.tiles.push(item);
+
+              if (tile.animated) {
+                let found = tilemap.animations.find((t) => t.id == tile.id);
+
+                if (!found) {
+                  found = {
+                    index: animIndex++,
+                    id: tile.id,
+                    texId: tex.id,
+                    duration: tile.frames[0].duration / 1000.0,
+                    frames: tile.frames.map((f) => f.tileId),
+                  };
+                  tilemap.animations.push(found);
+                }
+
+                // tiled.log(`ani: ${found.id} ${found.index}, inx: ${index}, inx: ${(index << 12) | found.id} ${x} ${y}`);
+                tilemap.animateTiles.push((index << 12) | found.index);
+
+                tilemap.tiles.push(0);
+              } else {
+                let item = tex.id + 1;
+                item |= tile.id << 4;
+                item |= cell.flippedHorizontally << 25;
+                item |= cell.FlippedVertically << 26;
+                item |= cell.flippedAntiDiagonally << 27;
+                tilemap.tiles.push(item);
+              }
             } else {
               tilemap.tiles.push(0);
             }
+            index++;
           }
         }
         entity.components.push(tilemap);

@@ -7,6 +7,8 @@ const { buildLib, cleanLibs } = require("./scripts/build-plutus-libs");
 
 const liboutdir = path.join("web", "obj");
 
+const projectName = "GeometryShader";
+
 const buildAll = () => {
   //----------------------------------------------Build Plutus Libs--------------------------------------------
   const libs = buildLib({ outdir: liboutdir });
@@ -39,35 +41,30 @@ const buildAll = () => {
 
   const plutus = buildProject(config);
   //----------------------------------------------Project Game--------------------------------------------
-  const projectName = "AssetTest";
   config.name = projectName;
   config.src = [path.join("Projects", projectName)];
 
   const game = buildProject(config);
   //----------------------------------------------End Project Game--------------------------------------------
 
-  if (!game.isUptodate || !plutus.isUptodate) {
-    const outExecDir = path.join("web", "release");
-    if (!fs.existsSync(outExecDir)) {
-      fs.mkdirs(outExecDir);
-    }
-
-    const OUTPUT_FLAG = `--shell-file web/game.html --preload-file ./assets -s WASM=1 -s ALLOW_MEMORY_GROWTH=1`;
-
-    const CFLAGS = `-s USE_WEBGL2=1 -s USE_GLFW=3 -lopenal -s WASM=1 -std=c++1z`;
-
-    const EXEC = path.join(outExecDir, "index.html");
-
-    try {
-      const INCLUDE = include.map((i) => `-I${i}`).join(" ");
-
-      const cmd = `emcc ${game.lib} ${plutus.lib} ${libs} -o ${EXEC} ${CFLAGS} ${OUTPUT_FLAG} ${INCLUDE}`;
-      console.log(cmd);
-      execSync(cmd);
-    } catch (error) {}
-  } else {
-    console.log("Project is up to date");
+  const outExecDir = path.join("web", "release");
+  if (!fs.existsSync(outExecDir)) {
+    fs.mkdirs(outExecDir);
   }
+
+  const OUTPUT_FLAG = `--shell-file web/game.html --preload-file ./web/assets@/assets -s WASM=1 -s ALLOW_MEMORY_GROWTH=1`;
+
+  const CFLAGS = `-O3 -s USE_WEBGL2=1 -s USE_GLFW=3 -lopenal -s WASM=1 -std=c++1z`;
+
+  const EXEC = path.join(outExecDir, "index.html");
+  console.log("Compiling Project ", projectName, "\n");
+  try {
+    const INCLUDE = include.map((i) => `-I${i}`).join(" ");
+
+    const cmd = `emcc ${game.lib} ${plutus.lib} ${libs} -o ${EXEC} ${CFLAGS} ${OUTPUT_FLAG} ${INCLUDE}`;
+    console.log(cmd);
+    execSync(cmd);
+  } catch (error) {}
 };
 
 const cmd = process.argv[2];

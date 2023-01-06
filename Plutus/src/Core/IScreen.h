@@ -11,7 +11,6 @@ namespace Plutus
     protected:
         Core* mCore;
         Scene mScene;
-        Input* mInput;
         bool mIsInitialized = false;
         Camera2D* mCamera = nullptr;
 
@@ -30,9 +29,7 @@ namespace Plutus
         void init(Core* core, Camera2D* camera) {
             mCore = core;
             mCamera = camera;
-            mInput = Input::get();
             mIsInitialized = true;
-
         };
 
         friend class Core;

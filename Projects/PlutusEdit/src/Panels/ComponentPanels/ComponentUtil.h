@@ -14,7 +14,7 @@
 namespace Plutus
 {
     template<typename T>
-    bool CollapseComponent(char* label, int id, Config* config) {
+    bool CollapseComponent(const char* label, int id, Config* config) {
         bool isOpen = ImGui::CollapsingHeader(label, ImGuiTreeNodeFlags_AllowItemOverlap);
         ImGui::SameLine(ImGui::GetContentRegionAvailWidth() - 15);
         ImGui::PushID(id);
@@ -33,7 +33,7 @@ namespace Plutus
             });
 
         if (it != vec.end()) {
-            vec.erase(e);
+            vec.erase(it);
         }
     }
 

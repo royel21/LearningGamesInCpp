@@ -12,6 +12,7 @@ namespace Plutus
     class Scene;
 
     struct Project {
+        bool isLoaded = false;
         std::string winTitle = "Plutus App";
         // Window Size
         int winWidth = 1280;
@@ -42,6 +43,8 @@ namespace Plutus
         std::unordered_map<std::string, std::string> scenes;
 
         Project();
+
+        operator bool() const { return isLoaded; }
 
         void clear();
 

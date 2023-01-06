@@ -12,14 +12,14 @@ namespace Plutus
     class Scene;
     struct Config;
     class DebugRender;
-    class TransformComponent;
+    struct TransformComponent;
     struct PhysicBodyComponent;
 
     class Render
     {
     public:
         Config* mConfig = nullptr;
-        Camera2D mCamera;
+        Camera2D* mCamera;
         FrameBuffer mFrameBuffer;
         FrameBuffer mFramePicker;
         std::vector<Renderable> mRenderables;
@@ -33,10 +33,11 @@ namespace Plutus
         void reload(Config* config);
 
         void draw();
+        void update(float dt);
 
         void resizeBuffers(const Vec2f& size);
 
-        void setScene(Scene* scene) { mScene = scene; }
+        void setScene(Scene* scene) { mScene = scene;  mRenderables.clear(); }
 
     private:
         void prepare();
@@ -45,7 +46,6 @@ namespace Plutus
 
     private:
         Scene* mScene = nullptr;
-        Shader mShader;
         SpriteBatch2D mSpriteBatch;
         DebugRender* mDebugRender = nullptr;
     };

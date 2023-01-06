@@ -3,6 +3,9 @@
 #include <fstream>
 #include <filesystem>
 
+#include <cstdlib>
+#include <ctime>
+
 #define PI 3.141592653589793238463
 #define DEC2RA(dec) dec *(PI / 180)
 
@@ -90,6 +93,19 @@ namespace Plutus
             auto str2 = str;
             for (auto& s : str2) if (s < 91) s = s + 32;
             return str2;
+        }
+
+
+        int getRandom(int min, int max)
+        {
+            static bool  first = true;
+
+            if (first) {
+                srand((uint32_t)time(0));
+                first = false;
+            }
+
+            return (rand() % (max + 1 - min)) + min;
         }
     } // namespace Utils
 } // namespace Plutus

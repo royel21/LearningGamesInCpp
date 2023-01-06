@@ -2,7 +2,7 @@
 
 #include "GLSL.h"
 #include "Camera2D.h"
-#include "GraphicsUtil.h"
+#include "Graphic.h"
 #include <algorithm>
 
 #include <Math/PMath.h>
@@ -28,62 +28,31 @@ namespace Plutus
 
 	void DebugRender::dispose()
 	{
-		if (mVao)
-			glDeleteVertexArrays(1, &mVao);
-
-		if (mVbo)
-			glDeleteBuffers(1, &mVao);
-
-		if (mIbo)
-			glDeleteBuffers(1, &mVao);
+		Graphic::destroy(&mVao, &mVbo, &mIbo);
 
 		mShader.destroy();
 	}
 
-	void DebugRender::init(Camera2D* _camera)
+	void DebugRender::init(Camera2D* camera)
 	{
-		mCamera = _camera;
+		mCamera = camera;
 		mShader.init(GLSL::debug_vertshader, GLSL::debug_fragshader);
-		mShader.setAtribute("vertexPosition");
-		mShader.setAtribute("vertexColor");
+		// //Set up buffer
+		mVao = Graphic::createVertexArray();
+		mVbo = Graphic::createBufferArray();
+		mIbo = Graphic::createElementBuffer();
+		auto vsize = sizeof(DebugVertex);
 
-		//Set up buffer
-		glGenVertexArrays(1, &mVao);
-		glGenBuffers(1, &mVbo);
-		glGenBuffers(1, &mIbo);
+		Graphic::setFAttribute(0, 2, vsize);
+		Graphic::setFAttribute(1, 4, vsize, offsetof(DebugVertex, color), GL_UNSIGNED_BYTE, GL_TRUE);
 
-		glBindVertexArray(mVao);
-
-		glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(DebugVertex), (void*)offsetof(DebugVertex, position));
-
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(DebugVertex), (void*)offsetof(DebugVertex, color));
-
-		glBindVertexArray(0);
+		Graphic::unBind();
 	}
+
 	void DebugRender::end()
 	{
-		//Set Up Vertex Buffer Object
-		glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-
-		glBufferData(GL_ARRAY_BUFFER, mVertexs.size() * sizeof(DebugVertex), nullptr, GL_DYNAMIC_DRAW);
-
-		glBufferSubData(GL_ARRAY_BUFFER, 0, mVertexs.size() * sizeof(DebugVertex), mVertexs.data());
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		//Set up Index Buffer Array
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
-
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndices.size() * sizeof(GLuint), nullptr, GL_DYNAMIC_DRAW);
-
-		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, mIndices.size() * sizeof(GLuint), mIndices.data());
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		Graphic::uploadBufferData(mVbo, mVertexs.size() * sizeof(DebugVertex), mVertexs.data());
+		Graphic::uploadBufferData(mIbo, mIndices.size() * sizeof(GLuint), mIndices.data(), GL_DYNAMIC_DRAW, GL_ELEMENT_ARRAY_BUFFER);
 
 		mNumElements = (uint32_t)mIndices.size();
 		mIndices.clear();
@@ -106,12 +75,12 @@ namespace Plutus
 		mIndices.push_back(i);
 	}
 	/***************************** Shapes **********************************************/
-	void DebugRender::drawBox(Box2d& b, const ColorRGBA8& color)
+	void DebugRender::submitBox(Box2d* b, const ColorRGBA8& color)
 	{
-		// drawBox(Vec4f(b.pos.x, b.pos.y, b.size.x, b.size.y), b.rotation, color);
+		// submitBox(Vec4f(b.pos.x, b.pos.y, b.size.x, b.size.y), b.rotation, color);
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 4);
-		auto vertices = b.getVertices();
+		auto vertices = b->getVertices();
 
 		int index = 0;
 		for (uint32_t j = i; j < i + 4; j++) {
@@ -123,7 +92,7 @@ namespace Plutus
 	}
 	/*******************************************************************************************************/
 
-	void DebugRender::drawLine(const Vec2f& a, const Vec2f& b, float angle, const ColorRGBA8& color)
+	void DebugRender::submitLine(const Vec2f& a, const Vec2f& b, float angle, const ColorRGBA8& color)
 	{
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 2);
@@ -138,7 +107,7 @@ namespace Plutus
 		mIndices.push_back(i + 1);
 	}
 
-	void DebugRender::drawBox(const Vec4f& rect, float angle, const ColorRGBA8& color)
+	void DebugRender::submitBox(const Vec4f& rect, float angle, const ColorRGBA8& color)
 	{
 		uint32_t i = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + 4);
@@ -155,10 +124,10 @@ namespace Plutus
 		{
 			Vec2f halfDim(rect.z * 0.5f, rect.w * 0.5f);
 			Vec2f center = Vec2f(rect.x, rect.y) + halfDim;
-			rotate(bl, center, angle);
-			rotate(tl, center, angle);
-			rotate(tr, center, angle);
-			rotate(br, center, angle);
+			PMath::rotate(bl, center, angle);
+			PMath::rotate(tl, center, angle);
+			PMath::rotate(tr, center, angle);
+			PMath::rotate(br, center, angle);
 		}
 
 		mVertexs[i + 0] = { bl, color };
@@ -169,14 +138,14 @@ namespace Plutus
 		addIndices(i);
 	}
 
-	void DebugRender::drawCircle(const Vec2f& center, float radius, const ColorRGBA8& color)
+	void DebugRender::submitCircle(const Vec2f& center, float radius, const ColorRGBA8& color)
 	{
 		uint32_t start = (uint32_t)mVertexs.size();
 		mVertexs.resize(mVertexs.size() + NUmVERTS);
 
 		for (size_t i = 0; i < NUmVERTS; i++)
 		{
-			float angle = ((float)i / NUmVERTS) * 2.0f * PI;
+			float angle = ((float)i / NUmVERTS) * 2.0f * PMath::PI;
 			mVertexs[start + i].position.x = cos(angle) * radius + center.x;
 			mVertexs[start + i].position.y = sin(angle) * radius + center.y;
 			mVertexs[start + i].color = color;
@@ -214,7 +183,7 @@ namespace Plutus
 
 				lineEnd.x = cpos.x + (currentLine);
 				lineEnd.y = cpos.y + size.y + th;
-				drawLine(lineStart, lineEnd, 0, mGridColor);
+				submitLine(lineStart, lineEnd, 0, mGridColor);
 			}
 
 			for (float currentLine = -3 * th; currentLine <= size.y + th; currentLine += th)
@@ -224,7 +193,7 @@ namespace Plutus
 
 				lineEnd.x = cpos.x + size.x + tw;
 				lineEnd.y = cpos.y + (currentLine);
-				drawLine(lineStart, lineEnd, 0, mGridColor);
+				submitLine(lineStart, lineEnd, 0, mGridColor);
 			}
 			end();
 
@@ -237,14 +206,13 @@ namespace Plutus
 		if (isDraw) {
 			mShader.enable();
 			mShader.setUniformMat4("camera", mCamera->getCameraMatrix());
-			// glEnable(GL_LINE_SMOOTH);
-			// glEnable(GL_BLEND);
 			glLineWidth(lineWidth);
-			glBindVertexArray(mVao);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
-			glDrawElements(GL_LINES, mNumElements, GL_UNSIGNED_INT, 0);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindVertexArray(0);
+
+			Graphic::bind(mVao, mIbo);
+
+			Graphic::drawElements(mNumElements, 0, GL_LINES);
+
+			Graphic::unBind();
 
 			mShader.disable();
 		}

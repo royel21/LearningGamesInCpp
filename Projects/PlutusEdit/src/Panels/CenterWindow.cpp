@@ -16,11 +16,31 @@
 
 #include <Systems/Systems.h>
 
-#include <Graphics/DebugRenderer.h>
 #include <Assets/Assets.h>
+#include <Graphics/DebugRenderer.h>
 #include <ECS/Components/TransformComponent.h>
 
 #include <Time/Timer.h>
+#include <Log/Logger.h>
+
+const char* newScript = R"SCRIPT(
+function init()
+
+end
+
+function update(dt)
+
+end
+
+function collisionStart(ent)
+end
+
+function collisionEnd(ent)
+end
+
+function destroy()
+
+end)SCRIPT";
 
 #define mapIn(x, min_in, max_in, min_out, max_out) (x - min_in) * (max_out - min_out) / (max_in - min_in) + min_out
 
@@ -36,9 +56,10 @@ namespace Plutus
         mTextEditor.SetShowWhitespaces(false);
 
         mSysManager.setProject(&mConfig->mTempProject);
-        mSysManager.AddSystem<ScriptSystem>(&mConfig->mRender->mCamera);
+        mSysManager.AddSystem<ScriptSystem>(mConfig->mRender.mCamera);
         mSysManager.AddSystem<PhysicSystem>();
         mSysManager.AddSystem<AnimationSystem>();
+        mSysManager.AddSystem<DebugSystem>(mConfig->mRender.mCamera);
     }
 
 
@@ -46,47 +67,47 @@ namespace Plutus
     {
         if (mConfig->isHover) {
             auto pos = mConfig->mMouseCoords;
-            auto& camera = mConfig->mRender->mCamera;
+            auto camera = mConfig->mRender.mCamera;
+            auto scale = camera->getScale();
 
-            if (Input::get()->onKeyPressed("F2"))
-                camera.setPosition(0, 0);
+            if (Input.onKeyPressed("F2"))
+                camera->setPosition(0, 0);
 
-            if (Input::get()->onKeyPressed("F3")) {
-                camera.setScale(1);
+            if (Input.onKeyPressed("F3")) {
+                camera->setScale(1);
                 mConfig->mProject.zoomLevel = 1;
             }
 
-            if (Input::get()->onKeyPressed("MouseLeft"))
+            if (Input.onKeyPressed("MouseLeft"))
             {
                 mMouseLastCoords = pos;
-                mCamCoords = camera.getPosition();
+                mCamCoords = camera->getPosition();
             }
             // move the camera
-            if (Input::get()->isCtrl)
+            if (Input.isCtrl)
             {
-                if (Input::get()->onKeyDown("MouseLeft"))
+                if (Input.onKeyDown("MouseLeft"))
                 {
-                    Vec2f result = pos - mMouseLastCoords;
-                    result /= camera.getScale();
+                    Vec2f result = (pos - mMouseLastCoords) / scale;
                     mConfig->mProject.vpPos = mCamCoords - result;
                 }
 
-                auto scroll = Input::get()->getMouseWheel();
+                auto scroll = Input.getMouseWheel();
                 if (scroll != 0)
                 {
-                    auto scalePos = pos / camera.getScale();
+                    auto scalePos = pos / scale;
 
-                    auto newVal = camera.getScale() + (scroll > 0 ? 0.05f : -0.05f);
-                    camera.setScale(CHECKLIMIT(newVal, 0.20f, 6));
-                    mConfig->mProject.zoomLevel = camera.getScale();
+                    auto newVal = scale + (scroll > 0 ? 0.1f : -0.1f);
+                    camera->setScale(newVal);
+                    mConfig->mProject.zoomLevel = camera->getScale();
 
-                    auto newPos = pos / camera.getScale();
+                    auto newPos = pos / camera->getScale();
 
                     auto offset = newPos - scalePos;
-                    mConfig->mProject.vpPos = camera.getPosition() - offset;
+                    mConfig->mProject.vpPos = camera->getPosition() - offset;
                 }
 
-                camera.setPosition(mConfig->mProject.vpPos);
+                camera->setPosition(mConfig->mProject.vpPos);
             }
         }
     }
@@ -95,51 +116,31 @@ namespace Plutus
     {
         auto& project = mConfig->mProject;
 
-        if (!Input::get()->isCtrl) {
-            if (Input::get()->onKeyPressed("MouseLeft"))
+        if (!Input.isCtrl) {
+            if (Input.onKeyPressed("MouseLeft"))
             {
-                mMouseLastCoords = mConfig->mMouseCoords;
-
-                auto id = mConfig->mRender->mFramePicker.getEntId({ x, y });
+                auto id = mConfig->mRender.mFramePicker.getEntId({ x, y });
                 Entity ent = mConfig->mProject.scene->getEntity(id);
 
-                if (ent) {
-                    project.mEnt = ent;
-                    if (project.mEnt.hasComponent<TransformComponent>()) {
-                        mEntLastPos = project.mEnt.getComponent<TransformComponent>()->getPosition();
-                    }
-                }
-            }
-
-            if (project.mEnt && Input::get()->onKeyDown("MouseLeft"))
-            {
-                if (project.mEnt.hasComponent<TransformComponent>()) {
-                    auto trans = project.mEnt.getComponent<TransformComponent>();
-                    Vec2f result = mConfig->mMouseCoords - mMouseLastCoords;
-                    result /= mConfig->mRender->mCamera.getScale();
-
-                    trans->x = mEntLastPos.x + result.x;
-                    trans->y = mEntLastPos.y + result.y;
-                }
+                if (ent) project.mEnt = ent;
             }
         }
     }
 
     void CenterWindow::showConfig()
     {
-        auto camera = mConfig->mRender->mCamera;
+        auto camera = mConfig->mRender.mCamera;
         auto& project = mConfig->mProject;
 
-        ImGui::SetNextWindowSize({ 0, 400 });
         auto winPos = ImGui::GetCursorScreenPos();
         ImVec2 pos(winPos.x + 200, winPos.y + 50);
         ImGui::SetNextWindowPos(pos);
         ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove
             | ImGuiWindowFlags_NoDecoration
-            | ImGuiWindowFlags_AlwaysAutoResize
             | ImGuiWindowFlags_NoSavedSettings;
 
-        if (ImGui::BeginPopupModal("Project Config", NULL, flags))
+        ImGui::SetNextWindowSize({ 400, 0 });
+        if (ImGui::BeginPopupModal("Project Config", NULL, ImGuiWindowFlags_NoMove))
         {
             float width = 380 * 0.35f;
             ImGui::Text("Window Config");
@@ -176,8 +177,14 @@ namespace Plutus
             ImGui::Row("Auto Clear Force", width);
             ImGui::Checkbox("##cforce", &project.autoClearForce);
             ImGui::Separator();
-            if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+            ImGui::InvisibleButton("inv-c", { 1,1 });
+            ImGui::SameLine(140);
+            if (ImGui::Button("Close", ImVec2(120, 0))) {
+                mConfig->mRender.init(mConfig);
+                ImGui::CloseCurrentPopup();
+            }
             ImGui::EndPopup();
+
         }
     }
 
@@ -186,13 +193,13 @@ namespace Plutus
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImVec4 WHITE = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
         ImGui::PushStyleColor(ImGuiCol_ChildBg, WHITE);
-        auto& framebuffer = mConfig->mRender->mFrameBuffer;
+        auto& framebuffer = mConfig->mRender.mFrameBuffer;
         if (ImGui::BeginChild("v-port"))
         {
             auto winSize = framebuffer.getSize();
             float aspectRation = framebuffer.getAspectRatio();
 
-            Vec2f vpSize = mConfig->mRender->mCamera.getViewPortSize();
+            Vec2f vpSize = mConfig->mRender.mCamera->getViewPortSize();
 
             auto winPos = ImGui::GetContentRegionAvail();
             auto pos = ImGui::GetCursorPos();
@@ -201,7 +208,7 @@ namespace Plutus
             if (newSize.y > winPos.y)
             {
                 newSize.y = winPos.y;
-                newSize.x = winPos.y * aspectRation;
+                newSize.x = roundf(winPos.y * aspectRation);
             }
             // add padding to the canvas
             newSize -= 10;
@@ -212,7 +219,8 @@ namespace Plutus
             ImGui::SetCursorPos({ x, y });
 
             if ((int)winSize.x != (int)newSize.x && (int)winSize.y != (int)newSize.y) {
-                mConfig->mRender->resizeBuffers(newSize);
+                mConfig->mRender.resizeBuffers(newSize);
+                mConfig->mRender.mCamera->setVPSize(newSize);
             }
 
             ImVec2 canvas_pos = ImGui::GetCursorScreenPos(); // ImDrawList API uses screen coordinates!
@@ -223,7 +231,6 @@ namespace Plutus
             float xPos = mapIn(localX, 0, newSize.x, 0, vpSize.x);
             float yPos = vpSize.y - mapIn(localY, 0, newSize.y, 0, vpSize.y);
 
-            // ImGui::Image((void*)mConfig->mRender->mFramePicker.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, { 0,0,0,1 }, { 0.0, 0.0, 0.0, 1.0 });
             ImGui::Image((void*)framebuffer.getTextureId(), { newSize.x, newSize.y }, { 0, 1 }, { 1, 0 }, WHITE, { 0.0, 0.0, 0.0, 1.0 });
             if (mConfig->isHover = ImGui::IsItemHovered())
             {
@@ -270,9 +277,9 @@ namespace Plutus
 
                 if (mConfig->state == Editing && ImGui::BeginTabItem("Script Editor")) {
                     if (saveStart) {
-                        auto time = Timer::millis() - saveStart;
+                        auto time = Time::millis() - saveStart;
 
-                        if (Timer::millis() - saveStart > 5000) {
+                        if (time > 5000) {
                             saveStart = 0;
                         }
                         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.85f, 1.0f, 1.0f));
@@ -289,21 +296,25 @@ namespace Plutus
             ImGui::EndTabBar();
 
             ImGui::SameLine();
-            ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f);
             ImGui::SetCursorPosY(4);
+
+            static Script* script = nullptr;
+
             if (isViewPort) {
+                script = nullptr;
+                ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f);
                 static bool drawGrid = DebugRender::get()->getShouldDraw();
                 bool isRunning = mConfig->state == Running;
 
                 if (ImGui::TransparentButton(isRunning ? ICON_FA_STOP : ICON_FA_PLAY)) {
                     if (isRunning) {
                         mConfig->state = Editing;
-                        mConfig->mRender->setScene(project.scene.get());
+                        mConfig->mRender.setScene(project.scene.get());
                         DebugRender::get()->setShouldDraw(mConfig->drawGrid);
 
                         mSysManager.stop();
                         mConfig->mTempProject.clearScene();
-                        mConfig->mRender->mCamera.setPosition(mCamCoords);
+                        mConfig->mRender.mCamera->setPosition(mCamCoords);
                     }
                     else {
                         mConfig->state = Running;
@@ -313,8 +324,8 @@ namespace Plutus
                         DebugRender::get()->setShouldDraw(false);
 
                         mSysManager.init();
-                        mConfig->mRender->setScene(mConfig->mTempProject.scene.get());
-                        mCamCoords = mConfig->mRender->mCamera.getPosition();
+                        mConfig->mRender.setScene(mConfig->mTempProject.scene.get());
+                        mCamCoords = mConfig->mRender.mCamera->getPosition();
                     }
                 }
                 ImGui::SameLine();
@@ -324,13 +335,17 @@ namespace Plutus
                 showConfig();
             }
             else {
-                auto scripts = AssetManager::get()->getAssets<Script>();
-                static Script* script = nullptr;
+                ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - 100);
+                auto& scripts = AssetManager::get()->getAssets<Script>();
 
-                if (scripts.size() && currentScript.empty()) {
+                if (scripts.size() && (currentScript.empty() || scripts.find(currentScript) == scripts.end())) {
                     currentScript = scripts.begin()->first;
+                    script = nullptr;
+                }
+
+                if (!script && !currentScript.empty() && scripts.size()) {
                     script = static_cast<Script*>(scripts[currentScript]);
-                    mTextEditor.SetText(script->mBuffer);
+                    mTextEditor.SetText(script->load());
                 }
 
 
@@ -342,19 +357,27 @@ namespace Plutus
                     ImGui::SameLine();
                     if (ImGui::TransparentButton(ICON_FA_SAVE " Save")) {
                         script->save(mTextEditor.GetText().c_str());
-                        saveStart = Timer::millis();
+                        saveStart = Time::millis();
+                    }
+
+                    ImGui::SameLine();
+                    if (ImGui::TransparentButton(ICON_FA_TRASH " Remove", false, { 1,0,0,1 })) {
+                        scripts.erase(currentScript);
+                        currentScript = "";
                     }
 
                     ImGui::SameLine();
                     ImGui::PushItemWidth(200);
                     if (ImGui::ComboBox("##scr-list", scripts, currentScript)) {
-                        mTextEditor.SetText(static_cast<Script*>(scripts[currentScript])->mBuffer);
+                        script = AssetManager::get()->getAsset<Script>(currentScript);
+                        mTextEditor.SetText(script->load());
                     }
+
                     ImGui::PopItemWidth();
 
-                    if (Input::get()->isCtrl && Input::get()->onKeyPressed("S")) {
+                    if (Input.isCtrl && Input.onKeyPressed("S")) {
                         script->save(mTextEditor.GetText().c_str());
-                        saveStart = Timer::millis();
+                        saveStart = Time::millis();
                     }
                 }
 
@@ -368,8 +391,10 @@ namespace Plutus
                     ImGui::Separator();
                     ImGui::SetCursorPosX(100);
                     if (ImGui::Button("Create")) {
-                        currentScript = name;
-                        AssetManager::get()->addAsset<Script>(name, "assets/scripts/" + name);
+                        currentScript = name + ".lua";
+                        auto scr = AssetManager::get()->addAsset<Script>(currentScript, "assets/scripts/" + currentScript);
+                        scr->save(newScript);
+                        mTextEditor.SetText(newScript);
                         ImGui::CloseCurrentPopup();
                     }
                     ImGui::SameLine();

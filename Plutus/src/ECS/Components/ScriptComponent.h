@@ -24,6 +24,13 @@ namespace Plutus
 
         void update(float dt);
 
+        void animationEnd(const std::string id);
+
+        void CollisionStart(uint32_t entId, bool isSensor);
+        void CollisionEnd(uint32_t entId, bool isSensor);
+
+        float report(uint32_t id, float frac);
+
         void destroy();
 
     private:

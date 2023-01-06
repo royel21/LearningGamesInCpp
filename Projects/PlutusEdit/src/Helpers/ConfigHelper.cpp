@@ -21,8 +21,6 @@ namespace Plutus
 
             config->winWidth = jhelper.getInt("win-width", 1280);
             config->winHeight = jhelper.getInt("win-height", 768);
-            config->tileWidth = jhelper.getInt("tile-width", 32);
-            config->tileHeight = jhelper.getInt("tile-height", 32);
             config->currentProject = jhelper.getString("current-project");
 
             //Create All Projects
@@ -39,8 +37,6 @@ namespace Plutus
         {
             ser.addInt("win-width", config->winWidth ? config->winWidth : 1280);
             ser.addInt("win-height", config->winHeight ? config->winHeight : 1280);
-            ser.addInt("tile-width", config->tileWidth);
-            ser.addInt("tile-height", config->tileHeight);
             ser.addString("current-project", config->currentProject);
 
             ser.StartArr("projects");
@@ -60,5 +56,31 @@ namespace Plutus
         ser.EndObj();
 
         FileIO::saveBufferToFile("config.json", ser.getString());
+    }
+
+    void createProject(const char* path) {
+        const char* newProj = R"PROJ({
+    "win-title": "Plutus App",
+    "win-width": 1280,
+    "win-height": 768,
+    "vp-width": 1280,
+    "vp-height": 768,
+    "vp-pos": [
+        0.0,
+        0.0
+    ],
+    "zoom-level": 1.0,
+    "max-fps": 60.0,
+    "velocity-iter": 8,
+    "position-iter": 3,
+    "gravity": [
+        0.0,
+        0.0
+    ],
+    "auto-clear-force": 1,
+    "current-scene": "",
+    "scenes": []
+})PROJ";
+        FileIO::saveBufferToFile(path, newProj);
     }
 }

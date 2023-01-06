@@ -1,6 +1,7 @@
 #include "RigidBodyComponent.h"
 #include <box2d/box2d.h>
 
+#include <cmath>
 namespace Plutus
 {
     void RigidBodyComponent::ApplyForce(float x, float y) {
@@ -21,16 +22,18 @@ namespace Plutus
     }
 
     void RigidBodyComponent::speedLimit() {
+        auto vel = getVelocity();
+
         float x = mMaxVel.x, y = mMaxVel.y;
         if (x > 0 || y > 0) {
-            auto vel = getVelocity();
+
             if (x) {
                 if (x > 0) {
                     if (vel.x < -x) {
-                        mBody->SetLinearVelocity({ -x, vel.y });
+                        vel.x = -x;
                     }
                     else if (vel.x > x) {
-                        mBody->SetLinearVelocity({ x, vel.y });
+                        vel.x = -x;
                     }
                 }
             }
@@ -38,15 +41,15 @@ namespace Plutus
             if (y) {
                 if (y > 0) {
                     if (vel.y < -y) {
-                        mBody->SetLinearVelocity({ vel.x, -y });
+                        vel.y = -y;
                     }
                     else if (vel.y > y) {
-                        mBody->SetLinearVelocity({ vel.x, y });
+                        vel.y = y;
                     }
                 }
             }
 
-            mBody->SetLinearVelocity({ vel.x * mSpeedReducctionFactor.x, vel.y * mSpeedReducctionFactor.y });
         }
+        mBody->SetLinearVelocity({ std::roundf(vel.x * mSpeedReducctionFactor.x), std::roundf(vel.y * mSpeedReducctionFactor.y) });
     }
 } // namespace Plutus

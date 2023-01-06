@@ -8,7 +8,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-constexpr int BITMAPSIZE = 500;
+constexpr int BITMAPSIZE = 1024;
 
 namespace Plutus
 {
@@ -16,6 +16,11 @@ namespace Plutus
     {
         mPath = path;
         mSize = fontSize;
+        auto fullPath = (baseDir + mPath);
+        if (!FileIO::exists(fullPath)) {
+            Logger::error("Font Not Found:%s", fullPath.c_str());
+            return;
+        }
 
         FT_Library ft;
         // All functions return a value different than 0 whenever an error occurred
@@ -24,7 +29,7 @@ namespace Plutus
             return;
         }
 
-        auto buffer = FileIO::readFile((baseDir + mPath).c_str());
+        auto buffer = FileIO::readFile(fullPath.c_str());
         // Load font as face
         FT_Face face;
         if (FT_New_Memory_Face(ft, buffer.data(), (long)buffer.size(), 0, &face)) {
@@ -39,8 +44,8 @@ namespace Plutus
         glGenTextures(1, &mTexId);
         glBindTexture(GL_TEXTURE_2D, mTexId);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -48,15 +53,23 @@ namespace Plutus
 
         int x = 0;
         int y = 0;
+        uint32_t height = 0;
 
         auto g = face->glyph;
         for (int i = 32; i < 128; i++) {
             if (FT_Load_Char(face, i, FT_LOAD_RENDER))
                 continue;
 
+            // FT_Render_Glyph(g, FT_RENDER_MODE_SDF); // <-- And this is new
+
+            if (height < g->bitmap.rows) {
+                height = g->bitmap.rows;
+            }
+
             if (x + g->bitmap.width > BITMAPSIZE) {
-                y += fontSize;
+                y += height;
                 x = 0;
+                height = 0;
             }
 
             if (g->bitmap.rows && g->bitmap.width) {

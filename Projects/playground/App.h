@@ -3,6 +3,8 @@
 #include <Input/InputListener.h>
 #include <Physics/Shapes.h>
 
+#include "QuadTree.h"
+
 namespace Plutus
 {
     class DebugRender;
@@ -22,8 +24,10 @@ namespace Plutus
         void onKeyUp(const std::string& key);
         void onMouseMove(float x, float y);
 
+        void drawQuadrant(QuadTree* qt);
+
     private:
         DebugRender* mDebug;
-        std::vector<Shape*> shapes;
+        QuadTreeContainer<Shape> mShapes;
     };
 } // namespace Plurus

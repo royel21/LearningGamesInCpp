@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 namespace Plutus
 {
     struct Vec2i;
@@ -30,6 +32,7 @@ namespace Plutus
 
         Vec2f operator+(const Vec2f& v) const;
         Vec2f operator-(const Vec2f& v) const;
+        Vec2f operator*(const Vec2f& v) const;
 
         Vec2f operator+(float v) const;
         Vec2f operator-(float v) const;
@@ -50,6 +53,8 @@ namespace Plutus
         bool operator> (const Vec2f& v) const;
         bool operator<= (const Vec2f& v) const;
         bool operator>= (const Vec2f& v) const;
+
+        Vec2f getDirection(const Vec2f& v);
     };
 
     struct Vec3f {
@@ -126,6 +131,7 @@ namespace Plutus
 
         Vec4f& operator*=(float n);
         Vec4f& operator/=(float n);
+        Vec4f operator-() const;
 
         Vec4f operator*(float v) const;
         Vec4f operator/(float v) const;
@@ -133,6 +139,17 @@ namespace Plutus
         Vec4f operator+(const Vec4f& v) const;
         Vec4f operator-(const Vec4f& v) const;
 
+        bool contain(const Vec2f& v);
+        bool contain(const Vec4f& v);
+        bool overlap(const Vec4f& v);
 
+        inline Vec2f getCenter() const { return { x + (z * 0.5f), y + (w * 0.5f) }; }
+        inline Vec2f getLower() const { return { x, y }; }
+        inline Vec2f getUpper() const { return { x + z, y + w }; }
+        inline Vec2f getSize() const { return { z, w }; }
+
+        std::array<Vec2f, 4> getvertices() const {
+            return std::array<Vec2f, 4>{ { {x, y}, { x,y + w }, { x + z, y + w }, { x + z, y } }};
+        }
     };
 } // namespace Plutus

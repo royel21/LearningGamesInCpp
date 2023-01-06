@@ -11,23 +11,34 @@ class b2World;
 namespace Plutus
 {
     class Scene;
+    struct TransformComponent;
 
     class Entity
     {
     public:
         entt::entity mId{ entt::null };
         Scene* mScene = nullptr;
+        bool mVisible = true;
 
     public:
         Entity() = default;
-        Entity(const Entity& ent) : mId(ent.mId), mScene(ent.mScene) { }
-        Entity(const Entity* ent) : mId(ent->mId), mScene(ent->mScene) { }
-        Entity(entt::entity ent, Scene* scene) : mId(ent), mScene(scene) {}
+        ~Entity();
+        Entity(const Entity& ent) : mId(ent.mId), mScene(ent.mScene), mVisible(ent.mVisible) { }
+        Entity(const Entity* ent) : mId(ent->mId), mScene(ent->mScene), mVisible(ent->mVisible) { }
+        Entity(entt::entity ent, Scene* scene, bool visible = true) : mId(ent), mScene(scene), mVisible(visible) {}
+        Entity(uint32_t ent, Scene* scene, bool visible = true) : mId(entt::entity(ent)), mScene(scene), mVisible(visible) {}
 
-        entt::entity getEntityId() const { return mId; }
+        inline uint32_t getId() { return (uint32_t)mId; }
+
+        inline entt::entity getEntityId() const { return mId; }
 
         const std::string getName();
         Vec2f getPosition();
+        Vec2f getCenter();
+        Vec2f getDirection(Entity& Ent);
+        float getDistance(Entity& Ent);
+
+        Vec4f getRect();
 
 
         void setName(const std::string& name);
@@ -74,27 +85,92 @@ namespace Plutus
     {
     public:
         ColorRGBA8 mBGColor;
+        int mTileWidth = 32;
+        int mTileHeight = 32;
 
         ~Scene() { mRegistry.clear(); }
 
-        Entity createEntity(const std::string& name);
+        inline Vec2f getTileSize() { return { mTileWidth, mTileHeight }; }
+
+        template<typename T>
+        Vec4f getRect(const T& tile) {
+            return { float(tile.x * mTileWidth), float(tile.y * mTileHeight), mTileWidth, mTileHeight };
+        }
+
+        inline Vec4f getRect(float x, float y) {
+            return { x * mTileWidth, y * mTileHeight, mTileWidth, mTileHeight };
+        }
+
+        inline Vec4f getRect(int x, int y) { return getRect(float(x), float(y)); }
+
+        Entity createEntity(const std::string& name, bool visible = true);
 
         Entity getEntity(int Id);
         Entity CreateCopy(Entity& ent);
-        Entity getEntityByName(const std::string name);
+        Entity getEntityByName(const std::string& name);
+
+        void remove() {
+            for (auto e : toRemove) {
+                mRegistry.destroy(e);
+            }
+            toRemove.clear();
+        }
+
+        inline TransformComponent* getTransform(uint32_t id) { return getTransform(entt::entity(id)); }
+        TransformComponent* getTransform(entt::entity id);
+
+        template<typename T>
+        T* getComponentFromName(const std::string& name) {
+            auto ent = getEntityByName(name);
+            if (ent) return &(mRegistry.get<T>(ent.mId));
+            return nullptr;
+        }
+
+        template<typename T>
+        T* getComponent(uint32_t id) {
+            return getComponent<T>(entt::entity(id));
+        }
+
+        template<typename T>
+        T* getComponent(entt::entity id) {
+            if (mRegistry.valid(id) && mRegistry.any_of<T>(id)) {
+                return  &(mRegistry.get<T>(id));
+            }
+            return nullptr;
+        }
 
         void copyScene(Scene* scene);
 
-        inline void removeEntity(entt::entity ent) { mRegistry.destroy(ent); }
+        inline void removeEntity(entt::entity ent) {
+            toRemove.push_back(ent);
+        }
+        inline void removeEntity(Entity ent) {
+            toRemove.push_back(ent.mId);
+        }
+        inline void removeEntity(uint32_t ent) {
+            toRemove.push_back(entt::entity(ent));
+        }
 
         inline bool isValid(Entity ent) { return mRegistry.valid(ent); }
+        inline bool isValid(uint32_t ent) { return mRegistry.valid(entt::entity(ent)); }
 
         inline entt::registry* getRegistry() { return &mRegistry; }
         // remove all entity from scene
-        inline void clear() { mRegistry.clear(); mBGColor = {}; }
+        inline void clear() { mRegistry.clear(); mBGColor = ColorRGBA8(); }
+
+        template<typename... T>
+        inline auto getView() {
+            return mRegistry.view<T...>();
+        }
+
+        template<typename... T>
+        inline auto getGroup() {
+            return mRegistry.group<T...>();
+        }
 
     private:
         entt::registry mRegistry;
+        std::vector<entt::entity> toRemove;
 
         friend class Entity;
         friend class System;

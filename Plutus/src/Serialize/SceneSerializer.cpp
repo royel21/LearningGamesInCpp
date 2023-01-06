@@ -63,8 +63,8 @@ namespace Plutus
                 ser.addInt("tileHeight", tex->mTileHeight);
                 ser.addInt("spacing", tex->mSpacing);
                 ser.addInt("margin", tex->mMargin);
-                ser.addInt("min-filter", tex->mMinFilter);
-                ser.addInt("mag-filter", tex->mMagFilter);
+                ser.addInt("gl-filter", tex->mGlFilter);
+                ser.addInt("tex-unit", tex->mTexureUnit);
             }
             ser.EndObj();
         }
@@ -111,8 +111,6 @@ namespace Plutus
             ser.addString("name", "TileMap");
             ser.addInt("width", tilemap->mWidth);
             ser.addInt("height", tilemap->mHeight);
-            ser.addInt("tileWidth", tilemap->mTileWidth);
-            ser.addInt("tileHeight", tilemap->mTileHeight);
             ser.addInt("layer", tilemap->mLayer);
 
             //Array of textures
@@ -127,6 +125,30 @@ namespace Plutus
                 }
             }
             ser.EndArr();
+            //Animations
+            ser.StartArr("animations");
+            for (auto& anim : tilemap->mTileAnims)
+            {
+                ser.StartObj();
+                ser.addInt("texId", anim.texId);
+                ser.addFloat("duration", anim.duration);
+                ser.StartArr("frames");
+                for (auto f : anim.frames)
+                    ser.addInt(f);
+                ser.EndArr();
+
+                ser.EndObj();
+            }
+            ser.EndArr();
+
+            ser.StartArr("animateTiles");
+            for (auto& anim : tilemap->mAnimateTiles)
+            {
+                int index = (anim.y * tilemap->mWidth) + anim.x;
+                ser.addInt((index << 12) | anim.texture);
+            }
+            ser.EndArr();
+
             //Tiles Array
             ser.StartArr("tiles");
             {
@@ -176,6 +198,9 @@ namespace Plutus
                         ser.addFloat("dens", fix.density);
                         ser.addFloat("restit", fix.restitution);
                     }
+                    ser.addInt("mask", fix.mask);
+                    ser.addInt("group", fix.group);
+                    ser.addInt("category", fix.category);
                     ser.addInt("sensor", fix.isSensor);
                 }
                 ser.EndObj();
@@ -193,30 +218,37 @@ namespace Plutus
         ser.addString("format", "Plutus");
         ser.addInt("type", 0);
 
-        ser.addInt("bg-color", scene->mBGColor);
+        ser.add4Float("bg-color", scene->mBGColor);
+        ser.addInt("tile-width", scene->mTileWidth);
+        ser.addInt("tile-height", scene->mTileHeight);
 
         Textures_JSON(ser);
 
         ser.StartArr("entities");
         scene->getRegistry()->each([&](entt::entity e) {
             Plutus::Entity ent = { e, scene };
+            auto tag = ent.getComponent<TagComponent>();
             ser.StartObj();
-            ser.addString("name", ent.getName());
+            ser.addString("name", tag->Name);
+            ser.addInt("visible", tag->Visible);
 
             ser.StartArr("components");
             {
+                if (ent.hasComponent<AnimationComponent>())
+                {
+                    Animate_JSON(ser, ent.getComponent<AnimationComponent>());
+                }
+
                 if (ent.hasComponent<TransformComponent>())
                 {
-                    if (ent.hasComponent<AnimationComponent>())
-                    {
-                        Animate_JSON(ser, ent.getComponent<AnimationComponent>());
-                    }
                     auto trans = ent.getComponent<TransformComponent>();
                     ser.StartObj();
                     {
                         ser.addString("name", "Transform");
                         ser.addFloat("x", trans->x);
                         ser.addFloat("y", trans->y);
+                        ser.addFloat("offset-x", trans->offsetX);
+                        ser.addFloat("offset-y", trans->offsetY);
                         ser.addInt("w", trans->w);
                         ser.addInt("h", trans->h);
                         ser.addFloat("r", trans->r);
@@ -225,6 +257,7 @@ namespace Plutus
                     }
                     ser.EndObj();
                 }
+
                 if (ent.hasComponent<SpriteComponent>())
                 {
                     auto sprite = ent.getComponent<SpriteComponent>();

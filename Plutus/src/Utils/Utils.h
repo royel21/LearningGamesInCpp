@@ -27,6 +27,8 @@ namespace Plutus
         void replaceAll(std::string& str, char what, char with);
 
         std::string ToLowerCase(const std::string& str);
+
+        int getRandom(int min, int max);
     } // namespace Utils
 
 } // namespace Plutus

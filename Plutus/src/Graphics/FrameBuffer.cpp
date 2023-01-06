@@ -1,5 +1,7 @@
 #include "FrameBuffer.h"
-#include <Graphics/GLheaders.h>
+
+#include <Graphics/Graphic.h>
+
 #include <assert.h>
 
 namespace Plutus
@@ -20,11 +22,11 @@ namespace Plutus
 
         if (isForPicking)
         {
-            mTexId = createTexture(w, h, 0, GL_RGBA32F, GL_RGBA, GL_FLOAT);
+            mTexId = Graphic::createTexture(w, h, 0, GL_RGBA32F, GL_RGBA, GL_FLOAT);
         }
         else
         {
-            mTexId = createTexture(w, h, 0, GL_RGBA8, GL_RGBA);
+            mTexId = Graphic::createTexture(w, h, 0, GL_RGBA8, GL_RGBA);
             glBindTexture(GL_TEXTURE_2D, mTexId);
 
             // Create render buffer for store the depth info

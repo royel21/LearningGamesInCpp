@@ -4,11 +4,6 @@
 
 namespace Plutus
 {
-
-    Vec4f Tile::getRect() {
-        return { x * parent->mTileWidth, y * parent->mTileHeight, parent->mTileWidth, parent->mTileHeight };
-    }
-
     void TileMapComponent::addTexture(int id, const std::string& texture)
     {
         mTextures[id] = texture;
@@ -33,10 +28,12 @@ namespace Plutus
         return  AssetManager::get()->getAsset<Texture>(mTextures[id]);
     }
 
-    void TileMapComponent::addTile(Tile& tile)
-    {
-        mTiles.push_back(tile);
-        mTiles.back().setParent(this);
+    Vec4f TileMapComponent::getTexCoord(Tile& tile) {
+        return  AssetManager::get()->getAsset<Texture>(mTextures[tile.texture])->getUV(tile.texcoord);
+    }
+
+    Vec4f TileMapComponent::getTexCoord(int texId, int coordIndex) {
+        return  AssetManager::get()->getAsset<Texture>(mTextures[texId])->getUV(coordIndex);
     }
 
     Tile* TileMapComponent::getTile(const Vec2i& mCoords)
@@ -61,20 +58,6 @@ namespace Plutus
             mTiles.erase(mTiles.begin() + index);
         }
         return index > -1;
-    }
-
-    void TileMapComponent::addTile(int pos, int tile) {
-
-        // uint32_t texId = 0xf & tile;
-        // int uvIndex = 0xffff & (tile >> 4);
-        // uint32_t transform = 0xf & tile;
-
-        // bool flipX = 0x2000000 & tile;
-        // bool flipY = 0x4000000 & tile;
-        // float rotation = 0x8000000 & tile ? 90.0f : 0;
-
-        // pos
-
     }
 
 } // namespace Plutus

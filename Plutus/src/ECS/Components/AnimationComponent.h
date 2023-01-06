@@ -21,20 +21,27 @@ namespace Plutus
 
         Sequence() = default;
         Sequence(const std::string& texId, Frames frames, int _seqTime = 100);
+
+        inline bool isValid() { return mFrames.size() && !mTexId.empty(); }
     };
 
     class AnimationComponent
     {
     public:
         AnimationComponent() = default;
+
         void addSequence(const std::string& id, const Sequence& seq);
-        void addSeq(const std::string& id, Frames frames, int frameTime, bool isDefault = false);
+
+        void addSeq(const std::string& id, Frames frames, int frameTime, bool isDefault);
+        inline void addSeq(const std::string& id, Frames frames) { addSeq(id, frames, 0, false); }
+        inline void addSeq(const std::string& id, Frames frames, int frameTime) { addSeq(id, frames, frameTime, false); }
 
         void setTexture(const std::string& texId);
 
         void updateSeq(const std::string& oldid, const std::string& newid);
 
-        void setLoop(bool _loop) { loop = _loop; }
+        inline void setLoop(bool _loop) { loop = _loop; }
+
         void play(const std::string& id);
 
         Sequence* getCurrentSeq();

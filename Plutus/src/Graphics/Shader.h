@@ -17,9 +17,6 @@ namespace Plutus
 	class Shader
 	{
 	private:
-		bool compileError = false;
-		//Number of attributes for shader
-		int mNumAttributes = 0;
 		//Shader Program Id
 		uint32_t mProgId = -1;
 		//A map of uniform locations
@@ -34,7 +31,7 @@ namespace Plutus
 		*/
 		bool init(const std::string& verShader = "", const std::string& fragShader = "");
 		// Enable this shader program
-		void enable();
+		bool enable();
 		// Disable this shader program
 		void disable();
 		// Destroy this shader program
@@ -43,8 +40,6 @@ namespace Plutus
 		uint32_t getUniform(std::string uName);
 		// Return the shader program ID
 		uint32_t getProgId() { return mProgId; }
-		// Acivate attributes by name
-		void setAtribute(const std::string& attributeName);
 		//Upload Uniform 1 boolean 
 		void setUniform1b(std::string name, GLboolean value);
 		//Upload Uniform 1 integer
@@ -54,16 +49,20 @@ namespace Plutus
 		//Upload Uniform 1 float
 		void setUniform1f(std::string name, float value);
 		//Upload Uniform 2 float
-		void setUniform2f(std::string name, Vec2f value);
+		void setUniform2f(std::string name, const Vec2f& value);
 		//Upload Uniform 3 float
-		void setUniform3f(std::string name, Vec3f value);
+		void setUniform3f(std::string name, const Vec3f& value);
 		//Upload Uniform 4 float
 		void setUniform4f(std::string name, const Vec4f& value);
+		//Upload Uniform array of float
+		void setUniform1fv(std::string name, int count, float* buffer);
+		//Upload Uniform array of int
+		void setUniform1iv(std::string name, int count, int* buffer);
 		//Upload Uniform matrix 4x4 of float
 		void setUniformMat4(std::string name, const glm::mat4& value);
 
 	private:
-		void compileShader(uint32_t id, std::string shader);
+		bool compileShader(uint32_t id, std::string shader);
 		bool getCompileError(uint32_t id, std::string shader);
 		void cleanUp(GLuint verId, GLuint fragId);
 	};

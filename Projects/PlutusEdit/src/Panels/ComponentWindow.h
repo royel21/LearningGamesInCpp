@@ -1,6 +1,7 @@
 #pragma once
 #include <ECS/Scene.h>
 
+#include "ImWindow.h"
 
 #include "./ComponentPanels/TileMapPanel.h"
 #include "./ComponentPanels/AnimationTab.h"
@@ -9,10 +10,9 @@ namespace Plutus
 {
     struct Config;
 
-    class ComponentWindow {
+    class ComponentWindow : public ImWindow {
     private:
         Entity mEnt;
-        Config* mConfig;
         AnimationTab mAnimation;
         TileMapPanel mTileMapPanel;
 
@@ -22,9 +22,6 @@ namespace Plutus
         float mTextColumnWidth = 0.30f;
 
     public:
-        void init(Config* config) {
-            mConfig = config;
-        }
         void draw();
 
     private:

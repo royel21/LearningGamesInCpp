@@ -2,16 +2,16 @@
 #include <Math/Vectors.h>
 #include <Systems/SystemManager.h>
 
+#include "ImWindow.h"
+
 #include "../ImGuiColorTextEdit/TextEditor.h"
 
 namespace Plutus
 {
-    struct Config;
-
-    class CenterWindow {
+    class CenterWindow : public ImWindow {
     public:
         CenterWindow() = default;
-        void init(Config* config);
+        void init(Config* config) override;
         void draw();
         void update(float dt);
 
@@ -23,8 +23,6 @@ namespace Plutus
         void showConfig();
 
     private:
-        Config* mConfig;
-
         Vec2f mMouseLastCoords;
         Vec2f mCamCoords;
         Vec2f mEntLastPos;
