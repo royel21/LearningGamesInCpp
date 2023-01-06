@@ -15,7 +15,7 @@ namespace Plutus
 
     struct EnumFilter {
         int filter;
-        char* Name;
+        const char* Name;
     };
 
     struct AssetFile {
@@ -26,7 +26,7 @@ namespace Plutus
         bool isNew = false;
     };
 
-    class AssetsWindow : public ImWindow
+    class AssetsWindow: public ImWindow
     {
     private:
         Scene* mScene;

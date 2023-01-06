@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(game C CXX)
@@ -92,10 +92,3 @@ target_link_libraries(TestBed PUBLIC Plutus)
 # *************Single Test**********************
 add_executable("SingleTest2" Projects/SingleTest.cpp)
 target_link_libraries(SingleTest2 PUBLIC Plutus)
-
-# *************SDFonts**********************
-file(GLOB_RECURSE SRC_SDFonts Projects/SDFonts/*.h Projects/SDFonts/*.cpp)
-
-add_executable("SDFonts" ${SRC_SDFonts})
-
-target_link_libraries(SDFonts PUBLIC Plutus)

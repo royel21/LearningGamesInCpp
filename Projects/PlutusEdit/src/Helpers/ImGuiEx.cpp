@@ -345,7 +345,7 @@ namespace ImGui {
         return clicked;
     }
 
-    bool Draw2Float(char* label, Plutus::Vec2f& value, float step, const char* btntag1, const char* btntag2) {
+    bool Draw2Float(const char* label, Plutus::Vec2f& value, float step, const char* btntag1, const char* btntag2) {
         bool changed = false;
 
         ImGui::BeginGroup();

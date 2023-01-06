@@ -171,7 +171,7 @@ namespace ImGui
 
     void EndDialog(bool& show, std::function<void(bool)> callback = nullptr);
 
-    bool Draw2Float(char* id, Plutus::Vec2f& value, float step = 1.0f, const char* btntag1 = "X", const char* btntag2 = "Y");
+    bool Draw2Float(const char* id, Plutus::Vec2f& value, float step = 1.0f, const char* btntag1 = "X", const char* btntag2 = "Y");
 
     bool InputString(const char* label, std::string& text);
 
