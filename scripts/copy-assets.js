@@ -1,12 +1,15 @@
 const fs = require("fs-extra");
 const path = require("path");
 
-const cmd = process.argv[2];
+const cfg = fs.readJsonSync("./config.json");
+const pro = cfg.projects.find((p) => p.name === cfg["current-project"]);
 
-path.join("ZombiesGame", "ZombiesGame.json");
+if (pro) {
+  console.log(pro.path);
+}
 
-if (cmd) {
-  const project = fs.readJSONSync(path.join("ZombiesGame", "assets", "scenes", cmd));
+if (pro) {
+  const project = fs.readJSONSync(pro.path);
 
   const copyFile = (file) => {
     try {
@@ -26,15 +29,22 @@ if (cmd) {
     }
   };
 
-  for (const items in project) {
-    for (const item of project[items]) {
-      if (items === "entities") {
-        for (const comp of item.components || []) {
-          if (comp.name === "Script") copyFile(comp.script);
+  const copyfromScene = (scene) => {
+    console.log(scene);
+    for (const items in scene) {
+      for (const item of scene[items]) {
+        if (items === "entities") {
+          for (const comp of item.components || []) {
+            if (comp.name === "Script") copyFile(comp.script);
+          }
+        } else if (item.path) {
+          copyFile(item.path);
         }
-      } else if (item.path) {
-        copyFile(item.path);
       }
     }
+  };
+
+  for (let scene of project.scenes) {
+    copyfromScene(scene);
   }
 }
