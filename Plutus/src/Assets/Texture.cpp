@@ -79,7 +79,7 @@ namespace Plutus
     void Texture::loadTexture()
     {
         auto fullPath = (baseDir + mPath);
-        Logger::info("file: %s, found: %i", fullPath.c_str(), FileIO::exists(fullPath));
+
         if (FileIO::exists(fullPath)) {
             int ch = Utils::getExtension(mPath).compare("png") == 0 ? 4 : 3;
 
