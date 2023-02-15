@@ -3,7 +3,7 @@
 #include <string>
 
 #if defined(__EMSCRIPTEN__) || defined(__ANDROID__)
-#define VERTEX_HEADER "#version 300 es \nprecision highp float;\n"
+#define VERTEX_HEADER "#version 300 es \nprecision mediump float;\n"
 #else
 #define VERTEX_HEADER "#version 330 core\n"
 #endif

@@ -13,7 +13,7 @@ local vel = {
     y = 0
 }
 
-camera:setBounds(Vec4f.new(0, 0, 7680 - size.x, 5120 - size.y));
+camera:setBounds(Vec4f.new(0, 0, 640, 480));
 
 local anim
 local frametime = 120

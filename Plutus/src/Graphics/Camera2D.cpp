@@ -4,6 +4,7 @@
 #include <cmath>
 #include <algorithm>
 #include <Input/Input.h>
+#include <Log/Logger.h>
 
 namespace Plutus
 {
@@ -38,7 +39,7 @@ namespace Plutus
 				if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
 			}
 		}
-
+		Logger::info("x:%0.3f y:%.03f", -mCamPos.x, -mCamPos.y);
 		mCameraMatrix = mOrtho * glm::translate(glm::mat4(1.0f), { -roundf(mCamPos.x), -roundf(mCamPos.y), 0.0f });
 	}
 
@@ -50,6 +51,6 @@ namespace Plutus
 	Vec2f Camera2D::convertScreenToWold(Vec2f coords, bool invertY)
 	{
 		auto coordsTrans = Vec2f{ coords.x / mWindowWidth, coords.y / mWindowHeight };
-		return mCamPos + Vec2f{ mScaleSize.x * coordsTrans.x, mScaleSize.y * coordsTrans.y };
+		return mCamPos + Vec2f{ mScaleSize.x* coordsTrans.x, mScaleSize.y* coordsTrans.y };
 	}
 } // namespace Plutus

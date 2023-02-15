@@ -36,7 +36,7 @@ namespace Plutus
 
         auto ent = mProject.scene->getEntityByName("Player");
         if (ent) {
-            ent.addComponent<TextComponent>("Aventurina.ttf", "Text Component LAND", 16.0f, 20.0f, ColorRGBA8{ 255, 255, 0, 255 });
+            ent.addComponent<TextComponent>("Aventurina.ttf", "Text Component LAND", 16.0f, 20.0f, ColorRGBA8{ 255, 255, 0, 255 }, .2f);
         }
 
         mSysManager.setProject(&mProject);

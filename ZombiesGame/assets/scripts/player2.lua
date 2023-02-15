@@ -22,8 +22,7 @@ local vec = Vec2f.new(-size.x / 2 + 32, -size.y / 2 + 32);
 
 print(size.x, size.y)
 
-local bounds = Vec4f.new(0, 0, 1280 - size.x, 768 - size.y)
-camera:setBounds(bounds);
+camera:setBounds(Vec4f.new(0, 0, 1280 - size.x, 768 - size.y));
 
 function init()
     anim = entity:getAnimate()

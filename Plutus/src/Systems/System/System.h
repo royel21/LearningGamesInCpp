@@ -7,6 +7,13 @@ namespace Plutus
 
     struct Project;
 
+    /**
+     * @brief System Interface should implement
+     * @param init initializer function
+     * @param update(float) called every frame
+     * @param draw optional called every frame
+     * @param destroy optional callled when system is destroyed
+     */
     class ISystem
     {
     protected:
@@ -15,8 +22,8 @@ namespace Plutus
         SystemManager* mSysManager;
 
     public:
-        ISystem() : mCamera(nullptr) {};
-        ISystem(Camera2D* camera) : mCamera(camera) {};
+        ISystem(): mCamera(nullptr) {};
+        ISystem(Camera2D* camera): mCamera(camera) {};
 
         virtual void init() = 0;
         virtual void update(float dt) = 0;
