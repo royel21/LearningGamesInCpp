@@ -42,7 +42,7 @@ namespace Plutus
         mSysManager.setProject(&mProject);
 
         mSysManager.AddSystem<ScriptSystem>(&mCamera);
-        mSysManager.AddSystem<PhysicSystem>();
+        // mSysManager.AddSystem<PhysicSystem>();
         mSysManager.AddSystem<AnimationSystem>();
         mSysManager.AddSystem<RendererSystem>(&mCamera);
 
