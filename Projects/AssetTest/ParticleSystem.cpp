@@ -30,7 +30,7 @@ namespace Plutus
 
     void ParticleSystem::init()
     {
-        mShader.init(ParticleShader::vertexShader, ParticleShader::fragShader);
+        mShader.init(ParticleShader::vertexShader, ParticleShader::fragShader, ParticleShader::geoShader);
 
         mBatches[-1];
         mVAO = Graphic::createVertexArray();

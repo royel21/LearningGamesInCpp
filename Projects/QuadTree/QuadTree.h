@@ -12,13 +12,13 @@
 
 namespace Plutus
 {
-    constexpr size_t MAX_DEPTH = 20;
+    constexpr size_t MAX_DEPTH = 10;
 
     template<typename T>
     class QuadTree
     {
     public:
-        QuadTree(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0) : mDepth(depth) { resize(area); }
+        QuadTree(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0): mDepth(depth) { resize(area); }
 
         void clear() {
             mItems.clear();
@@ -130,7 +130,7 @@ namespace Plutus
         QuadTree<uint32_t> root;
 
     public:
-        QuadTreeContainer(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0) : root(area) { }
+        QuadTreeContainer(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0): root(area) { }
 
         void resize(const Rect area) {
             root.resize(area);

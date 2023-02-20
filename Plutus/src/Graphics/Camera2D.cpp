@@ -39,7 +39,6 @@ namespace Plutus
 				if (mCamPos.y > mBounds.w) mCamPos.y = mBounds.w;
 			}
 		}
-		Logger::info("x:%0.3f y:%.03f", -mCamPos.x, -mCamPos.y);
 		mCameraMatrix = mOrtho * glm::translate(glm::mat4(1.0f), { -roundf(mCamPos.x), -roundf(mCamPos.y), 0.0f });
 	}
 

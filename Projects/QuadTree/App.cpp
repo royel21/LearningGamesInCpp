@@ -57,7 +57,7 @@ namespace Plutus
             uint8_t g = (uint8_t)Utils::getRandom(0, 255);
             uint8_t b = (uint8_t)Utils::getRandom(0, 255);
 
-            // rects.emplace_back(Rect{ x, y, w, h }, ColorRGBA8(r, g, b));
+            rects.emplace_back(Rect{ x, y, w, h }, ColorRGBA8(r, g, b));
 
             ColorRect crect(Rect{ x, y, w, h }, ColorRGBA8(r, g, b));
 

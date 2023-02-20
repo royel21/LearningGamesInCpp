@@ -17,16 +17,25 @@ namespace Plutus
 		destroy();
 	}
 
-	bool Shader::init(const std::string& verData, const std::string& fragData)
+	bool Shader::init(const std::string& verData, const std::string& fragData, const std::string geoShader)
 	{
+		bool hasGeoShader = !geoShader.empty();
+
 		auto vsdata = verData.empty() ? GLSL::vertexShader : verData;
 		auto fsdata = fragData.empty() ? GLSL::fragShader : fragData;
 
 
 		GLuint vertId = glCreateShader(GL_VERTEX_SHADER);
 		GLuint fragId = glCreateShader(GL_FRAGMENT_SHADER);
+		//Geometry Shader Id
+		GLuint geoId;
 
 		bool error = !compileShader(vertId, vsdata);
+
+		if (hasGeoShader) {
+			geoId = glCreateShader(GL_GEOMETRY_SHADER);
+			error = !compileShader(geoId, geoShader);
+		}
 
 		error = !compileShader(fragId, fsdata);
 
@@ -45,6 +54,7 @@ namespace Plutus
 		{
 			//attach the shader to the program
 			glAttachShader(proId, vertId);
+			if (hasGeoShader) glAttachShader(proId, geoId);
 			glAttachShader(proId, fragId);
 			//link the programs
 			glLinkProgram(proId);
@@ -60,11 +70,13 @@ namespace Plutus
 			}
 
 			glDetachShader(proId, vertId);
+			if (hasGeoShader) glDetachShader(proId, geoId);
 			glDetachShader(proId, fragId);
 		}
 
 		glDeleteShader(vertId);
 		glDeleteShader(fragId);
+		if (hasGeoShader) glDeleteShader(geoId);
 
 		if (result) {
 			destroy();

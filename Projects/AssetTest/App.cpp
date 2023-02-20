@@ -85,7 +85,7 @@ namespace Plutus
 
         if (Input.onKeyDown("MouseLeft")) {
             // if (timer.IntervalMillis(0)) {
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 500; i++) {
                 auto x = Utils::getRandom(-100, 100);
                 auto y = Utils::getRandom(20, 100);
                 particles->addParticle(mpos, 100, { x, y }, 2.0f);
