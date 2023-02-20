@@ -12,20 +12,45 @@
 
 namespace Plutus
 {
-    constexpr size_t MAX_DEPTH = 10;
+    constexpr size_t MAX_DEPTH = 4;
 
     template<typename T>
     class QuadTree
     {
+    private:
+        size_t mDepth = 0;
+        //Area of root quad tree
+        Rect mRect;
+
+        // area of the 4 children
+        std::array<Rect, 4> mChildsArea{};
+
+        // 4 child of the quad tree
+        std::array<std::shared_ptr<QuadTree<T>>, 4> mChilds{};
+        //Items belonging to this qtree
+        std::vector<std::pair<Rect, T>> mItems;
+
     public:
         QuadTree(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0): mDepth(depth) { resize(area); }
+
+        void getChilds(std::vector<Rect*>& childs) {
+            for (size_t i = 0; i < 4; i++) {
+                if (mChilds[i]) {
+                    mChilds[i]->getChilds(childs);
+                }
+            }
+            childs.push_back(&mRect);
+        }
 
         void clear() {
             mItems.clear();
 
             for (size_t i = 0; i < 4; i++) {
-                if (mChilds[i]) mChilds[i]->clear();
-                mChilds[i].reset();
+                if (mChilds[i]) {
+                    mChilds[i]->clear();
+                    mChilds[i].reset();
+                }
+
             }
         }
 
@@ -40,19 +65,21 @@ namespace Plutus
         void insert(const T& item, const Rect& itemSize) {
             auto curDepth = mDepth + 1;
 
-            for (size_t i = 0; i < 4; i++)
-            {
-                if (mChildsArea[i].contains(itemSize)) {
-                    if (curDepth < MAX_DEPTH) {
-
+            if (curDepth < MAX_DEPTH) {
+                for (size_t i = 0; i < 4; i++)
+                {
+                    if (mChildsArea[i].contains(itemSize)) {
+                        //if child don't exit create it
                         if (!mChilds[i]) {
                             mChilds[i] = std::make_shared<QuadTree<T>>(mChildsArea[i], curDepth);
                         }
+                        //insert item on child
                         mChilds[i]->insert(item, itemSize);
                         return;
                     }
                 }
             }
+
             mItems.push_back({ itemSize, item });
         }
 
@@ -104,19 +131,6 @@ namespace Plutus
         }
 
         const Rect& getArea() { return mRect; }
-
-    private:
-        size_t mDepth = 0;
-        //Area of root quad tree
-        Rect mRect;
-
-        // area of the 4 children
-        std::array<Rect, 4> mChildsArea{};
-
-        // 4 child of the quad tree
-        std::array<std::shared_ptr<QuadTree<T>>, 4> mChilds{};
-        //Items belonging to this qtree
-        std::vector<std::pair<Rect, T>> mItems;
     };
 
     /************** Quad Tree Container *****************************************************/
@@ -131,6 +145,12 @@ namespace Plutus
 
     public:
         QuadTreeContainer(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0): root(area) { }
+
+        std::vector<Rect*> getQTRects() {
+            std::vector<Rect*> rects;
+            root.getChilds(rects);
+            return rects;
+        }
 
         void resize(const Rect area) {
             root.resize(area);

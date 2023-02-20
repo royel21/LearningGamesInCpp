@@ -4,6 +4,7 @@
 #include <Graphics/Shader.h>
 #include <Graphics/Camera2D.h>
 #include <Graphics/SpriteBatch2D.h>
+#include <Graphics/DebugRenderer.h>
 
 #include <vector>
 #include <Time/Limiter.h>
@@ -16,7 +17,7 @@ namespace Plutus
         Rect rect;
         ColorRGBA8 color;
 
-        ColorRect(const Rect& r, const ColorRGBA8& c) : rect(r), color(c) {};
+        ColorRect(const Rect& r, const ColorRGBA8& c): rect(r), color(c) {};
     };
 
 
@@ -34,11 +35,13 @@ namespace Plutus
         Window mWindow;
         Camera2D mCamera;
         SpriteBatch2D mSpritebatch;
+        DebugRender mDebugRender;
 
         std::vector<ColorRect> rects;
         QuadTreeContainer<ColorRect> mQTrees;
         uint32_t count;
         Limiter mLimiter;
         Rect rect1;
+        std::vector<Plutus::Rect*> mChildRects;
     };
 } // namespace Plutus

@@ -148,6 +148,8 @@ namespace Plutus
         }
 
         auto start = Time::micros();
+        uint32_t count = 0;
+
         for (size_t i = 0; i < mShapes.size(); i++) {
             auto shapeA = mShapes[i].ref;
             if (shapeA->isStatic) continue;
@@ -156,7 +158,8 @@ namespace Plutus
             bool isLineA = shapeA->type == EdgeShape;
 
             auto items = mShapes.query(shapeA->getRect());
-
+            count += items.size();
+            // Logger::info("items: %zu", items.size());
             for (auto& item : items) {
                 if (i == item->index) continue;
                 auto shapeB = mShapes[item->index].ref;
@@ -206,7 +209,8 @@ namespace Plutus
                 }
             }
         }
-        Logger::info("collider: %llu", Time::micros() - start);
+        auto time = Time::micros() - start;
+        Logger::info("collider: %llu - count: %zu", time, count);
     }
 
     void App::drawQuadrant(QuadTree* qt) {

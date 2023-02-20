@@ -19,7 +19,7 @@ namespace Plutus
     class QuadTree
     {
     public:
-        QuadTree(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0) : mDepth(depth) { resize(area); }
+        QuadTree(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0): mDepth(depth) { resize(area); }
 
         void clear() {
             mItems.clear();
@@ -82,11 +82,8 @@ namespace Plutus
             for (size_t i = 0; i < 4; i++)
             {
                 if (mChilds[i]) {
-                    if (area.contains(mChildsArea[i])) {
+                    if (area.overlaps(mChildsArea[i])) {
                         mChilds[i]->items(itemsList);
-                    }
-                    else if (mChildsArea[i].overlaps(area)) {
-                        mChilds[i]->queryItems(area, itemsList);
                     }
                 }
             }
@@ -144,7 +141,7 @@ namespace Plutus
         uint32_t qIndex;
         QuadTree* qRef;
 
-        QuadTreeItem(T* rf, uint32_t i, uint32_t ii, QuadTree* qt) : ref(rf), index(i), qIndex(ii), qRef(qt) {}
+        QuadTreeItem(T* rf, uint32_t i, uint32_t ii, QuadTree* qt): ref(rf), index(i), qIndex(ii), qRef(qt) {}
     };
 
     template <typename T>
@@ -156,7 +153,7 @@ namespace Plutus
 
     public:
         QuadTree root;
-        QuadTreeContainer(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0) : root(area) { }
+        QuadTreeContainer(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0): root(area) { }
         ~QuadTreeContainer() {
             for (auto& item : mItems) {
                 delete item.ref;

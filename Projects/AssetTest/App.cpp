@@ -32,7 +32,7 @@ namespace Plutus
         mWindow.setVSYNC(0);
 
         // AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle.png");
-        AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle-textures/fire.png", 64, 64, GL_LINEAR);
+        AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle-textures/fire.png", 64, 64, GL_NEAREST);
         // AssetManager::get()->addAsset<Texture>("particles.png", "assets/textures/particle-textures/cosmic.png", 64, 64, GL_LINEAR);
 
         auto ent = mProject.scene->createEntity("particleEmiter");
@@ -85,10 +85,10 @@ namespace Plutus
 
         if (Input.onKeyDown("MouseLeft")) {
             // if (timer.IntervalMillis(0)) {
-            for (int i = 0; i < 500; i++) {
+            for (int i = 0; i < 1000; i++) {
                 auto x = Utils::getRandom(-100, 100);
                 auto y = Utils::getRandom(20, 100);
-                particles->addParticle(mpos, 100, { x, y }, 2.0f);
+                particles->addParticle(mpos, 100, { x, y }, 0.50f);
             }
             // }
         }

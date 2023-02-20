@@ -8,8 +8,8 @@
 
 namespace Plutus
 {
-    constexpr uint32_t MAX_RECT = 20000;
-    constexpr uint32_t scale = 10;
+    constexpr uint32_t MAX_RECT = 1000;
+    constexpr uint32_t scale = 5;
     constexpr uint32_t WIDTH = 1280 * scale;
     constexpr uint32_t HEIGHT = 720 * scale;
 
@@ -48,10 +48,10 @@ namespace Plutus
         mQTrees.reserve(MAX_RECT);
         for (size_t i = 0; i < MAX_RECT; i++)
         {
-            float x = (float)Utils::getRandom(0, WIDTH);
-            float y = (float)Utils::getRandom(0, HEIGHT);
-            float w = (float)Utils::getRandom(20, 50);
-            float h = (float)Utils::getRandom(20, 50);
+            float x = (float)Utils::getRandom(0, WIDTH - 50);
+            float y = (float)Utils::getRandom(0, HEIGHT - 50);
+            float w = (float)Utils::getRandom(20, 120);
+            float h = (float)Utils::getRandom(20, 120);
 
             uint8_t r = (uint8_t)Utils::getRandom(0, 255);
             uint8_t g = (uint8_t)Utils::getRandom(0, 255);
@@ -63,9 +63,15 @@ namespace Plutus
 
             mQTrees.insert(crect, crect.rect);
         }
-        rect1 = { 0,0, 600,600 };
+        rect1 = { 0,0, 600, 600 };
         size_t totalItems = mQTrees.size();
-        Logger::info("count: %zu %llu", totalItems, Time::micros() - start);
+        Logger::info("count: %zu %0.3fms", totalItems, (Time::micros() - start) / 1000.0f);
+
+        mChildRects = mQTrees.getQTRects();
+        Logger::info("rects: %zu", mChildRects.size());
+
+        mDebugRender.init(&mCamera);
+
     }
 
     void App::update() {
@@ -109,30 +115,40 @@ namespace Plutus
 
         std::vector<ColorRect*> items;
 
-        if (LinearSearch) {
-            for (auto& r : rects) {
-                if (rect1.overlaps(r.rect)) {
-                    items.push_back(&r);
-                }
-            }
-        }
-        else {
-            items = mQTrees.query(rect1);
-        }
+        // auto start = Time::micros();
+        // if (LinearSearch) {
+        //     for (auto& r : rects) {
+        //         if (rect1.overlaps(r.rect)) {
+        //             items.push_back(&r);
+        //         }
+        //     }
+        // }
+        // else {
+        //     items = mQTrees.query(rect1);
+        // }
+        items = mQTrees.query({ 0,0, WIDTH, HEIGHT });
+        // Logger::info("count: %zu %0.3f", count, (Time::micros() - start) / 1000.0f);
+
         count = items.size();
         for (auto item : items) {
             mSpritebatch.submit(item->rect.getBox(), item->color);
         }
 
-        Rect v1(515, 259, 250, 250);
+        // Rect v1(515, 259, 250, 250);
 
         ColorRGBA8 c(0, 0, 0, 10);
-        if (rect1.contains(v1)) {
-            mSpritebatch.submit(v1.getBox());
-        }
+        // if (rect1.contains(v1)) {
+        //     mSpritebatch.submit(v1.getBox());
+        // }
 
         mSpritebatch.submit(rect1.getBox(), c);
         mSpritebatch.finish();
+
+        for (auto rect : mChildRects) {
+            mDebugRender.submitBox(rect->getBox());
+        }
+        mDebugRender.end();
+        mDebugRender.render();
 
     }
 }
