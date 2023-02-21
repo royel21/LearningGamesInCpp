@@ -7,6 +7,10 @@
 
 #include <Math/PMath.h>
 
+#include <Time/Timer.h>
+#include <GLFW/glfw3.h>
+#include <Log/Logger.h>
+
 constexpr uint32_t NUmVERTS = 64;
 
 namespace Plutus
@@ -17,7 +21,7 @@ namespace Plutus
 		return instance;
 	}
 
-	DebugRender::DebugRender() : mVao(0), mVbo(0), mIbo(0), mGridColor(0, 0, 0, 255), mCellSize(32, 32)
+	DebugRender::DebugRender(): mVao(0), mVbo(0), mIbo(0), mGridColor(0, 0, 0, 255), mCellSize(32, 32)
 	{
 	}
 
@@ -49,16 +53,18 @@ namespace Plutus
 		Graphic::unBind();
 	}
 
-	void DebugRender::end()
+	uint32_t DebugRender::end()
 	{
+		auto start = glfwGetTime();
 		Graphic::uploadBufferData(mVbo, mVertexs.size() * sizeof(DebugVertex), mVertexs.data());
+		mVertexs.clear();
 		Graphic::uploadBufferData(mIbo, mIndices.size() * sizeof(GLuint), mIndices.data(), GL_DYNAMIC_DRAW, GL_ELEMENT_ARRAY_BUFFER);
-
 		mNumElements = (uint32_t)mIndices.size();
 		mIndices.clear();
-		mVertexs.clear();
-	}
+		Logger::info("collider: %0.2f count: %zu", (glfwGetTime() - start) * 1000.0f, mVertexs.size());
 
+		return mNumElements;
+	}
 	void DebugRender::addIndices(int i) {
 		mIndices.reserve(mIndices.size() + 8);
 
@@ -74,6 +80,8 @@ namespace Plutus
 		mIndices.push_back(i + 3);
 		mIndices.push_back(i);
 	}
+	//8096883762442403578
+	//1867497160925380362
 	/***************************** Shapes **********************************************/
 	void DebugRender::submitBox(Box2d* b, const ColorRGBA8& color)
 	{

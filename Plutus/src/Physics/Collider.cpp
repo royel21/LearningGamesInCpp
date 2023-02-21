@@ -19,7 +19,7 @@ namespace Plutus
 
             auto distVec = c1->pos - c2->pos;
             float sqrtLength = distVec.lengthSqrt();
-            bool isColliding = sqrtLength < r* r;
+            bool isColliding = sqrtLength < r * r;
 
             if (isColliding && mtv) {
                 float length = 1 / PMath::invSqrt(sqrtLength);

@@ -16,6 +16,7 @@
 #include <Math/PMath.h>
 #include <Time/Timer.h>
 #include <Utils/Utils.h>
+#include <GLFW/glfw3.h>
 
 namespace Plutus
 {
@@ -39,19 +40,20 @@ namespace Plutus
         // setAlwaysOnTop(true);
         mDebug = DebugRender::get();
         mDebug->init(&mCamera);
+        mWindow.setVSYNC(1);
 
         mShapes.insert<Circle2d>(70.0f, 100.0f, 30.0f);
-        mShapes.insert<Circle2d>(640.0f, 150.0f, 30.0f);
-        mShapes.insert<Circle2d>(640.0f, 100.0f, 30.0f);
-        mShapes.back().ref->isStatic = true;
-        mShapes.insert<Box2d>(360.0f, 90.0f, 100.0f, 100.0f);
-        mShapes.back().ref->isStatic = true;
+        // mShapes.insert<Circle2d>(640.0f, 150.0f, 30.0f);
+        // mShapes.insert<Circle2d>(640.0f, 100.0f, 30.0f);
+        // mShapes.back().ref->isStatic = true;
+        // mShapes.insert<Box2d>(360.0f, 90.0f, 100.0f, 100.0f);
+        // mShapes.back().ref->isStatic = true;
 
         float x = 40;
         float y = 40;
-        for (size_t i = 0; i < 300; i++) {
-            float x = (float)Utils::getRandom(30, 1100);
-            float y = (float)Utils::getRandom(30, 700);
+        for (size_t i = 0; i < 1000; i++) {
+            float x = (float)Utils::getRandom(30, 1900);
+            float y = (float)Utils::getRandom(30, 1000);
             float size = (float)Utils::getRandom(20, 25);
             mShapes.insert<Circle2d>(x, y, size);
         }
@@ -114,6 +116,7 @@ namespace Plutus
             if (Input.onKeyDown("Left")) { shape->pos.x -= speed; }
         }
 
+
         // if (isMouseDownInBox) {
         //     auto dis = initPos - mpos;
         //     mShapes[1]->pos = pos - dis;
@@ -147,29 +150,31 @@ namespace Plutus
             }
         }
 
-        auto start = Time::micros();
+        // auto start = Time::micros();
         uint32_t count = 0;
 
         for (size_t i = 0; i < mShapes.size(); i++) {
             auto shapeA = mShapes[i].ref;
+            shapeA->color = { 255,255,255,255 };
+
             if (shapeA->isStatic) continue;
+
             bool isCircleA = shapeA->type & CircleShape;
             bool isBoxA = shapeA->type == BoxShape;
             bool isLineA = shapeA->type == EdgeShape;
 
             auto items = mShapes.query(shapeA->getRect());
-            count += items.size();
-            // Logger::info("items: %zu", items.size());
             for (auto& item : items) {
-                if (i == item->index) continue;
-                auto shapeB = mShapes[item->index].ref;
-                // for (size_t x = 0; x < mShapes.size(); x++) {
+                if (i == item) continue;
+                auto shapeB = mShapes[item].ref;
+
+                // for (size_t x = i + 1; x < mShapes.size(); x++) {
                 //     auto shapeB = mShapes[x].ref;
+                count++;
                 bool isCircleB = shapeB->type == CircleShape;
                 bool isBoxB = shapeB->type == BoxShape;
                 bool isLineB = shapeB->type == EdgeShape;
                 bool collided = false;
-
                 MTV mtv;
                 if (isCircleA && isLineB) {
                     collided = Collider::isColliding((Circle2d*)shapeA, (Line2d*)shapeB, &mtv);
@@ -209,8 +214,14 @@ namespace Plutus
                 }
             }
         }
-        auto time = Time::micros() - start;
-        Logger::info("collider: %llu - count: %zu", time, count);
+        // auto time = Time::micros() - start;
+        // Logger::info("collider: %llu - count: %zu", time, count);
+        {
+            auto items = mShapes.query(shape->getRect());
+            for (auto i : items) {
+                mShapes[i].ref->color = { 0,0,255,255 };
+            }
+        }
     }
 
     void App::drawQuadrant(QuadTree* qt) {
@@ -225,34 +236,34 @@ namespace Plutus
 
     void App::Draw()
     {
+
+
         for (auto& item : mShapes) {
             auto shape = item.ref;
             switch (shape->type) {
             case BoxShape: {
-                mDebug->submitBox((Box2d*)shape);
+                mDebug->submitBox((Box2d*)shape, shape->color);
                 break;
             }
             case EdgeShape: {
-                mDebug->submitLine((Line2d*)shape);
+                mDebug->submitLine((Line2d*)shape, shape->color);
                 break;
             }
             case CircleShape: {
-                DebugRender::get()->submitCircle(shape->pos, 5);
-                mDebug->submitCircle((Circle2d*)shape);
+                mDebug->submitCircle((Circle2d*)shape, shape->color);
                 break;
             }
             }
-            // if (shape->type == CircleShape) {
-            //     auto rect = shape->getRect();
-            //     auto box = Box2d{ rect.pos, rect.size };
-            //     mDebug->submitBox(&box);
-            // }
         }
 
         drawQuadrant(&mShapes.root);
 
+        auto count = mDebug->end();
         mDebug->render();
-        mDebug->end();
+
+        char title[128];
+        std::snprintf(title, 128, "FPS: %.2f", getFPS());
+        mWindow.setTitle(title);
     }
 
     void App::Exit()
@@ -268,11 +279,6 @@ namespace Plutus
             isMouseDownInBox = true;
             pos = mShapes[1].ref->pos;
         }
-
-        // if (PUtils::PointInCircle(initPos, &c1)) {
-        //     isMouseDownInCircle = true;
-        //     pos = c1.pos;
-        // }
     }
 
     void App::onKeyUp(const std::string& key)

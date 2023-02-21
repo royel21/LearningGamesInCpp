@@ -48,8 +48,8 @@ namespace Plutus
         mQTrees.reserve(MAX_RECT);
         for (size_t i = 0; i < MAX_RECT; i++)
         {
-            float x = (float)Utils::getRandom(0, WIDTH - 50);
-            float y = (float)Utils::getRandom(0, HEIGHT - 50);
+            float x = (float)Utils::getRandom(10, WIDTH - 50);
+            float y = (float)Utils::getRandom(10, HEIGHT - 50);
             float w = (float)Utils::getRandom(20, 120);
             float h = (float)Utils::getRandom(20, 120);
 

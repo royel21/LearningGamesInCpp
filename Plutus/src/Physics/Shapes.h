@@ -3,6 +3,7 @@
 #include <Math/Vectors.h>
 
 #include <Math/Rect.h>
+#include <Utils/ColorRGBA8.h>
 
 class b2Body;
 
@@ -25,6 +26,7 @@ namespace Plutus
         Vec2f pos;
         Vec2f size;
         float radius = 1.0f;
+        ColorRGBA8 color;
 
         int type;
         b2Body* body;
@@ -34,14 +36,14 @@ namespace Plutus
         bool isStatic = false;
 
         Shape() = default;
-        Shape(float x, float y) : pos(x, y) {}
-        Shape(const Vec2f _pos) : pos(_pos) {}
+        Shape(float x, float y): pos(x, y) {}
+        Shape(const Vec2f _pos): pos(_pos) {}
         Rect getRect();
 
         virtual void update();
     };
 
-    struct Line2d : public Shape {
+    struct Line2d: public Shape {
         float rotation = 0;
 
         Line2d() { type = EdgeShape; };
@@ -55,16 +57,16 @@ namespace Plutus
         float lastRotation = -1;
     };
 
-    struct Circle2d : public Shape
+    struct Circle2d: public Shape
     {
         Circle2d() { type = CircleShape; };
-        Circle2d(float x, float y, float r) : Shape(x, y) { radius = r; type = CircleShape; }
-        Circle2d(const Vec2f& _pos, float r) : Shape(_pos) { radius = r; type = CircleShape; }
+        Circle2d(float x, float y, float r): Shape(x, y) { radius = r; type = CircleShape; }
+        Circle2d(const Vec2f& _pos, float r): Shape(_pos) { radius = r; type = CircleShape; }
 
         float radiusSqrt() const { return radius * radius; }
     };
 
-    struct Box2d : public Shape
+    struct Box2d: public Shape
     {
         Vec2f half;
         Points axes;

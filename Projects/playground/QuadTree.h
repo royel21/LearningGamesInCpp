@@ -9,6 +9,7 @@
 #include <utility>
 
 #include <Log/Logger.h>
+#include <Time/Timer.h>
 
 namespace Plutus
 {
@@ -18,7 +19,19 @@ namespace Plutus
 
     class QuadTree
     {
+
+    private:
+        size_t mDepth = 0;
+
+        // area of the 4 children
+        std::array<Rect, 4> mChildsArea{};
     public:
+        //Area of root quad tree
+        Rect mRect;
+        // 4 child of the quad tree
+        std::array<std::shared_ptr<QuadTree>, 4> mChilds{};
+        //Items belonging to this qtree
+        std::vector<QuadItem> mItems;
         QuadTree(const Rect& area = { 0,0, 100, 100 }, const size_t depth = 0): mDepth(depth) { resize(area); }
 
         void clear() {
@@ -66,26 +79,25 @@ namespace Plutus
             mChildsArea = {
                 Rect{area.pos, halfSize}, // bottom left
                 Rect{{area.pos.x + halfSize.x, area.pos.y}, halfSize}, // bottom right
-                Rect{{area.pos.x, area.pos.y + halfSize.y}, halfSize}, // top left
-                Rect{area.pos + halfSize, halfSize} // top right
+                Rect{area.pos + halfSize, halfSize}, // top right
+                Rect{{area.pos.x, area.pos.y + halfSize.y}, halfSize} // top left
             };
         }
 
 
-        void queryItems(const Rect& area, std::list<QuadItem*>& itemsList) {
-
-            for (auto& p : mItems) {
-                if (area.overlaps(p.first))
-                    itemsList.push_back(&p);
-            }
+        void queryItems(const Rect& area, std::vector<uint32_t>& itemsList) {
 
             for (size_t i = 0; i < 4; i++)
             {
                 if (mChilds[i]) {
-                    if (area.overlaps(mChildsArea[i])) {
-                        mChilds[i]->items(itemsList);
+                    if (mChilds[i]->mRect.overlaps(area)) {
+                        mChilds[i]->queryItems(area, itemsList);
                     }
                 }
+            }
+
+            for (auto& p : mItems) {
+                itemsList.push_back(p.second);
             }
         }
 
@@ -118,19 +130,6 @@ namespace Plutus
 
             return this;
         }
-
-    private:
-        size_t mDepth = 0;
-
-        // area of the 4 children
-        std::array<Rect, 4> mChildsArea{};
-    public:
-        //Area of root quad tree
-        Rect mRect;
-        // 4 child of the quad tree
-        std::array<std::shared_ptr<QuadTree>, 4> mChilds{};
-        //Items belonging to this qtree
-        std::vector<QuadItem> mItems;
     };
 
     /************** Quad Tree Container *****************************************************/
@@ -205,17 +204,19 @@ namespace Plutus
             return root.getQuadItemListRef(rect);
         }
 
-        std::list<QuadTreeItem<T>*> query(const Rect& r)
+        std::vector<uint32_t> query(const Rect& r)
         {
-            std::list<QuadItem*> items;
-
+            // auto start = Time::micros();
+            std::vector<uint32_t> items;
+            items.reserve(1000);
             root.queryItems(r, items);
 
-            std::list<QuadTreeItem<T>*> itemList;
-
-            for (auto& i : items) {
-                itemList.push_back(&mItems[i->second]);
+            std::vector<uint32_t> itemList;
+            itemList.reserve(items.size());
+            for (uint32_t i : items) {
+                itemList.push_back(mItems[i].index);
             }
+            // Logger::info("time: %llu", Time::micros() - start);
             return itemList;
         }
     };

@@ -33,7 +33,7 @@ namespace Plutus
 
 		void render(float lineWidth = 1.0f);
 		void drawGrid();
-		void end();
+		uint32_t end();
 		void dispose();
 		//Grid Cell Size w = Width, h = Height
 		void setCellSize(const Vec2i& cellSize);

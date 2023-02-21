@@ -22,7 +22,7 @@ namespace Plutus
             float dot = dist.dot(((p1 - circle->pos)));
 
             // if point out of the line in the negative side of the axis return start point because is the closest point
-            if (dot > lengthSqtr) {
+            if (dot * dot > lengthSqtr) {
                 return p2;
             }
             // if point out of the line in the positive side of the axis return end point because is the closest point
