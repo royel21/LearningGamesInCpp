@@ -36,7 +36,9 @@ namespace Plutus
 
     void App::Init()
     {
-        mShapes.resize({ 0, 0, (float)mWidth, (float)mHeight });
+        mCamera.setScale(.5f);
+        auto scSize = mCamera.getScaleScreen();
+        mShapes.resize({ 0, 0, scSize.x, scSize.y });
         // setAlwaysOnTop(true);
         mDebug = DebugRender::get();
         mDebug->init(&mCamera);
@@ -51,10 +53,10 @@ namespace Plutus
 
         float x = 40;
         float y = 40;
-        for (size_t i = 0; i < 1000; i++) {
-            float x = (float)Utils::getRandom(30, 1900);
-            float y = (float)Utils::getRandom(30, 1000);
-            float size = (float)Utils::getRandom(20, 25);
+        for (size_t i = 0; i < 2000; i++) {
+            float x = (float)Utils::getRandom(30, int(scSize.x - 80));
+            float y = (float)Utils::getRandom(30, int(scSize.y - 80));
+            float size = (float)Utils::getRandom(10, 25);
             mShapes.insert<Circle2d>(x, y, size);
         }
 
@@ -150,8 +152,8 @@ namespace Plutus
             }
         }
 
-        // auto start = Time::micros();
-        uint32_t count = 0;
+        auto start = Time::micros();
+        count = 0;
 
         for (size_t i = 0; i < mShapes.size(); i++) {
             auto shapeA = mShapes[i].ref;
@@ -214,7 +216,7 @@ namespace Plutus
                 }
             }
         }
-        // auto time = Time::micros() - start;
+        auto time = Time::micros() - start;
         // Logger::info("collider: %llu - count: %zu", time, count);
         {
             auto items = mShapes.query(shape->getRect());
@@ -232,13 +234,15 @@ namespace Plutus
 
         auto box = Box2d{ qt->mRect.pos, qt->mRect.size };
         mDebug->submitBox(&box);
+        count++;
     }
 
     void App::Draw()
     {
-
-
+        count = 0;
+        auto start = Time::micros();
         for (auto& item : mShapes) {
+            count++;
             auto shape = item.ref;
             switch (shape->type) {
             case BoxShape: {
@@ -257,8 +261,8 @@ namespace Plutus
         }
 
         drawQuadrant(&mShapes.root);
-
-        auto count = mDebug->end();
+        Logger::info("collider: %llu C:%lu", Time::micros() - start, count);
+        mDebug->end();
         mDebug->render();
 
         char title[128];

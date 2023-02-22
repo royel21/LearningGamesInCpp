@@ -87,6 +87,10 @@ namespace Plutus
 
         void queryItems(const Rect& area, std::vector<uint32_t>& itemsList) {
 
+            for (auto& p : mItems) {
+                itemsList.push_back(p.second);
+            }
+
             for (size_t i = 0; i < 4; i++)
             {
                 if (mChilds[i]) {
@@ -95,19 +99,6 @@ namespace Plutus
                     }
                 }
             }
-
-            for (auto& p : mItems) {
-                itemsList.push_back(p.second);
-            }
-        }
-
-        void items(std::list<QuadItem*>& itemsList) {
-            for (auto& item : mItems)
-                itemsList.push_back(&item);
-
-
-            for (size_t i = 0; i < 4; i++)
-                if (mChilds[i])  mChilds[i]->items(itemsList);
         }
 
         const Rect& getArea() { return mRect; }

@@ -9,7 +9,7 @@ namespace Plutus
 {
     class DebugRender;
 
-    class App : public Core, public InputListener
+    class App: public Core, public InputListener
     {
     public:
         App() = default;
@@ -29,5 +29,6 @@ namespace Plutus
     private:
         DebugRender* mDebug;
         QuadTreeContainer<Shape> mShapes;
+        uint32_t count;
     };
 } // namespace Plurus

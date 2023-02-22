@@ -55,13 +55,12 @@ namespace Plutus
 
 	uint32_t DebugRender::end()
 	{
-		auto start = glfwGetTime();
 		Graphic::uploadBufferData(mVbo, mVertexs.size() * sizeof(DebugVertex), mVertexs.data());
 		mVertexs.clear();
-		Graphic::uploadBufferData(mIbo, mIndices.size() * sizeof(GLuint), mIndices.data(), GL_DYNAMIC_DRAW, GL_ELEMENT_ARRAY_BUFFER);
+
 		mNumElements = (uint32_t)mIndices.size();
+		Graphic::uploadBufferData(mIbo, mIndices.size() * sizeof(GLuint), mIndices.data(), GL_DYNAMIC_DRAW, GL_ELEMENT_ARRAY_BUFFER);
 		mIndices.clear();
-		Logger::info("collider: %0.2f count: %zu", (glfwGetTime() - start) * 1000.0f, mVertexs.size());
 
 		return mNumElements;
 	}
