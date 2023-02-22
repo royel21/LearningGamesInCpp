@@ -1,16 +1,22 @@
 #include "Limiter.h"
 
+#include <thread>
 #include <chrono>
 
 #include "SleepImp.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 namespace Plutus
 {
-    using Clock = std::chrono::system_clock;
-    using Duration = std::chrono::duration<float>;
+    using Clock = std::chrono::steady_clock;
+    using Duration = std::chrono::duration<double>;
 
-    std::chrono::system_clock::time_point mStartPoint;
-    std::chrono::system_clock::time_point mEndPoint;
+    Clock::time_point mStartPoint;
+    std::chrono::duration<double> frameTime(0.0);
+    std::chrono::duration<double> sleepAdjust(0.0);
 
     void Limiter::init(float fps)
     {
@@ -36,15 +42,31 @@ namespace Plutus
     void Limiter::end()
     {
 #ifndef __EMSCRIPTEN__
+        std::chrono::duration<double> target(mSpecFps);
+
         if (limitFPS) {
-            Duration drawTime = Clock::now() - mStartPoint;
-            if (drawTime.count() < mSpecFps)
+            Clock::time_point mEndPoint = Clock::now();
+            std::chrono::duration<double> timeUsed = mEndPoint - mStartPoint;
+            std::chrono::duration<double> sleepTime = target - timeUsed + sleepAdjust;
+
+            if (sleepTime > std::chrono::duration<double>(0))
             {
-                msSleep((uint32_t)floorf((mSpecFps - drawTime.count()) * 1000.0f));
+#ifdef _WIN32
+                timeBeginPeriod(1);
+#endif
+                std::this_thread::sleep_for(sleepTime);
+#ifdef _WIN32
+                timeEndPeriod(1);
+#endif
             }
         }
-        Duration currentFrame = Clock::now() - mStartPoint;
-        mLastElapsed = currentFrame.count();
+
+
+        Duration frameTime = Clock::now() - mStartPoint;
+        mLastElapsed = frameTime.count();
+
+        // Compute the sleep adjustment using a low pass filter
+        sleepAdjust = 0.995 * sleepAdjust + 0.1 * (target - frameTime);
 #endif
 
         mFrameTime += mLastElapsed;

@@ -76,6 +76,8 @@ namespace Plutus
         //set if fps should be limited.
         void limitFPS(bool state) { mLimiter.setFPSLimiter(state); }
 
+        void setVSync(bool state);
+
         void addScreen(const std::string id, IScreen* screen, bool primary = false);
         void setNextScreen(const std::string& screenId);
 

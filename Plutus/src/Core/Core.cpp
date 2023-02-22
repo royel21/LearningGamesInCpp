@@ -84,6 +84,12 @@ namespace Plutus
         Exit();
     }
 
+    void Core::setVSync(bool state)
+    {
+        mWindow.setVSYNC(state);
+        mLimiter.setFPSLimiter(state);
+    }
+
     void Core::addScreen(const std::string id, IScreen * screen, bool primary) {
         mScreenList[id] = screen;
         screen->init(this, &mCamera);

@@ -18,6 +18,8 @@
 #include <Utils/Utils.h>
 #include <GLFW/glfw3.h>
 
+#define NUMCIRCLES 2000
+
 namespace Plutus
 {
     template<typename T>
@@ -42,18 +44,16 @@ namespace Plutus
         // setAlwaysOnTop(true);
         mDebug = DebugRender::get();
         mDebug->init(&mCamera);
-        mWindow.setVSYNC(1);
+        // mWindow.setVSYNC(1);
 
         mShapes.insert<Circle2d>(70.0f, 100.0f, 30.0f);
-        // mShapes.insert<Circle2d>(640.0f, 150.0f, 30.0f);
+        mShapes.insert<Circle2d>(640.0f, 150.0f, 30.0f);
         // mShapes.insert<Circle2d>(640.0f, 100.0f, 30.0f);
         // mShapes.back().ref->isStatic = true;
         // mShapes.insert<Box2d>(360.0f, 90.0f, 100.0f, 100.0f);
         // mShapes.back().ref->isStatic = true;
 
-        float x = 40;
-        float y = 40;
-        for (size_t i = 0; i < 2000; i++) {
+        for (size_t i = 0; i < NUMCIRCLES; i++) {
             float x = (float)Utils::getRandom(30, int(scSize.x - 80));
             float y = (float)Utils::getRandom(30, int(scSize.y - 80));
             float size = (float)Utils::getRandom(10, 25);
@@ -73,8 +73,8 @@ namespace Plutus
         mShapes.insert<Line2d>(5.0f, 5.0f, size.x, 5.0f);
         mShapes.back().ref->isStatic = true;
 
-        mShapes.insert<Line2d>(80.0f, 62.0f, 600.0f, 600.0f);
-        mShapes.back().ref->isStatic = true;
+        // mShapes.insert<Line2d>(80.0f, 62.0f, 600.0f, 600.0f);
+        // mShapes.back().ref->isStatic = true;
     }
     bool isMouseDown = false;
     bool isMouseDownInCircle = false;
@@ -128,6 +128,8 @@ namespace Plutus
             auto dis = initPos - mpos;
         }
 
+
+        // auto start = Time::micros();
         for (auto& item : mShapes) {
             auto shape = item.ref;
 
@@ -152,7 +154,6 @@ namespace Plutus
             }
         }
 
-        auto start = Time::micros();
         count = 0;
 
         for (size_t i = 0; i < mShapes.size(); i++) {
@@ -164,7 +165,6 @@ namespace Plutus
             bool isCircleA = shapeA->type & CircleShape;
             bool isBoxA = shapeA->type == BoxShape;
             bool isLineA = shapeA->type == EdgeShape;
-
             auto items = mShapes.query(shapeA->getRect());
             for (auto& item : items) {
                 if (i == item) continue;
@@ -216,14 +216,16 @@ namespace Plutus
                 }
             }
         }
-        auto time = Time::micros() - start;
-        // Logger::info("collider: %llu - count: %zu", time, count);
+        // Logger::info("dt: %0.3f, items:%lu, time: %llu", dt, count, Time::micros() - start);
         {
             auto items = mShapes.query(shape->getRect());
             for (auto i : items) {
                 mShapes[i].ref->color = { 0,0,255,255 };
             }
         }
+        char title[128];
+        std::snprintf(title, 128, "FPS: %.2f", getFPS());
+        mWindow.setTitle(title);
     }
 
     void App::drawQuadrant(QuadTree* qt) {
@@ -240,7 +242,6 @@ namespace Plutus
     void App::Draw()
     {
         count = 0;
-        auto start = Time::micros();
         for (auto& item : mShapes) {
             count++;
             auto shape = item.ref;
@@ -261,13 +262,10 @@ namespace Plutus
         }
 
         drawQuadrant(&mShapes.root);
-        Logger::info("collider: %llu C:%lu", Time::micros() - start, count);
+        // auto start = Time::micros();
         mDebug->end();
         mDebug->render();
-
-        char title[128];
-        std::snprintf(title, 128, "FPS: %.2f", getFPS());
-        mWindow.setTitle(title);
+        // Logger::info("time: %llu C:%lu", Time::micros() - start, count);
     }
 
     void App::Exit()

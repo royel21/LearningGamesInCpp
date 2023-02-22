@@ -59,7 +59,11 @@ namespace Plutus
         // Bind the buffer buffId and upload the data unbind after data upload
         inline static void uploadBufferData(uint32_t buffId, uint32_t buffsize, const void* buffer, uint32_t drawType = GL_DYNAMIC_DRAW, uint32_t bufferType = GL_ARRAY_BUFFER) {
             glBindBuffer(bufferType, buffId);
-            glBufferData(bufferType, buffsize, buffer, drawType);
+            // glBufferData(bufferType, buffsize, buffer, drawType);
+
+            glBufferData(bufferType, buffsize, nullptr, drawType);
+            //Upload the data
+            glBufferSubData(bufferType, 0, buffsize, buffer);
             glBindBuffer(bufferType, 0);
         }
         //Enable blend mode GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA or addictive GL_SRC_ALPHA, GL_ONE

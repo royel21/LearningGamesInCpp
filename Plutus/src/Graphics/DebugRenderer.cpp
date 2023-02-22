@@ -55,12 +55,31 @@ namespace Plutus
 
 	uint32_t DebugRender::end()
 	{
-		Graphic::uploadBufferData(mVbo, mVertexs.size() * sizeof(DebugVertex), mVertexs.data());
-		mVertexs.clear();
+		// auto start = Time::micros();
+		//Set Up Vertex Buffer Object
+		glBindBuffer(GL_ARRAY_BUFFER, mVbo);
 
-		mNumElements = (uint32_t)mIndices.size();
-		Graphic::uploadBufferData(mIbo, mIndices.size() * sizeof(GLuint), mIndices.data(), GL_DYNAMIC_DRAW, GL_ELEMENT_ARRAY_BUFFER);
+		glBufferData(GL_ARRAY_BUFFER, mVertexs.size() * sizeof(DebugVertex), mVertexs.data(), GL_DYNAMIC_DRAW);
+
+		// glBufferSubData(GL_ARRAY_BUFFER, 0, mVertexs.size() * sizeof(DebugVertex), mVertexs.data());
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		if (mNumElements != (uint32_t)mIndices.size()) {
+			//Set up Index Buffer Array
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIbo);
+
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndices.size() * sizeof(GLuint), mIndices.data(), GL_STATIC_DRAW);
+
+			// glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, mIndices.size() * sizeof(GLuint), mIndices.data());
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+			mNumElements = (uint32_t)mIndices.size();
+		}
 		mIndices.clear();
+		mVertexs.clear();
+		// Logger::info("time: %llu sz:%zu", Time::micros() - start, mIndices.size());
 
 		return mNumElements;
 	}
