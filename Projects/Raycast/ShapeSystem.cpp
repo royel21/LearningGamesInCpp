@@ -30,7 +30,7 @@ namespace Plutus
     {
         auto view = mProject->scene->getView<ShapeComponent>();
 
-        for (auto& [ent, shape] : view.each()) {
+        for (auto [ent, shape] : view.each()) {
             uint32_t count = shape.Points.size();
 
             if (count) {
