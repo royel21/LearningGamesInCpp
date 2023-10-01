@@ -19,3 +19,4 @@ pe-config.json
 config.json
 assets/script/player2.lua
 *.mp3
+scripts/db.json
