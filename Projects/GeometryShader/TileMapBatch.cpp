@@ -78,7 +78,6 @@ namespace Plutus
             auto& animTile = mTileMap->mAnimateTiles[i];
             auto rect = mProject->scene->getRect(animTile);
 
-            // if (mCamera->getViewPortDim().overlap(rect)) {
             animTile.currentTime += dt;
 
             auto anim = animTile.anim;
@@ -97,7 +96,6 @@ namespace Plutus
             mtiles[mStaticTilesCount + tileVers++] = { vertices[2], uv.z, uv.y, anim->texId };
             mtiles[mStaticTilesCount + tileVers++] = { vertices[3], uv.z, uv.w, anim->texId };
             animVert += 6;
-            // }
         }
     }
 
