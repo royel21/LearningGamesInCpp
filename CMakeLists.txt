@@ -13,7 +13,7 @@ add_subdirectory(Plutus)
 
 # Add Game Target
 add_executable(game ${GAME_SRC})
-target_link_libraries(game Plutus)
+target_link_libraries("game" Plutus)
 
 # ------------------------Plutus Editor-----------------------------------#
 set(PE_DIR Projects/PlutusEdit/src)
